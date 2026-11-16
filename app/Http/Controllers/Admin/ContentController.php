@@ -74,13 +74,15 @@ class ContentController extends Controller
         $data=$this->validated($request,$type,$item->id);$categoryIds=$data['category_ids']??[];unset($data['category_ids']);
         if(isset($data['title'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['title'],$item->id);
         if(isset($data['name'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['name'],$item->id);
+        $oldFiles=[];
         foreach(['image','featured_image','photo'] as $field) if($request->hasFile($field)) {
-            if($item->$field) Storage::disk('public')->delete($item->$field);
+            if($item->$field) $oldFiles[]=$item->$field;
             $data[$field]=$request->file($field)->store($type,'public');
         }
         if($type==='posts' && ($data['status']??null)==='published' && !$item->published_at) $data['published_at']=now();
         if(in_array($type,['banners','team'])) $data['is_active']=$request->boolean('is_active');
         DB::transaction(function()use($item,$data,$type,$categoryIds){$item->update($data);if($type==='posts')$item->categories()->sync($categoryIds);});
+        foreach($oldFiles as $path)Storage::disk('public')->delete($path);
         return redirect()->route('admin.content.index',$type)->with('success',ucfirst($type).' item updated.');
     }
 
