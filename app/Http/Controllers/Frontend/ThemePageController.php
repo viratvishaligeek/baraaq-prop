@@ -25,7 +25,7 @@ class ThemePageController extends Controller
             $form='<form action="'.route('enquiries.store').'" method="POST" class="contact-form ajax-contact">'.csrf_field();
             $html=str_replace('<form action="https://html.themehour.net/piller/demo/mail.php" method="POST" class="contact-form ajax-contact">',$form,$html);
             $html=str_replace('name="number"','name="phone"',$html);
-            $html=str_replace('name="Your Messsage*"','name="message"',$html);
+            $html=str_replace('name="Your Messsage*"','name="message"',$html);$html=str_replace('class="contact-form ajax-contact"','class="contact-form"',$html);
         }
         return view('frontend.theme-page',['html'=>$html]);
     }
