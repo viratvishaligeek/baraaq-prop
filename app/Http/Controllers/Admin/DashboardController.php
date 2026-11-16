@@ -1,4 +1,0 @@
-<?php
-namespace App\Http\Controllers\Admin;
-use App\Http\Controllers\Controller; use App\Models\Enquiry; use App\Models\Post; use App\Models\Property;
-class DashboardController extends Controller { public function __invoke(){return view('admin.dashboard',['propertyCount'=>Property::count(),'publishedPropertyCount'=>Property::where('status','published')->count(),'postCount'=>Post::count(),'newEnquiryCount'=>Enquiry::where('status','new')->count(),'recentEnquiries'=>Enquiry::with('property:id,title')->latest()->limit(8)->get(),'recentProperties'=>Property::select('id','title','slug','status','price','city','created_at')->latest()->limit(6)->get()]);} }

@@ -1,4 +1,0 @@
-<?php
-namespace App\Http\Controllers\Frontend;
-use App\Http\Controllers\Controller; use App\Models\Banner; use App\Models\Post; use App\Models\Property; use App\Models\TeamMember;
-class HomeController extends Controller { public function __invoke(){return view('frontend.home',['properties'=>Property::published()->with('category:id,name')->latest('published_at')->limit(6)->get(),'featuredProperties'=>Property::published()->where('is_featured',true)->with('category:id,name')->latest('published_at')->limit(4)->get(),'banners'=>Banner::where('is_active',true)->where('placement','home')->orderBy('sort_order')->get(),'posts'=>Post::published()->latest('published_at')->limit(3)->get(),'teamMembers'=>TeamMember::where('is_active',true)->orderBy('sort_order')->limit(4)->get()]);} }
