@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller; use App\Models\Media; use Illuminate\Http\Request; use Illuminate\Support\Facades\Storage;
+class MediaController extends Controller { public function index(){return view('admin.media.index',['media'=>Media::latest()->paginate(30)]);} public function store(Request $r){$r->validate(['files'=>['required','array','max:20'],'files.*'=>['required','file','mimes:jpg,jpeg,png,webp,gif,pdf,svg,mp4','max:10240']]);foreach($r->file('files') as $file){$path=$file->store('media','public');Media::create(['uploaded_by'=>$r->user()->id,'disk'=>'public','path'=>$path,'original_name'=>$file->getClientOriginalName(),'mime_type'=>$file->getMimeType(),'size'=>$file->getSize()]);}return back()->with('success','Files uploaded.');} public function destroy(Media $media){Storage::disk($media->disk)->delete($media->path);$media->delete();return back()->with('success','Media deleted.');} }
