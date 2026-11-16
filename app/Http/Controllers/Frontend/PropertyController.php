@@ -1,0 +1,7 @@
+<?php
+namespace App\Http\Controllers\Frontend;
+use App\Http\Controllers\Controller; use App\Models\Category; use App\Models\Property; use Illuminate\Http\Request;
+class PropertyController extends Controller {
+ public function index(Request $r){$q=Property::published()->with('category:id,name');if($r->filled('q'))$q->where('title','like','%'.$r->input('q').'%');if($r->filled('city'))$q->where('city',$r->input('city'));if($r->filled('listing_type'))$q->where('listing_type',$r->input('listing_type'));if($r->filled('category'))$q->where('category_id',$r->integer('category'));if($r->filled('min_price'))$q->where('price','>=',$r->input('min_price'));if($r->filled('max_price'))$q->where('price','<=',$r->input('max_price'));return view('frontend.properties.index',['properties'=>$q->latest('published_at')->paginate(12)->withQueryString(),'categories'=>Category::where('type','property')->orderBy('name')->get()]);}
+ public function show(Property $property){abort_unless($property->status==='published'&&$property->published_at&&$property->published_at->lte(now()),404);$property->load(['category','images']);$related=Property::published()->where('id','!=',$property->id)->where('city',$property->city)->limit(3)->get();return view('frontend.properties.show',compact('property','related'));}
+}

@@ -1,4 +1,0 @@
-<?php
-namespace App\Models;
-use Illuminate\Database\Eloquent\Model;
-class Setting extends Model { protected $fillable=['group','key','value','type']; public static function read(string $key,mixed $default=null):mixed{$value=cache()->remember('setting:'.$key,3600,fn()=>static::where('key',$key)->value('value'));return $value===null?$default:$value;} public static function write(string $key,mixed $value,string $group='general',string $type='string'):void{static::updateOrCreate(['key'=>$key],['value'=>is_scalar($value)?(string)$value:json_encode($value),'group'=>$group,'type'=>$type]);cache()->forget('setting:'.$key);cache()->forget('settings:'.$group);} }

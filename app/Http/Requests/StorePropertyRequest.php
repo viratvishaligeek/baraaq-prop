@@ -1,0 +1,7 @@
+<?php
+namespace App\Http\Requests;
+use Illuminate\Foundation\Http\FormRequest; use Illuminate\Validation\Rule;
+class StorePropertyRequest extends FormRequest {
+ public function authorize():bool{return $this->user()?->isAdministrator()||$this->user()?->hasPermission('properties.manage')||$this->user()?->hasPermission('properties.create')||$this->user()?->hasPermission('properties.edit');}
+ public function rules():array{return ['title'=>['required','string','max:255'],'slug'=>['nullable','string','max:255',Rule::unique('properties','slug')->ignore($this->route('property'))],'category_id'=>['nullable','exists:categories,id'],'property_type'=>['nullable','string','max:60'],'listing_type'=>['required',Rule::in(['sale','rent','lease'])],'price'=>['nullable','numeric','min:0'],'price_label'=>['nullable','string','max:100'],'bedrooms'=>['nullable','integer','min:0','max:100'],'bathrooms'=>['nullable','integer','min:0','max:100'],'area'=>['nullable','numeric','min:0'],'area_unit'=>['required','string','max:20'],'address'=>['nullable','string','max:255'],'city'=>['nullable','string','max:100'],'state'=>['nullable','string','max:100'],'postal_code'=>['nullable','string','max:20'],'description'=>['nullable','string'],'featured_image'=>['nullable','image','max:5120'],'status'=>['required',Rule::in(['draft','published','archived'])],'is_featured'=>['sometimes','boolean']];}
+}
