@@ -2,7 +2,7 @@
 use Illuminate\Database\Migrations\Migration; use Illuminate\Database\Schema\Blueprint; use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
  public function up(): void {
- Schema::table('users',fn(Blueprint $t)=>[$t->string('phone',30)->nullable(),$t->boolean('is_active')->default(true)]);
+ Schema::table('users', function (Blueprint $table) { $table->string('phone',30)->nullable(); $table->boolean('is_active')->default(true); });
  Schema::create('roles',function(Blueprint $t){$t->id();$t->string('name');$t->string('slug')->unique();$t->text('description')->nullable();$t->timestamps();});
  Schema::create('permissions',function(Blueprint $t){$t->id();$t->string('name');$t->string('slug')->unique();$t->string('group')->nullable();$t->timestamps();});
  Schema::create('role_user',function(Blueprint $t){$t->foreignId('role_id')->constrained()->cascadeOnDelete();$t->foreignId('user_id')->constrained()->cascadeOnDelete();$t->primary(['role_id','user_id']);});
