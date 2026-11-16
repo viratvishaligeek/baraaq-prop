@@ -1,1 +1,0 @@
-document.addEventListener('DOMContentLoaded',function(){if(window.toastr){toastr.options={closeButton:true,progressBar:true,positionClass:'toast-top-right',timeOut:3500};}});

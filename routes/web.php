@@ -1,4 +1,7 @@
 <?php
-use App\Http\Controllers\Admin\AuthController; use App\Http\Controllers\Admin\DashboardController; use App\Http\Controllers\Admin\EnquiryController; use App\Http\Controllers\Admin\PropertyController as AdminPropertyController; use App\Http\Controllers\Frontend\EnquiryController as FrontendEnquiryController; use App\Http\Controllers\Frontend\HomeController; use App\Http\Controllers\Frontend\PropertyController as FrontendPropertyController; use Illuminate\Support\Facades\Route;
-Route::get('/',HomeController::class)->name('home'); Route::get('/properties',[FrontendPropertyController::class,'index'])->name('properties.index'); Route::get('/properties/{property:slug}',[FrontendPropertyController::class,'show'])->name('properties.show'); Route::post('/enquiries',[FrontendEnquiryController::class,'store'])->middleware('throttle:5,1')->name('enquiries.store');
-Route::prefix('admin')->name('admin.')->group(function(){Route::middleware('guest')->group(function(){Route::get('/login',[AuthController::class,'create'])->name('login');Route::post('/login',[AuthController::class,'store'])->middleware('throttle:5,1')->name('login.store');});Route::middleware(['auth','admin.access'])->group(function(){Route::post('/logout',[AuthController::class,'destroy'])->name('logout');Route::get('/',DashboardController::class)->name('dashboard');Route::resource('properties',AdminPropertyController::class)->except(['show']);Route::get('/enquiries',[EnquiryController::class,'index'])->name('enquiries.index');Route::patch('/enquiries/{enquiry}',[EnquiryController::class,'update'])->name('enquiries.update');Route::delete('/enquiries/{enquiry}',[EnquiryController::class,'destroy'])->name('enquiries.destroy');});});
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
