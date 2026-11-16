@@ -42,20 +42,20 @@ class ContentController extends Controller
     public function create(string $type)
     {
         $model=$this->model($type);
-        return view('admin.content.form',['type'=>$type,'item'=>new $model]);
+        return view('admin.content.form',['type'=>$type,'item'=>new $model,'categories'=>$type==='posts'?Category::where('type','post')->orderBy('name')->get():collect()]);
     }
 
     public function store(Request $request,string $type)
     {
         $model=$this->model($type);
-        $data=$this->validated($request,$type);
+        $data=$this->validated($request,$type);$categoryIds=$data['category_ids']??[];unset($data['category_ids']);
         if(isset($data['title'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['title']);
         if(isset($data['name'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['name']);
         if(in_array($type,['posts','pages'])) $data['author_id']=$request->user()->id;
         foreach(['image','featured_image','photo'] as $field) if($request->hasFile($field)) $data[$field]=$request->file($field)->store($type,'public');
         if($type==='posts' && ($data['status']??null)==='published') $data['published_at']=now();
         if(in_array($type,['banners','team'])) $data['is_active']=$request->boolean('is_active');
-        $model::create($data);
+        $item=$model::create($data);if($type==='posts')$item->categories()->sync($categoryIds);
         return redirect()->route('admin.content.index',$type)->with('success',ucfirst($type).' item created.');
     }
 
@@ -63,14 +63,14 @@ class ContentController extends Controller
     {
         $model=$this->model($type);
         $item=$model::findOrFail($id);
-        return view('admin.content.form',compact('type','item'));
+        return view('admin.content.form',['type'=>$type,'item'=>$item,'categories'=>$type==='posts'?Category::where('type','post')->orderBy('name')->get():collect()]);
     }
 
     public function update(Request $request,string $type,int $id)
     {
         $model=$this->model($type);
         $item=$model::findOrFail($id);
-        $data=$this->validated($request,$type,$item->id);
+        $data=$this->validated($request,$type,$item->id);$categoryIds=$data['category_ids']??[];unset($data['category_ids']);
         if(isset($data['title'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['title'],$item->id);
         if(isset($data['name'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['name'],$item->id);
         foreach(['image','featured_image','photo'] as $field) if($request->hasFile($field)) {
@@ -79,7 +79,7 @@ class ContentController extends Controller
         }
         if($type==='posts' && ($data['status']??null)==='published' && !$item->published_at) $data['published_at']=now();
         if(in_array($type,['banners','team'])) $data['is_active']=$request->boolean('is_active');
-        $item->update($data);
+        $item->update($data);if($type==='posts')$item->categories()->sync($categoryIds);
         return redirect()->route('admin.content.index',$type)->with('success',ucfirst($type).' item updated.');
     }
 
@@ -93,7 +93,7 @@ class ContentController extends Controller
     private function validated(Request $request,string $type,?int $id=null): array
     {
         $rules=match($type) {
-            'posts'=>['title'=>['required','string','max:255'],'slug'=>['nullable','string','max:255',Rule::unique('posts')->ignore($id)],'excerpt'=>['nullable','string'],'content'=>['nullable','string'],'featured_image'=>['nullable','image','max:5120'],'status'=>['required','in:draft,published,archived'],'meta_title'=>['nullable','string','max:255'],'meta_description'=>['nullable','string','max:1000']],
+            'posts'=>['title'=>['required','string','max:255'],'slug'=>['nullable','string','max:255',Rule::unique('posts')->ignore($id)],'excerpt'=>['nullable','string'],'content'=>['nullable','string'],'category_ids'=>['nullable','array'],'category_ids.*'=>['integer','exists:categories,id'],'featured_image'=>['nullable','image','max:5120'],'status'=>['required','in:draft,published,archived'],'meta_title'=>['nullable','string','max:255'],'meta_description'=>['nullable','string','max:1000']],
             'pages'=>['title'=>['required','string','max:255'],'slug'=>['nullable','string','max:255',Rule::unique('pages')->ignore($id)],'content'=>['nullable','string'],'template'=>['required','string','max:80'],'status'=>['required','in:draft,published,archived'],'meta_title'=>['nullable','string','max:255'],'meta_description'=>['nullable','string','max:1000']],
             'categories'=>['name'=>['required','string','max:150'],'slug'=>['nullable','string','max:180',Rule::unique('categories')->ignore($id)],'description'=>['nullable','string'],'parent_id'=>['nullable','exists:categories,id'],'type'=>['required','in:property,post']],
             'banners'=>['title'=>['required','string','max:255'],'subtitle'=>['nullable','string','max:255'],'description'=>['nullable','string'],'image'=>['nullable','image','max:5120'],'button_text'=>['nullable','string','max:100'],'button_url'=>['nullable','url','max:2048'],'placement'=>['required','string','max:60'],'sort_order'=>['nullable','integer','min:0'],'is_active'=>['sometimes','boolean']],
