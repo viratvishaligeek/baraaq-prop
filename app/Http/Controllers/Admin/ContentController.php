@@ -64,7 +64,7 @@ class ContentController extends Controller
     {
         $model=$this->model($type);
         $item=$model::findOrFail($id);
-        return view('admin.content.form',['type'=>$type,'item'=>$item,'categories'=>$type==='posts'?Category::where('type','post')->orderBy('name')->get():collect(),'parentCategories'=>$type==='categories'?Category::where('type',$item->type)->whereKeyNot($item->id)->orderBy('name')->get():collect()]);
+        return view('admin.content.form',['type'=>$type,'item'=>$item,'categories'=>$type==='posts'?Category::where('type','post')->orderBy('name')->get():collect(),'parentCategories'=>$type==='categories'?Category::where('type',$item->type)->where('id','!=',$item->id)->orderBy('name')->get():collect()]);
     }
 
     public function update(Request $request,string $type,int $id)
