@@ -7,7 +7,7 @@
 <div class="content-card"><div class="d-flex justify-content-between align-items-center mb-3"><h2 class="section-title mb-0">Menu items</h2><button type="button" class="btn btn-sm btn-outline-primary" id="add-menu-item">Add item</button></div>
 <div id="menu-items-list">
 @foreach(old('items',$menuItems->map(fn($item)=>['label'=>$item->label,'url'=>$item->url,'target'=>$item->target,'parent_index'=>$item->parent_index,'is_active'=>$item->is_active?1:0])->all()) as $index=>$item)
-<div class="menu-item-row border rounded p-3 mb-3" draggable="true"><div class="d-flex justify-content-between align-items-center mb-2"><span class="fw-semibold menu-item-handle" style="cursor:move">↕ Drag to reorder · Item <span class="item-number">{{ $index+1 }}</span></span><button type="button" class="btn btn-sm btn-outline-danger remove-menu-item">Remove</button></div><div class="row g-2"><div class="col-md-3"><label class="form-label">Label</label><input class="form-control" name="items[{{ $index }}][label]" value="{{ $item['label']??'' }}" required></div><div class="col-md-4"><label class="form-label">URL</label><input class="form-control" name="items[{{ $index }}][url]" value="{{ $item['url']??'' }}" placeholder="/properties or https://..."></div><div class="col-md-2"><label class="form-label">Parent</label><select class="form-select parent-select" name="items[{{ $index }}][parent_index]"><option value="">Top level</option>@foreach(old('items',$menuItems->map(fn($i)=>['label'=>$i->label])->all()) as $parentIndex=>$parent) @if($parentIndex<$index)<option value="{{ $parentIndex }}" @selected((string)($item['parent_index']??'')===(string)$parentIndex)>{{ $parent['label'] }}</option>@endif @endforeach</select></div><div class="col-md-2"><label class="form-label">Target</label><select class="form-select" name="items[{{ $index }}][target]"><option value="_self" @selected(($item['target']??'_self')==='_self')>Same tab</option><option value="_blank" @selected(($item['target']??'')==='_blank')>New tab</option></select></div><div class="col-md-1 d-flex align-items-end"><label class="form-check"><input class="form-check-input" type="checkbox" name="items[{{ $index }}][is_active]" value="1" @checked($item['is_active']??true)><span class="form-check-label">On</span></label></div></div></div>
+<div class="menu-item-row border rounded p-3 mb-3" draggable="true" data-index="{{ $index }}"><div class="d-flex justify-content-between align-items-center mb-2"><span class="fw-semibold menu-item-handle" style="cursor:move">↕ Drag to reorder · Item <span class="item-number">{{ $index+1 }}</span></span><button type="button" class="btn btn-sm btn-outline-danger remove-menu-item">Remove</button></div><div class="row g-2"><div class="col-md-3"><label class="form-label">Label</label><input class="form-control" name="items[{{ $index }}][label]" value="{{ $item['label']??'' }}" required></div><div class="col-md-4"><label class="form-label">URL</label><input class="form-control" name="items[{{ $index }}][url]" value="{{ $item['url']??'' }}" placeholder="/properties or https://..."></div><div class="col-md-2"><label class="form-label">Parent</label><select class="form-select parent-select" name="items[{{ $index }}][parent_index]"><option value="">Top level</option>@foreach(old('items',$menuItems->map(fn($i)=>['label'=>$i->label])->all()) as $parentIndex=>$parent) @if($parentIndex<$index)<option value="{{ $parentIndex }}" @selected((string)($item['parent_index']??'')===(string)$parentIndex)>{{ $parent['label'] }}</option>@endif @endforeach</select></div><div class="col-md-2"><label class="form-label">Target</label><select class="form-select" name="items[{{ $index }}][target]"><option value="_self" @selected(($item['target']??'_self')==='_self')>Same tab</option><option value="_blank" @selected(($item['target']??'')==='_blank')>New tab</option></select></div><div class="col-md-1 d-flex align-items-end"><label class="form-check"><input class="form-check-input" type="checkbox" name="items[{{ $index }}][is_active]" value="1" @checked($item['is_active']??true)><span class="form-check-label">On</span></label></div></div></div>
 @endforeach
 </div><button class="btn btn-primary mt-3">Save menu</button></div></form>
 @endsection
@@ -16,13 +16,15 @@
 (function($){
 let dragged=null;
 function renumber(){
-$('#menu-items-list .menu-item-row').each(function(index){
-$(this).attr('data-index',index).find('.item-number').text(index+1);
-$(this).find('[name]').each(function(){this.name=this.name.replace(/items\[\d+\]/,'items['+index+']');});
-const select=$(this).find('.parent-select'),selected=select.val();
-select.empty().append($('<option>',{value:'',text:'Top level'}));
-$('#menu-items-list .menu-item-row').each(function(parentIndex){if(parentIndex<index)select.append($('<option>',{value:parentIndex,text:$(this).find('input[name$="[label]"]').val()||'Item '+(parentIndex+1)}));});
-select.val(selected);
+const rows=$('#menu-items-list .menu-item-row').toArray(),indexMap={},parents=[];
+rows.forEach(function(row,index){const old=$(row).attr('data-index');if(old!==undefined)indexMap[old]=index;});
+rows.forEach(function(row){const selected=$(row).find('.parent-select').val();parents.push(selected!==''&&indexMap[selected]!==undefined?String(indexMap[selected]):'');});
+rows.forEach(function(row,index){
+const item=$(row);item.attr('data-index',index).find('.item-number').text(index+1);
+item.find('[name]').each(function(){this.name=this.name.replace(/items\[\d+\]/,'items['+index+']');});
+const select=item.find('.parent-select');select.empty().append($('<option>',{value:'',text:'Top level'}));
+rows.forEach(function(parent,parentIndex){if(parentIndex<index)select.append($('<option>',{value:parentIndex,text:$(parent).find('input[name$="[label]"]').val()||'Item '+(parentIndex+1)}));});
+select.val(parents[index]);
 });
 }
 $('#add-menu-item').on('click',function(){
