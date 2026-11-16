@@ -22,6 +22,10 @@ class ThemePageController extends Controller
         $html=File::get($path);
         $html=preg_replace_callback('/((?:src|href|data-bg-src)=["\'])assets\/([^"\']+)/',fn($m)=>$m[1].asset('theme-assets/'.$m[2]),$html);
         $html=str_replace('href="index.html','href="/"',$html);
+        $email=Setting::read('site_email','');
+        $phone=Setting::read('site_phone','');
+        if($email)$html=str_replace(['infomailexample@mail.com','infomail123@domain.com'],$email,$html);
+        if($phone)$html=str_replace(['+00 (123) 456 789 00','+00 (123) 456 789 012'],$phone,$html);
         if($contact){
             $form='<form action="'.route('enquiries.store').'" method="POST" class="contact-form ajax-contact">'.csrf_field();
             $html=str_replace('<form action="https://html.themehour.net/piller/demo/mail.php" method="POST" class="contact-form ajax-contact">',$form,$html);
