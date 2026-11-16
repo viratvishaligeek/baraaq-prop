@@ -27,6 +27,7 @@ class ThemePageController extends Controller
             $html=str_replace('name="number"','name="phone"',$html);
             $html=str_replace('name="Your Messsage*"','name="message"',$html);$html=str_replace('class="contact-form ajax-contact"','class="contact-form"',$html);
         }
+        if($contact){$feedback='';if(session('enquiry_success'))$feedback.='<div class="alert alert-success">'.e(session('enquiry_success')).'</div>';if($errors->any())$feedback.='<div class="alert alert-danger">'.e($errors->first()).'</div>';$html=str_replace('<form action="'.route('enquiries.store').'" method="POST" class="contact-form">',$feedback.'<form action="'.route('enquiries.store').'" method="POST" class="contact-form">',$html);}
         return view('frontend.theme-page',['html'=>$html]);
     }
 }
