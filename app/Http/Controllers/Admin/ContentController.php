@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\TeamMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -55,7 +56,7 @@ class ContentController extends Controller
         foreach(['image','featured_image','photo'] as $field) if($request->hasFile($field)) $data[$field]=$request->file($field)->store($type,'public');
         if($type==='posts' && ($data['status']??null)==='published') $data['published_at']=now();
         if(in_array($type,['banners','team'])) $data['is_active']=$request->boolean('is_active');
-        $item=$model::create($data);if($type==='posts')$item->categories()->sync($categoryIds);
+        $item=DB::transaction(function()use($model,$data,$type,$categoryIds){$created=$model::create($data);if($type==='posts')$created->categories()->sync($categoryIds);return $created;});
         return redirect()->route('admin.content.index',$type)->with('success',ucfirst($type).' item created.');
     }
 
@@ -79,7 +80,7 @@ class ContentController extends Controller
         }
         if($type==='posts' && ($data['status']??null)==='published' && !$item->published_at) $data['published_at']=now();
         if(in_array($type,['banners','team'])) $data['is_active']=$request->boolean('is_active');
-        $item->update($data);if($type==='posts')$item->categories()->sync($categoryIds);
+        DB::transaction(function()use($item,$data,$type,$categoryIds){$item->update($data);if($type==='posts')$item->categories()->sync($categoryIds);});
         return redirect()->route('admin.content.index',$type)->with('success',ucfirst($type).' item updated.');
     }
 
