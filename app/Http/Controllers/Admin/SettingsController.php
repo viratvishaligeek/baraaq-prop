@@ -1,4 +1,0 @@
-<?php
-namespace App\Http\Controllers\Admin;
-use App\Http\Controllers\Controller; use App\Models\Setting; use Illuminate\Http\Request;
-class SettingsController extends Controller { public function edit(){return view('admin.settings.edit',['settings'=>Setting::where('group','general')->pluck('value','key')]);} public function update(Request $r){$data=$r->validate(['site_title'=>['required','string','max:150'],'site_email'=>['nullable','email','max:190'],'site_phone'=>['nullable','string','max:30'],'site_address'=>['nullable','string','max:255'],'footer_description'=>['nullable','string','max:1000'],'meta_description'=>['nullable','string','max:1000'],'whatsapp_number'=>['nullable','string','max:30']]);foreach($data as $key=>$value)Setting::write($key,$value,'general');return back()->with('success','Website settings saved.');} }
