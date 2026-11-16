@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
     private function seedPrimaryMenu():void
     {
         $menu=Menu::firstOrCreate(['location'=>'primary'],['name'=>'Primary navigation']);
+        if($menu->allItems()->exists())return;
         $items=[
             ['Home','/',null,0],
             ['Properties','/properties',null,1],
@@ -41,10 +42,15 @@ class DatabaseSeeder extends Seeder
         $parents=[];
         foreach($items as [$label,$url,$parent,$order]){
             $parentId=$parent?$parents[$parent]->id:null;
-            $parents[$label]=MenuItem::updateOrCreate(
-                ['menu_id'=>$menu->id,'label'=>$label],
-                ['url'=>$url,'parent_id'=>$parentId,'target'=>'_self','sort_order'=>$order,'is_active'=>true]
-            );
+            $parents[$label]=MenuItem::create([
+                'menu_id'=>$menu->id,
+                'label'=>$label,
+                'url'=>$url,
+                'parent_id'=>$parentId,
+                'target'=>'_self',
+                'sort_order'=>$order,
+                'is_active'=>true,
+            ]);
         }
         Cache::forget('menu:primary');
     }
