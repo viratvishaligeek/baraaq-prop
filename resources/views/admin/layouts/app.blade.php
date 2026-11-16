@@ -22,6 +22,7 @@
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('banners.manage'))<a href="{{ route('admin.content.index','banners') }}"><i class="fa-regular fa-images"></i> Banners</a>@endif
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('team.manage'))<a href="{{ route('admin.content.index','team') }}"><i class="fa-solid fa-users"></i> Team members</a>@endif
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('media.manage'))<a href="{{ route('admin.media.index') }}"><i class="fa-regular fa-folder-open"></i> Media library</a>@endif
+@if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('newsletters.manage'))<a href="{{ route('admin.newsletters.index') }}" class="{{ request()->routeIs('admin.newsletters.*')?'active':'' }}"><i class="fa-regular fa-envelope"></i> Newsletter subscribers</a>@endif
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage'))
 <div class="nav-label">WEBSITE</div>
 <a href="{{ route('admin.appearance.index') }}" class="{{ request()->routeIs('admin.appearance.*')?'active':'' }}"><i class="fa-solid fa-palette"></i> Appearance & themes</a>
