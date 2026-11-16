@@ -1,58 +1,113 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# BaraaQ Prop — Laravel Real Estate CMS
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 13 real-estate CMS built with Blade, PHP, MySQL, Bootstrap 5, jQuery, Toastr and SweetAlert2. The Piller HTML theme supplied in \`theme-files-html/\` is retained as the frontend foundation; its static assets are served from \`public/theme-assets/\`.
 
-## About Laravel
+## Requirements
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- PHP 8.3+
+- Composer 2
+- MySQL 8+ (or a compatible MySQL/MariaDB version supported by Laravel)
+- PHP extensions required by Laravel 13, including Fileinfo, Mbstring, OpenSSL, PDO and PDO MySQL
+- A web server configured to serve the Laravel \`public/\` directory
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Node.js, npm, Vite, Webpack, Tailwind, frontend compilation and browser automation are not required.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Installation
 
-## Learning Laravel
+1. Upload/checkout the repository and install PHP dependencies:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+   \`\`\`bash
+   composer install --no-dev --optimize-autoloader
+   \`\`\`
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. Create the environment file and application key:
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+   \`\`\`bash
+   cp .env.example .env
+   php artisan key:generate
+   \`\`\`
 
-## Agentic Development
+3. Configure \`.env\` for the hosting environment. Set \`APP_ENV=production\`, \`APP_DEBUG=false\`, \`APP_URL\`, MySQL connection details and unique administrator credentials:
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+   \`\`\`dotenv
+   APP_NAME="BaraaQ Prop"
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_URL=https://your-domain.example
 
-```bash
-composer require laravel/boost --dev
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=your_database
+   DB_USERNAME=your_database_user
+   DB_PASSWORD=your_database_password
 
-php artisan boost:install
-```
+   SESSION_DRIVER=file
+   CACHE_STORE=file
+   QUEUE_CONNECTION=sync
+   FILESYSTEM_DISK=public
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+   CMS_ADMIN_NAME="Site Administrator"
+   CMS_ADMIN_EMAIL=admin@your-domain.example
+   CMS_ADMIN_PASSWORD="use-a-unique-password-of-at-least-12-characters"
+   \`\`\`
 
-## Contributing
+4. Create the MySQL database and run the migration and seeder manually:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+   \`\`\`bash
+   php artisan migrate --force
+   php artisan db:seed --force
+   php artisan storage:link
+   \`\`\`
 
-## Code of Conduct
+5. Ensure \`storage/\` and \`bootstrap/cache/\` are writable by the PHP process. Configure the web server document root to Laravel's \`public/\` directory.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+6. Optional production optimizations after environment configuration:
 
-## Security Vulnerabilities
+   \`\`\`bash
+   php artisan config:cache
+   php artisan route:cache
+   php artisan view:cache
+   \`\`\`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   Run \`php artisan optimize:clear\` before rebuilding caches after changing cached configuration or routes.
 
-## License
+## Admin panel
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Login: \`/admin/login\`
+- Dashboard: \`/admin\`
+- Administrator account: created by \`DatabaseSeeder\` from \`CMS_ADMIN_NAME\`, \`CMS_ADMIN_EMAIL\` and \`CMS_ADMIN_PASSWORD\`
+- The seeder creates the Administrator and Editor roles, permissions, and an editable \`primary\` navigation menu. It does not insert a hardcoded password.
+
+## CMS features
+
+- Property listings, categories, cover images, ordered galleries and property enquiries
+- Blog posts, categories, pages and per-item SEO metadata
+- Media library with alt-text editing
+- Navigation menus with parent/child nesting and drag-and-drop ordering
+- Homepage banners with active state and schedule windows
+- Team members and website contact/SEO settings
+- Users, roles and permission checks
+- Appearance overview for the fixed Piller theme and an SEO completeness overview
+
+## Theme pages and routes
+
+The original theme HTML is preserved in \`theme-files-html/\`. Converted theme pages are in \`resources/views/frontend/theme-pages/\`; reusable dynamic property, blog and CMS page views live under \`resources/views/frontend/\`.
+
+Primary dynamic routes:
+
+- \`/\` — homepage
+- \`/properties\` and \`/properties/{slug}\` — property listings and details
+- \`/blog\` and \`/blog/{slug}\` — blog listing and article
+- \`/{slug}\` — published CMS pages
+- \`/{template}.html\` — converted Piller theme pages
+
+Legacy \`index.html\`, \`property.html\`, \`property-details.html\`, \`blog.html\` and \`blog-details.html\` URLs redirect to their dynamic listing destinations.
+
+## Operational notes
+
+- Uploads are stored on Laravel's \`public\` filesystem disk. Create the public storage symlink with \`php artisan storage:link\`.
+- Configure a valid HTTPS URL and production database credentials before going live.
+- Configure outbound mail separately if enquiry notifications are later required; enquiry submissions are currently stored in the database.
+- The Appearance screen reports the active Piller theme. Theme switching is intentionally disabled to preserve the supplied design.
+- Automated tests, PHPUnit/Pest, browser automation, npm commands, asset builds and deployment are not part of the implementation workflow requested for this repository.

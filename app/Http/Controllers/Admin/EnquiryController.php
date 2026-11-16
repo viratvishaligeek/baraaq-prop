@@ -1,0 +1,4 @@
+<?php
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller; use App\Models\Enquiry; use Illuminate\Http\Request; use Illuminate\Validation\Rule;
+class EnquiryController extends Controller { public function index(){return view('admin.enquiries.index',['enquiries'=>Enquiry::with('property:id,title,slug')->latest()->paginate(20)]);} public function update(Request $r,Enquiry $enquiry){$d=$r->validate(['status'=>['required',Rule::in(['new','contacted','qualified','closed','spam'])],'admin_notes'=>['nullable','string','max:5000']]);$d['contacted_at']=$d['status']==='contacted'?now():$enquiry->contacted_at;$enquiry->update($d);return back()->with('success','Enquiry updated.');} public function destroy(Enquiry $enquiry){$enquiry->delete();return back()->with('success','Enquiry deleted.');} }
