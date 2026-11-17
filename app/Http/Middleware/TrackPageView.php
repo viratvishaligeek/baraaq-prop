@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class TrackPageView
@@ -13,15 +14,28 @@ class TrackPageView
     {
         $response = $next($request);
 
-        if (!$request->isMethod('GET') || $request->is('admin/*') || $request->is('storage/*') || $request->is('build/*') || $request->is('theme-assets/*') || $request->is('sitemap.xml') || $request->is('robots.txt')) {
+        if (
+            !$request->isMethod('GET')
+            || $request->is('admin/*')
+            || $request->is('storage/*')
+            || $request->is('build/*')
+            || $request->is('theme-assets/*')
+            || $request->is('sitemap.xml')
+            || $request->is('robots.txt')
+        ) {
             return $response;
         }
 
         $visitor = $request->cookie('site_visitor');
         $newVisitor = !is_string($visitor) || !preg_match('/^[a-f0-9]{64}$/', $visitor);
-
         if ($newVisitor) {
-            $visitor = bin2hex(random_bytes(32));
+            $visitor = Str::random(64);
+        }
+
+        $visit = $request->cookie('site_visit');
+        $newVisit = !is_string($visit) || !preg_match('/^[a-f0-9]{64}$/', $visit);
+        if ($newVisit) {
+            $visit = Str::random(64);
         }
 
         $route = $request->route();
@@ -40,10 +54,13 @@ class TrackPageView
             'page' => $route?->parameter('page'),
             default => null,
         };
-        $contentId = is_object($parameter) && method_exists($parameter, 'getKey') ? $parameter->getKey() : null;
+        $contentId = is_object($parameter) && method_exists($parameter, 'getKey')
+            ? $parameter->getKey()
+            : null;
 
         DB::table('page_views')->insert([
             'visitor_hash' => hash('sha256', $visitor),
+            'visit_hash' => hash('sha256', $visit),
             'path' => '/'.ltrim($request->path(), '/'),
             'route_name' => $routeName,
             'content_type' => $contentType,
@@ -53,6 +70,10 @@ class TrackPageView
 
         if ($newVisitor) {
             $response->headers->setCookie(cookie('site_visitor', $visitor, 60 * 24 * 365, '/', null, $request->isSecure(), true, false, 'Lax'));
+        }
+
+        if ($newVisit) {
+            $response->headers->setCookie(cookie('site_visit', $visit, 30, '/', null, $request->isSecure(), true, false, 'Lax'));
         }
 
         return $response;
