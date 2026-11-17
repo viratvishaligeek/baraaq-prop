@@ -12,6 +12,12 @@
             <a href="{{ route('admin.homepages.index') }}" class="btn btn-light">Back</a>
             <a href="{{ route('admin.homepages.preview', $homepage) }}" class="btn btn-outline-primary" target="_blank"
                 rel="noopener">Preview draft</a>
+            <form method="POST" action="{{ route('admin.homepages.verify', $homepage) }}"
+                onsubmit="return confirm('Have you compared every section with the original Piller HTML and checked desktop, tablet and mobile layouts, images, links and interactive behavior? The server will also verify that every required section is registered.')">
+                @csrf
+                @method('PATCH')
+                <button class="btn btn-outline-success" type="submit">Verify composition</button>
+            </form>
             <form method="POST" action="{{ route('admin.homepages.publish', $homepage) }}"
                 onsubmit="return confirm('Publish this draft? It will not become the live homepage until you select it as the default.')">
                 @csrf
