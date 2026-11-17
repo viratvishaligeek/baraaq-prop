@@ -31,10 +31,10 @@ class ContentController extends Controller
     {
         abort_unless($post->status === 'published' && $post->published_at && $post->published_at->lte(now()), 404);
 
-        return view('frontend.blog.show', compact('post'));
+        return view('frontend.blog.show', ['post' => $post->load(['categories', 'comments' => fn ($query) => $query->where('status', 'approved')->latest()])]);
     }
 
-    public function page(Page $page)
+    public function storeComment(Request $request, Post $post)\n    {\n        abort_unless($post->status === 'published' && $post->published_at && $post->published_at->lte(now()), 404);\n        $data = $request->validate(['name' => ['required', 'string', 'max:120'], 'email' => ['required', 'email', 'max:190'], 'body' => ['required', 'string', 'min:5', 'max:5000']]);\n        $post->comments()->create($data + ['status' => 'pending']);\n        return back()->with('comment_submitted', 'Your comment has been received and is awaiting moderation.');\n    }\n\n    public function services()\n    {\n        $services = Service::published()->latest('published_at')->paginate(12);\n        return view('frontend.services.index', compact('services'));\n    }\n\n    public function service(Service $service)\n    {\n        abort_unless($service->status === 'published' && $service->published_at && $service->published_at->lte(now()), 404);\n        return view('frontend.services.show', compact('service'));\n    }\n\n    public function page(Page $page)
     {
         abort_unless($page->status === 'published', 404);
 
