@@ -99,18 +99,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('appearance.index');
 
         Route::resource('properties', PropertyController::class)
-            ->except(['show'])
-            ->middleware('permission:properties.manage');
+            ->except(['show']);
         Route::delete('/properties/{property}/images/{image}', [PropertyController::class, 'destroyImage'])
             ->scopeBindings()
-            ->middleware('permission:properties.manage')
             ->name('properties.images.destroy');
         Route::patch('/properties/{property}/images/reorder', [PropertyController::class, 'reorderImages'])
-            ->middleware('permission:properties.manage')
             ->name('properties.images.reorder');
         Route::patch('/properties/{property}/images/{image}/feature', [PropertyController::class, 'setFeaturedImage'])
             ->scopeBindings()
-            ->middleware('permission:properties.manage')
             ->name('properties.images.feature');
 
         Route::get('/enquiries', [EnquiryController::class, 'index'])
