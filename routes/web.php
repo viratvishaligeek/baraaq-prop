@@ -21,7 +21,7 @@ Route::post('/newsletter', [NewsletterController::class, 'store'])
     ->name('newsletter.store');
 
 Route::get('/blog', [FrontendContentController::class, 'blog'])->name('blog.index');
-Route::get('/blog/{post:slug}', [FrontendContentController::class, 'post'])->name('blog.show');
+Route::get('/blog/{post:slug}', [FrontendContentController::class, 'post'])->name('blog.show');\nRoute::get('/pages/{page:slug}', [FrontendContentController::class, 'page'])->name('pages.show');
 
 Route::get('/index.html', fn () => redirect()->route('home'));
 Route::get('/property.html', fn () => redirect()->route('properties.index'));
