@@ -50,13 +50,13 @@
                                     <div class="icon-wrap"><button class="slider-arrow slider-prev"><i class="far fa-arrow-left"></i></button> <button class="slider-arrow slider-next"><i class="far fa-arrow-right"></i></button></div>
                                 </div>
                             @else
-                                <a class="popular-popup-image" href="{{ $firstImageUrl }}"><img src="{{ $firstImageUrl }}" alt="{{ $property->title }}"></a>
+                                @if($firstImageUrl)<a class="popular-popup-image" href="{{ $firstImageUrl }}"><img src="{{ $firstImageUrl }}" alt="{{ $property->title }}"></a>@endif
                             @endif
                             @if($sectionConfig['show_favorite_action'] ?? true)
                                 <div class="actions"><a href="{{ route('properties.show', $property) }}" class="icon-btn" aria-label="View property"><i class="fas fa-heart"></i></a></div>
                             @endif
                             @if($sectionConfig['show_gallery_action'] ?? true)
-                                <div class="actions-style-2-wrapper"><div class="actions style-2"><a href="{{ $firstImageUrl }}" class="icon-btn popular-popup-image"><span class="action-text">View all img</span><i class="fa-solid fa-camera"></i></a></div></div>
+                                <div class="actions-style-2-wrapper"><div class="actions style-2">@if($firstImageUrl)<a href="{{ $firstImageUrl }}" class="icon-btn popular-popup-image"><span class="action-text">View all img</span><i class="fa-solid fa-camera"></i></a>@endif</div></div>
                             @endif
                             @if($sectionConfig['show_property_badge'] ?? true)
                                 <div class="popular-badge"><img src="{{ ($sectionConfig['badge_icon'] ?? asset('theme-assets/img/icon/sell_rent_icon.svg')) }}" alt="icon"><p>{{ $property->listing_type === 'rent' ? 'For Rent' : 'For Sale' }}</p></div>
