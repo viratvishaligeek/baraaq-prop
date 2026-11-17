@@ -51,32 +51,37 @@ class HomepageController extends Controller
             if ($homepage->sections->isEmpty()) {
                 $sectionKeys = ['hero.'.$homepage->design_key];
 
-                // These two source designs place the category slider immediately after the hero.
-                if (in_array($homepage->design_key, ['home-2', 'home-7'], true)) {
-                    if ($homepage->design_key === 'home-2') {
-                        $sectionKeys[] = 'search.home-2';
-                    }
-                    $sectionKeys[] = 'categories.'.$homepage->design_key;
-                    if ($homepage->design_key === 'home-3') {
-                        $sectionKeys[] = 'properties.home-3';
-                        $sectionKeys[] = 'why.home-3';
-                        $sectionKeys[] = 'team.home-3';
-                        $sectionKeys[] = 'gallery.home-3';
-                    }
-                    if ($homepage->design_key === 'home-2') {
-                        $sectionKeys[] = 'about.home-2';
-                        $sectionKeys[] = 'why.home-2';
-                        $sectionKeys[] = 'properties.home-2';
-                        $sectionKeys[] = 'neighborhoods.home-2';
-                        $sectionKeys[] = 'property-values.home-2';
-                        $sectionKeys[] = 'team.home-2';
-                        $sectionKeys[] = 'download.home-2';
-                        $sectionKeys[] = 'marquee.home-2';
-                        $sectionKeys[] = 'featured-properties.home-2';
-                        $sectionKeys[] = 'testimonials.home-2';
-                        $sectionKeys[] = 'faq.home-2';
-                        $sectionKeys[] = 'blog.home-2';
-                    }
+                if ($homepage->design_key === 'home-2') {
+                    $sectionKeys[] = 'search.home-2';
+                    $sectionKeys[] = 'categories.home-2';
+                    $sectionKeys = array_merge($sectionKeys, [
+                        'about.home-2',
+                        'why.home-2',
+                        'properties.home-2',
+                        'neighborhoods.home-2',
+                        'property-values.home-2',
+                        'team.home-2',
+                        'download.home-2',
+                        'marquee.home-2',
+                        'featured-properties.home-2',
+                        'testimonials.home-2',
+                        'faq.home-2',
+                        'blog.home-2',
+                    ]);
+                }
+
+                if ($homepage->design_key === 'home-3') {
+                    $sectionKeys = array_merge($sectionKeys, [
+                        'categories.home-3',
+                        'properties.home-3',
+                        'why.home-3',
+                        'team.home-3',
+                        'gallery.home-3',
+                    ]);
+                }
+
+                if ($homepage->design_key === 'home-7') {
+                    $sectionKeys[] = 'categories.home-7';
                 }
 
                 if ($homepage->design_key === 'index') {
