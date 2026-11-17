@@ -328,3 +328,19 @@ This status reflects GitHub-side source changes only; it is not a claim that the
 ### Verification status
 
 No Composer install, Artisan command, migration, seeder, PHPUnit/Pest test, route-list check or browser screenshot was executed in this environment. The GitHub connection accepted the source changes, but runtime behavior and database compatibility remain unverified until the branch is run against the project's Laravel/MySQL environment.
+
+
+### Homepage builder follow-up — 2026-11-17
+
+The latest source changes extend the initial builder foundation:
+
+- The section registry now defines typed, per-section field schemas. The admin form renders text, textarea, URL/path, color, number, checkbox and select controls from each section's schema. Server validation whitelists those fields and merges partial updates.
+- The primary property, team and blog sections now expose additional database-backed display controls, including bounded item counts and supported filters/metadata visibility.
+- Section instances can be duplicated. Drafts have an authenticated preview route.
+- Reusable sections can be saved from a homepage instance and inserted into another draft. The new additive migration stores stable `section_key` and `source_design` values; instances reference a shared library row and may store local overrides.
+- A live-safety flag, `homepages.is_composition_complete`, prevents incomplete section compositions from replacing the complete original homepage. The frontend falls back to the original full template unless the flag is true, and admin default-selection is blocked until completion is explicitly verified.
+- The fidelity audit now lists all 57 identified literal `<section>` wrappers by design, with source data expectations and extraction/admin/dynamic/responsive gates. Hero and div-based blocks are listed separately as further inventory work.
+
+**Important completion status:** this is still an incomplete CMS phase. Thirteen registered partials exist (ten heroes plus property/team/blog), but none has passed the full strict completion gate for all visible fields, images, links, layout options, interactions and responsive comparison. The 57-wrapper inventory is not the final count of every content block because many source blocks are div-based. The section catalog is not yet complete, and secondary-template drafts still begin with only the registered hero section when no saved composition exists. Do not set `is_composition_complete` to true until the audit gates are completed for that design.
+
+**Runtime verification:** PHP CLI is present in the assistant execution environment, but the repository is not checked out there and Composer/vendor dependencies, application database and browser are not available. No Laravel commands, migrations, seeders, automated tests, route compilation or browser comparisons have been run. This remains source-level implementation only.
