@@ -17,7 +17,7 @@ class PropertyController extends Controller
             'location' => ['nullable', 'string', 'max:120'],
             'state' => ['nullable', 'string', 'max:120'],
             'postal_code' => ['nullable', 'string', 'max:20'],
-            'listing_type' => ['nullable', 'in:sale,rent'],
+            'listing_type' => ['nullable', 'in:sale,rent,lease'],
             'status' => ['nullable', 'in:sale,rent'],
             'property_type' => ['nullable', 'string', 'max:80'],
             'category' => ['nullable', 'integer', 'min:1'],
