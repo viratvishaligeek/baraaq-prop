@@ -175,8 +175,25 @@ Each checkbox is independent. A source section is not considered complete until 
 | home-9 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
 | home-10 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
 
-**Current measured status:** 57 explicit section wrappers identified; 13 registered section partials currently exist (10 hero variants plus primary-design properties, team and blog partials). Of these, the three non-hero sections have only limited heading/eyebrow configuration, not complete field-level editing. Therefore the number of fully extracted, fully admin-connected and fully dynamic source sections is **0** under the strict completion definition above. This conservative status avoids treating a partial Blade extraction as a finished CMS section.
+**Current measured status after the latest builder work:** 57 explicit section wrappers identified; 13 registered section partials exist (10 hero variants plus primary-design properties, team and blog partials). The builder now renders typed, section-specific controls from the PHP registry; property/team/blog sections support database-driven records and selected display settings (such as item limits, filters or metadata visibility). Hero settings have a broader typed schema, but several hero variants still do not consume every exposed setting, and the original hero content is not fully data-driven. The section library can save a section configuration and insert linked reusable instances; local overrides are merged over shared configuration. Section duplication and authenticated draft preview are now implemented in source. No source section meets the strict completion definition across all its text, images, links, responsive settings, interactions and visual regression checks yet. Therefore the number of fully complete source sections remains **0**. This is a conservative status, not a claim that the partials have no dynamic behavior.
 
 ### Element-level inventory still required
 
 The 57-wrapper pass records representative headings, paragraph samples, image paths and per-wrapper counts of links/buttons/inputs. It does not yet enumerate every nested text node, SVG path, icon class, responsive data attribute, CSS pseudo-element, CSS background URL or JavaScript interaction. Those require the next extraction pass against the original HTML and theme CSS/JS. The exact source file remains the authority for each field. No default text should be considered safely editable until its source node has been mapped to a schema field and rendered from the saved configuration/content record.
+
+## Builder implementation progress (source review only)
+
+The following builder capabilities now have source-level implementations on `feat/property-cms-foundation`:
+
+- Typed section-field schemas are defined per registered section in `config/cms-sections.php` (text, textarea, URL/path, color, number, checkbox and select controls).
+- The admin settings form renders each section's own field schema instead of a universal heading/description form.
+- Section updates validate by field type, whitelist registered fields and merge partial updates rather than clearing previously saved configuration.
+- Property, team and blog section partials consume selected settings and existing database records. The property section supports sale/rent/featured filtering and a bounded item count; team supports bounded count and email visibility; blog supports bounded count and author/date visibility.
+- A draft section can be duplicated without changing the live homepage.
+- An authenticated draft preview route renders the saved draft composition with the same current frontend data collections.
+- Administrators can save a section's effective configuration into `reusable_sections`, then insert it into another draft. Homepage instances reference the shared library record and merge per-instance overrides over the shared configuration.
+- A separate additive migration stores the stable section key and source design on reusable library records.
+
+These are partial foundations. The reusable library does not yet have a complete standalone edit/version/history interface. The section catalog still does not include the 57 source wrappers, hero fields are not all consumed by their Blade partials, and draft duplication cannot yet reconstruct complete source section sequences. The preview currently uses the existing frontend layout and current query limits; it is not a substitute for responsive browser validation.
+
+**No execution claims:** Composer, Artisan migrations/seeders, automated tests, route compilation, and browser screenshot comparisons have not been run in this environment.
