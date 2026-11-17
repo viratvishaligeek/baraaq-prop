@@ -10,6 +10,10 @@
     </div>
     @php
         $config = old('config', $widget->config ?? []);
+        $widgetMedia = isset($config['image_url']) && ctype_digit((string) $config['image_url'])
+            ? \\App\\Models\\Media::find((int) $config['image_url'])
+            : null;
+        $widgetImagePreview = $widgetMedia?->url ?: ($config['image_url'] ?? '');
     @endphp
     <form method="POST"
         action="{{ $widget->exists ? route('admin.widgets.update', $widget) : route('admin.widgets.store') }}">
@@ -57,9 +61,15 @@
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Image URL</label>
-                            <input class="form-control" name="image_url"
-                                value="{{ old('image_url', $config['image_url'] ?? '') }}">
+                            <label class="form-label">Image / Media Library</label>
+                            <input class="form-control" name="image_url" id="widget-image-url"
+                                value="{{ old('image_url', $config['image_url'] ?? '') }}"
+                                placeholder="Choose an image or paste a URL">
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                                data-open-media-picker data-target="widget-image-url">Choose from Media Library</button>
+                            <div class="mt-2"><img src="{{ $widgetImagePreview }}" alt="Widget image preview"
+                                class="rounded border" style="max-width:180px;max-height:100px;object-fit:cover"
+                                data-media-preview @if (!$widgetImagePreview) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Link URL</label>
