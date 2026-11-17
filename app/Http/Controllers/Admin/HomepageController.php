@@ -37,7 +37,9 @@ class HomepageController extends Controller
 
     public function duplicate(Homepage $homepage)
     {
-        $draft = DB::transaction(function () use ($homepage) {
+        $sectionDefinitions = config('cms-sections.sections', []);
+
+        $draft = DB::transaction(function () use ($homepage, $sectionDefinitions) {
             $copy = $homepage->replicate();
             $copy->name = $homepage->name . ' (Draft)';
             $copy->slug = Str::slug($homepage->slug . '-draft-' . now()->format('YmdHis') . '-' . Str::lower(Str::random(5)));
@@ -101,7 +103,7 @@ class HomepageController extends Controller
                 }
 
                 foreach ($sectionKeys as $sectionKey) {
-                    $definition = config('cms-sections.sections.' . $sectionKey);
+                    $definition = $sectionDefinitions[$sectionKey] ?? null;
 
                     if (!$definition) {
                         continue;
@@ -186,6 +188,7 @@ class HomepageController extends Controller
         ]);
 
         Cache::forget('homepage:published-default');
+        Cache::forget('homepage:published-default:id');
 
         return redirect()
             ->route('admin.homepages.index')
