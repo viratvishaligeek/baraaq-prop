@@ -73,6 +73,7 @@ class SectionDataResolver
         return match ($section->section_type) {
             'category-slider' => ['categories' => $this->categories($config)],
             'team-slider' => ['teamMembers' => $this->teamMembers($config)],
+            'testimonial-slider' => $this->testimonials($config),
             'property-slider-grid' => $this->properties($config),
             'featured-gallery-slider' => ['featuredProperties' => Property::published()->where('is_featured', true)->with(['images', 'creator:id,name'])->latest('published_at')->limit(max(1, min(8, (int) ($config['items_limit'] ?? 3))))->get()],
             'blog-slider' => ['posts' => Post::published()->with('author')->latest('published_at')->limit(max(1, min(12, (int) ($config['items_limit'] ?? 6))))->get()],
@@ -123,6 +124,7 @@ class SectionDataResolver
     private function teamMembers(array $config): Collection
     {
         return TeamMember::query()
+            ->where('status', 'published')
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('name')
