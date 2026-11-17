@@ -123,3 +123,41 @@ document.addEventListener('DOMContentLoaded', function () {
         if (nextPage) loadMedia(nextPage, true);
     });
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const previewUrls = new WeakMap();
+    document.querySelectorAll('input[type="file"][accept*="image"]').forEach(input => {
+        let preview = input.parentElement?.querySelector('[data-local-upload-preview]');
+        if (!preview) {
+            preview = document.createElement('img');
+            preview.dataset.localUploadPreview = 'true';
+            preview.alt = 'Selected upload preview';
+            preview.hidden = true;
+            preview.className = 'd-block rounded border mt-2';
+            preview.style.cssText = 'max-width:180px;max-height:120px;object-fit:contain';
+            input.insertAdjacentElement('afterend', preview);
+        }
+
+        input.addEventListener('change', () => {
+            const previousUrl = previewUrls.get(input);
+            if (previousUrl) URL.revokeObjectURL(previousUrl);
+            const file = input.files?.[0];
+            if (!file || !file.type.startsWith('image/')) {
+                preview.removeAttribute('src');
+                preview.hidden = true;
+                return;
+            }
+            const url = URL.createObjectURL(file);
+            previewUrls.set(input, url);
+            preview.src = url;
+            preview.hidden = false;
+        });
+    });
+
+    window.addEventListener('pagehide', () => {
+        document.querySelectorAll('input[type="file"][accept*="image"]').forEach(input => {
+            const url = previewUrls.get(input);
+            if (url) URL.revokeObjectURL(url);
+        });
+    });
+});
