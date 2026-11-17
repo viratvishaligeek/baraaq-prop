@@ -149,21 +149,17 @@
                                                         $imagePreview = $selectedMedia?->url ?: (\Illuminate\Support\Str::startsWith((string) $value, ['http://', 'https://', '/']) ? $value : ($value ? asset($value) : ''));
                                                     @endphp
                                                     <div class="d-flex gap-2 align-items-center mb-2">
-                                                        <select class="form-select form-select-sm" aria-label="Choose image from Media Library"
-                                                            data-media-select
-                                                            data-target="image-preview-{{ $section->id }}-{{ $field }}"
-                                                            data-input="image-value-{{ $section->id }}-{{ $field }}">
-                                                            <option value="">Choose an image…</option>
-                                                            @foreach ($mediaLibrary as $mediaItem)
-                                                                <option value="{{ $mediaItem->id }}" data-url="{{ $mediaItem->url }}" @selected((string) $value === (string) $mediaItem->id)>{{ $mediaItem->original_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        <button type="button" class="btn btn-sm btn-outline-secondary" data-clear-image="{{ $section->id }}-{{ $field }}">Remove</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                                            data-open-media-picker
+                                                            data-target="image-value-{{ $section->id }}-{{ $field }}">Choose from Media Library</button>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                            data-clear-media
+                                                            data-target="image-value-{{ $section->id }}-{{ $field }}">Remove</button>
                                                     </div>
                                                     <input id="image-value-{{ $section->id }}-{{ $field }}" class="form-control form-control-sm mb-2" type="text"
                                                         name="config[{{ $field }}]" value="{{ $value }}" placeholder="Theme asset path or image URL">
                                                     <div class="border rounded p-2 bg-light" style="min-height:76px">
-                                                        <img id="image-preview-{{ $section->id }}-{{ $field }}" src="{{ $imagePreview }}" alt="Selected image preview"
+                                                        <img id="image-preview-{{ $section->id }}-{{ $field }}" data-media-preview src="{{ $imagePreview }}" alt="Selected image preview"
                                                             style="{{ $imagePreview ? 'display:block' : 'display:none' }};max-width:100%;max-height:130px;object-fit:contain">
                                                         <span class="small text-muted" data-empty-image="{{ $section->id }}-{{ $field }}" style="{{ $imagePreview ? 'display:none' : '' }}">No image selected</span>
                                                     </div>
