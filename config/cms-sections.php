@@ -13,6 +13,19 @@ $heroDesigns = [
     'home-10' => ['label' => 'Hero — Home 10', 'view' => 'frontend.sections.hero.home-10'],
 ];
 
+$heroFields = [
+    'eyebrow' => ['label' => 'Eyebrow / small heading', 'type' => 'text', 'max' => 120],
+    'heading' => ['label' => 'Main heading', 'type' => 'textarea', 'max' => 500],
+    'description' => ['label' => 'Description', 'type' => 'textarea', 'max' => 1500],
+    'primary_button_label' => ['label' => 'Primary button label', 'type' => 'text', 'max' => 80],
+    'primary_button_url' => ['label' => 'Primary button URL', 'type' => 'url', 'max' => 2048],
+    'secondary_button_label' => ['label' => 'Secondary button label', 'type' => 'text', 'max' => 80],
+    'secondary_button_url' => ['label' => 'Secondary button URL', 'type' => 'url', 'max' => 2048],
+    'background_image' => ['label' => 'Background image path or URL', 'type' => 'image', 'max' => 2048],
+    'overlay_color' => ['label' => 'Overlay color', 'type' => 'color'],
+    'overlay_opacity' => ['label' => 'Overlay opacity (%)', 'type' => 'number', 'min' => 0, 'max' => 100],
+];
+
 $sections = [];
 
 foreach ($heroDesigns as $design => $definition) {
@@ -25,7 +38,7 @@ foreach ($heroDesigns as $design => $definition) {
         'source_design' => $design,
         'view' => $definition['view'],
         'defaults' => [],
-        'settings' => $design === 'index' ? [] : ['heading'],
+        'fields' => $heroFields,
     ];
 }
 
@@ -36,7 +49,15 @@ $sections['properties.index'] = [
     'source_design' => 'index',
     'view' => 'frontend.sections.properties.index',
     'defaults' => [],
-    'settings' => ['eyebrow', 'heading'],
+    'fields' => [
+        'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
+        'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
+        'description' => ['label' => 'Introductory text', 'type' => 'textarea', 'max' => 1000],
+        'items_limit' => ['label' => 'Number of properties', 'type' => 'number', 'min' => 1, 'max' => 24],
+        'listing_filter' => ['label' => 'Listing filter', 'type' => 'select', 'options' => ['all' => 'All listings', 'sale' => 'For sale', 'rent' => 'For rent', 'featured' => 'Featured only']],
+        'button_label' => ['label' => 'View-all button label', 'type' => 'text', 'max' => 80],
+        'button_url' => ['label' => 'View-all button URL', 'type' => 'url', 'max' => 2048],
+    ],
 ];
 
 $sections['team.index'] = [
@@ -46,7 +67,14 @@ $sections['team.index'] = [
     'source_design' => 'index',
     'view' => 'frontend.sections.team.index',
     'defaults' => [],
-    'settings' => ['eyebrow', 'heading'],
+    'fields' => [
+        'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
+        'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
+        'description' => ['label' => 'Introductory text', 'type' => 'textarea', 'max' => 1000],
+        'items_limit' => ['label' => 'Number of team members', 'type' => 'number', 'min' => 1, 'max' => 24],
+        'layout' => ['label' => 'Card layout', 'type' => 'select', 'options' => ['grid-4' => 'Four-column grid', 'grid-3' => 'Three-column grid', 'slider' => 'Slider']],
+        'show_email' => ['label' => 'Show email address', 'type' => 'checkbox'],
+    ],
 ];
 
 $sections['blog.index'] = [
@@ -56,7 +84,16 @@ $sections['blog.index'] = [
     'source_design' => 'index',
     'view' => 'frontend.sections.blog.index',
     'defaults' => [],
-    'settings' => ['eyebrow', 'heading'],
+    'fields' => [
+        'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
+        'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
+        'description' => ['label' => 'Introductory text', 'type' => 'textarea', 'max' => 1000],
+        'items_limit' => ['label' => 'Number of articles', 'type' => 'number', 'min' => 1, 'max' => 24],
+        'button_label' => ['label' => 'View-all button label', 'type' => 'text', 'max' => 80],
+        'button_url' => ['label' => 'View-all button URL', 'type' => 'url', 'max' => 2048],
+        'show_author' => ['label' => 'Show author', 'type' => 'checkbox'],
+        'show_date' => ['label' => 'Show publish date', 'type' => 'checkbox'],
+    ],
 ];
 
 return [
