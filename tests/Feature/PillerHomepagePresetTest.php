@@ -73,6 +73,10 @@ class PillerHomepagePresetTest extends TestCase
         foreach ($required as $key) $this->assertContains($key, $keys);
         $this->assertCount(count($keys), array_unique($keys));
         $this->assertFalse($draft->is_composition_complete);
+
+        app(HomepageController::class)->verifyComposition($draft);
+
+        $this->assertTrue($draft->fresh()->is_composition_complete);
     }
 
     public function test_all_ten_presets_include_non_hero_content_and_are_not_implicitly_marked_complete(): void
