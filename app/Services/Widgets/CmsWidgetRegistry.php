@@ -16,6 +16,10 @@ class CmsWidgetRegistry
         'blog-slider' => 'Blog posts',
         'featured-gallery-slider' => 'Image galleries',
         'faq' => 'Frequently asked questions',
+        'faq-accordion' => 'Frequently asked questions',
+        'statistics' => 'Statistics',
+        'contact-panel' => 'Contact',
+        'brand-slider' => 'Client logos',
         'cta' => 'Call to action',
     ];
 

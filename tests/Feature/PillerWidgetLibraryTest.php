@@ -21,9 +21,20 @@ class PillerWidgetLibraryTest extends TestCase
         $serviceKeys = ['services.home-4', 'services.home-6', 'services.home-9', 'services.home-10'];
         $testimonialKeys = ['testimonials.index', 'testimonials.home-4', 'testimonials.home-10'];
         $categoryDefinition = $registry->find('categories.home-10');
+        $additionalKeys = [
+            'faq.home-10', 'statistics.home-4', 'statistics.home-6', 'statistics.home-10',
+            'contact.home-1', 'contact.home-2', 'contact.home-3',
+            'brands.grid', 'brands.marquee', 'cta.download-home-2', 'cta.download-home-3',
+            'cta.enquiry-home-3', 'cta.home-10',
+        ];
 
         $this->assertNotNull($categoryDefinition);
         $this->assertTrue(view()->exists($categoryDefinition['view']));
+        foreach ($additionalKeys as $key) {
+            $definition = $registry->find($key);
+            $this->assertNotNull($definition, $key.' should be registered');
+            $this->assertTrue(view()->exists($definition['view']), $key.' should resolve to an actual Blade view');
+        }
 
         foreach (array_merge($aboutKeys, $serviceKeys, $testimonialKeys) as $key) {
             $definition = $registry->find($key);
