@@ -40,7 +40,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Photo</label>
-                        <input class="form-control" type="file" name="photo" accept="image/*">
+                        <input class="form-control" type="file" name="photo" id="upload-testimonial-photo" accept="image/*">
                         <input type="hidden" name="photo_media_id" id="media-testimonial-photo"
                             value="{{ old('photo_media_id', $mediaItems->firstWhere('path', $item->photo)?->id) }}"
                             data-media-upload-input="upload-testimonial-photo">
