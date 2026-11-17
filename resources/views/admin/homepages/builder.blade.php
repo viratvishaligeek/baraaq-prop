@@ -227,32 +227,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="homepage-media-picker" tabindex="-1" aria-labelledby="homepage-media-picker-title"
-        aria-hidden="true" data-endpoint="{{ route('admin.media.picker') }}">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title fs-5" id="homepage-media-picker-title">Choose image from Media Library</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form class="d-flex gap-2 mb-3" id="homepage-media-search">
-                        <input type="search" class="form-control" id="homepage-media-query"
-                            placeholder="Search image filename">
-                        <button class="btn btn-outline-primary" type="submit">Search</button>
-                    </form>
-                    <div class="row g-3" id="homepage-media-results" aria-live="polite">
-                    </div>
-                    <div class="text-center mt-3">
-                        <button type="button" class="btn btn-outline-secondary" id="homepage-media-more" hidden>Load
-                            more</button>
-                    </div>
-                    <p class="small text-muted mt-2 mb-0" id="homepage-media-status">Loading images…</p>
-                </div>
-            </div>
-        </div>
-    </div>
+
 @endsection
 
 @push('scripts')
@@ -320,101 +295,7 @@
                 dragged = null;
             });
 
-            const picker = document.getElementById('homepage-media-picker');
-            if (picker && window.bootstrap?.Modal) {
-                const modal = bootstrap.Modal.getOrCreateInstance(picker);
-                const results = document.getElementById('homepage-media-results');
-                const status = document.getElementById('homepage-media-status');
-                const more = document.getElementById('homepage-media-more');
-                const query = document.getElementById('homepage-media-query');
-                let targetInput = null;
-                let nextPage = null;
 
-                async function loadMedia(url, append = false) {
-                    status.textContent = 'Loading images…';
-                    more.hidden = true;
-                    try {
-                        const response = await fetch(url, {
-                            headers: {
-                                'Accept': 'application/json'
-                            }
-                        });
-                        if (!response.ok) throw new Error('Media Library could not be loaded.');
-                        const payload = await response.json();
-                        if (!append) results.replaceChildren();
-                        payload.data.forEach((item) => {
-                            const col = document.createElement('div');
-                            col.className = 'col-6 col-sm-4 col-md-3 col-xl-2';
-                            const button = document.createElement('button');
-                            button.type = 'button';
-                            button.className = 'btn btn-light border w-100 h-100 p-2 text-start';
-                            const image = document.createElement('img');
-                            image.src = item.url;
-                            image.alt = item.alt || item.name;
-                            image.className = 'w-100 rounded mb-2';
-                            image.style.cssText = 'height:110px;object-fit:cover';
-                            const name = document.createElement('span');
-                            name.className = 'small d-block text-break';
-                            name.textContent = item.name;
-                            button.append(image, name);
-                            button.addEventListener('click', () => {
-                                if (!targetInput) return;
-                                targetInput.value = String(item.id);
-                                const preview = targetInput.parentElement.querySelector(
-                                    '[data-media-preview]');
-                                if (preview) {
-                                    preview.src = item.url;
-                                    preview.alt = item.alt || item.name;
-                                    preview.hidden = false;
-                                }
-                                const meta = targetInput.parentElement.querySelector(
-                                    '[data-media-meta]');
-                                if (meta) meta.textContent = item.name + ' · ' + (Number(item
-                                    .size || 0) / 1024).toFixed(1) + ' KB';
-                                modal.hide();
-                            });
-                            col.append(button);
-                            results.append(col);
-                        });
-                        nextPage = payload.next_page_url;
-                        more.hidden = !nextPage;
-                        status.textContent = payload.data.length ?
-                            'Select an image to use it in this section.' :
-                            'No images found. Upload images in Media Library first.';
-                    } catch (error) {
-                        status.textContent = error.message;
-                    }
-                }
-
-                document.querySelectorAll('[data-open-media-picker]').forEach((button) => {
-                    button.addEventListener('click', () => {
-                        targetInput = document.getElementById(button.dataset.target);
-                        query.value = '';
-                        modal.show();
-                        loadMedia(picker.dataset.endpoint);
-                    });
-                });
-                document.querySelectorAll('[data-clear-media]').forEach((button) => {
-                    button.addEventListener('click', () => {
-                        const input = document.getElementById(button.dataset.target);
-                        if (!input) return;
-                        input.value = '';
-                        const preview = input.parentElement.querySelector('[data-media-preview]');
-                        if (preview) preview.hidden = true;
-                        const meta = input.parentElement.querySelector('[data-media-meta]');
-                        if (meta) meta.textContent = '';
-                    });
-                });
-                document.getElementById('homepage-media-search').addEventListener('submit', (event) => {
-                    event.preventDefault();
-                    const url = new URL(picker.dataset.endpoint, window.location.origin);
-                    if (query.value.trim()) url.searchParams.set('search', query.value.trim());
-                    loadMedia(url.toString());
-                });
-                more.addEventListener('click', () => {
-                    if (nextPage) loadMedia(nextPage, true);
-                });
-            }
         });
     </script>
 @endpush
