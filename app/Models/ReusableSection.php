@@ -28,7 +28,7 @@ class ReusableSection extends Model
         ];
     }
 
-    public function homepageSections()
+    public function mediaAttachments()\n    {\n        return $this->morphMany(MediaAttachment::class, 'mediable')->with('media');\n    }\n\n    public function homepageSections()
     {
         return $this->hasMany(HomepageSection::class);
     }
