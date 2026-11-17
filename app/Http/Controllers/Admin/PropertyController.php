@@ -19,7 +19,7 @@ class PropertyController extends Controller
     private function slug(string $value,?int $ignoreId=null): string
     {
         $base=Str::slug($value)?:Str::random(8);$slug=$base;$i=2;
-        while(Property::where('slug',$slug)->when($ignoreId,fn($q)=>$q->whereKeyNot($ignoreId))->exists())$slug=$base.'-'.$i++;
+        while(Property::withTrashed()->where('slug',$slug)->when($ignoreId,fn($q)=>$q->whereKeyNot($ignoreId))->exists())$slug=$base.'-'.$i++;
         return $slug;
     }
     public function index(){$this->authorizeAction('view');return view('admin.properties.index',['properties'=>Property::with('category:id,name')->latest()->paginate(15)]);}
