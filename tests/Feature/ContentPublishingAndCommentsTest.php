@@ -70,8 +70,8 @@ class ContentPublishingAndCommentsTest extends TestCase
         $firstResponse = $this->get(route('services.show', $service));
         $firstResponse->assertOk();
 
-        $visitorCookie = $firstResponse->getCookie('site_visitor');
-        $visitCookie = $firstResponse->getCookie('site_visit');
+        $visitorCookie = $firstResponse->getCookie('site_visitor', false);
+        $visitCookie = $firstResponse->getCookie('site_visit', false);
         $this->assertNotNull($visitorCookie);
         $this->assertNotNull($visitCookie);
 
