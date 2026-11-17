@@ -3,7 +3,7 @@
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
 
-<div class="download-sec-2 {{ $sectionConfig['vertical_spacing'] ?? 'space' }} overflow-hidden {{ $visibility }}" @if(!empty($sectionConfig['background_image'])) data-bg-src="{{ $sectionConfig['background_image'] }}" @endif>
+<div class="download-sec-2 {{ $sectionConfig['vertical_spacing'] ?? 'space' }} overflow-hidden {{ $visibility }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif @if(!empty($sectionConfig['background_image'])) data-bg-src="{{ $sectionConfig['background_image'] }}" @endif>
     <div class="shape-mockup spin z-index-3 d-none d-xxl-block" style="top: 46%; right: 6%;">@if(!empty($sectionConfig['round_shape_image']))<img src="{{ $sectionConfig['round_shape_image'] }}" alt="Decorative shape">@endif</div>
     <div class="shape-mockup jump d-none d-xl-block" style="top: 19%; left: 5%;">@if(!empty($sectionConfig['scan_arrow_image']))<img src="{{ $sectionConfig['scan_arrow_image'] }}" alt="Decorative shape">@endif</div>
     <div class="container">
