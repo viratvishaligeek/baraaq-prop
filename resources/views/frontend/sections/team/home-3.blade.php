@@ -14,7 +14,7 @@
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
 
-<section class="team-area-1 {{ $sectionConfig['vertical_spacing'] ?? 'space-bottom' }} overflow-hidden {{ $visibility }}">
+<section class="team-area-1 {{ $sectionConfig['vertical_spacing'] ?? 'space-bottom' }} overflow-hidden {{ $visibility }}" @if(!empty($sectionConfig['section_background_color'])) style="background-color: {{ $sectionConfig['section_background_color'] }};" @endif @if(!empty($sectionConfig['section_background_image'])) data-bg-src="{{ $sectionConfig['section_background_image'] }}" @endif>
     @if(!empty($sectionConfig['decorative_shape']))
         <div class="shape-mockup jump d-none d-lg-block" style="top: 6%; right: 4%;"><img src="{{ $sectionConfig['decorative_shape'] }}" alt="img"></div>
     @endif
