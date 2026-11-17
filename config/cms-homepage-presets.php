@@ -10,6 +10,7 @@
 return [
     'index' => [
         'properties.index',
+        'why.home-1',
         'properties.featured-index',
         'property-values.home-1',
         'gallery.home-1-city-explore',
