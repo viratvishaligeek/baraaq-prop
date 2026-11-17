@@ -26,7 +26,7 @@ class SectionDataResolver
     private function properties(array $config): array
     {
         $properties = Property::published()
-            ->with(['images', 'category'])
+            ->with(['images', 'category', 'creator:id,name'])
             ->latest('published_at')
             ->limit(max(1, min(16, (int) ($config['items_limit'] ?? 8))))
             ->get();
