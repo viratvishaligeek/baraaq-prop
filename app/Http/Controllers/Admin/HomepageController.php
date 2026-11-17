@@ -52,56 +52,10 @@ class HomepageController extends Controller
             $copy->save();
 
             if ($homepage->sections->isEmpty()) {
-                $sectionKeys = ['hero.' . $homepage->design_key];
-
-                if ($homepage->design_key === 'home-2') {
-                    $sectionKeys[] = 'search.home-2';
-                    $sectionKeys[] = 'categories.home-2';
-                    $sectionKeys = array_merge($sectionKeys, [
-                        'about.home-2',
-                        'why.home-2',
-                        'properties.home-2',
-                        'neighborhoods.home-2',
-                        'property-values.home-2',
-                        'team.home-2',
-                        'download.home-2',
-                        'marquee.home-2',
-                        'featured-properties.home-2',
-                        'testimonials.home-2',
-                        'faq.home-2',
-                        'blog.home-2',
-                    ]);
-                }
-
-                if ($homepage->design_key === 'home-3') {
-                    $sectionKeys = array_merge($sectionKeys, [
-                        'categories.home-3',
-                        'properties.home-3',
-                        'why.home-3',
-                        'team.home-3',
-                        'gallery.home-3',
-                        'download.home-3',
-                        'featured-gallery.home-3',
-                        'testimonials.home-3',
-                        'faq.home-3',
-                        'enquiry.home-3',
-                        'marquee.home-3',
-                        'blog.home-3',
-                        'brands.home-3',
-                    ]);
-                }
-
-                if ($homepage->design_key === 'home-7') {
-                    $sectionKeys[] = 'categories.home-7';
-                }
-
-                if ($homepage->design_key === 'index') {
-                    $sectionKeys = array_merge($sectionKeys, [
-                        'properties.index',
-                        'team.index',
-                        'blog.index',
-                    ]);
-                }
+                $sectionKeys = array_merge(
+                    ['hero.' . $homepage->design_key],
+                    config('cms-homepage-presets.' . $homepage->design_key, [])
+                );
 
                 foreach ($sectionKeys as $sectionKey) {
                     $definition = $sectionDefinitions[$sectionKey] ?? null;
