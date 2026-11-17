@@ -63,7 +63,7 @@
                                         <select name="listing_type" id="{{ $tabId }}-listing-type" class="form-select nice-select">
                                             <option value="">Any listing status</option>
                                             @foreach(($listingTypes ?? collect()) as $listingTypeOption)
-                                                <option value="{{ $listingTypeOption }}" @selected($listingTypeOption === 'sale')>{{ ucfirst($listingTypeOption) }}</option>
+                                                <option value="{{ $listingTypeOption }}">{{ ucfirst($listingTypeOption) }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -143,7 +143,7 @@
                                 $markerTop = abs($latSpan) < 0.000001 ? 50 : 14 + (((float) $mapBounds['max_lat'] - (float) $property->latitude) / $latSpan) * 72;
                             @endphp
                             <li class="map-icon map-icon{{ $markerIndex }}" style="left: {{ number_format($markerLeft, 2, '.', '') }}%;top: {{ number_format($markerTop, 2, '.', '') }}%">
-                                <img src="{{ $sectionConfig['map_marker_image'] ?? '' }}" alt="{{ $property->title }}">
+                                @if(!empty($sectionConfig['map_marker_image']))<img src="{{ $sectionConfig['map_marker_image'] }}" alt="{{ $property->title }}">@endif
                             </li>
                         @endforeach
                     </ul>
