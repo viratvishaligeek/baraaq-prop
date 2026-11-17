@@ -218,7 +218,7 @@ Counts below are **minimum identified literal section wrappers** plus separately
 | Homepage | Literal wrappers identified (minimum) | Registered section partials | Section forms with matching schema | Database bindings in registered sections | Frontend partial rendering | Responsive verification |
 |---|---:|---:|---|---|---|---|
 | index | 7 + hero | 4 (hero, properties, team, blog) | Partial; hero still incomplete | Banner, properties, team, posts | Source-level only | Pending |
-| home-2 | 7 + hero, plus about div block | 4 (hero, categories, about, property values) | Category/about/property-values schemas implemented; hero partial | Property categories/counts | Source-level only | Pending |
+| home-2 | 7 + hero, plus about and neighborhood div blocks | 5 (hero, categories, about, property values, neighborhood gallery) | Category/about/property-values/neighborhood schemas implemented; hero partial | Property categories/counts | Source-level only | Pending |
 | home-3 | 5 + hero | 2 (hero, categories) | Category schema implemented; hero partial | Property categories/counts | Source-level only | Pending |
 | home-4 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
 | home-5 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
@@ -232,3 +232,5 @@ Counts below are **minimum identified literal section wrappers** plus separately
 
 
 The Home 2 property-values gallery is now also registered as `property-values.home-2`. Its source-specific three-column composition (left card, two stacked center cards, right card), hover overlay, plus icon, image and per-card title/description/button/URL are editable. The repeated card markup lives in a small reusable Blade partial. This section is configuration-driven rather than backed by a new database content type.
+
+The Home 2 neighborhood gallery is another extracted div-based component (`gallery-sec-2`). Its original `gallery-card style-2` image overlay, city/count labels, links, decorative shape, slider controls and breakpoint behavior are retained. All eight card images, labels, titles and URLs have individual section settings, with shared slider loop/column and spacing/background controls. This is editable configuration content; it is not yet backed by a dedicated location entity.
