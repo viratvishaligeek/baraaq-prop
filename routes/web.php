@@ -25,6 +25,8 @@ Route::post('/newsletter', [NewsletterController::class, 'store'])
 Route::get('/blog', [FrontendContentController::class, 'blog'])->name('blog.index');
 Route::get('/blog/{post:slug}', [FrontendContentController::class, 'post'])->name('blog.show');
 Route::get('/services', [FrontendContentController::class, 'services'])->name('services.index');
+Route::get('/team', [FrontendContentController::class, 'team'])->name('team.index');
+Route::get('/testimonials', [FrontendContentController::class, 'testimonials'])->name('testimonials.index');
 Route::get('/services/{service:slug}', [FrontendContentController::class, 'service'])->name('services.show');
 Route::post('/blog/{post:slug}/comments', [FrontendContentController::class, 'storeComment'])->middleware('throttle:3,10')->name('blog.comments.store');
 Route::get('/pages/{page:slug}', [FrontendContentController::class, 'page'])->name('pages.show');
