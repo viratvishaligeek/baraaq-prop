@@ -23,7 +23,11 @@ document.addEventListener('DOMContentLoaded', function () {
         targetInput.value = String(item.id);
         if (targetInput.dataset.mediaUploadInput) {
             const upload = document.getElementById(targetInput.dataset.mediaUploadInput);
-            if (upload) upload.value = '';
+            if (upload) {
+                upload.value = '';
+                if (upload.dataset.localObjectUrl) URL.revokeObjectURL(upload.dataset.localObjectUrl);
+                delete upload.dataset.localObjectUrl;
+            }
         }
         targetInput.dispatchEvent(new Event('input', { bubbles: true }));
         targetInput.dispatchEvent(new Event('change', { bubbles: true }));
@@ -187,6 +191,57 @@ document.addEventListener('DOMContentLoaded', function () {
         const url = new URL(endpoint, window.location.origin);
         if (query.value.trim()) url.searchParams.set('search', query.value.trim());
         loadMedia(url.toString(), false);
+    });
+
+    // Every Admin image upload gets an immediate local preview, while the
+    // matching Media Library ID is cleared so the newly uploaded file wins.
+    document.addEventListener('change', event => {
+        const fileInput = event.target.closest('input[type="file"][accept*="image"]');
+        if (!fileInput) return;
+
+        const files = Array.from(fileInput.files || []).filter(file => file.type.startsWith('image/'));
+        const mediaField = Array.from(document.querySelectorAll('[data-media-upload-input]'))
+            .find(input => input.dataset.mediaUploadInput === fileInput.id);
+
+        if (mediaField) {
+            mediaField.value = '';
+            mediaField.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        const containerId = fileInput.dataset.previewContainerId;
+        if (containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.replaceChildren();
+            files.forEach(file => {
+                const image = document.createElement('img');
+                image.src = URL.createObjectURL(file);
+                image.alt = file.name;
+                image.className = 'rounded border';
+                image.style.cssText = 'width:88px;height:68px;object-fit:cover';
+                container.append(image);
+            });
+            return;
+        }
+
+        const preview = mediaField?.parentElement?.querySelector('[data-media-preview]')
+            || fileInput.parentElement?.querySelector('[data-media-preview]');
+        if (!preview) return;
+
+        if (fileInput.dataset.localObjectUrl) URL.revokeObjectURL(fileInput.dataset.localObjectUrl);
+        if (!files.length) {
+            if (fileInput.dataset.localObjectUrl) URL.revokeObjectURL(fileInput.dataset.localObjectUrl);
+            delete fileInput.dataset.localObjectUrl;
+            preview.removeAttribute('src');
+            preview.hidden = true;
+            return;
+        }
+
+        fileInput.dataset.localObjectUrl = URL.createObjectURL(files[0]);
+        preview.src = fileInput.dataset.localObjectUrl;
+        preview.alt = files[0].name;
+        preview.hidden = false;
+        preview.style.display = 'block';
     });
 
     applyMultiple?.addEventListener('click', () => {
