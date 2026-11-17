@@ -68,7 +68,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::patch('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
         Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
-        Route::get('/content/{type}', [ContentController::class, 'index'])->name('content.index');
+        Route::patch('/pages/{page}/homepage', [PageHomepageController::class, 'store'])->middleware('permission:pages.manage')->name('pages.homepage');\n\n        Route::get('/content/{type}', [ContentController::class, 'index'])->name('content.index');
         Route::get('/content/{type}/create', [ContentController::class, 'create'])->name('content.create');
         Route::post('/content/{type}', [ContentController::class, 'store'])->name('content.store');
         Route::get('/content/{type}/{id}/edit', [ContentController::class, 'edit'])->name('content.edit');
