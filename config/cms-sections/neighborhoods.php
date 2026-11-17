@@ -59,6 +59,15 @@ return [
             'vertical_spacing' => ['label' => 'Section spacing', 'type' => 'select', 'options' => ['space' => 'Theme spacing', 'space-top' => 'Top only', 'space-bottom' => 'Bottom only', 'py-0' => 'No vertical spacing']],
             'shape_image' => ['label' => 'Decorative shape image', 'type' => 'image', 'max' => 2048],
             'background_color' => ['label' => 'Background color', 'type' => 'color'],
-        ],
+        ], (function () {
+            $fields = [];
+            for ($i = 1; $i <= 8; $i++) {
+                $fields['item_'.$i.'_image'] = ['label' => 'Card '.$i.' image', 'type' => 'image', 'max' => 2048];
+                $fields['item_'.$i.'_count'] = ['label' => 'Card '.$i.' count label', 'type' => 'text', 'max' => 80];
+                $fields['item_'.$i.'_title'] = ['label' => 'Card '.$i.' title', 'type' => 'text', 'max' => 150];
+                $fields['item_'.$i.'_url'] = ['label' => 'Card '.$i.' URL', 'type' => 'url', 'max' => 2048];
+            }
+            return $fields;
+        })(),
     ],
 ];
