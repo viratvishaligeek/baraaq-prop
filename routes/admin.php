@@ -91,6 +91,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/content/{type}/{id}', [ContentController::class, 'destroy'])->name('content.destroy');
 
         Route::get('/media/picker', MediaPickerController::class)->middleware('permission:media.manage')->name('media.picker');
+        Route::post('/media/picker', [MediaPickerController::class, 'upload'])->middleware('permission:media.manage')->name('media.picker.upload');
         Route::get('/media', [MediaController::class, 'index'])->middleware('permission:media.manage')->name('media.index');
         Route::post('/media', [MediaController::class, 'store'])->middleware('permission:media.manage')->name('media.store');
         Route::patch('/media/{media}', [MediaController::class, 'update'])->middleware('permission:media.manage')->name('media.update');
