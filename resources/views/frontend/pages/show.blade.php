@@ -24,11 +24,18 @@
             </div>
         </div>
     </div>
-    <section class="space">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-9">{!! nl2br(e($page->content)) !!}</div>
+    @if ($page->sections->isNotEmpty())
+        @include('frontend.partials.page-sections', ['page' => $page])
+    @elseif ($page->content)
+        <section class="space">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">{!! nl2br(e($page->content)) !!}</div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
+    @if (($isBuilderPreview ?? false) && $page->status === 'draft')
+        <div class="container py-3"><span class="badge bg-warning text-dark">Draft preview — not publicly published</span></div>
+    @endif
 @endsection

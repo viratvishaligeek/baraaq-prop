@@ -4,6 +4,9 @@
     <div class="mb-4">
         <a href="{{ route('admin.content.index', $type) }}" class="text-decoration-none small">← {{ ucfirst($type) }}</a>
         <h1 class="page-title mt-2">{{ $item->exists ? 'Edit' : 'Add' }} {{ rtrim($type, 's') }}</h1>
+        @if ($type === 'pages' && $item->exists)
+            <a class="btn btn-outline-primary btn-sm mt-2" href="{{ route('admin.pages.builder', $item) }}">Open universal page builder</a>
+        @endif
     </div>
     <form method="POST" enctype="multipart/form-data"
         action="{{ $item->exists ? route('admin.content.update', [$type, $item->id]) : route('admin.content.store', $type) }}">

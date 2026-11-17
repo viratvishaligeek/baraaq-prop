@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\MediaPickerController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\PageHomepageController;
+use App\Http\Controllers\Admin\PageBuilderController;
 use App\Http\Controllers\Admin\PropertyController;
 use App\Http\Controllers\Admin\ReusableSectionController;
 use App\Http\Controllers\Admin\RoleController;
@@ -69,7 +70,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::patch('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
         Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
-        Route::patch('/pages/{page}/homepage', [PageHomepageController::class, 'store'])->middleware('permission:pages.manage')->name('pages.homepage');\n\n        Route::get('/content/{type}', [ContentController::class, 'index'])->name('content.index');
+        Route::patch('/pages/{page}/homepage', [PageHomepageController::class, 'store'])->middleware('permission:pages.manage')->name('pages.homepage');
+        
+        Route::get('/pages/{page}/builder', [PageBuilderController::class, 'edit'])->middleware('permission:pages.manage')->name('pages.builder');
+        Route::post('/pages/{page}/builder/duplicate', [PageBuilderController::class, 'duplicate'])->middleware('permission:pages.manage')->name('pages.duplicate');
+        Route::get('/pages/{page}/builder/preview', [PageBuilderController::class, 'preview'])->middleware('permission:pages.manage')->name('pages.preview');
+        Route::post('/pages/{page}/widgets', [PageBuilderController::class, 'add'])->middleware('permission:pages.manage')->name('pages.widgets.add');
+        Route::patch('/pages/{page}/widgets/reorder', [PageBuilderController::class, 'reorder'])->middleware('permission:pages.manage')->name('pages.widgets.reorder');
+        Route::patch('/pages/{page}/widgets/{section}', [PageBuilderController::class, 'update'])->middleware('permission:pages.manage')->name('pages.widgets.update');
+        Route::post('/pages/{page}/widgets/{section}/duplicate', [PageBuilderController::class, 'duplicateSection'])->middleware('permission:pages.manage')->name('pages.widgets.duplicate');
+        Route::patch('/pages/{page}/widgets/{section}/toggle', [PageBuilderController::class, 'toggle'])->middleware('permission:pages.manage')->name('pages.widgets.toggle');
+        Route::delete('/pages/{page}/widgets/{section}', [PageBuilderController::class, 'destroy'])->middleware('permission:pages.manage')->name('pages.widgets.delete');
+        Route::patch('/pages/{page}/publish', [PageBuilderController::class, 'publish'])->middleware('permission:pages.manage')->name('pages.publish');
+
+        Route::get('/content/{type}', [ContentController::class, 'index'])->name('content.index');
         Route::get('/content/{type}/create', [ContentController::class, 'create'])->name('content.create');
         Route::post('/content/{type}', [ContentController::class, 'store'])->name('content.store');
         Route::get('/content/{type}/{id}/edit', [ContentController::class, 'edit'])->name('content.edit');

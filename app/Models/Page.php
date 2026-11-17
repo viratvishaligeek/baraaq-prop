@@ -10,18 +10,14 @@ class Page extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'author_id',
-        'title',
-        'slug',
-        'content',
-        'template',
-        'status',
-        'homepage_key',
-        'meta_title',
-        'meta_description',
-        'canonical_url',
-        'og_image',
+        'author_id', 'title', 'slug', 'content', 'template', 'status',
+        'homepage_key', 'meta_title', 'meta_description', 'canonical_url', 'og_image',
     ];
+
+    public function sections()
+    {
+        return $this->hasMany(HomepageSection::class)->whereNull('homepage_id')->orderBy('sort_order');
+    }
 
     protected static function booted(): void
     {
