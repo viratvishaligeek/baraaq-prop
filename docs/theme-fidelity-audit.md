@@ -137,10 +137,10 @@ The original HTML loads Inter and Plus Jakarta Sans from Google Fonts and refere
 | home-2 | 6 | Testimonials — style 2 | Testimonial records, avatars, quote, slider | Not extracted |
 | home-2 | 7 | Blog/news — style 2 | Posts, author/date, excerpts, images, links | Not extracted |
 | home-3 | 1 | Property categories — style 2 | Categories, SVG icons, labels, counts, links | Registered as style-2 category slider; data/form/render implemented; visual verification pending |
-| home-3 | 2 | Popular properties | Properties, price/status, feature icons, links | Not extracted |
-| home-3 | 3 | Team members — home-2 variant | Team records, photos, social links | Not extracted |
-| home-3 | 4 | Testimonials — rating/trust layout | Testimonials, rating summary, trust mark, avatars | Not extracted |
-| home-3 | 5 | Blog/news — style 3 | Posts, author, date, excerpt, images, links | Not extracted |
+| home-3 | 2 | Popular properties | Properties, price/status, feature icons, links | Home 3 source-specific property grid and published-property resolver implemented; browser verification pending |
+| home-3 | 3 | Team members — home-2 variant | Team records, photos, social links | Home 3 team view/config and active-team resolver implemented; browser verification pending |
+| home-3 | 4 | Testimonials — rating/trust layout | Testimonials, rating summary, trust mark, avatars | Four editable section-config entries and trust summary implemented; browser verification pending |
+| home-3 | 5 | Blog/news — style 3 | Posts, author, date, excerpt, images, links | Home 3 editorial view/config and published-post resolver implemented; browser verification pending |
 | home-4 | 1 | Featured luxury properties — style 2 | Properties, price, status, images, feature details | Not extracted |
 | home-4 | 2 | Virtual tour / featured locations | Location/property records, gallery images, labels, links | Not extracted |
 | home-4 | 3 | Testimonials — style 4 | Testimonials, avatars, quote marks, heading | Not extracted |
