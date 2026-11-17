@@ -134,6 +134,9 @@ $home3HeroDefaults = [
     'advanced_type_label' => 'Property Type', 'advanced_bedrooms_label' => 'Max of Bedrooms',
     'advanced_location_label' => 'Location',
     'map_card_limit' => 4,
+    'show_map' => true,
+    'show_counters' => true,
+    'show_search_form' => true,
     'animate_content' => true,
     'show_mobile' => true, 'show_tablet' => true, 'show_desktop' => true,
 ];
@@ -167,19 +170,18 @@ $home3HeroFields = [
     'advanced_bedrooms_label' => ['label' => 'Advanced bedrooms label', 'type' => 'text', 'max' => 80],
     'advanced_location_label' => ['label' => 'Advanced location label', 'type' => 'text', 'max' => 80],
     'map_card_limit' => ['label' => 'Map property cards', 'type' => 'number', 'min' => 1, 'max' => 4],
+    'show_map' => ['label' => 'Show property map', 'type' => 'checkbox'],
+    'show_counters' => ['label' => 'Show hero counters', 'type' => 'checkbox'],
+    'show_search_form' => ['label' => 'Show property search', 'type' => 'checkbox'],
     'animate_content' => ['label' => 'Enable hero entrance animations', 'type' => 'checkbox'],
     'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
     'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
     'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
 ];
 for ($i = 1; $i <= 4; $i++) {
-    $home3HeroDefaults['map_marker_'.$i.'_x'] = [18, 38, 61, 80][$i - 1];
-    $home3HeroDefaults['map_marker_'.$i.'_y'] = [24, 66, 34, 72][$i - 1];
     $home3HeroFields['counter_'.$i.'_value'] = ['label' => 'Counter '.$i.' value', 'type' => 'number', 'min' => 0, 'max' => 9999999];
     $home3HeroFields['counter_'.$i.'_suffix'] = ['label' => 'Counter '.$i.' suffix', 'type' => 'text', 'max' => 12];
     $home3HeroFields['counter_'.$i.'_label'] = ['label' => 'Counter '.$i.' label', 'type' => 'text', 'max' => 80];
-    $home3HeroFields['map_marker_'.$i.'_x'] = ['label' => 'Map marker '.$i.' horizontal position (%)', 'type' => 'number', 'min' => 0, 'max' => 100];
-    $home3HeroFields['map_marker_'.$i.'_y'] = ['label' => 'Map marker '.$i.' vertical position (%)', 'type' => 'number', 'min' => 0, 'max' => 100];
 }
 
 $sections = [];
