@@ -3,6 +3,7 @@
 namespace App\Services\Widgets;
 
 use App\Models\Category;
+use App\Models\Media;
 use App\Models\Post;
 use App\Models\Property;
 use App\Models\Widget;
