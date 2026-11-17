@@ -102,7 +102,8 @@ class SectionDataResolver
         $sort = in_array($config['sort_by'] ?? 'published_at', ['published_at', 'created_at', 'price'], true) ? ($config['sort_by'] ?? 'published_at') : 'published_at';
         $properties = (clone $query)->orderBy($sort, $direction)->limit(max(1, min(24, (int) ($config['items_limit'] ?? 8))))->get();
         $categories = Category::query()->where('type', 'property')->where('is_active', true)
-            ->withCount(['properties' => fn ($q) => $q->published()])->having('properties_count', '>', 0)
+            ->whereHas('properties', fn ($q) => $q->published())
+            ->withCount(['properties' => fn ($q) => $q->published()])
             ->orderBy('sort_order')->orderBy('name')->get();
 
         return ['properties' => $properties, 'propertyCategories' => $categories];
