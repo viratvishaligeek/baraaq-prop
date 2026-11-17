@@ -11,7 +11,7 @@ return [
             'eyebrow' => 'Listing Property',
             'heading' => 'Featured Luxury Properties',
             'items_limit' => 4,
-            'listing_filter' => 'featured',
+            'listing_filter' => 'all',
             'button_label' => 'View All Properties',
             'button_url' => '/properties',
         ],
