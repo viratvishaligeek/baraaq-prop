@@ -10,6 +10,8 @@
     }
     $items = array_slice($items, 0, max(1, min(8, (int) ($sectionConfig['items_limit'] ?? 8))));
     $slides = max(2, min(4, (int) ($sectionConfig['columns'] ?? 4)));
+    $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
+    $backgroundImage = $sectionConfig['background_image'] ?? null;
     $options = json_encode([
         'centeredSlides' => false,
         'loop' => (bool) ($sectionConfig['loop'] ?? true),
@@ -24,7 +26,7 @@
     ], JSON_UNESCAPED_SLASHES);
 @endphp
 
-<div class="gallery-sec-2 overflow-hidden bg-smoke {{ $sectionConfig['vertical_spacing'] ?? 'space' }} overflow-hidden" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif>
+<div class="gallery-sec-2 overflow-hidden bg-smoke {{ $sectionConfig['vertical_spacing'] ?? 'space' }} {{ $visibility }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif @if($backgroundImage) data-bg-src="{{ $backgroundImage }}" @endif>
     <div class="shape-mockup moving d-none d-md-block" style="top: 12%; left: 7%;"><img src="{{ $sectionConfig['shape_image'] ?? '/theme-assets/img/shape/gallery-sec-1-left.png' }}" alt="img"></div>
     <div class="container">
         <div class="row justify-content-center">
