@@ -107,7 +107,8 @@
                     @foreach($mapProperties as $index => $property)
                         @php
                             $mapIndex = $index + 1;
-                            $propertyImagePath = $property->featured_image ?: $property->images->first()?->path;\n                            $propertyImage = $propertyImagePath ? Storage::disk('public')->url($propertyImagePath) : ($sectionConfig['map_property_fallback_image'] ?? null);
+                            $propertyImagePath = $property->featured_image ?: $property->images->first()?->path;
+                            $propertyImage = $propertyImagePath ? Storage::disk('public')->url($propertyImagePath) : ($sectionConfig['map_property_fallback_image'] ?? null);
                         @endphp
                         <div class="map-popular-list map-popular-list{{ $mapIndex }} {{ ($mapIndex === 4 || ($loop->last && $mapProperties->count() < 4)) ? 'show' : '' }}">
                             <div class="popular-list-1">
