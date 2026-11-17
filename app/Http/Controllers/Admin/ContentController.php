@@ -81,7 +81,7 @@ class ContentController extends Controller
             $data[$field]=$request->file($field)->store($type,'public');
         }
         if($type==='posts' && ($data['status']??null)==='published' && !$item->published_at) $data['published_at']=now();
-        if(in_array($type,['banners','team'])) $data['is_active']=$request->boolean('is_active');
+        if(in_array($type,['banners','team','categories'])) $data['is_active']=$request->boolean('is_active');
         if($type==='team' && isset($data['social_links'])) { $links=json_decode($data['social_links'],true); $data['social_links']=is_array($links)?$links:[]; }
         DB::transaction(function()use($item,$data,$type,$categoryIds){$item->update($data);if($type==='posts')$item->categories()->sync($categoryIds);});
         foreach($oldFiles as $path)Storage::disk('public')->delete($path);
