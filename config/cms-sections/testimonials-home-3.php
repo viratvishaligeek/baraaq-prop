@@ -8,39 +8,21 @@ return [
         'source_design' => 'home-3',
         'view' => 'frontend.sections.testimonials.home-3',
         'defaults' => [
-            'rating' => '4.9',
-            'review_count' => 189,
             'view_all_label' => 'View All Reviews',
-            'view_all_url' => '/contact.html',
-            'trust_brand' => 'Trustipilot',
+            'view_all_url' => '/testimonials',
+            'trust_brand' => 'Client reviews',
             'avatar_group_image' => '/theme-assets/img/hero/heror-1-avator-group.png',
             'rating_shape_image' => '/theme-assets/img/shape/download-circle.png',
             'star_icon_image' => '/theme-assets/img/icon/star-icon.svg',
             'quote_icon_image' => '/theme-assets/img/icon/testi-2quote.svg',
-            'item_1_image' => '/theme-assets/img/testimonial/testi-2-1.jpg',
-            'item_2_image' => '/theme-assets/img/testimonial/testi-2-2.jpg',
-            'item_3_image' => '/theme-assets/img/testimonial/testi-2-3.jpg',
-            'item_4_image' => '/theme-assets/img/testimonial/testi-2-4.jpg',
             'eyebrow' => 'Testimonials',
             'heading' => 'What Clients Say About Pillar',
             'items_limit' => 4,
             'vertical_spacing' => 'space',
             'background_color' => '',
             'show_mobile' => true, 'show_tablet' => true, 'show_desktop' => true,
-            'item_1_quote' => 'Adinventitias sequi cerno cedo vapulus adhaero decretum suppono iure voluptate. Trans triumphus toties sed cogito carbo valetudo aequus ciminatio conventus. Voluptates decimus vorago suadeo. Culpo carmen adnuo. Verecundia capio denego. Tracto caterva cavus denique culpa vigor tergum possimus.',
-            'item_1_quote_2' => 'Aer arceo umerus asperiores templum desidero caritas. Velum adipisci verumtamen comparo ascisco ceno vitiosus aeneus tenetur bibo.',
-            'item_1_name' => 'Georgia Schaden', 'item_1_role' => 'Property owner',
-            'item_2_quote' => 'Tenax comitatus ambulo regnum eligo, conturbo vis caelum cohors. Infit ustulo adoptio collum, speciosus lumen soluta. Condico spiculum ratio, sopor conventus adversus fiducia. Arma arcesso altaria impleo pax laboriosus. Tracto caterva cavus denique culpa vigor tergum possimus.',
-            'item_2_quote_2' => 'Aer arceo umerus asperiores templum desidero caritas. Trepide asporto momentum, Tracto caterva cavus denique culpa vigor virgo',
-            'item_2_name' => 'Walter Deckow', 'item_2_role' => 'Property owner',
-            'item_3_quote' => 'Contendo votum traho clamo statim suffragium numquam teneo. Altus iudicium versor, perpetuus velum pax vestigium carpo. Candidus firmamentum celo, voluptas optio demitto sonitus. Obduro casus adinventio vestigium amplitudo sumo.vestigium carpo. Candidus firmamentum celo, voluptas',
-            'item_3_quote_2' => 'Concido laboriosam varietas amplector, aureus stella sursum approbo. Gravitas turbo decet, perpetuus auxilium comes virga.',
-            'item_3_name' => 'Carlos Bauch', 'item_3_role' => 'Property owner',
-            'item_4_quote' => 'Tenax comitatus ambulo regnum eligo, conturbo vis caelum cohors. Infit ustulo adoptio collum, speciosus lumen soluta. Condico spiculum ratio, sopor conventus adversus fiducia. Arma arcesso altaria impleo pax laboriosus. Trepide asporto momentum, virgo sollemne aurora amo cedo umquam cedo.',
-            'item_4_quote_2' => 'Cedo umquam cedo summisse damnum reiciendis veritas flamma. Tempus appono validus translatio, Exemplum adnuo radius caecus exsisto.',
-            'item_4_name' => 'Julia Era', 'item_4_role' => 'Property owner',
         ],
-        'fields' => array_merge([
+        'fields' => [
             'rating' => ['label' => 'Trust rating', 'type' => 'text', 'max' => 8],
             'review_count' => ['label' => 'Review count', 'type' => 'number', 'min' => 0, 'max' => 10000000],
             'view_all_label' => ['label' => 'View all button label', 'type' => 'text', 'max' => 80],
@@ -58,16 +40,5 @@ return [
             'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
             'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
             'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
-        ], (function () {
-            $fields = [];
-            for ($i = 1; $i <= 4; $i++) {
-                $fields['item_'.$i.'_quote'] = ['label' => 'Testimonial '.$i.' first paragraph', 'type' => 'textarea', 'max' => 1200];
-                $fields['item_'.$i.'_quote_2'] = ['label' => 'Testimonial '.$i.' second paragraph', 'type' => 'textarea', 'max' => 1200];
-                $fields['item_'.$i.'_image'] = ['label' => 'Testimonial '.$i.' portrait', 'type' => 'image', 'max' => 2048];
-                $fields['item_'.$i.'_name'] = ['label' => 'Testimonial '.$i.' name', 'type' => 'text', 'max' => 120];
-                $fields['item_'.$i.'_role'] = ['label' => 'Testimonial '.$i.' role', 'type' => 'text', 'max' => 120];
-            }
-            return $fields;
-        })()),
-    ],
+        ],  ],
 ];
