@@ -17,6 +17,8 @@ class SitemapController extends Controller
             ['loc' => route('properties.index'), 'lastmod' => now()],
             ['loc' => route('blog.index'), 'lastmod' => now()],
             ['loc' => route('services.index'), 'lastmod' => now()],
+            ['loc' => route('team.index'), 'lastmod' => now()],
+            ['loc' => route('testimonials.index'), 'lastmod' => now()],
         ]);
 
         foreach (Property::published()->get(['slug', 'updated_at']) as $property) {
