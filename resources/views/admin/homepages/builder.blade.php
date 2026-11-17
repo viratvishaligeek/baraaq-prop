@@ -35,6 +35,20 @@
                     <button class="btn btn-sm btn-outline-primary" type="submit">Add</button>
                 </form>
             @endforeach
+            <hr class="my-4">
+            <h3 class="h6 fw-semibold">Saved reusable sections</h3>
+            @forelse($reusableSections as $reusableSection)
+                <form method="POST" action="{{ route('admin.homepages.reusable-sections.attach', [$homepage, $reusableSection]) }}" class="d-flex justify-content-between align-items-center gap-2 border rounded p-2 mb-2">
+                    @csrf
+                    <div>
+                        <div class="fw-semibold">{{ $reusableSection->name }}</div>
+                        <div class="text-muted small">{{ $reusableSection->section_key }} · From {{ $reusableSection->source_design }}</div>
+                    </div>
+                    <button class="btn btn-sm btn-outline-success" type="submit">Insert</button>
+                </form>
+            @empty
+                <p class="small text-muted mb-0">No reusable sections have been saved yet. Save one from the homepage canvas.</p>
+            @endforelse
         </div>
     </div>
 
@@ -61,7 +75,7 @@
                                 @csrf
                                 @method('PATCH')
                                 @foreach($definition['fields'] as $field => $schema)
-                                    @php($fieldValue = old('config.'.$field, $section->config[$field] ?? ''))
+                                    @php($fieldValue = old('config.'.$field, $section->config[$field] ?? $section->reusableSection?->config[$field] ?? ''))
                                     <div class="{{ in_array($schema['type'], ['textarea'], true) ? 'col-12' : 'col-md-6' }}">
                                         <label class="form-label small" for="section-{{ $section->id }}-{{ $field }}">{{ $schema['label'] }}</label>
                                         @if($schema['type'] === 'textarea')
@@ -97,7 +111,12 @@
                                 <div class="col-12"><button class="btn btn-sm btn-outline-primary" type="submit">Save section settings</button></div>
                             </form>
                         @endif
-                        <div class="d-flex gap-2">
+                        <div class="d-flex flex-wrap gap-2">
+                            <form method="POST" action="{{ route('admin.homepages.sections.save-reusable', [$homepage, $section]) }}" class="d-flex gap-1 align-items-center">
+                                @csrf
+                                <input class="form-control form-control-sm" type="text" name="name" maxlength="120" placeholder="Reusable section name" required aria-label="Reusable section name">
+                                <button class="btn btn-sm btn-outline-success" type="submit">Save to library</button>
+                            </form>
                             <form method="POST" action="{{ route('admin.homepages.sections.duplicate', [$homepage, $section]) }}">
                                 @csrf
                                 <button class="btn btn-sm btn-outline-primary" type="submit">Duplicate</button>
