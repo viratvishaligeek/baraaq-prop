@@ -84,6 +84,42 @@ class HomepageMediaTest extends TestCase
         $this->assertSame($media->url, $rendered['background_image']);
     }
 
+    public function test_legacy_url_based_section_media_remains_backward_compatible(): void
+    {
+        $legacyUrl = '/theme-assets/img/hero/hero-3-right.jpg';
+        $section = $this->createSection([
+            'background_image' => $legacyUrl,
+        ]);
+
+        $rendered = app(SectionMediaResolver::class)->forRendering($section, $section->config);
+
+        $this->assertSame($legacyUrl, $rendered['background_image']);
+    }
+
+    public function test_replacing_a_selected_media_record_updates_the_rendered_image(): void
+    {
+        $original = $this->createMedia('homepage/original.png');
+        $replacement = $this->createMedia('homepage/replacement.png');
+        $section = $this->createSection([
+            'background_image' => (string) $original->id,
+        ]);
+        $section->mediaAttachments()->create([
+            'field_key' => 'background_image',
+            'media_id' => $original->id,
+        ]);
+
+        $section->mediaAttachments()->updateOrCreate(
+            ['field_key' => 'background_image'],
+            ['media_id' => $replacement->id]
+        );
+        $section->update(['config' => ['background_image' => (string) $replacement->id]]);
+
+        $rendered = app(SectionMediaResolver::class)->forRendering($section->fresh(), $section->fresh()->config);
+
+        $this->assertSame($replacement->url, $rendered['background_image']);
+        $this->assertSame($replacement->alt_text, $rendered['background_image_alt']);
+    }
+
     public function test_deleted_media_does_not_render_a_stale_numeric_url(): void
     {
         $media = $this->createMedia('homepage/deleted-image.png');
