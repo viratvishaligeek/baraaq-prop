@@ -10,6 +10,7 @@ use App\Models\Post;
 use App\Models\Property;
 use App\Models\ReusableSection;
 use App\Models\TeamMember;
+use App\Services\Widgets\CmsWidgetRegistry;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -33,7 +34,7 @@ class HomepageController extends Controller
             'homepage' => $homepage->load('sections.mediaAttachments.media', 'sections.reusableSection.mediaAttachments.media'),
             'reusableSections' => ReusableSection::query()->where('status', 'published')->orderBy('name')->get(),
             'availableSections' => config('cms-sections.sections', []),
-            'queryableTypes' => app(\\App\\Services\\Widgets\\CmsWidgetRegistry::class)->queryableTypes(),
+            'queryableTypes' => app(CmsWidgetRegistry::class)->queryableTypes(),
         ]);
     }
 
