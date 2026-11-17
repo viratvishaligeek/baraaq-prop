@@ -11,6 +11,25 @@ class CacheAndSectionRegistryRegressionTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_homepage_controller_caches_only_the_homepage_id(): void
+    {
+        $homepage = Homepage::create([
+            'name' => 'Published homepage',
+            'slug' => 'published-homepage-cache-test',
+            'design_key' => 'index',
+            'status' => 'published',
+            'is_default' => true,
+            'published_at' => now(),
+        ]);
+
+        Cache::put('homepage:published-default', new \\stdClass());
+
+        app(HomeController::class)->__invoke();
+
+        $this->assertSame($homepage->id, Cache::get('homepage:published-default:id'));
+        $this->assertNull(Cache::get('homepage:published-default'));
+    }
+
     public function test_setting_read_ignores_legacy_model_cache_and_caches_scalar_data(): void
     {
         Setting::create([
