@@ -81,6 +81,17 @@
                         value="{{ old('header_menu_location', $settings['header_menu_location'] ?? 'primary') }}" required>
                 </div>
                 <div class="col-md-6">
+                    <label class="form-label">Header call-to-action label</label>
+                    <input class="form-control" name="header_cta_label"
+                        value="{{ old('header_cta_label', $settings['header_cta_label'] ?? 'Browse Properties') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Header call-to-action URL</label>
+                    <input class="form-control" name="header_cta_url"
+                        value="{{ old('header_cta_url', $settings['header_cta_url'] ?? '/properties') }}"
+                        placeholder="/properties or https://example.com">
+                </div>
+                <div class="col-md-6">
                     <label class="form-label">Footer menu location</label>
                     <input class="form-control" name="footer_menu_location"
                         value="{{ old('footer_menu_location', $settings['footer_menu_location'] ?? 'footer') }}" required>
