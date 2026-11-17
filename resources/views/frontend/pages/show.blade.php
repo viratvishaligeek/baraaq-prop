@@ -4,13 +4,17 @@
 @section('canonical_url', $page->canonical_url ?: (($isHomepage ?? false) ? route('home') : route('pages.show', $page)))
 @section('og_image', $page->og_image ? asset('storage/' . $page->og_image) : (!empty($siteSettings['default_og_image']) ? asset('storage/' . $siteSettings['default_og_image']) : asset('theme-assets/img/hero/hero-10-1.jpg')))
 @section('structured_data')
-    <script type="application/ld+json">@json([
+    @php
+        $structuredData = [
         '@context' => 'https://schema.org',
         '@type' => 'WebPage',
         'name' => $page->meta_title ?: $page->title,
         'description' => $page->meta_description ?: ($siteSettings['meta_description'] ?? ''),
         'url' => ($isHomepage ?? false) ? route('home') : route('pages.show', $page),
-    ])</script>
+    
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($structuredData, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
 @endsection
 @section('content')
     <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcumb-bg.jpg') }}">
