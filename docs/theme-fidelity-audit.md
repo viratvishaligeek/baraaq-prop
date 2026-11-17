@@ -97,14 +97,14 @@ The original HTML loads Inter and Plus Jakarta Sans from Google Fonts and refere
 | index | 5 | Team members | Team/agent records, photos, role, social links | Extracted in part; heading settings only |
 | index | 6 | Testimonials | Testimonial records, avatar/logo, quote, rating, slider settings | Not extracted |
 | index | 7 | Blog/news slider | Published posts, author/date/image, comments, CTA | Extracted in part; heading settings only |
-| home-2 | 1 | Property categories | Property categories, icons, counts, links, decorative shapes | Not extracted |
+| home-2 | 1 | Property categories | Property categories, icons, counts, links, decorative shapes | Registered as a source-specific category slider; data/form/render implemented; visual verification pending |
 | home-2 | 2 | Featured properties — standard cards | Properties, images, price/status, features, actions | Not extracted |
 | home-2 | 3 | Property values / expert-rated villas | Editable intro and property/value cards | Not extracted |
 | home-2 | 4 | Team members — home-2 card variant | Team records, images, socials, slider settings | Not extracted |
 | home-2 | 5 | Featured property spotlight — alternate card | Featured property, location, beds/baths, image, CTA | Not extracted |
 | home-2 | 6 | Testimonials — style 2 | Testimonial records, avatars, quote, slider | Not extracted |
 | home-2 | 7 | Blog/news — style 2 | Posts, author/date, excerpts, images, links | Not extracted |
-| home-3 | 1 | Property categories — style 2 | Categories, SVG icons, labels, counts, links | Not extracted |
+| home-3 | 1 | Property categories — style 2 | Categories, SVG icons, labels, counts, links | Registered as style-2 category slider; data/form/render implemented; visual verification pending |
 | home-3 | 2 | Popular properties | Properties, price/status, feature icons, links | Not extracted |
 | home-3 | 3 | Team members — home-2 variant | Team records, photos, social links | Not extracted |
 | home-3 | 4 | Testimonials — rating/trust layout | Testimonials, rating summary, trust mark, avatars | Not extracted |
@@ -124,7 +124,7 @@ The original HTML loads Inter and Plus Jakarta Sans from Google Fonts and refere
 | home-6 | 3 | Feature highlights / corporate values | Feature records, icons, headings, body copy | Not extracted |
 | home-6 | 4 | Executive/team profiles | Team records, portrait, name, title, socials | Not extracted |
 | home-6 | 5 | Blog insights — style 5 | Posts, images, title, metadata, links | Not extracted |
-| home-7 | 1 | Property categories | Categories, icons, counts, links, decorative shapes | Not extracted |
+| home-7 | 1 | Property categories | Categories, icons, counts, links, decorative shapes | Registered as source-specific category slider; data/form/render implemented; visual verification pending |
 | home-7 | 2 | Popular properties | Properties, price/status, images, feature icons, CTAs | Not extracted |
 | home-7 | 3 | Team members | Team records, photos, role, social links | Not extracted |
 | home-7 | 4 | Testimonials — trust score layout | Testimonials, score, review count, avatars, trust mark | Not extracted |
@@ -201,3 +201,31 @@ These are partial foundations. The reusable library does not yet have a complete
 ### Live-homepage safety guard
 
 An additive `is_composition_complete` flag now protects the production homepage while the source conversion is incomplete. The public controller only renders the custom section composition when this flag is true; otherwise it retains the selected original full-page Blade template. The admin cannot set an incomplete composition as the live default, and the homepage list explains why. This deliberately prevents a draft containing only a hero or a few extracted sections from replacing the complete existing homepage. The flag must only be enabled after the per-design checklist and regression gates are actually complete.
+
+
+### New div-based extraction pass — category and Home 2 about blocks
+
+The next implementation pass confirmed that important content is not bounded by literal section tags. In particular, Home 2's about composition is a large `div.about-1-wrapper` block with a five-image collage, animated circular logo, four icon/feature cards, CTA and telephone action. It is now registered as `about.home-2`, rendered with the original `about-1-wrapper`, `img-box1`, `about-left/middle/right`, `about-1-item` and CTA class structure, and has section-specific controls for all five collage images, logo, four feature icons/titles/descriptions, heading/body, CTA and phone details. The section is included after the category slider when a Home 2 draft is initialized.
+
+The category blocks are registered separately as `categories.home-2`, `categories.home-3` and `categories.home-7`. The Home 3 variant keeps `category-sec-2`, `category-card style-2` and its pagination; Home 2/Home 7 keep `category-sec-1`, source decorative shapes and the standard card. The resolver binds active property categories and published property counts. Category records now support an icon path, sort order and active state. These are source-level implementations; no responsive/browser pass has been run.
+
+The builder's image fields now open a searchable picker backed by the existing Media Library. The endpoint returns only image MIME types and uses the configured storage disk URL. Category record icons can also be uploaded from the category editor. The registry now loads category and about definitions from dedicated files under `config/cms-sections/`, rather than adding all new definitions to the root registry file.
+
+### Homepage verification matrix — current source-level status
+
+Counts below are **minimum identified literal section wrappers** plus separately registered partials. They do not count every div-based block, slider, card collection, search overlay or shared chrome element. “Form / binding / render” records source implementation only, not runtime proof. Responsive verification remains pending for every design.
+
+| Homepage | Literal wrappers identified (minimum) | Registered section partials | Section forms with matching schema | Database bindings in registered sections | Frontend partial rendering | Responsive verification |
+|---|---:|---:|---|---|---|---|
+| index | 7 + hero | 4 (hero, properties, team, blog) | Partial; hero still incomplete | Banner, properties, team, posts | Source-level only | Pending |
+| home-2 | 7 + hero, plus about div block | 3 (hero, categories, about) | Category/about schemas implemented; hero partial | Property categories/counts | Source-level only | Pending |
+| home-3 | 5 + hero | 2 (hero, categories) | Category schema implemented; hero partial | Property categories/counts | Source-level only | Pending |
+| home-4 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
+| home-5 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
+| home-6 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
+| home-7 | 5 + hero | 2 (hero, categories) | Category schema implemented; hero partial | Property categories/counts | Source-level only | Pending |
+| home-8 | 6 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
+| home-9 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
+| home-10 | 7 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
+
+**Strict completion count remains 0.** The table deliberately distinguishes registered partials from fully verified source sections. No homepage has a complete source-block inventory, full section sequence, complete settings coverage, and desktop/tablet/mobile visual regression result yet.
