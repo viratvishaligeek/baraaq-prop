@@ -13,7 +13,7 @@
     $accordionId = 'home3-faq-'.$section->id;
 @endphp
 
-<div class="{{ $sectionConfig['vertical_spacing'] ?? 'space' }} bg-smoke {{ $visibility }}" id="{{ $accordionId }}" @if(!empty($sectionConfig['background_image'])) data-bg-src="{{ $sectionConfig['background_image'] }}" @endif>
+<div class="{{ $sectionConfig['vertical_spacing'] ?? 'space' }} bg-smoke {{ $visibility }}" id="{{ $accordionId }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif @if(!empty($sectionConfig['background_image'])) data-bg-src="{{ $sectionConfig['background_image'] }}" @endif>
     @if(!empty($sectionConfig['shape_image']))
         <div class="shape-mockup" style="bottom: 0; left: 0%;"><img src="{{ $sectionConfig['shape_image'] }}" alt="Decorative shape"></div>
     @endif
