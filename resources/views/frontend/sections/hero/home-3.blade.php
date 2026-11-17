@@ -107,7 +107,7 @@
                     @foreach($mapProperties as $index => $property)
                         @php
                             $mapIndex = $index + 1;
-                            $propertyImage = $property->featured_image ? Storage::disk('public')->url($property->featured_image) : ($property->images->first()?->path ? Storage::disk('public')->url($property->images->first()->path) : null);
+                            $propertyImagePath = $property->featured_image ?: $property->images->first()?->path;\n                            $propertyImage = $propertyImagePath ? Storage::disk('public')->url($propertyImagePath) : ($sectionConfig['map_property_fallback_image'] ?? null);
                         @endphp
                         <div class="map-popular-list map-popular-list{{ $mapIndex }} {{ ($mapIndex === 4 || ($loop->last && $mapProperties->count() < 4)) ? 'show' : '' }}">
                             <div class="popular-list-1">
@@ -119,12 +119,12 @@
                                 <div class="property-content">
                                     <div class="media-body">
                                         <h3 class="box-title"><a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a></h3>
-                                        <div class="box-text"><div class="icon"><img src="{{ asset('theme-assets/img/icon/popular-location.svg') }}" alt="icon"></div>{{ $property->address }}, {{ $property->city }}</div>
+                                        <div class="box-text"><div class="icon"><img src="{{ ($sectionConfig['map_location_icon'] ?? asset('theme-assets/img/icon/popular-location.svg')) }}" alt="icon"></div>{{ $property->address }}, {{ $property->city }}</div>
                                     </div>
                                     <ul class="property-featured">
-                                        <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bed.svg') }}" alt="icon"></div>Bed {{ $property->bedrooms ?? '—' }}</li>
-                                        <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bath.svg') }}" alt="icon"></div>Bath {{ $property->bathrooms ?? '—' }}</li>
-                                        <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="icon"></div>{{ $property->area ? number_format((float) $property->area).' '.$property->area_unit : '—' }}</li>
+                                        <li><div class="icon"><img src="{{ ($sectionConfig['map_bed_icon'] ?? asset('theme-assets/img/icon/bed.svg')) }}" alt="icon"></div>Bed {{ $property->bedrooms ?? '—' }}</li>
+                                        <li><div class="icon"><img src="{{ ($sectionConfig['map_bath_icon'] ?? asset('theme-assets/img/icon/bath.svg')) }}" alt="icon"></div>Bath {{ $property->bathrooms ?? '—' }}</li>
+                                        <li><div class="icon"><img src="{{ ($sectionConfig['map_area_icon'] ?? asset('theme-assets/img/icon/sqft.svg')) }}" alt="icon"></div>{{ $property->area ? number_format((float) $property->area).' '.$property->area_unit : '—' }}</li>
                                     </ul>
                                 </div>
                                 <div class="arrow-bottom"></div>
