@@ -14,8 +14,10 @@ class StorePropertyRequest extends FormRequest
     public function withValidator($validator): void
     {
         $validator->after(function ($validator) {
-            $uploaded = count($this->file('gallery', []));
-            $selected = count($this->input('gallery_media_ids', []));
+            $uploadedFiles = $this->file('gallery', []);
+            $selectedIds = $this->input('gallery_media_ids', []);
+            $uploaded = is_array($uploadedFiles) ? count($uploadedFiles) : 0;
+            $selected = is_array($selectedIds) ? count($selectedIds) : 0;
 
             if ($uploaded + $selected > 20) {
                 $validator->errors()->add('gallery', 'You can add up to 20 gallery images in total.');
