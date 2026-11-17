@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const status = document.getElementById('shared-media-status');
     const more = document.getElementById('shared-media-more');
     const searchForm = document.getElementById('shared-media-search');
+    const uploadForm = document.getElementById('shared-media-upload');
+    const uploadButton = document.getElementById('shared-media-upload-submit');
     const query = document.getElementById('shared-media-query');
     const applyMultiple = document.getElementById('shared-media-apply-multiple');
     let targetInput = null;
@@ -137,6 +139,46 @@ document.addEventListener('DOMContentLoaded', function () {
                 ? document.getElementById(input.dataset.mediaMetaId)
                 : input.parentElement?.querySelector('[data-media-meta]');
             if (meta) meta.textContent = '';
+        }
+    });
+
+    uploadForm?.addEventListener('submit', async event => {
+        event.preventDefault();
+        const files = uploadForm.querySelector('input[type="file"]');
+        if (!files?.files?.length) return;
+        const originalLabel = uploadButton?.textContent;
+        if (uploadButton) {
+            uploadButton.disabled = true;
+            uploadButton.textContent = 'Uploading…';
+        }
+        status.textContent = 'Uploading images to the Media Library…';
+        try {
+            const response = await fetch(uploadForm.action, {
+                method: 'POST',
+                body: new FormData(uploadForm),
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                }
+            });
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                const errors = Object.values(payload.errors || {}).flat();
+                throw new Error(errors[0] || payload.message || 'Image upload failed.');
+            }
+            files.value = '';
+            const url = new URL(endpoint, window.location.origin);
+            if (query.value.trim()) url.searchParams.set('search', query.value.trim());
+            await loadMedia(url.toString(), false);
+            status.textContent = (payload.data?.length || 0) + ' image(s) uploaded. Select an image below.';
+        } catch (error) {
+            status.textContent = error.message;
+        } finally {
+            if (uploadButton) {
+                uploadButton.disabled = false;
+                uploadButton.textContent = originalLabel || 'Upload to library';
+            }
         }
     });
 
