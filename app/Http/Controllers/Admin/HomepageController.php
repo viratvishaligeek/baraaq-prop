@@ -29,7 +29,7 @@ class HomepageController extends Controller
         abort_unless($homepage->status === 'draft', 409, 'Create a draft copy before editing a published homepage.');
 
         return view('admin.homepages.builder', [
-            'homepage' => $homepage->load('sections.reusableSection'),
+            'homepage' => $homepage->load('sections.mediaAttachments.media', 'sections.reusableSection.mediaAttachments.media'),
             'reusableSections' => ReusableSection::query()->where('status', 'published')->orderBy('name')->get(),
             'availableSections' => config('cms-sections.sections', []),
         ]);
