@@ -31,13 +31,21 @@
                     @else
                         <a class="btn btn-sm btn-outline-secondary" href="{{ route('theme.page', ['template' => $homepage->design_key]) }}" target="_blank" rel="noopener noreferrer">Preview</a>
                     @endif
-                    @unless($homepage->is_default)
-                        <form method="POST" action="{{ route('admin.homepages.default', $homepage) }}">
+                    @if($homepage->status === 'draft')
+                        <a class="btn btn-sm btn-primary" href="{{ route('admin.homepages.builder', $homepage) }}">Open builder</a>
+                    @else
+                        <form method="POST" action="{{ route('admin.homepages.duplicate', $homepage) }}">
                             @csrf
-                            @method('PATCH')
-                            <button class="btn btn-sm btn-primary" type="submit">Set as homepage</button>
+                            <button class="btn btn-sm btn-outline-primary" type="submit">Create draft copy</button>
                         </form>
-                    @endunless
+                        @unless($homepage->is_default)
+                            <form method="POST" action="{{ route('admin.homepages.default', $homepage) }}">
+                                @csrf
+                                @method('PATCH')
+                                <button class="btn btn-sm btn-primary" type="submit">Set as homepage</button>
+                            </form>
+                        @endunless
+                    @endif
                 </div>
             </div>
         </div>
