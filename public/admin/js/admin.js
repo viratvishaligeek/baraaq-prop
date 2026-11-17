@@ -1,1 +1,121 @@
 document.addEventListener('DOMContentLoaded',function(){if(window.toastr){toastr.options={closeButton:true,progressBar:true,positionClass:'toast-top-right',timeOut:3500};}});
+document.addEventListener('DOMContentLoaded', function () {
+    const picker = document.getElementById('shared-media-picker');
+    if (!picker || !window.bootstrap?.Modal) return;
+
+    const modal = bootstrap.Modal.getOrCreateInstance(picker);
+    const endpoint = picker.dataset.endpoint;
+    const results = document.getElementById('shared-media-results');
+    const status = document.getElementById('shared-media-status');
+    const more = document.getElementById('shared-media-more');
+    const searchForm = document.getElementById('shared-media-search');
+    const query = document.getElementById('shared-media-query');
+    let targetInput = null;
+    let nextPage = null;
+
+    function updateTarget(item) {
+        if (!targetInput) return;
+        targetInput.value = String(item.id);
+        targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+        targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        const preview = targetInput.dataset.mediaPreviewId
+            ? document.getElementById(targetInput.dataset.mediaPreviewId)
+            : targetInput.parentElement?.querySelector('[data-media-preview]');
+        if (preview) {
+            preview.src = item.url;
+            preview.alt = item.alt || item.name;
+            preview.hidden = false;
+            preview.style.display = 'block';
+        }
+
+        const meta = targetInput.dataset.mediaMetaId
+            ? document.getElementById(targetInput.dataset.mediaMetaId)
+            : targetInput.parentElement?.querySelector('[data-media-meta]');
+        if (meta) meta.textContent = item.name + ' · ' + (Number(item.size || 0) / 1024).toFixed(1) + ' KB';
+        modal.hide();
+    }
+
+    async function loadMedia(url, append) {
+        status.textContent = 'Loading images…';
+        more.hidden = true;
+        try {
+            const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+            if (!response.ok) throw new Error('Media Library could not be loaded.');
+            const payload = await response.json();
+            if (!append) results.replaceChildren();
+
+            (payload.data || []).forEach(item => {
+                const column = document.createElement('div');
+                column.className = 'col-6 col-sm-4 col-md-3 col-xl-2';
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'btn btn-light border w-100 h-100 p-2 text-start';
+                const image = document.createElement('img');
+                image.src = item.url;
+                image.alt = item.alt || item.name;
+                image.className = 'w-100 rounded mb-2';
+                image.style.cssText = 'height:110px;object-fit:cover';
+                const name = document.createElement('span');
+                name.className = 'small d-block text-break';
+                name.textContent = item.name;
+                button.append(image, name);
+                button.addEventListener('click', () => updateTarget(item));
+                column.append(button);
+                results.append(column);
+            });
+
+            nextPage = payload.next_page_url || null;
+            more.hidden = !nextPage;
+            status.textContent = payload.data?.length
+                ? 'Select an image to use it in this field.'
+                : 'No images found. Upload images in Media Library first.';
+        } catch (error) {
+            status.textContent = error.message;
+        }
+    }
+
+    document.addEventListener('click', event => {
+        const openButton = event.target.closest('[data-open-media-picker]');
+        if (openButton) {
+            targetInput = document.getElementById(openButton.dataset.target);
+            if (!targetInput) return;
+            query.value = '';
+            modal.show();
+            loadMedia(endpoint, false);
+            return;
+        }
+
+        const clearButton = event.target.closest('[data-clear-media]');
+        if (clearButton) {
+            const input = document.getElementById(clearButton.dataset.target);
+            if (!input) return;
+            input.value = '';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+            const preview = input.dataset.mediaPreviewId
+                ? document.getElementById(input.dataset.mediaPreviewId)
+                : input.parentElement?.querySelector('[data-media-preview]');
+            if (preview) {
+                preview.removeAttribute('src');
+                preview.hidden = true;
+                preview.style.display = 'none';
+            }
+            const meta = input.dataset.mediaMetaId
+                ? document.getElementById(input.dataset.mediaMetaId)
+                : input.parentElement?.querySelector('[data-media-meta]');
+            if (meta) meta.textContent = '';
+        }
+    });
+
+    searchForm?.addEventListener('submit', event => {
+        event.preventDefault();
+        const url = new URL(endpoint, window.location.origin);
+        if (query.value.trim()) url.searchParams.set('search', query.value.trim());
+        loadMedia(url.toString(), false);
+    });
+
+    more?.addEventListener('click', () => {
+        if (nextPage) loadMedia(nextPage, true);
+    });
+});
