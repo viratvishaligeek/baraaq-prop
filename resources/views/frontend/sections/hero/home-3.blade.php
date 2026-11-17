@@ -163,12 +163,12 @@
                                 <div class="property-content">
                                     <div class="media-body">
                                         <h3 class="box-title"><a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a></h3>
-                                        <div class="box-text"><div class="icon"><img src="{{ $sectionConfig['map_location_icon'] ?? '' }}" alt="icon"></div>{{ $property->address }}, {{ $property->city }}</div>
+                                        <div class="box-text"><div class="icon">@if(!empty($sectionConfig['map_location_icon']))<img src="{{ $sectionConfig['map_location_icon'] }}" alt="icon">@endif</div>{{ $property->address }}, {{ $property->city }}</div>
                                     </div>
                                     <ul class="property-featured">
-                                        <li><div class="icon"><img src="{{ $sectionConfig['map_bed_icon'] ?? '' }}" alt="icon"></div>Bed {{ $property->bedrooms ?? '—' }}</li>
-                                        <li><div class="icon"><img src="{{ $sectionConfig['map_bath_icon'] ?? '' }}" alt="icon"></div>Bath {{ $property->bathrooms ?? '—' }}</li>
-                                        <li><div class="icon"><img src="{{ $sectionConfig['map_area_icon'] ?? '' }}" alt="icon"></div>{{ $property->area ? number_format((float) $property->area).' '.$property->area_unit : '—' }}</li>
+                                        <li><div class="icon">@if(!empty($sectionConfig['map_bed_icon']))<img src="{{ $sectionConfig['map_bed_icon'] }}" alt="icon">@endif</div>Bed {{ $property->bedrooms ?? '—' }}</li>
+                                        <li><div class="icon">@if(!empty($sectionConfig['map_bath_icon']))<img src="{{ $sectionConfig['map_bath_icon'] }}" alt="icon">@endif</div>Bath {{ $property->bathrooms ?? '—' }}</li>
+                                        <li><div class="icon">@if(!empty($sectionConfig['map_area_icon']))<img src="{{ $sectionConfig['map_area_icon'] }}" alt="icon">@endif</div>{{ $property->area ? number_format((float) $property->area).' '.$property->area_unit : '—' }}</li>
                                     </ul>
                                 </div>
                                 <div class="arrow-bottom"></div>
