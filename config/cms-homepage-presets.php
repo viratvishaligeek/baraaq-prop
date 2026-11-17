@@ -56,7 +56,6 @@ return [
     'home-5' => [
         'gallery.home-5-rooms',
         'property-values.home-2',
-        'properties.home-2',
         'testimonials.home-5',
         'team.home-2',
         'blog.home-2',
@@ -64,7 +63,6 @@ return [
     'home-6' => [
         'gallery.home-6-projects',
         'services.home-6',
-        'statistics.home-6',
         'testimonials.home-3',
         'team.home-3',
         'blog.home-3',
