@@ -10,6 +10,7 @@ use App\Services\Widgets\CmsWidgetRegistry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 
 class HomepageSectionController extends Controller
@@ -194,6 +195,14 @@ class HomepageSectionController extends Controller
             }
 
             $source = $request->validate($queryRules)['data_source'] ?? [];
+            $filters = $source['filters'] ?? [];
+            if (isset($filters['min_price'], $filters['max_price'])
+                && $filters['min_price'] !== '' && $filters['max_price'] !== ''
+                && (float) $filters['min_price'] > (float) $filters['max_price']) {
+                throw ValidationException::withMessages([
+                    'data_source.filters.max_price' => 'Maximum price must be greater than or equal to minimum price.',
+                ]);
+            }
         }
 
         $allowedFields = array_keys($definition['fields'] ?? []);
