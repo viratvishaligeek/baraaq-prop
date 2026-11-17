@@ -94,7 +94,7 @@
                             $querySchema = $queryableTypes[$section->section_type] ?? null;
                             $dataSource = $section->data_source ?? [];
                         @endphp
-                        <article class="border rounded p-3 mb-3 page-builder-item" draggable="{{ $page->status === 'draft' ? 'true' : 'false' }}" data-section-id="{{ $section->id }}">
+                        <article class="border rounded p-3 mb-3 page-builder-item" draggable="{{ $page->status === 'draft' ? 'true' : 'false' }}" data-section-id="{{ $section->id }}" data-section-key="{{ $section->section_key }}">
                             <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="text-muted" aria-hidden="true">⠿</span>
@@ -310,9 +310,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     const messages = Object.values(payload.errors || {}).flat();
                     throw new Error(messages[0] || payload.message || 'Could not save this section.');
                 }
+                const article = form.closest('.page-builder-item');
+                const selectedDesign = form.querySelector('[name="section_key"]')?.value;
+                if (article && selectedDesign && selectedDesign !== article.dataset.sectionKey) {
+                    window.location.reload();
+                    return;
+                }
                 if (previewFrame) {
-                    const separator = previewFrame.src.includes('?') ? '&' : '?';
-                    previewFrame.src = previewFrame.src.split('&_preview=')[0] + separator + '_preview=' + Date.now();
+                    const previewUrl = new URL(previewFrame.src, window.location.origin);
+                    previewUrl.searchParams.set('_preview', String(Date.now()));
+                    previewFrame.src = previewUrl.toString();
                 }
                 if (status) status.textContent = 'Settings saved. Frontend preview refreshed.';
             } catch (error) {
