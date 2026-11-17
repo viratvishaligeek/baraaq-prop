@@ -197,3 +197,7 @@ The following builder capabilities now have source-level implementations on `fea
 These are partial foundations. The reusable library does not yet have a complete standalone edit/version/history interface. The section catalog still does not include the 57 source wrappers, hero fields are not all consumed by their Blade partials, and draft duplication cannot yet reconstruct complete source section sequences. The preview currently uses the existing frontend layout and current query limits; it is not a substitute for responsive browser validation.
 
 **No execution claims:** Composer, Artisan migrations/seeders, automated tests, route compilation, and browser screenshot comparisons have not been run in this environment.
+
+### Live-homepage safety guard
+
+An additive `is_composition_complete` flag now protects the production homepage while the source conversion is incomplete. The public controller only renders the custom section composition when this flag is true; otherwise it retains the selected original full-page Blade template. The admin cannot set an incomplete composition as the live default, and the homepage list explains why. This deliberately prevents a draft containing only a hero or a few extracted sections from replacing the complete existing homepage. The flag must only be enabled after the per-design checklist and regression gates are actually complete.
