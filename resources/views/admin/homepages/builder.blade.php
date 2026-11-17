@@ -80,7 +80,12 @@
                                 @csrf
                                 @method('PATCH')
                                 @foreach($definition['fields'] as $field => $schema)
-                                    @php($fieldValue = old('config.'.$field, $section->config[$field] ?? $section->reusableSection?->config[$field] ?? ''))
+                                    @php
+                                        $fieldValue = old('config.'.$field, $section->config[$field] ?? $section->reusableSection?->config[$field] ?? '');
+                                        $fieldMedia = $section->mediaAttachments->firstWhere('field_key', $field)?->media
+                                            ?? $section->reusableSection?->mediaAttachments?->firstWhere('field_key', $field)?->media;
+                                        $fieldPreviewUrl = $fieldMedia?->url ?? (is_string($fieldValue) && !ctype_digit($fieldValue) ? $fieldValue : '');
+                                    @endphp
                                     <div class="{{ in_array($schema['type'], ['textarea'], true) ? 'col-12' : 'col-md-6' }}">
                                         <label class="form-label small" for="section-{{ $section->id }}-{{ $field }}">{{ $schema['label'] }}</label>
                                         @if($schema['type'] === 'textarea')
@@ -95,7 +100,8 @@
                                         @elseif($schema['type'] === 'image')
                                             <input type="hidden" id="section-{{ $section->id }}-{{ $field }}" name="config[{{ $field }}]" value="{{ $fieldValue }}" data-media-value>
                                             <div class="d-flex align-items-center gap-2">
-                                                <img src="{{ $fieldValue }}" alt="Selected section media" class="rounded border" style="width:76px;height:56px;object-fit:cover" data-media-preview @if(!$fieldValue) hidden @endif>
+                                                <img src="{{ $fieldPreviewUrl }}" alt="{{ $fieldMedia?->alt_text ?: 'Selected section media' }}" class="rounded border" style="width:76px;height:56px;object-fit:cover" data-media-preview @if(!$fieldPreviewUrl) hidden @endif>
+                                                <span class="small text-muted" data-media-meta>{{ $fieldMedia ? $fieldMedia->original_name.' · '.number_format($fieldMedia->size / 1024, 1).' KB' : '' }}</span>
                                                 <button type="button" class="btn btn-sm btn-outline-secondary" data-open-media-picker data-target="section-{{ $section->id }}-{{ $field }}">Choose from Media Library</button>
                                                 <button type="button" class="btn btn-sm btn-link text-danger" data-clear-media data-target="section-{{ $section->id }}-{{ $field }}">Clear</button>
                                             </div>
@@ -271,9 +277,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     button.append(image, name);
                     button.addEventListener('click', () => {
                         if (!targetInput) return;
-                        targetInput.value = item.url;
+                        targetInput.value = String(item.id);
                         const preview = targetInput.parentElement.querySelector('[data-media-preview]');
-                        if (preview) { preview.src = item.url; preview.hidden = false; }
+                        if (preview) { preview.src = item.url; preview.alt = item.alt || item.name; preview.hidden = false; }\n                        const meta = targetInput.parentElement.querySelector('[data-media-meta]');\n                        if (meta) meta.textContent = item.name + ' · ' + (Number(item.size || 0) / 1024).toFixed(1) + ' KB';
                         modal.hide();
                     });
                     col.append(button);
@@ -301,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!input) return;
                 input.value = '';
                 const preview = input.parentElement.querySelector('[data-media-preview]');
-                if (preview) preview.hidden = true;
+                if (preview) preview.hidden = true;\n                const meta = input.parentElement.querySelector('[data-media-meta]');\n                if (meta) meta.textContent = '';
             });
         });
         document.getElementById('homepage-media-search').addEventListener('submit', (event) => {
