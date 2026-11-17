@@ -11,12 +11,12 @@
                 @case('text')
                 @case('custom')
                     @if (!empty($widget['config']['body']))
-                        <div class="widget-content">{!! \\App\\Support\\HtmlSanitizer::sanitize($widget['config']['body']) !!}</div>
+                        <div class="widget-content">{!! \App\Support\HtmlSanitizer::sanitize($widget['config']['body']) !!}</div>
                     @endif
                 @break
 
                 @case('html')
-                    {!! \\App\\Support\\HtmlSanitizer::sanitize($widget['config']['html'] ?? '') !!}
+                    {!! \App\Support\HtmlSanitizer::sanitize($widget['config']['html'] ?? '') !!}
                 @break
 
                 @case('image')
@@ -80,7 +80,7 @@
 
                 @case('cta')
                     @if (!empty($widget['config']['body']))
-                        <div class="widget-content">{!! \\App\\Support\\HtmlSanitizer::sanitize($widget['config']['body']) !!}</div>
+                        <div class="widget-content">{!! \App\Support\HtmlSanitizer::sanitize($widget['config']['body']) !!}</div>
                     @endif
                     @if (!empty($widget['config']['url']))
                         <a class="th-btn"
