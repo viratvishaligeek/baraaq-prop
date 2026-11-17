@@ -20,7 +20,7 @@ class PropertyController extends Controller
             'listing_type' => ['nullable', 'in:sale,rent,lease'],
             'status' => ['nullable', 'in:sale,rent'],
             'property_type' => ['nullable', 'string', 'max:80'],
-            'category' => ['nullable', 'integer', 'min:1'],
+            'category' => ['nullable', 'string', 'max:180'],
             'category_id' => ['nullable', 'integer', 'min:1'],
             'min_price' => ['nullable', 'numeric', 'min:0'],
             'max_price' => ['nullable', 'numeric', 'min:0'],
