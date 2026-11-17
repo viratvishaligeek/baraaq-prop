@@ -18,9 +18,7 @@ $fields = [
 $defaults = [
     'eyebrow' => 'Contact Us', 'heading' => 'Do you have questions? Contact Us',
     'description' => 'Our team is ready to help with your property questions.',
-    'phone' => '+91 00000 00000', 'email' => 'hello@example.com',
-    'address' => 'Visit our office to discuss your property goals.',
-    'hours' => 'Monday – Saturday, 9:00 AM – 6:00 PM',
+    'phone' => '', 'email' => '', 'address' => '', 'hours' => '',
     'map_url' => '', 'button_label' => 'Get in touch', 'button_url' => '/contact',
     'show_mobile' => true, 'show_tablet' => true, 'show_desktop' => true,
 ];
