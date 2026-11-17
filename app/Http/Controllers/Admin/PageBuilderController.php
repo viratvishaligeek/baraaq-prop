@@ -179,7 +179,10 @@ class PageBuilderController extends Controller
                         $filterRules[] = 'integer';
                         $filterRules[] = 'min:' . ($schema['min'] ?? 0);
                         if (isset($schema['max'])) $filterRules[] = 'max:' . $schema['max'];
-                        if ($filter === 'category_id') $filterRules[] = Rule::exists('categories', 'id');
+                        if ($filter === 'category_id') {
+                            $filterRules[] = Rule::exists('categories', 'id')
+                                ->where('type', $schema['category_type'] ?? 'property');
+                        }
                         break;
                     case 'number':
                         $filterRules[] = 'numeric';
