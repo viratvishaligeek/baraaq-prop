@@ -11,7 +11,7 @@
     @php
         $config = old('config', $widget->config ?? []);
         $widgetMedia = isset($config['image_url']) && ctype_digit((string) $config['image_url'])
-            ? \\App\\Models\\Media::find((int) $config['image_url'])
+            ? \App\Models\Media::find((int) $config['image_url'])
             : null;
         $widgetImagePreview = $widgetMedia?->url ?: ($config['image_url'] ?? '');
     @endphp
