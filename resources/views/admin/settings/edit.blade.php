@@ -22,7 +22,7 @@
 <div class="col-md-6"><label class="form-label">Footer menu location</label><input class="form-control" name="footer_menu_location" value="{{ old('footer_menu_location',$settings['footer_menu_location']??'footer') }}" required></div>
 <div class="col-12"><label class="form-label">Footer description</label><textarea class="form-control" name="footer_description" rows="3">{{ old('footer_description',$settings['footer_description']??'') }}</textarea></div>
 <div class="col-md-6"><label class="form-label">Copyright text</label><input class="form-control" name="footer_copyright" value="{{ old('footer_copyright',$settings['footer_copyright']??'') }}"></div>
-<div class="col-md-6 form-check mt-5"><input class="form-check-input" type="checkbox" name="sticky_header" value="1" id="sticky-header" @checked(old('sticky_header',$settings['sticky_header']??false))><label class="form-check-label" for="sticky-header">Enable sticky header</label></div>
+<div class="col-md-6 form-check mt-5"><input class="form-check-input" type="checkbox" name="sticky_header" value="1" id="sticky-header" @checked(old('sticky_header',$settings['sticky_header']??true))><label class="form-check-label" for="sticky-header">Enable sticky header</label></div>
 </div></div>
 <div class="content-card mb-4"><h4 class="mb-3">Social media</h4><div class="row g-3">
 @foreach(['facebook'=>'Facebook','instagram'=>'Instagram','linkedin'=>'LinkedIn','youtube'=>'YouTube','x'=>'X / Twitter'] as $key=>$label)
