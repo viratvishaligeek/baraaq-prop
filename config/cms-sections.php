@@ -253,6 +253,9 @@ $heroVariantFields = [
     ],
     'home-9' => [
         'eyebrow' => ['label' => 'Eyebrow', 'type' => 'text', 'max' => 120],
+        'heading_prefix' => ['label' => 'Heading prefix', 'type' => 'text', 'max' => 120],
+        'heading_highlight' => ['label' => 'Highlighted heading', 'type' => 'text', 'max' => 120],
+        'heading_suffix' => ['label' => 'Heading suffix', 'type' => 'text', 'max' => 120],
         'foreground_image' => ['label' => 'Foreground image', 'type' => 'image', 'max' => 2048],
     ],
     'home-10' => [
@@ -475,6 +478,9 @@ return [
     'home-9' => [
         'eyebrow' => 'Don’t Missed Out',
         'heading' => 'Discover Most Suitable Property',
+        'heading_prefix' => 'Discover',
+        'heading_highlight' => 'Most Suitable',
+        'heading_suffix' => 'Property',
         'description' => 'Explore top listings and let our expert agents guide you every step of the way to your new home.',
         'primary_button_label' => 'Explore Properties',
         'primary_button_url' => '/properties',
