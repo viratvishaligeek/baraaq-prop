@@ -145,7 +145,8 @@
                                                     </select>
                                                 @elseif ($schema['type'] === 'image')
                                                     @php
-                                                        $selectedMedia = $mediaLibrary->firstWhere('id', (int) $value);
+                                                        $selectedMedia = $section->mediaAttachments->firstWhere('field_key', $field)?->media
+                                                            ?? $mediaLibrary->firstWhere('id', (int) $value);
                                                         $imagePreview = $selectedMedia?->url ?: (\Illuminate\Support\Str::startsWith((string) $value, ['http://', 'https://', '/']) ? $value : ($value ? asset($value) : ''));
                                                     @endphp
                                                     <div class="d-flex gap-2 align-items-center mb-2">
