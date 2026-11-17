@@ -36,6 +36,27 @@ class HomepageSectionController extends Controller
             ->with('success', 'Section added to the draft homepage.');
     }
 
+
+    public function duplicate(Homepage $homepage, HomepageSection $section)
+    {
+        abort_unless($homepage->status === 'draft', 409);
+        abort_unless($section->homepage_id === $homepage->id, 404);
+
+        DB::transaction(function () use ($homepage, $section) {
+            $homepage->sections()
+                ->where('sort_order', '>', $section->sort_order)
+                ->lockForUpdate()
+                ->increment('sort_order');
+
+            $copy = $section->replicate();
+            $copy->instance_key = (string) Str::uuid();
+            $copy->sort_order = $section->sort_order + 1;
+            $copy->save();
+        });
+
+        return back()->with('success', 'Section duplicated in the draft homepage.');
+    }
+
     public function reorder(Request $request, Homepage $homepage)
     {
         abort_unless($homepage->status === 'draft', 409);
