@@ -33,6 +33,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
         Route::get('/', DashboardController::class)->name('dashboard');
 
+        Route::get('/analytics', [AnalyticsController::class, 'index'])->middleware('permission:analytics.view')->name('analytics.index');
+
         Route::get('/newsletters', [NewsletterController::class, 'index'])
             ->middleware('permission:newsletters.manage')
             ->name('newsletters.index');
