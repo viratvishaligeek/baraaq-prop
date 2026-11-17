@@ -44,6 +44,7 @@ class SectionDataResolver
 
         return match ($section->section_type) {
             'service-list' => ['services' => $this->services($config, $ids, $direction)],
+            'city-explore-gallery' => $this->properties($config, $ids, $direction),
             'category-slider' => ['categories' => $this->categories($config, $ids, $direction)],
             'team-slider' => ['teamMembers' => $this->teamMembers($config, $ids, $direction)],
             'testimonial-slider' => $this->testimonials($config, $ids, $direction),

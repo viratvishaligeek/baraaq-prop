@@ -20,6 +20,7 @@ class CmsWidgetRegistry
         'property-values-gallery' => 'Image galleries',
         'room-gallery' => 'Image galleries',
         'project-gallery' => 'Image galleries',
+        'city-explore-gallery' => 'Image galleries',
         'process-steps' => 'Process steps',
         'faq' => 'Frequently asked questions',
         'faq-accordion' => 'Frequently asked questions',
@@ -88,6 +89,7 @@ class CmsWidgetRegistry
     {
         return [
             'service-list' => ['label' => 'Services', 'table' => 'services', 'sort' => ['published_at', 'created_at', 'title'], 'slider' => false],
+            'city-explore-gallery' => ['label' => 'Featured property explorer', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price']],
             'property-slider-grid' => ['label' => 'Properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price']],
             'property-list' => ['label' => 'Properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price'], 'slider' => false],
             'testimonial-slider' => ['label' => 'Testimonials', 'table' => 'testimonials', 'sort' => ['sort_order', 'created_at', 'name']],

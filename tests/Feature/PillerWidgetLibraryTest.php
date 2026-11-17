@@ -24,7 +24,7 @@ class PillerWidgetLibraryTest extends TestCase
         $additionalKeys = [
             'faq.home-10', 'statistics.home-4', 'statistics.home-6', 'statistics.home-10',
             'contact.home-1', 'contact.home-2', 'contact.home-3',
-            'brands.grid', 'brands.marquee', 'gallery.home-5-rooms', 'gallery.home-10-projects', 'process.home-8', 'cta.download-home-2', 'cta.download-home-3',
+            'brands.grid', 'brands.marquee', 'gallery.home-5-rooms', 'gallery.home-6-projects', 'gallery.home-10-projects', 'gallery.home-1-city-explore', 'process.home-8', 'cta.download-home-2', 'cta.download-home-3',
             'cta.enquiry-home-3', 'cta.home-10',
         ];
 
@@ -78,7 +78,7 @@ class PillerWidgetLibraryTest extends TestCase
             }
         }
 
-        $this->assertSame(51, array_sum(array_map('count', $designGroups)));
+        $this->assertSame(53, array_sum(array_map('count', $designGroups)));
     }
 
     public function test_service_widget_query_honours_selected_ids_limit_sorting_and_published_scope(): void
