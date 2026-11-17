@@ -2,6 +2,7 @@
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
     $mapProperties = ($mapProperties ?? collect())->take(max(1, min(4, (int) ($sectionConfig['map_card_limit'] ?? 4))));
     $tabId = 'home3-search-'.$section->id;
+    $animateContent = $sectionConfig['animate_content'] ?? true;
 @endphp
 
 <div class="th-hero-wrapper bg-smoke hero-3 {{ $visibility }}" id="hero-{{ $section->id }}">
@@ -12,18 +13,18 @@
             <div class="col-xl-6 col-lg-12">
                 <div class="hero-style3">
                     <div class="title-area text-left mb-50">
-                        <p class="sub-title fadeinup wow" data-wow-delay="0.2s"><span class="double-line"></span> {{ $sectionConfig['eyebrow'] ?? '' }}</p>
-                        <h1 class="hero-title fadeinup wow" data-wow-delay="0.3s">{{ $sectionConfig['heading_prefix'] ?? '' }} <span class="title2 text-theme">{{ $sectionConfig['heading_highlight'] ?? '' }}</span> {{ $sectionConfig['heading_suffix'] ?? '' }}</h1>
+                        <p class="sub-title{{ $animateContent ? ' fadeinup wow' : '' }}" data-wow-delay="0.2s"><span class="double-line"></span> {{ $sectionConfig['eyebrow'] ?? '' }}</p>
+                        <h1 class="hero-title{{ $animateContent ? ' fadeinup wow' : '' }}" data-wow-delay="0.3s">{{ $sectionConfig['heading_prefix'] ?? '' }} <span class="title2 text-theme">{{ $sectionConfig['heading_highlight'] ?? '' }}</span> {{ $sectionConfig['heading_suffix'] ?? '' }}</h1>
                     </div>
                     <div class="hero-3-search-wrap">
-                        <ul class="nav nav-tabs custom fadeinup wow" id="{{ $tabId }}" role="tablist" data-wow-delay="0.5s">
+                        <ul class="nav nav-tabs custom{{ $animateContent ? ' fadeinup wow' : '' }}" id="{{ $tabId }}" role="tablist" data-wow-delay="0.5s">
                             @foreach(['buy' => 'buy_tab_label', 'sell' => 'sell_tab_label', 'rent' => 'rent_tab_label'] as $tab => $labelKey)
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link {{ $loop->first ? 'active' : '' }}" id="{{ $tabId }}-{{ $tab }}-tab" data-bs-toggle="tab" data-bs-target="#{{ $tabId }}-{{ $tab }}" type="button" role="tab" aria-controls="{{ $tabId }}-{{ $tab }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}">{{ $sectionConfig[$labelKey] ?? ucfirst($tab) }}</button>
                                 </li>
                             @endforeach
                         </ul>
-                        <div class="tab-content fadeinup wow" id="{{ $tabId }}-content" data-wow-delay="0.7s">
+                        <div class="tab-content{{ $animateContent ? ' fadeinup wow' : '' }}" id="{{ $tabId }}-content" data-wow-delay="0.7s">
                             @foreach(['buy' => 'sale', 'sell' => null, 'rent' => 'rent'] as $tab => $listingType)
                                 <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}" id="{{ $tabId }}-{{ $tab }}" role="tabpanel" aria-labelledby="{{ $tabId }}-{{ $tab }}-tab">
                                     <div class="hero-search-wrapper">
@@ -82,7 +83,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="hero-3-counter-wrap fadeinup wow" data-wow-delay="0.9s">
+                    <div class="hero-3-counter-wrap{{ $animateContent ? ' fadeinup wow' : '' }}" data-wow-delay="0.9s">
                         @for($i = 1; $i <= 4; $i++)
                             <div class="hero-3-counter-item">
                                 <h2 class="counter"><span class="counter-number">{{ $sectionConfig['counter_'.$i.'_value'] ?? 0 }}</span> {{ $sectionConfig['counter_'.$i.'_suffix'] ?? '' }}</h2>
@@ -93,7 +94,7 @@
                 </div>
             </div>
             <div class="col-xl-6 col-lg-12">
-                <div class="map-wrapper fadeinright wow" data-wow-delay="0.5s">
+                <div class="map-wrapper{{ $animateContent ? ' fadeinright wow' : '' }}" data-wow-delay="0.5s">
                     @if(!empty($sectionConfig['map_image']))<img src="{{ $sectionConfig['map_image'] }}" alt="Property locations map">@endif
                     <ul class="map-marker-wrap">
                         @foreach($mapProperties as $index => $property)
