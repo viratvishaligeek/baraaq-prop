@@ -41,20 +41,17 @@
                     <div class="col-md-6">
                         <label class="form-label">Photo</label>
                         <input class="form-control" type="file" name="photo" accept="image/*">
-                        <div class="col-md-6">
-                            <label class="form-label">Select testimonial photo from Media Library</label>
-                            <select class="form-select" name="photo_media_id">
-                                <option value="">Keep uploaded file / no change</option>
-                                @foreach ($mediaItems as $media)
-                                    <option value="{{ $media->id }}" @selected($media->path === $item->photo)>
-                                        {{ $media->original_name }}</option>
-                                @endforeach
-                            </select>
+                        <input type="hidden" name="photo_media_id" id="media-testimonial-photo"
+                            value="{{ old('photo_media_id', $mediaItems->firstWhere('path', $item->photo)?->id) }}"
+                            data-media-upload-input="upload-testimonial-photo">
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                            data-open-media-picker data-target="media-testimonial-photo">Choose from Media Library</button>
+                        <div class="mt-2">
+                            <img class="rounded" width="88" data-media-preview
+                                src="{{ $item->photo ? asset('storage/' . $item->photo) : '' }}"
+                                alt="Testimonial photo preview" @if (!$item->photo) hidden @endif>
+                            <span class="small text-muted" data-media-meta></span>
                         </div>
-                        @if ($item->photo)
-                            <img class="mt-2 rounded" width="72" src="{{ asset('storage/' . $item->photo) }}"
-                                alt="">
-                        @endif
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Sort order</label>
@@ -109,17 +106,15 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Photo</label>
-                        <input class="form-control" type="file" name="photo" accept="image/*">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Select photo from Media Library</label>
-                        <select class="form-select" name="photo_media_id">
-                            <option value="">Keep uploaded file / no change</option>
-                            @foreach ($mediaItems as $media)
-                                <option value="{{ $media->id }}" @selected($media->path === $item->photo)>
-                                    {{ $media->original_name }}</option>
-                            @endforeach
-                        </select>
+                        <input class="form-control" type="file" name="photo" id="upload-team-photo" accept="image/*">
+                        <input type="hidden" name="photo_media_id" id="media-team-photo"
+                            value="{{ old('photo_media_id', $mediaItems->firstWhere('path', $item->photo)?->id) }}"
+                            data-media-upload-input="upload-team-photo">
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                            data-open-media-picker data-target="media-team-photo">Choose from Media Library</button>
+                        <div class="mt-2"><img class="rounded" width="88" data-media-preview
+                            src="{{ $item->photo ? asset('storage/' . $item->photo) : '' }}"
+                            alt="Team photo preview" @if (!$item->photo) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Sort order</label>
@@ -156,22 +151,16 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Category icon</label>
-                        <input class="form-control" type="file" name="icon_path"
+                        <input class="form-control" type="file" name="icon_path" id="upload-category-icon"
                             accept="image/png,image/jpeg,image/webp">
-                        <div class="col-md-6">
-                            <label class="form-label">Select icon from Media Library</label>
-                            <select class="form-select" name="icon_media_id">
-                                <option value="">Keep uploaded file / no change</option>
-                                @foreach ($mediaItems as $media)
-                                    <option value="{{ $media->id }}" @selected($media->path === $item->icon_path)>
-                                        {{ $media->original_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        @if ($item->icon_path)
-                            <img src="{{ asset('storage/' . $item->icon_path) }}" alt=""
-                                class="mt-2 rounded border" style="width:64px;height:64px;object-fit:contain">
-                        @endif
+                        <input type="hidden" name="icon_media_id" id="media-category-icon"
+                            value="{{ old('icon_media_id', $mediaItems->firstWhere('path', $item->icon_path)?->id) }}"
+                            data-media-upload-input="upload-category-icon">
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                            data-open-media-picker data-target="media-category-icon">Choose from Media Library</button>
+                        <div class="mt-2"><img src="{{ $item->icon_path ? asset('storage/' . $item->icon_path) : '' }}"
+                            alt="Category icon preview" class="rounded border" style="width:64px;height:64px;object-fit:contain"
+                            data-media-preview @if (!$item->icon_path) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Sort order</label>
@@ -212,17 +201,18 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Image</label>
-                        <input class="form-control" type="file" name="image" accept="image/*">
+                        <input class="form-control" type="file" name="image" id="upload-banner-image" accept="image/*">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Select banner image from Media Library</label>
-                        <select class="form-select" name="image_media_id">
-                            <option value="">Keep uploaded file / no change</option>
-                            @foreach ($mediaItems as $media)
-                                <option value="{{ $media->id }}" @selected($media->path === $item->image)>
-                                    {{ $media->original_name }}</option>
-                            @endforeach
-                        </select>
+                        <input type="hidden" name="image_media_id" id="media-banner-image"
+                            value="{{ old('image_media_id', $mediaItems->firstWhere('path', $item->image)?->id) }}"
+                            data-media-upload-input="upload-banner-image">
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                            data-open-media-picker data-target="media-banner-image">Choose from Media Library</button>
+                        <div class="mt-2"><img src="{{ $item->image ? asset('storage/' . $item->image) : '' }}"
+                            alt="Banner image preview" class="rounded" style="max-width:180px;max-height:100px;object-fit:cover"
+                            data-media-preview @if (!$item->image) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Placement</label>
@@ -276,17 +266,18 @@
                     @if (in_array($type, ['posts', 'services']))
                         <div class="col-md-6">
                             <label class="form-label">Featured image</label>
-                            <input class="form-control" type="file" name="featured_image" accept="image/*">
+                            <input class="form-control" type="file" name="featured_image" id="upload-featured-image" accept="image/*">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Select featured image from Media Library</label>
-                            <select class="form-select" name="featured_image_media_id">
-                                <option value="">Keep uploaded file / no change</option>
-                                @foreach ($mediaItems as $media)
-                                    <option value="{{ $media->id }}" @selected($media->path === $item->featured_image)>
-                                        {{ $media->original_name }}</option>
-                                @endforeach
-                            </select>
+                            <input type="hidden" name="featured_image_media_id" id="media-featured-image"
+                                value="{{ old('featured_image_media_id', $mediaItems->firstWhere('path', $item->featured_image)?->id) }}"
+                                data-media-upload-input="upload-featured-image">
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                                data-open-media-picker data-target="media-featured-image">Choose from Media Library</button>
+                            <div class="mt-2"><img src="{{ $item->featured_image ? asset('storage/' . $item->featured_image) : '' }}"
+                                alt="Featured image preview" class="rounded" style="max-width:180px;max-height:100px;object-fit:cover"
+                                data-media-preview @if (!$item->featured_image) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                         </div>
                         @if ($type === 'posts')
                             <div class="col-12">
@@ -326,17 +317,18 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Social sharing image</label>
-                        <input class="form-control" type="file" name="og_image" accept="image/*">
+                        <input class="form-control" type="file" name="og_image" id="upload-og-image" accept="image/*">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Select social image from Media Library</label>
-                        <select class="form-select" name="og_image_media_id">
-                            <option value="">Keep uploaded file / no change</option>
-                            @foreach ($mediaItems as $media)
-                                <option value="{{ $media->id }}" @selected($media->path === $item->og_image)>
-                                    {{ $media->original_name }}</option>
-                            @endforeach
-                        </select>
+                        <input type="hidden" name="og_image_media_id" id="media-og-image"
+                            value="{{ old('og_image_media_id', $mediaItems->firstWhere('path', $item->og_image)?->id) }}"
+                            data-media-upload-input="upload-og-image">
+                        <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                            data-open-media-picker data-target="media-og-image">Choose from Media Library</button>
+                        <div class="mt-2"><img src="{{ $item->og_image ? asset('storage/' . $item->og_image) : '' }}"
+                            alt="Social sharing image preview" class="rounded" style="max-width:180px;max-height:100px;object-fit:cover"
+                            data-media-preview @if (!$item->og_image) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                     </div>
                 @endif
                 @if (in_array($type, ['posts', 'pages', 'services']))
