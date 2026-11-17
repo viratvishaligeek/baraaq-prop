@@ -1,0 +1,39 @@
+<?php
+
+return [
+    'featured-gallery.home-3' => [
+        'key' => 'featured-gallery.home-3',
+        'label' => 'Featured property gallery slider — Home 3',
+        'type' => 'featured-gallery-slider',
+        'source_design' => 'home-3',
+        'view' => 'frontend.sections.gallery.featured-home-3',
+        'defaults' => [
+            'video_url' => 'https://www.youtube.com/watch?v=_sI_Ps7JSEk',
+            'eyebrow' => 'Popular Properties',
+            'heading' => 'Featured Properties',
+            'items_limit' => 3,
+            'card_button_label' => 'View More',
+            'agent_role_label' => 'Sale Agent',
+            'vertical_spacing' => 'space',
+            'show_video_button' => true,
+            'show_agent' => true,
+            'show_mobile' => true,
+            'show_tablet' => true,
+            'show_desktop' => true,
+        ],
+        'fields' => [
+            'video_url' => ['label' => 'Gallery video URL', 'type' => 'url', 'max' => 2048],
+            'eyebrow' => ['label' => 'Property card eyebrow', 'type' => 'text', 'max' => 120],
+            'heading' => ['label' => 'Property card heading', 'type' => 'text', 'max' => 180],
+            'items_limit' => ['label' => 'Featured properties', 'type' => 'number', 'min' => 1, 'max' => 8],
+            'card_button_label' => ['label' => 'Property button label', 'type' => 'text', 'max' => 80],
+            'agent_role_label' => ['label' => 'Agent role label', 'type' => 'text', 'max' => 80],
+            'vertical_spacing' => ['label' => 'Section spacing', 'type' => 'select', 'options' => ['space' => 'Theme spacing', 'space-top' => 'Top only', 'space-bottom' => 'Bottom only', 'py-0' => 'No vertical spacing']],
+            'show_video_button' => ['label' => 'Show video popup button', 'type' => 'checkbox'],
+            'show_agent' => ['label' => 'Show listing agent', 'type' => 'checkbox'],
+            'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
+            'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
+            'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
+        ],
+    ],
+];
