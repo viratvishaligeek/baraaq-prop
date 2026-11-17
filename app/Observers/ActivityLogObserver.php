@@ -32,6 +32,8 @@ class ActivityLogObserver
         $label = data_get($model, 'title')
             ?: data_get($model, 'name')
             ?: data_get($model, 'email')
+            ?: data_get($model, 'key')
+            ?: data_get($model, 'slug')
             ?: 'ID '.$model->getKey();
 
         ActivityLog::create([
@@ -39,7 +41,7 @@ class ActivityLogObserver
             'subject_type' => $model::class,
             'subject_id' => $model->getKey(),
             'event' => $event,
-            'description' => Str::headline(class_basename($model)).' "'.$label.'" '.$event,
+            'description' => Str::limit(Str::headline(class_basename($model)).' "'.$label.'" '.$event, 255),
             'properties' => $changed === [] ? null : ['changed_fields' => $changed],
             'created_at' => now(),
         ]);
