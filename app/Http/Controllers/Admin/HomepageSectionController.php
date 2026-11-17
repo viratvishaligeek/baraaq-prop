@@ -70,15 +70,49 @@ class HomepageSectionController extends Controller
         abort_unless($definition, 422, 'The section is not registered.');
 
         $rules = ['config' => ['nullable', 'array']];
-        foreach ($definition['settings'] ?? [] as $field) {
-            $rules['config.'.$field] = ['nullable', 'string', 'max:180'];
+
+        foreach ($definition['fields'] ?? [] as $field => $schema) {
+            $fieldRules = ['sometimes', 'nullable'];
+
+            switch ($schema['type'] ?? 'text') {
+                case 'textarea':
+                case 'text':
+                case 'url':
+                case 'image':
+                    $fieldRules[] = 'string';
+                    $fieldRules[] = 'max:'.($schema['max'] ?? 255);
+                    break;
+
+                case 'color':
+                    $fieldRules[] = 'regex:/^#[0-9A-Fa-f]{6}$/';
+                    break;
+
+                case 'number':
+                    $fieldRules[] = 'integer';
+                    $fieldRules[] = 'min:'.($schema['min'] ?? 0);
+                    $fieldRules[] = 'max:'.($schema['max'] ?? 9999);
+                    break;
+
+                case 'checkbox':
+                    $fieldRules[] = 'boolean';
+                    break;
+
+                case 'select':
+                    $fieldRules[] = 'string';
+                    $fieldRules[] = 'in:'.implode(',', array_keys($schema['options'] ?? []));
+                    break;
+            }
+
+            $rules['config.'.$field] = $fieldRules;
         }
 
         $data = $request->validate($rules);
-        $config = array_intersect_key(
+        $allowedFields = array_keys($definition['fields'] ?? []);
+        $submittedConfig = array_intersect_key(
             $data['config'] ?? [],
-            array_flip($definition['settings'] ?? [])
+            array_flip($allowedFields)
         );
+        $config = array_merge($section->config ?? [], $submittedConfig);
 
         $section->update(['config' => $config]);
 
