@@ -141,19 +141,11 @@ class UniversalPageBuilderTest extends TestCase
         $page = Page::create([
             'title' => 'Builder render test',
             'slug' => 'builder-render-test',
-            'status' => 'published',
+            'status' => 'draft',
         ]);
 
-        $page->sections()->create([
-            'instance_key' => (string) Str::uuid(),
-            'section_key' => 'hero.index',
-            'section_type' => 'hero',
-            'source_design' => 'index',
-            'sort_order' => 1,
-            'is_enabled' => true,
-            'config' => [],
-            'data_source' => [],
-        ]);
+        app(PageBuilderService::class)->add($page, 'hero.index');
+        $page->update(['status' => 'published']);
 
         $this->get('/pages/builder-render-test')
             ->assertOk()
