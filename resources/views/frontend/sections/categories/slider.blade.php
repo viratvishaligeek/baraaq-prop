@@ -55,7 +55,7 @@
                                 </div>
                                 <h3 class="box-title"><a href="{{ url('/properties?category='.$category->slug) }}">{{ $category->name }}</a></h3>
                                 @if($sectionConfig['show_property_count'] ?? true)
-                                    <p class="box-subtitle">{{ $category->properties_count }} {{ \\Illuminate\\Support\\Str::plural('Property', $category->properties_count) }}</p>
+                                    <p class="box-subtitle">{{ $category->properties_count }} {{ \Illuminate\Support\Str::plural('Property', $category->properties_count) }}</p>
                                 @endif
                             </div>
                         </div>
