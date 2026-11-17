@@ -191,8 +191,8 @@ foreach ($heroDesigns as $design => $definition) {
         'type' => 'hero',
         'source_design' => $design,
         'view' => $definition['view'],
-        'defaults' => $design === 'home-2' ? $home2HeroDefaults : [],
-        'fields' => $design === 'home-2' ? $home2HeroFields : $heroFields,
+        'defaults' => $design === 'home-2' ? $home2HeroDefaults : ($design === 'home-3' ? $home3HeroDefaults : []),
+        'fields' => $design === 'home-2' ? $home2HeroFields : ($design === 'home-3' ? $home3HeroFields : $heroFields),
     ];
 }
 
