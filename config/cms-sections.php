@@ -247,6 +247,8 @@ $heroVariantFields = [
         'slide_3_background_image' => ['label' => 'Slide 3 background', 'type' => 'image', 'max' => 2048],
     ],
     'home-8' => [
+        'heading_prefix' => ['label' => 'First heading line', 'type' => 'text', 'max' => 120],
+        'heading_suffix' => ['label' => 'Second heading line', 'type' => 'text', 'max' => 120],
         'foreground_image' => ['label' => 'Foreground image', 'type' => 'image', 'max' => 2048],
     ],
     'home-9' => [
@@ -460,6 +462,8 @@ return [
     ],
     'home-8' => [
         'heading' => 'Find Your Local Home.',
+        'heading_prefix' => 'Find Your',
+        'heading_suffix' => 'Local Home.',
         'description' => 'Explore top listings and let our expert agents guide you every step of the way to your new home.',
         'primary_button_label' => 'Explore Properties',
         'primary_button_url' => '/properties',
