@@ -23,12 +23,15 @@ class ReusableSection extends Model
 
     protected function casts(): array
     {
-        return [
-            'config' => 'array',
-        ];
+        return ['config' => 'array'];
     }
 
-    public function mediaAttachments()\n    {\n        return $this->morphMany(MediaAttachment::class, 'mediable')->with('media');\n    }\n\n    public function homepageSections()
+    public function mediaAttachments()
+    {
+        return $this->morphMany(MediaAttachment::class, 'mediable')->with('media');
+    }
+
+    public function homepageSections()
     {
         return $this->hasMany(HomepageSection::class);
     }
