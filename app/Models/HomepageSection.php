@@ -33,7 +33,12 @@ class HomepageSection extends Model
         return $this->belongsTo(Homepage::class);
     }
 
-    public function mediaAttachments()\n    {\n        return $this->morphMany(MediaAttachment::class, 'mediable')->with('media');\n    }\n\n    public function reusableSection()
+    public function mediaAttachments()
+    {
+        return $this->morphMany(MediaAttachment::class, 'mediable')->with('media');
+    }
+
+    public function reusableSection()
     {
         return $this->belongsTo(ReusableSection::class);
     }
