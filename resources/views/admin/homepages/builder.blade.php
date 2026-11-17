@@ -10,6 +10,7 @@
     </div>
     <div class="d-flex gap-2">
         <a href="{{ route('admin.homepages.index') }}" class="btn btn-light">Back</a>
+        <a href="{{ route('admin.homepages.preview', $homepage) }}" class="btn btn-outline-primary" target="_blank" rel="noopener">Preview draft</a>
         <form method="POST" action="{{ route('admin.homepages.publish', $homepage) }}" onsubmit="return confirm('Publish this draft? It will not become the live homepage until you select it as the default.')">
             @csrf
             @method('PATCH')
