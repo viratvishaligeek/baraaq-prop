@@ -45,7 +45,7 @@
             @endif
         </div>
         <div class="slider-area">
-            <div class="swiper th-slider" id="categorySlider-{{ $section->id }}" data-slider-options='@json($sliderOptions)'>
+            <div class="swiper th-slider" id="categorySlider-{{ $section->id }}" data-slider-options='{{ $sliderOptions }}'>
                 <div class="swiper-wrapper">
                     @foreach(($categories ?? collect())->take((int) ($sectionConfig['items_limit'] ?? 7)) as $category)
                         <div class="swiper-slide">
@@ -53,7 +53,7 @@
                                 <div class="box-icon">
                                     <img src="{{ $category->icon_path ? asset('storage/'.$category->icon_path) : asset('theme-assets/img/icon/category_card_1.svg') }}" alt="{{ $category->name }}">
                                 </div>
-                                <h3 class="box-title"><a href="{{ route('properties.index', ['category' => $category->slug]) }}">{{ $category->name }}</a></h3>
+                                <h3 class="box-title"><a href="{{ url('/properties?category='.$category->slug) }}">{{ $category->name }}</a></h3>
                                 @if($sectionConfig['show_property_count'] ?? true)
                                     <p class="box-subtitle">{{ $category->properties_count }} {{ IlluminateSupportStr::plural('Property', $category->properties_count) }}</p>
                                 @endif
