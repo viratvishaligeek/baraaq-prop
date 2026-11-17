@@ -10,6 +10,8 @@ return [
         'defaults' => [
             'eyebrow' => 'Properties Values',
             'heading' => 'Trusted by 100+ Million Buyers',
+            'vertical_spacing' => 'space',
+            'animate_cards' => true,
             'item_1_image' => '/theme-assets/img/property-values/property-values-2-1.jpg',
             'item_1_title' => 'Top Rated Villa',
             'item_1_text' => 'Find the very best villas with in-depth reviews and ratings from multiple experts.',
@@ -34,6 +36,10 @@ return [
         'fields' => [
             'eyebrow' => ['label' => 'Eyebrow', 'type' => 'text', 'max' => 120],
             'heading' => ['label' => 'Heading', 'type' => 'text', 'max' => 180],
+            'vertical_spacing' => ['label' => 'Section spacing', 'type' => 'select', 'options' => ['space' => 'Theme spacing', 'space-top' => 'Top only', 'space-bottom' => 'Bottom only', 'py-0' => 'No vertical spacing']],
+            'background_color' => ['label' => 'Background color', 'type' => 'color'],
+            'background_image' => ['label' => 'Background image', 'type' => 'image', 'max' => 2048],
+            'animate_cards' => ['label' => 'Enable card entrance animations', 'type' => 'checkbox'],
             'item_1_image' => ['label' => 'Card 1 image', 'type' => 'image', 'max' => 2048],
             'item_1_title' => ['label' => 'Card 1 title', 'type' => 'text', 'max' => 150],
             'item_1_text' => ['label' => 'Card 1 description', 'type' => 'textarea', 'max' => 500],
