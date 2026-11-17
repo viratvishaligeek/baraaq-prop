@@ -65,7 +65,7 @@ return [
         'services.home-6',
         'testimonials.home-3',
         'team.home-3',
-        'blog.home-3',
+        'blog.home-6',
     ],
     'home-7' => [
         'categories.home-7',
