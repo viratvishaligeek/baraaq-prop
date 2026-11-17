@@ -24,7 +24,7 @@ class PropertyController extends Controller
         $base = Str::slug($value) ?: Str::random(8);
         $slug = $base;
         $i = 2;
-        while (Property::where('slug', $slug)->when($ignoreId, fn ($q) => $q->whereKeyNot($ignoreId))->exists()) {
+        while (Property::withTrashed()->where('slug', $slug)->when($ignoreId, fn ($q) => $q->whereKeyNot($ignoreId))->exists()) {
             $slug = $base.'-'.$i++;
         }
         return $slug;
