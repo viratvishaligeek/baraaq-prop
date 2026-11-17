@@ -64,6 +64,8 @@ class HomepageController extends Controller
                         $sectionKeys[] = 'download.home-2';
                         $sectionKeys[] = 'marquee.home-2';
                         $sectionKeys[] = 'featured-properties.home-2';
+                        $sectionKeys[] = 'testimonials.home-2';
+                        $sectionKeys[] = 'faq.home-2';
                     }
                 }
 
