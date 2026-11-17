@@ -53,6 +53,13 @@ class HomepageSectionController extends Controller
             $copy->instance_key = (string) Str::uuid();
             $copy->sort_order = $section->sort_order + 1;
             $copy->save();
+
+            foreach ($section->mediaAttachments as $attachment) {
+                $copy->mediaAttachments()->create([
+                    'field_key' => $attachment->field_key,
+                    'media_id' => $attachment->media_id,
+                ]);
+            }
         });
 
         return back()->with('success', 'Section duplicated in the draft homepage.');
