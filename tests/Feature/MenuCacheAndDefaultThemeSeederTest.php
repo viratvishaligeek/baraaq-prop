@@ -93,6 +93,14 @@ class MenuCacheAndDefaultThemeSeederTest extends TestCase
             'key' => 'footer_menu_location',
             'value' => 'footer',
         ]);
+        $this->assertDatabaseHas('settings', [
+            'key' => 'header_cta_label',
+            'value' => 'Browse Properties',
+        ]);
+        $this->assertDatabaseHas('settings', [
+            'key' => 'header_cta_url',
+            'value' => '/properties',
+        ]);
         $this->assertSame(8, Menu::where('location', 'primary')->first()->allItems()->count());
         $this->assertSame(6, Menu::where('location', 'footer')->first()->allItems()->count());
         $this->assertDatabaseHas('categories', ['slug' => 'apartment', 'type' => 'property']);
