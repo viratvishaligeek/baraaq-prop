@@ -280,6 +280,7 @@ $sections = array_merge($sections, require __DIR__.'/cms-sections/testimonials-h
 $sections = array_merge($sections, require __DIR__.'/cms-sections/enquiry-home-3.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/marquee-home-3.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/blog-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/blog-piller.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/brands-home-3.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/brands-piller.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/contact-piller.php');
