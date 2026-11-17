@@ -7,6 +7,7 @@ use App\Models\Homepage;
 use App\Models\Banner;
 use App\Models\Post;
 use App\Models\Property;
+use App\Models\ReusableSection;
 use App\Models\TeamMember;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +29,8 @@ class HomepageController extends Controller
         abort_unless($homepage->status === 'draft', 409, 'Create a draft copy before editing a published homepage.');
 
         return view('admin.homepages.builder', [
-            'homepage' => $homepage->load('sections'),
+            'homepage' => $homepage->load('sections.reusableSection'),
+            'reusableSections' => ReusableSection::query()->where('status', 'published')->orderBy('name')->get(),
             'availableSections' => config('cms-sections.sections', []),
         ]);
     }
