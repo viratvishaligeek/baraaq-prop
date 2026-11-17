@@ -7,6 +7,16 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Enquiry;
 use App\Models\Menu;
+use App\Models\MenuItem;
+use App\Models\Media;
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\Homepage;
+use App\Models\HomepageSection;
+use App\Models\ReusableSection;
+use App\Models\WidgetArea;
+use App\Models\WidgetAreaItem;
+use App\Models\Widget;
 use App\Models\Page;
 use App\Models\Post;
 use App\Models\Property;
@@ -38,6 +48,17 @@ class AppServiceProvider extends ServiceProvider
             Comment::class,
             Enquiry::class,
             Menu::class,
+            MenuItem::class,
+            Media::class,
+            Permission::class,
+            Role::class,
+            Homepage::class,
+            HomepageSection::class,
+            ReusableSection::class,
+            WidgetArea::class,
+            WidgetAreaItem::class,
+            Widget::class,
+            Setting::class,
             Page::class,
             Post::class,
             Property::class,
