@@ -9,7 +9,7 @@
         <div class="row gy-40 gx-100 justify-content-center align-items-end">
             <div class="col-lg-4">
                 <div class="testi-3-rating me-xxl-5">
-                    <div class="rating-count"><h2>{{ $sectionConfig['rating'] ?? $averageRating }}</h2><div class="star-shape spin">@if(!empty($sectionConfig['rating_shape_image']))<img src="{{ $sectionConfig['rating_shape_image'] }}" alt="Decorative shape">@endif</div></div>
+                    <div class="rating-count"><h2>{{ $sectionConfig['rating'] ?? ($averageRating > 0 ? number_format($averageRating, 1) : '—') }}</h2><div class="star-shape spin">@if(!empty($sectionConfig['rating_shape_image']))<img src="{{ $sectionConfig['rating_shape_image'] }}" alt="Decorative shape">@endif</div></div>
                     <div class="reviews-star">
                         <div class="th-social"><i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i></div>
                         <h4 class="review-title"><span class="number">Trust-score on <span class="counter-number">{{ $sectionConfig['review_count'] ?? $reviewCount }}</span>+</span> reviews</h4>
