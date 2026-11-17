@@ -62,11 +62,22 @@ The repository/API environment does not render a browser. The following must rem
 No pixel-perfect or browser-interaction verification is claimed by this inventory.
 
 
-## Asset issue discovered during source inspection
+## Asset inventory and source/public parity
 
-- The original HTML references `assets/js/app.min.js`, and the public copy is `public/theme-assets/js/app.min.js`.
-- Both source and public copies currently return an empty file (zero bytes) with the same Git blob SHA. This is not a change introduced by the CMS work; the source copy on `main` is also empty.
-- `assets/js/main.js` references Swiper, GSAP, ScrollTrigger, SplitText, Isotope and other theme plugins. The original page script list only includes jQuery, the empty `app.min.js`, WOW, Nice Select and `main.js`. The required vendor plugin implementations were not found among those HTML script references.
-- Font Awesome CSS declares local Pro font files for brands, duotone, light, regular, solid and thin weights under `assets/fonts/fontawesome/`. The HTML also loads Inter and Plus Jakarta Sans from Google Fonts.
-- This is a genuine frontend verification blocker: do not report carousel, animation, filtering, slider or related theme interactions as working until the missing vendor bundle/dependencies are located or replaced with compatible licensed assets. Do not silently fabricate a replacement bundle.
+A recursive Git tree inventory of `theme-files-html/assets/` contains **476 files**:
+
+- 3 CSS files: `app.min.css`, `fontawesome.min.css`, `style.css`.
+- 5 JavaScript files: `app.min.js`, `main.js`, `nice-select.min.js`, `wow.min.js`, and `vendor/jquery-3.7.1.min.js`.
+- 12 Font Awesome font files: six `.woff2` and six `.ttf` variants for brands, duotone, light, regular, solid and thin.
+- 454 image assets across the about, agencies, background, blog, brand, contact, download, error, city, favicon, gallery, hero, icon, normal, pages, popular, product, project, property, service, shape, team, testimonial and why folders.
+
+The recursive Git tree comparison confirms that all **476 source asset files have matching public copies** under `public/theme-assets/`: zero missing files, zero extra files and zero blob-SHA mismatches. This means the repository already reuses the original theme assets without a need to upload or duplicate them.
+
+The original HTML loads Inter and Plus Jakarta Sans from Google Fonts and references the shared CSS/JS files listed above. `main.js` contains references to Swiper, GSAP, ScrollTrigger, SplitText, Isotope and other theme plugins. GitHub's directory metadata confirms `app.min.js` is a 1,116,141-byte file; the text-file fetch interface returned an empty text payload for this large file, so its contents could not be inspected through that interface. **Do not classify it as an empty or missing bundle.**
+
+### Remaining asset verification
+
+- Source/public file parity is verified by Git blob SHA, but binary images and font files were not individually decoded or visually rendered.
+- The contents of the large `app.min.js` bundle still need inspection in a local checkout or browser.
+- All ten pages still need desktop/tablet/mobile screenshot comparison and interaction testing. No browser fidelity result is claimed here.
 
