@@ -219,7 +219,7 @@ Counts below are **minimum identified literal section wrappers** plus separately
 |---|---:|---:|---|---|---|---|
 | index | 7 + hero | 4 (hero, properties, team, blog) | Partial; hero still incomplete | Banner, properties, team, posts | Source-level only | Pending |
 | home-2 | 7 + hero, plus about, benefits, neighborhood, download, marquee and FAQ div blocks | 13 (hero, categories, about, benefits, property grid, neighborhood gallery, property values, team, download, marquee, featured property carousel, testimonials, FAQ) | Twelve non-hero section schemas plus partial hero settings | Property categories/counts, published properties and active team records | Source-level only | Pending |
-| home-3 | 5 explicit wrappers + identified div-based blocks | 6 (hero, categories, property grid, amenities carousel, team carousel, neighborhood gallery) | Five non-hero schemas/forms registered; full field audit pending | Property categories/counts, published properties and active team records | Source-level only | Pending |
+| home-3 | 5 explicit wrappers + 9 div-based blocks (14 major blocks total) | 6 (hero, categories, property grid, amenities carousel, team carousel, neighborhood gallery) | Five non-hero schemas/forms registered; full field audit pending | Property categories/counts, published properties and active team records | Source-level only | Pending |
 | home-4 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
 | home-5 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
 | home-6 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
