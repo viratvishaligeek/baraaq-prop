@@ -64,7 +64,7 @@
                                     @if($sectionConfig['show_agent'] ?? true)
                                         <div class="agent-wrap">
                                             <div class="agent-thumb"><img src="{{ asset('theme-assets/img/popular/agent-thumb-'.($loop->iteration % 2 ? '1' : '2').'.jpg') }}" alt="Agent"></div>
-                                            <div class="agent-content"><h4 class="box-title">{{ $property->creator?->name ?? 'Property Consultant' }}</h4><p class="box-text">Sale Agent</p></div>
+                                            <div class="agent-content"><h4 class="box-title">{{ $property->creator?->name ?? 'Property Consultant' }}</h4><p class="box-text">{{ $property->listing_type === 'rent' ? 'Rental Agent' : 'Sale Agent' }}</p></div>
                                         </div>
                                     @endif
                                 </div>
