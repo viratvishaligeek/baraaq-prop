@@ -87,6 +87,41 @@ class HomepageController extends Controller
             ->with('success', 'Draft copy created. The published homepage has not changed.');
     }
 
+
+    public function preview(Homepage $homepage)
+    {
+        abort_unless($homepage->status === 'draft', 404);
+
+        return view('frontend.home-builder', [
+            'homepage' => $homepage->load(['sections.reusableSection']),
+            'properties' => Property::published()
+                ->with('category:id,name')
+                ->latest('published_at')
+                ->limit(6)
+                ->get(),
+            'featuredProperties' => Property::published()
+                ->where('is_featured', true)
+                ->with('category:id,name')
+                ->latest('published_at')
+                ->limit(4)
+                ->get(),
+            'banners' => Banner::visible()
+                ->where('placement', 'home')
+                ->orderBy('sort_order')
+                ->get(),
+            'posts' => Post::published()
+                ->with('author:id,name')
+                ->latest('published_at')
+                ->limit(3)
+                ->get(),
+            'teamMembers' => TeamMember::where('is_active', true)
+                ->orderBy('sort_order')
+                ->limit(4)
+                ->get(),
+            'isHomepagePreview' => true,
+        ]);
+    }
+
     public function publish(Homepage $homepage)
     {
         abort_unless($homepage->status === 'draft', 409, 'Only a draft homepage can be published.');
