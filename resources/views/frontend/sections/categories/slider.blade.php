@@ -51,7 +51,7 @@
                         <div class="swiper-slide">
                             <div class="category-card {{ $variant }}">
                                 <div class="box-icon">
-                                    <img src="{{ $category->icon_path ? asset('storage/'.$category->icon_path) : asset('theme-assets/img/icon/category_card_'.min(6, $loop->iteration).'.svg') }}" alt="{{ $category->name }}">
+                                    <img src="{{ $category->icon_path ? asset('storage/'.$category->icon_path) : asset('theme-assets/img/icon/category_card_'.((($loop->iteration - 1) % 6) + 1).'.svg') }}" alt="{{ $category->name }}">
                                 </div>
                                 <h3 class="box-title"><a href="{{ url('/properties?category='.$category->id) }}">{{ $category->name }}</a></h3>
                                 @if($sectionConfig['show_property_count'] ?? true)
