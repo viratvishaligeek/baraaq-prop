@@ -107,6 +107,61 @@ for ($i = 1; $i <= 4; $i++) {
     $home2HeroFields['quick_type_'.$i.'_icon'] = ['label' => 'Quick type '.$i.' icon', 'type' => 'image', 'max' => 2048];
 }
 
+$home3HeroDefaults = [
+    'eyebrow' => 'Welcome To Pillar',
+    'heading_prefix' => 'Find Your Perfect',
+    'heading_highlight' => 'Home',
+    'heading_suffix' => 'to Life Spend',
+    'map_image' => '/theme-assets/img/hero/hero-3-right.jpg',
+    'counter_1_value' => 1950, 'counter_1_suffix' => '+', 'counter_1_label' => 'Project Handover',
+    'counter_2_value' => 2, 'counter_2_suffix' => 'M +', 'counter_2_label' => 'Monthly Visitors',
+    'counter_3_value' => 850, 'counter_3_suffix' => '+', 'counter_3_label' => 'Property Ready',
+    'counter_4_value' => 98, 'counter_4_suffix' => '%', 'counter_4_label' => 'Happy Customers',
+    'buy_tab_label' => 'Buy', 'sell_tab_label' => 'Sell', 'rent_tab_label' => 'Rent',
+    'keyword_label' => 'Keyword', 'keyword_placeholder' => 'Looking For?',
+    'location_label' => 'Location', 'location_placeholder' => 'Find a location',
+    'pricing_label' => 'Pricing', 'pricing_placeholder' => '$0 - $8,99500',
+    'advanced_label' => 'Advanced', 'search_button_label' => 'Search',
+    'advanced_type_label' => 'Property Type', 'advanced_bedrooms_label' => 'Max of Bedrooms',
+    'advanced_location_label' => 'Location',
+    'map_card_limit' => 4,
+    'show_mobile' => true, 'show_tablet' => true, 'show_desktop' => true,
+];
+$home3HeroFields = [
+    'eyebrow' => ['label' => 'Eyebrow', 'type' => 'text', 'max' => 120],
+    'heading_prefix' => ['label' => 'Heading prefix', 'type' => 'text', 'max' => 100],
+    'heading_highlight' => ['label' => 'Highlighted heading', 'type' => 'text', 'max' => 100],
+    'heading_suffix' => ['label' => 'Heading suffix', 'type' => 'text', 'max' => 150],
+    'map_image' => ['label' => 'Map-side hero image', 'type' => 'image', 'max' => 2048],
+    'buy_tab_label' => ['label' => 'Buy tab label', 'type' => 'text', 'max' => 40],
+    'sell_tab_label' => ['label' => 'Sell tab label', 'type' => 'text', 'max' => 40],
+    'rent_tab_label' => ['label' => 'Rent tab label', 'type' => 'text', 'max' => 40],
+    'keyword_label' => ['label' => 'Keyword label', 'type' => 'text', 'max' => 60],
+    'keyword_placeholder' => ['label' => 'Keyword placeholder', 'type' => 'text', 'max' => 100],
+    'location_label' => ['label' => 'Location label', 'type' => 'text', 'max' => 60],
+    'location_placeholder' => ['label' => 'Location placeholder', 'type' => 'text', 'max' => 100],
+    'pricing_label' => ['label' => 'Pricing label', 'type' => 'text', 'max' => 60],
+    'pricing_placeholder' => ['label' => 'Pricing placeholder', 'type' => 'text', 'max' => 100],
+    'advanced_label' => ['label' => 'Advanced search label', 'type' => 'text', 'max' => 60],
+    'search_button_label' => ['label' => 'Search button label', 'type' => 'text', 'max' => 60],
+    'advanced_type_label' => ['label' => 'Advanced property type label', 'type' => 'text', 'max' => 80],
+    'advanced_bedrooms_label' => ['label' => 'Advanced bedrooms label', 'type' => 'text', 'max' => 80],
+    'advanced_location_label' => ['label' => 'Advanced location label', 'type' => 'text', 'max' => 80],
+    'map_card_limit' => ['label' => 'Map property cards', 'type' => 'number', 'min' => 1, 'max' => 4],
+    'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
+    'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
+    'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
+];
+for ($i = 1; $i <= 4; $i++) {
+    $home3HeroDefaults['map_marker_'.$i.'_x'] = [18, 38, 61, 80][$i - 1];
+    $home3HeroDefaults['map_marker_'.$i.'_y'] = [24, 66, 34, 72][$i - 1];
+    $home3HeroFields['counter_'.$i.'_value'] = ['label' => 'Counter '.$i.' value', 'type' => 'number', 'min' => 0, 'max' => 9999999];
+    $home3HeroFields['counter_'.$i.'_suffix'] = ['label' => 'Counter '.$i.' suffix', 'type' => 'text', 'max' => 12];
+    $home3HeroFields['counter_'.$i.'_label'] = ['label' => 'Counter '.$i.' label', 'type' => 'text', 'max' => 80];
+    $home3HeroFields['map_marker_'.$i.'_x'] = ['label' => 'Map marker '.$i.' horizontal position (%)', 'type' => 'number', 'min' => 0, 'max' => 100];
+    $home3HeroFields['map_marker_'.$i.'_y'] = ['label' => 'Map marker '.$i.' vertical position (%)', 'type' => 'number', 'min' => 0, 'max' => 100];
+}
+
 $sections = [];
 
 foreach ($heroDesigns as $design => $definition) {
