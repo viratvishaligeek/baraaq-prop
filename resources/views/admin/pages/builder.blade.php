@@ -34,11 +34,12 @@
         <div class="col-xl-3">
             <div class="content-card">
                 <h2 class="section-title">Widget library</h2>
-                <p class="small text-muted">Choose a widget and one of its registered Piller designs. The design controls the original theme markup; the instance settings control its content and query.</p>
+                <p class="small text-muted">Choose an existing Piller section design. No replacement layouts are generated.</p>
+                <input type="search" class="form-control form-control-sm mb-3" id="widget-library-search" placeholder="Search sections and designs…" aria-label="Search widget library">
                 @foreach ($widgetGroups as $group => $widgets)
                     <h3 class="h6 mt-3">{{ $group }}</h3>
                     @foreach ($widgets as $widget)
-                        <form method="POST" action="{{ route('admin.pages.widgets.add', $page) }}" class="border rounded p-2 mb-2 d-flex align-items-center justify-content-between gap-2">
+                        <form method="POST" action="{{ route('admin.pages.widgets.add', $page) }}" class="border rounded p-2 mb-2 d-flex align-items-center justify-content-between gap-2 widget-library-item" data-search="{{ strtolower($widget['label'].' '.$widget['design'].' '.$widget['type'].' '.$widget['key']) }}">
                             @csrf
                             <input type="hidden" name="section_key" value="{{ $widget['key'] }}">
                             <div>
@@ -52,7 +53,7 @@
             </div>
         </div>
 
-        <div class="col-xl-9">
+        <div class="col-xl-9"><div class="row g-3"><div class="col-xl-7">
             <div class="content-card">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="section-title mb-0">Page canvas</h2>
@@ -79,7 +80,13 @@
                                 loading="eager"></iframe>
                         </div>
                     </div>
-                    <div id="page-builder-list" data-sort-url="{{ route('admin.pages.widgets.reorder', $page) }}">
+                </div>
+                </div>
+                <div class="col-xl-5">
+                    <div class="content-card">
+                        <h2 class="section-title">Section inspector</h2>
+                        <p class="small text-muted">Select a section on the page preview to jump to its settings. Save each section after editing.</p>
+                        <div id="page-builder-list" data-sort-url="{{ route('admin.pages.widgets.reorder', $page) }}" style="max-height:1000px;overflow:auto;padding-right:4px">
                     @forelse ($page->sections as $section)
                         @php
                             $definition = $widgetDefinitions[$section->section_key] ?? null;
@@ -130,7 +137,6 @@
                                                         $selectedMedia = $mediaLibrary->firstWhere('id', (int) $value);
                                                         $imagePreview = $selectedMedia?->url ?: (\Illuminate\Support\Str::startsWith((string) $value, ['http://', 'https://', '/']) ? $value : ($value ? asset($value) : ''));
                                                     @endphp
-                                                    <input class="form-control form-control-sm mb-2" name="config[{{ $field }}]" type="hidden" value="{{ $value }}">
                                                     <div class="d-flex gap-2 align-items-center mb-2">
                                                         <select class="form-select form-select-sm" aria-label="Choose image from Media Library"
                                                             data-media-select
@@ -186,6 +192,7 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
 @endsection
 
@@ -228,6 +235,12 @@ document.addEventListener('DOMContentLoaded', () => {
             image.style.display = 'none';
             const empty = button.closest('.col-12, .col-md-6, .col-md-3, .col-md-4')?.querySelector('[data-empty-image]');
             if (empty) empty.style.display = 'inline';
+        });
+    });
+    document.getElementById('widget-library-search')?.addEventListener('input', event => {
+        const term = event.target.value.trim().toLowerCase();
+        document.querySelectorAll('.widget-library-item').forEach(item => {
+            item.hidden = !item.dataset.search.includes(term);
         });
     });
     const list = document.getElementById('page-builder-list');
