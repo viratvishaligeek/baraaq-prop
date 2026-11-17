@@ -19,8 +19,9 @@ class PillerWidgetLibraryTest extends TestCase
 
         $aboutKeys = ['about.home-4', 'about.home-7', 'about.home-8', 'about.home-9', 'about.home-10'];
         $serviceKeys = ['services.home-4', 'services.home-6', 'services.home-9', 'services.home-10'];
+        $testimonialKeys = ['testimonials.index', 'testimonials.home-4', 'testimonials.home-10'];
 
-        foreach (array_merge($aboutKeys, $serviceKeys) as $key) {
+        foreach (array_merge($aboutKeys, $serviceKeys, $testimonialKeys) as $key) {
             $definition = $registry->find($key);
 
             $this->assertNotNull($definition, $key.' should be registered');
@@ -32,6 +33,8 @@ class PillerWidgetLibraryTest extends TestCase
 
         $this->assertCount(5, $aboutViews);
         $this->assertCount(4, $serviceViews);
+        $testimonialViews = collect($testimonialKeys)->map(fn ($key) => $registry->find($key)['view'])->unique();
+        $this->assertCount(3, $testimonialViews);
     }
 
     public function test_service_widget_query_honours_selected_ids_limit_sorting_and_published_scope(): void

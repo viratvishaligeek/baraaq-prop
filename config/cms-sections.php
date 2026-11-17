@@ -278,6 +278,7 @@ $sections = array_merge($sections, require __DIR__.'/cms-sections/brands-home-3.
 $sections = array_merge($sections, require __DIR__.'/cms-sections/download.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/marquee.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/testimonials.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/testimonials-piller.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/featured-properties.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/blog.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/search.php');

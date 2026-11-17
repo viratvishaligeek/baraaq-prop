@@ -22,8 +22,8 @@ This inventory records the source HTML review for the ten original homepage desi
 - About: Home 4 editorial mission/vision, Home 7 split statement/image story, Home 8 local agency/statistics, Home 9 mission/vision triptych, Home 10 modern image panorama.
 - Services: Home 4 icon cards, Home 6 editorial feature grid, Home 9 four-column service cards, Home 10 asymmetric modern service grid.
 
-The About and Services designs use the existing Piller theme class system and theme asset paths. Their text, images, buttons, counters, visibility and spacing are controlled through the existing section `config` JSON. Services read published `services` records through the existing Eloquent model and shared section data resolver.
+Added Testimonials designs: Home 1 classic centered slider, Home 4 editorial split cards, and Home 10 modern card grid. The About, Services and Testimonials designs use the existing Piller theme class system and theme asset paths. Their text, images, buttons, counters, visibility and spacing are controlled through the existing section `config` JSON. Services read published `services` records through the existing Eloquent model and shared section data resolver.
 
 ## Remaining conversion work
 
-This is an inventory and progress record, not a claim that every section is migrated. Dedicated work remains for the complete target variations for Testimonials, Categories, FAQ, CTA, Statistics, Contact and Client Logos, plus the room/project galleries and the original homepage-specific testimonial layouts. Existing original HTML files and assets must remain until those layouts have been implemented and visually verified.
+This is an inventory and progress record, not a claim that every section is migrated. Dedicated work remains for the complete target variations for Categories, FAQ, CTA, Statistics, Contact and Client Logos, plus room/project galleries and further original homepage-specific layouts. Testimonials now has five registered designs in total when the existing Home 2 and Home 3 templates are included. Existing original HTML files and assets must remain until those layouts have been implemented and visually verified.
