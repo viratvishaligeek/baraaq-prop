@@ -105,6 +105,7 @@ $sections = array_merge($sections, require __DIR__.'/cms-sections/properties.php
 $sections = array_merge($sections, require __DIR__.'/cms-sections/faq.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/download.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/marquee.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/testimonials.php');
 
 return [
     'sections' => $sections,
