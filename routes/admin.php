@@ -34,6 +34,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->middleware('permission:newsletters.manage')
             ->name('newsletters.destroy');
 
+        Route::get('/homepages', [\\App\\Http\\Controllers\\Admin\\HomepageController::class, 'index'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.index');
+        Route::patch('/homepages/{homepage}/default', [\\App\\Http\\Controllers\\Admin\\HomepageController::class, 'setDefault'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.default');
+
         Route::get('/seo', [SeoController::class, 'index'])
             ->middleware('permission:settings.manage')
             ->name('seo.index');
