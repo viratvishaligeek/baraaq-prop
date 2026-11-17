@@ -25,9 +25,11 @@
             <div class="col-lg-8">
                 <div class="swiper th-slider" id="brand-slider-{{ $section->id }}" data-slider-options='{{ $options }}'>
                     <div class="swiper-wrapper">
-                        @foreach($items as $item)
-                            <div class="swiper-slide"><div class="brand-box"><a href="{{ $item['url'] }}"><img src="{{ $item['image'] }}" alt="Brand logo"></a></div></div>
-                        @endforeach
+                        @for($repeat = 0; $repeat < 2; $repeat++)
+                            @foreach($items as $item)
+                                <div class="swiper-slide"><div class="brand-box"><a href="{{ $item['url'] }}"><img src="{{ $item['image'] }}" alt="Brand logo"></a></div></div>
+                            @endforeach
+                        @endfor
                     </div>
                 </div>
             </div>
