@@ -187,7 +187,10 @@ class HomepageSectionController extends Controller
         abort_unless($homepage->status === 'draft', 409);
         abort_unless($section->homepage_id === $homepage->id, 404);
 
-        $section->delete();
+        DB::transaction(function () use ($section) {
+            $section->mediaAttachments()->delete();
+            $section->delete();
+        });
 
         return back()->with('success', 'Section removed from the draft homepage.');
     }
