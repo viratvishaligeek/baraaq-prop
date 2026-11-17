@@ -7,16 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class HomepageSection extends Model
 {
     protected $fillable = [
-        'homepage_id',
-        'reusable_section_id',
-        'instance_key',
-        'section_key',
-        'section_type',
-        'source_design',
-        'sort_order',
-        'is_enabled',
-        'config',
-        'data_source',
+        'homepage_id', 'reusable_section_id', 'instance_key', 'section_key',
+        'section_type', 'source_design', 'sort_order', 'is_enabled', 'config', 'data_source',
     ];
 
     protected function casts(): array
@@ -26,6 +18,13 @@ class HomepageSection extends Model
             'config' => 'array',
             'data_source' => 'array',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::deleting(function (HomepageSection $section) {
+            $section->mediaAttachments()->delete();
+        });
     }
 
     public function homepage()
