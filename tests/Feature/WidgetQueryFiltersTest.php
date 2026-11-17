@@ -1,15 +1,17 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Models\\HomepageSection;
-use App\\Models\\Testimonial;
-use App\\Services\\Homepage\\SectionDataResolver;
-use App\\Services\\Widgets\\CmsWidgetRegistry;
-use Tests\\TestCase;
+use App\Models\HomepageSection;
+use App\Models\Testimonial;
+use App\Services\Homepage\SectionDataResolver;
+use App\Services\Widgets\CmsWidgetRegistry;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class WidgetQueryFiltersTest extends TestCase
 {
+    use RefreshDatabase;
     public function test_testimonial_query_applies_minimum_rating_filter_before_limit(): void
     {
         Testimonial::create([
