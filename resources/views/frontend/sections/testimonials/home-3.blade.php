@@ -1,3 +1,4 @@
+@if($testimonials->isNotEmpty())
 @php
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
     $sliderId = 'testiSlide3-'.$section->id;
@@ -8,10 +9,10 @@
         <div class="row gy-40 gx-100 justify-content-center align-items-end">
             <div class="col-lg-4">
                 <div class="testi-3-rating me-xxl-5">
-                    <div class="rating-count"><h2>{{ $sectionConfig['rating'] ?? '4.9' }}</h2><div class="star-shape spin">@if(!empty($sectionConfig['rating_shape_image']))<img src="{{ $sectionConfig['rating_shape_image'] }}" alt="Decorative shape">@endif</div></div>
+                    <div class="rating-count"><h2>{{ $sectionConfig['rating'] ?? $averageRating }}</h2><div class="star-shape spin">@if(!empty($sectionConfig['rating_shape_image']))<img src="{{ $sectionConfig['rating_shape_image'] }}" alt="Decorative shape">@endif</div></div>
                     <div class="reviews-star">
                         <div class="th-social"><i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i></div>
-                        <h4 class="review-title"><span class="number">Trust-score on <span class="counter-number">{{ $sectionConfig['review_count'] ?? 0 }}</span>+</span> reviews</h4>
+                        <h4 class="review-title"><span class="number">Trust-score on <span class="counter-number">{{ $sectionConfig['review_count'] ?? $reviewCount }}</span>+</span> reviews</h4>
                     </div>
                     <a class="th-btn tab-btn style3 radius" href="{{ $sectionConfig['view_all_url'] ?? '#' }}">{{ $sectionConfig['view_all_label'] ?? 'View All Reviews' }}</a>
                     <div class="testi-bottom-item">
@@ -27,20 +28,19 @@
                 <div class="testi-card-slide pe-xl-5 ps-xl-5">
                     <div class="swiper has-shadow th-slider" id="{{ $sliderId }}" data-slider-options='{"autoplay":false,"centeredSlides":true,"paginationType":"progressbar","loop":true,"breakpoints":{"0":{"slidesPerView":1},"576":{"slidesPerView":1},"768":{"slidesPerView":1},"992":{"slidesPerView":1},"1200":{"slidesPerView":1}}}'>
                         <div class="swiper-wrapper">
-                            @for($i = 1; $i <= min(4, (int) ($sectionConfig['items_limit'] ?? 4)); $i++)
-                                @if(!empty($sectionConfig['item_'.$i.'_name']))
-                                    <div class="swiper-slide">
-                                        <div class="testi-block style-2 style-3" dir="ltr">
-                                            <div class="top-wrap"><div class="quote">@if(!empty($sectionConfig['quote_icon_image']))<img src="{{ $sectionConfig['quote_icon_image'] }}" alt="quote">@endif</div></div>
-                                            <div class="testi-content"><p class="box-text mb-40">“{{ $sectionConfig['item_'.$i.'_quote'] ?? '' }}”</p><p class="box-text">“{{ $sectionConfig['item_'.$i.'_quote_2'] ?? '' }}”</p></div>
-                                            <div class="bottom-wrap">
-                                                <div class="team-img">@if(!empty($sectionConfig['item_'.$i.'_image']))<img src="{{ $sectionConfig['item_'.$i.'_image'] }}" alt="{{ $sectionConfig['item_'.$i.'_name'] }}">@endif</div>
-                                                <div class="content"><h3 class="box-title">{{ $sectionConfig['item_'.$i.'_name'] }}</h3><p class="text">{{ $sectionConfig['item_'.$i.'_role'] ?? '' }}</p></div>
-                                            </div>
+                            @forelse($testimonials as $testimonial)
+                                <div class="swiper-slide">
+                                    <div class="testi-block style-2 style-3" dir="ltr">
+                                        <div class="top-wrap"><div class="quote">@if(!empty($sectionConfig['quote_icon_image']))<img src="{{ $sectionConfig['quote_icon_image'] }}" alt="quote">@endif</div></div>
+                                        <div class="testi-content"><p class="box-text mb-40">“{{ $testimonial->quote }}”</p></div>
+                                        <div class="bottom-wrap">
+                                            <div class="team-img">@if($testimonial->photo)<img src="{{ Storage::disk('public')->url($testimonial->photo) }}" alt="{{ $testimonial->name }}">@endif</div>
+                                            <div class="content"><h3 class="box-title">{{ $testimonial->name }}</h3><p class="text">{{ $testimonial->designation }}@if($testimonial->company), {{ $testimonial->company }}@endif</p></div>
                                         </div>
                                     </div>
-                                @endif
-                            @endfor
+                                </div>
+                            @empty
+                            @endforelse
                         </div>
                         <div class="slider-pagination style-2 mt-5"></div>
                     </div>
@@ -51,3 +51,4 @@
         </div>
     </div>
 </section>
+@endif
