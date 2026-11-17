@@ -115,6 +115,29 @@ class Home3PropertySearchTest extends TestCase
         $this->assertSame($matched->id, $results->first()->id);
     }
 
+    public function test_property_category_navigation_accepts_a_category_slug(): void
+    {
+        $category = Category::create([
+            'name' => 'Villas',
+            'slug' => 'villas',
+            'type' => 'property',
+            'is_active' => true,
+            'sort_order' => 1,
+        ]);
+
+        $matching = $this->createProperty('Published villa', ['category_id' => $category->id]);
+        $this->createProperty('Uncategorized listing');
+
+        $response = app(PropertyController::class)->index(Request::create('/properties', 'GET', [
+            'category' => 'villas',
+        ]));
+
+        $results = $response->getData()['properties']->getCollection();
+
+        $this->assertCount(1, $results);
+        $this->assertSame($matching->id, $results->first()->id);
+    }
+
     private function createProperty(string $title, array $overrides = []): Property
     {
         return Property::create(array_merge([
