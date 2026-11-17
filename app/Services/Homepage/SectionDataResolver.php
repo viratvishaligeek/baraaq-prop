@@ -16,6 +16,36 @@ class SectionDataResolver
      */
     public function resolve(HomepageSection $section, array $config = []): array
     {
+        if ($section->section_key === 'hero.home-3') {
+            return [
+                'mapProperties' => Property::published()
+                    ->whereNotNull('latitude')
+                    ->whereNotNull('longitude')
+                    ->with(['images', 'category'])
+                    ->orderByDesc('is_featured')
+                    ->latest('published_at')
+                    ->limit(max(1, min(4, (int) ($config['map_card_limit'] ?? 4))))
+                    ->get(),
+                'cities' => Property::published()
+                    ->whereNotNull('city')
+                    ->where('city', '!=', '')
+                    ->distinct()
+                    ->orderBy('city')
+                    ->pluck('city'),
+                'propertyTypes' => Property::published()
+                    ->whereNotNull('property_type')
+                    ->where('property_type', '!=', '')
+                    ->distinct()
+                    ->orderBy('property_type')
+                    ->pluck('property_type'),
+                'bedroomOptions' => Property::published()
+                    ->whereNotNull('bedrooms')
+                    ->distinct()
+                    ->orderBy('bedrooms')
+                    ->pluck('bedrooms'),
+            ];
+        }
+
         return match ($section->section_type) {
             'category-slider' => ['categories' => $this->categories($config)],
             'team-slider' => ['teamMembers' => $this->teamMembers($config)],
