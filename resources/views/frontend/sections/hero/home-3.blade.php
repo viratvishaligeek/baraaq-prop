@@ -108,7 +108,7 @@
                             $mapIndex = $index + 1;
                             $propertyImage = $property->featured_image ? Storage::disk('public')->url($property->featured_image) : ($property->images->first()?->path ? Storage::disk('public')->url($property->images->first()->path) : null);
                         @endphp
-                        <div class="map-popular-list map-popular-list{{ $mapIndex }} {{ $mapIndex === 4 ? 'show' : '' }}">
+                        <div class="map-popular-list map-popular-list{{ $mapIndex }} {{ ($mapIndex === 4 || ($loop->last && $mapProperties->count() < 4)) ? 'show' : '' }}">
                             <div class="popular-list-1">
                                 <div class="thumb-wrapper">
                                     @if($propertyImage)<img src="{{ $propertyImage }}" alt="{{ $property->title }}">@endif
