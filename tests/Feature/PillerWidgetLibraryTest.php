@@ -24,7 +24,7 @@ class PillerWidgetLibraryTest extends TestCase
         $additionalKeys = [
             'faq.home-10', 'statistics.home-4', 'statistics.home-6', 'statistics.home-10',
             'contact.home-1', 'contact.home-2', 'contact.home-3',
-            'brands.grid', 'brands.marquee', 'cta.download-home-2', 'cta.download-home-3',
+            'brands.grid', 'brands.marquee', 'gallery.home-5-rooms', 'gallery.home-10-projects', 'process.home-8', 'cta.download-home-2', 'cta.download-home-3',
             'cta.enquiry-home-3', 'cta.home-10',
         ];
 

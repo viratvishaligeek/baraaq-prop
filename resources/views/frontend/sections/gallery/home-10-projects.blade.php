@@ -1,0 +1,11 @@
+@php
+    $items = [];
+    for($i=1;$i<=min(12,(int)($sectionConfig['items_limit'] ?? 8));$i++) if(!empty($sectionConfig['item_'.$i.'_image'])) $items[] = ['image'=>$sectionConfig['item_'.$i.'_image'],'title'=>$sectionConfig['item_'.$i.'_title'] ?? '','text'=>$sectionConfig['item_'.$i.'_text'] ?? '','url'=>$sectionConfig['item_'.$i.'_url'] ?? '#'];
+    $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
+@endphp
+@if(count($items))
+<section class="project-sec-2 position-relative space bg-smoke overflow-hidden {{ $visibility }}" id="projects-{{ $section->id }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif @if(!empty($sectionConfig['background_image'])) data-bg-src="{{ $sectionConfig['background_image'] }}" @endif><div class="container"><div class="row mb-3 mb-xxl-5 mb-xl-4"><div class="col-xl-4"><div class="title-area text-left mb-1"><p class="sub-title style4 style2 bg-white text-anime-style-1">{{ $sectionConfig['eyebrow'] ?? 'Our Projects' }}</p></div></div><div class="col-xxl-6 col-xl-7"><div class="pe-xxl-5 me-xxl-4"><h3 class="sec-title style-2">{{ $sectionConfig['heading'] ?? '' }}</h3><p>{{ $sectionConfig['description'] ?? '' }}</p></div></div></div>
+    <div class="row gy-4 justify-content-center">@foreach($items as $item)<div class="col-xl-4 col-lg-4 col-md-6"><div class="project2-card-wrap-{{ (($loop->index % 3)+1) }}"><div class="category3-card"><div class="thumb"><img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" loading="lazy"><div class="cate3-content"><h4 class="box-title"><a href="{{ $item['url'] }}">{{ $item['title'] }}</a></h4><p class="box-text">{{ $item['text'] }}</p></div></div></div></div></div>@endforeach</div>
+    @if(!empty($sectionConfig['button_label']))<div class="text-end mt-4"><a href="{{ $sectionConfig['button_url'] ?? '/properties' }}" class="th-btn big-btn pill style3">{{ $sectionConfig['button_label'] }}</a></div>@endif
+</div></section>
+@endif
