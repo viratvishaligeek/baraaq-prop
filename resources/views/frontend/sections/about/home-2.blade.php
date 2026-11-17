@@ -3,6 +3,8 @@
         ? $path
         : asset($path);
     $features = [];
+    $featureColumns = (int) ($sectionConfig['feature_columns'] ?? 2) === 4 ? 3 : 6;
+    $animationClass = ($sectionConfig['animate_images'] ?? true) ? ' fadeinup wow' : '';
     for ($i = 1; $i <= 4; $i++) {
         $features[] = [
             'icon' => $sectionConfig['feature_'.$i.'_icon'] ?? null,
@@ -12,13 +14,13 @@
     }
 @endphp
 
-<div class="about-1-wrapper space overflow-hidden" id="about-sec-{{ $section->id }}">
-    <div class="shape-mockup" data-bottom="0" data-left="0"><img src="{{ asset('theme-assets/img/icon/about-2-shape.png') }}" alt="img"></div>
-    <div class="shape-mockup spin d-none d-lg-block" data-bottom="11%" data-left="5%"><img src="{{ asset('theme-assets/img/icon/circle-start.png') }}" alt="img"></div>
+<div class="about-1-wrapper {{ $sectionConfig['vertical_spacing'] ?? 'space' }} overflow-hidden" id="about-sec-{{ $section->id }}">
+    <div class="shape-mockup" data-bottom="0" data-left="0"><img src="{{ $image($sectionConfig['shape_bottom_image'] ?? '/theme-assets/img/icon/about-2-shape.png') }}" alt="img"></div>
+    <div class="shape-mockup spin d-none d-lg-block" data-bottom="11%" data-left="5%"><img src="{{ $image($sectionConfig['shape_spin_image'] ?? '/theme-assets/img/icon/circle-start.png') }}" alt="img"></div>
     <div class="container">
         <div class="row gy-40 gx-70 justify-content-center">
             <div class="col-xl-7">
-                <div class="img-box1 about-1 fadeinup wow" data-wow-duration="1.5s" data-wow-delay="0.3s">
+                <div class="img-box1 about-1{{ $animationClass }}" data-wow-duration="1.5s" data-wow-delay="0.3s">
                     <div class="about-logo-wrap-2">
                         <div class="logo-icon-wrap">
                             <div class="logo-icon"><img src="{{ $image($sectionConfig['logo_image'] ?? '') }}" alt="img"></div>
@@ -37,14 +39,14 @@
                 </div>
             </div>
             <div class="col-xl-5">
-                <div class="title-area text-left mb-50">
+                <div class="title-area text-{{ $sectionConfig['content_alignment'] ?? 'left' }} mb-50">
                     <p class="sub-title text-anime-style-1"><span class="double-line"></span> {{ $sectionConfig['eyebrow'] ?? '' }}</p>
                     <h2 class="sec-title text-anime-style-2">{{ $sectionConfig['heading'] ?? '' }}</h2>
                     <p class="sec-text text-anime-style-3">{{ $sectionConfig['description'] ?? '' }}</p>
                 </div>
                 <div class="row gy-40 gx-60 mb-4">
                     @foreach($features as $feature)
-                        <div class="col-lg-6 col-md-6 fadeinup wow" data-wow-delay="{{ ['.1s','.3s','.5s','.7s'][$loop->index] }}">
+                        <div class="col-lg-{{ $featureColumns }} col-md-6{{ $animationClass }}" data-wow-delay="{{ ['.1s','.3s','.5s','.7s'][$loop->index] }}">
                             <div class="about-1-item">
                                 <div class="icon"><img src="{{ $image($feature['icon']) }}" alt="icon"></div>
                                 <div class="content">
@@ -62,7 +64,7 @@
                                 <a href="{{ $sectionConfig['button_url'] ?? '#' }}" class="th-btn bg-black pill">{{ $sectionConfig['button_label'] }}</a>
                             @endif
                             <div class="about1-call-wrapper">
-                                <div class="icon"><i class="fa-regular fa-phone"></i></div>
+                                <div class="icon"><i class="{{ $sectionConfig['phone_icon'] ?? 'fa-regular fa-phone' }}"></i></div>
                                 <div class="content">
                                     <p>{{ $sectionConfig['phone_label'] ?? '' }}</p>
                                     <a href="tel:{{ preg_replace('/[^0-9+]/', '', $sectionConfig['phone_number'] ?? '') }}" class="link">{{ $sectionConfig['phone_number'] ?? '' }}</a>
