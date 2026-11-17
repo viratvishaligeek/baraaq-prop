@@ -118,6 +118,17 @@
 
                             <form method="POST" action="{{ route('admin.pages.widgets.update', [$page, $section]) }}" data-widget-save>
                                 @csrf @method('PATCH')
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold">Original Piller design</label>
+                                    <select class="form-select form-select-sm" name="section_key">
+                                        @foreach ($widgetDefinitions as $designKey => $designDefinition)
+                                            @if (($designDefinition['type'] ?? null) === $section->section_type)
+                                                <option value="{{ $designKey }}" @selected($section->section_key === $designKey)>{{ $designDefinition['label'] ?? $designKey }} · {{ $designDefinition['source_design'] ?? 'Piller' }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted">Switches to another registered design in this widget family. Matching content fields are retained; new fields use that design's defaults.</small>
+                                </div>
                                 @if (!empty($definition['fields']))
                                     <div class="row g-3">
                                         @foreach ($definition['fields'] as $field => $schema)
