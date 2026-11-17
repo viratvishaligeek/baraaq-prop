@@ -1,0 +1,43 @@
+<?php
+
+return [
+    'blog.home-2' => [
+        'key' => 'blog.home-2',
+        'label' => 'Latest articles carousel — Home 2',
+        'type' => 'blog-slider',
+        'source_design' => 'home-2',
+        'view' => 'frontend.sections.blog.home-2',
+        'defaults' => [
+            'eyebrow' => 'latest News',
+            'heading' => 'Latest news & articles',
+            'description' => 'Car dealerships typically feature showrooms where the latest models are displayed in a well-lit, aesthetically pleasing environment.',
+            'button_label' => 'Explore All',
+            'button_url' => '/blog',
+            'items_limit' => 6,
+            'show_author' => true,
+            'show_date' => true,
+            'card_button_label' => 'Read More',
+            'vertical_spacing' => 'space',
+            'show_mobile' => true,
+            'show_tablet' => true,
+            'show_desktop' => true,
+        ],
+        'fields' => [
+            'eyebrow' => ['label' => 'Eyebrow', 'type' => 'text', 'max' => 120],
+            'heading' => ['label' => 'Heading', 'type' => 'text', 'max' => 180],
+            'description' => ['label' => 'Description', 'type' => 'textarea', 'max' => 700],
+            'button_label' => ['label' => 'Explore button label', 'type' => 'text', 'max' => 80],
+            'button_url' => ['label' => 'Explore button URL', 'type' => 'url', 'max' => 2048],
+            'items_limit' => ['label' => 'Maximum articles', 'type' => 'number', 'min' => 1, 'max' => 12],
+            'show_author' => ['label' => 'Show author', 'type' => 'checkbox'],
+            'show_date' => ['label' => 'Show publication date', 'type' => 'checkbox'],
+            'card_button_label' => ['label' => 'Card button label', 'type' => 'text', 'max' => 80],
+            'vertical_spacing' => ['label' => 'Section spacing', 'type' => 'select', 'options' => ['space' => 'Theme spacing', 'space-top' => 'Top only', 'space-bottom' => 'Bottom only', 'py-0' => 'No vertical spacing']],
+            'background_color' => ['label' => 'Background color', 'type' => 'color'],
+            'background_image' => ['label' => 'Background image', 'type' => 'image', 'max' => 2048],
+            'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
+            'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
+            'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
+        ],
+    ],
+];
