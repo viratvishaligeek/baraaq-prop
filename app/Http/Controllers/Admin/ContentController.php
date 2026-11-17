@@ -56,6 +56,7 @@ class ContentController extends Controller
         foreach(['image','featured_image','photo','icon_path'] as $field) if($request->hasFile($field)) $data[$field]=$request->file($field)->store($type,'public');
         if($type==='posts' && ($data['status']??null)==='published') $data['published_at']=now();
         if(in_array($type,['banners','team','categories'])) $data['is_active']=$request->boolean('is_active');
+        if($type==='team' && isset($data['social_links'])) { $links=json_decode($data['social_links'],true); $data['social_links']=is_array($links)?$links:[]; }
         $item=DB::transaction(function()use($model,$data,$type,$categoryIds){$created=$model::create($data);if($type==='posts')$created->categories()->sync($categoryIds);return $created;});
         return redirect()->route('admin.content.index',$type)->with('success',ucfirst($type).' item created.');
     }
@@ -100,7 +101,7 @@ class ContentController extends Controller
             'pages'=>['title'=>['required','string','max:255'],'slug'=>['nullable','string','max:255',Rule::unique('pages')->ignore($id)],'content'=>['nullable','string'],'status'=>['required','in:draft,published,archived'],'meta_title'=>['nullable','string','max:255'],'meta_description'=>['nullable','string','max:1000']],
             'categories'=>['name'=>['required','string','max:150'],'slug'=>['nullable','string','max:180',Rule::unique('categories')->ignore($id)],'description'=>['nullable','string'],'icon_path'=>['nullable','image','mimes:png,jpg,jpeg,webp','max:2048'],'sort_order'=>['nullable','integer','min:0'],'is_active'=>['sometimes','boolean'],'parent_id'=>['nullable',Rule::exists('categories','id')->where(fn($q)=>$q->where('type',$request->input('type'))->when($id,fn($q)=>$q->where('id','!=',$id)))],'type'=>['required','in:property,post']],
             'banners'=>['title'=>['required','string','max:255'],'subtitle'=>['nullable','string','max:255'],'description'=>['nullable','string'],'image'=>['nullable','image','mimes:jpg,jpeg,png,webp','max:5120'],'button_text'=>['nullable','string','max:100'],'button_url'=>['nullable','string','max:2048','regex:/^(https?:\/\/|\/|#)/i'],'placement'=>['required','string','max:60'],'sort_order'=>['nullable','integer','min:0'],'starts_at'=>['nullable','date'],'ends_at'=>['nullable','date','after_or_equal:starts_at'],'is_active'=>['sometimes','boolean']],
-            'team'=>['name'=>['required','string','max:150'],'designation'=>['nullable','string','max:150'],'bio'=>['nullable','string'],'photo'=>['nullable','image','mimes:jpg,jpeg,png,webp','max:5120'],'email'=>['nullable','email'],'phone'=>['nullable','string','max:30'],'sort_order'=>['nullable','integer','min:0'],'is_active'=>['sometimes','boolean']]
+            'team'=>['name'=>['required','string','max:150'],'designation'=>['nullable','string','max:150'],'bio'=>['nullable','string'],'photo'=>['nullable','image','mimes:jpg,jpeg,png,webp','max:5120'],'email'=>['nullable','email'],'phone'=>['nullable','string','max:30'],'social_links'=>['nullable','json'],'sort_order'=>['nullable','integer','min:0'],'is_active'=>['sometimes','boolean']]
         };
         return $request->validate($rules);
     }
