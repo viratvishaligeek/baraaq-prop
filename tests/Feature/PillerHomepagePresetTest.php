@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Services\\Widgets\\CmsWidgetRegistry;
-use Tests\\TestCase;
+use App\Services\Widgets\CmsWidgetRegistry;
+use Tests\TestCase;
 
 class PillerHomepagePresetTest extends TestCase
 {
