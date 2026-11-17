@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Homepage;
 use App\Models\HomepageSection;
+use App\Models\Banner;
 use App\Models\Page;
 use App\Models\Testimonial;
 use App\Services\Homepage\SectionDataResolver;
@@ -145,10 +146,22 @@ class UniversalPageBuilderTest extends TestCase
         ]);
 
         app(PageBuilderService::class)->add($page, 'hero.index');
+        Banner::create([
+            'title' => 'Database hero title',
+            'subtitle' => 'Database hero subtitle',
+            'description' => 'A banner loaded from the database.',
+            'button_text' => 'Explore listings',
+            'button_url' => '/properties',
+            'placement' => 'home',
+            'sort_order' => 1,
+            'is_active' => true,
+        ]);
         $page->update(['status' => 'published']);
 
         $this->get('/pages/builder-render-test')
             ->assertOk()
-            ->assertSee('Journey To Your Perfect Luxury Home');
+            ->assertSee('hero-1', false)
+            ->assertSee('Database hero title')
+            ->assertSee('Database hero subtitle');
     }
 }
