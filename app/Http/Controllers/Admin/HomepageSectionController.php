@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Homepage;
 use App\Models\HomepageSection;
 use App\Models\Media;
+use App\Services\Widgets\CmsWidgetRegistry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 
 class HomepageSectionController extends Controller
@@ -138,12 +140,68 @@ class HomepageSectionController extends Controller
         }
 
         $data = $request->validate($rules);
+        $queryable = app(CmsWidgetRegistry::class)->queryableTypes()[$section->section_type] ?? null;
+        $source = $section->data_source ?? [];
+
+        if ($queryable) {
+            $sourceInput = $request->input('data_source', $source);
+            if (isset($sourceInput['selected_ids']) && is_string($sourceInput['selected_ids'])) {
+                $sourceInput['selected_ids'] = array_values(array_filter(array_map(
+                    'intval',
+                    preg_split('/[,\\s]+/', $sourceInput['selected_ids']) ?: []
+                )));
+            }
+            $request->merge(['data_source' => $sourceInput]);
+
+            $queryRules = [
+                'data_source.limit' => ['nullable', 'integer', 'min:1', 'max:24'],
+                'data_source.sort_by' => ['nullable', Rule::in($queryable['sort'])],
+                'data_source.sort_direction' => ['nullable', Rule::in(['asc', 'desc'])],
+                'data_source.columns' => ['nullable', 'integer', 'min:1', 'max:6'],
+                'data_source.slider' => ['nullable', 'boolean'],
+                'data_source.selected_ids' => ['nullable', 'array', 'max:100'],
+                'data_source.selected_ids.*' => ['integer', 'distinct', Rule::exists($queryable['table'], 'id')],
+                'data_source.filters' => ['nullable', 'array'],
+            ];
+
+            foreach ($queryable['filters'] ?? [] as $filter => $schema) {
+                $filterRules = ['nullable'];
+                switch ($schema['type'] ?? 'text') {
+                    case 'select':
+                        $filterRules[] = 'string';
+                        $filterRules[] = Rule::in(array_map('strval', array_keys($schema['options'] ?? [])));
+                        break;
+                    case 'integer':
+                        $filterRules[] = 'integer';
+                        $filterRules[] = 'min:' . ($schema['min'] ?? 0);
+                        if (isset($schema['max'])) $filterRules[] = 'max:' . $schema['max'];
+                        if ($filter === 'category_id') {
+                            $filterRules[] = Rule::exists('categories', 'id')
+                                ->where('type', $schema['category_type'] ?? 'property');
+                        }
+                        break;
+                    case 'number':
+                        $filterRules[] = 'numeric';
+                        $filterRules[] = 'min:' . ($schema['min'] ?? 0);
+                        if (isset($schema['max'])) $filterRules[] = 'max:' . $schema['max'];
+                        break;
+                    default:
+                        $filterRules[] = 'string';
+                        $filterRules[] = 'max:' . ($schema['max'] ?? 120);
+                        break;
+                }
+                $queryRules['data_source.filters.' . $filter] = $filterRules;
+            }
+
+            $source = $request->validate($queryRules)['data_source'] ?? [];
+        }
+
         $allowedFields = array_keys($definition['fields'] ?? []);
         $submittedConfig = array_intersect_key(
             $data['config'] ?? [],
             array_flip($allowedFields)
         );
-        DB::transaction(function () use ($submittedConfig, $definition, $section) {
+        DB::transaction(function () use ($submittedConfig, $definition, $section, $source) {
             foreach ($submittedConfig as $field => $value) {
                 if (($definition['fields'][$field]['type'] ?? null) !== 'image') {
                     continue;
@@ -168,7 +226,7 @@ class HomepageSectionController extends Controller
 
             $config = array_merge($section->config ?? [], $submittedConfig);
 
-            $section->update(['config' => $config]);
+            $section->update(['config' => $config, 'data_source' => $source]);
         });
 
         return back()->with('success', 'Section settings saved.');
