@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AppearanceController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ContentController;
+use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EnquiryController;
 use App\Http\Controllers\Admin\HomepageController;
@@ -118,6 +119,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/enquiries/{enquiry}', [EnquiryController::class, 'destroy'])
             ->middleware('permission:enquiries.manage')
             ->name('enquiries.destroy');
+
+        Route::get('/comments', [CommentController::class, 'index'])->middleware('permission:comments.manage')->name('comments.index');
+        Route::patch('/comments/{comment}', [CommentController::class, 'update'])->middleware('permission:comments.manage')->name('comments.update');
+        Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->middleware('permission:comments.manage')->name('comments.destroy');
 
         Route::get('/content/{type}', [ContentController::class, 'index'])->name('content.index');
         Route::get('/content/{type}/create', [ContentController::class, 'create'])->name('content.create');
