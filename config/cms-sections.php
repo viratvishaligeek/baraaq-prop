@@ -35,6 +35,7 @@ $sections['properties.index'] = [
     'source_design' => 'index',
     'view' => 'frontend.sections.properties.index',
     'defaults' => [],
+    'settings' => ['eyebrow', 'heading'],
 ];
 
 $sections['team.index'] = [
@@ -44,6 +45,7 @@ $sections['team.index'] = [
     'source_design' => 'index',
     'view' => 'frontend.sections.team.index',
     'defaults' => [],
+    'settings' => ['eyebrow', 'heading'],
 ];
 
 $sections['blog.index'] = [
@@ -53,6 +55,7 @@ $sections['blog.index'] = [
     'source_design' => 'index',
     'view' => 'frontend.sections.blog.index',
     'defaults' => [],
+    'settings' => ['eyebrow', 'heading'],
 ];
 
 return [
