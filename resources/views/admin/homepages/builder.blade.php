@@ -55,17 +55,45 @@
                                 <div class="small text-muted">{{ $section->section_type }} · Source: {{ $section->source_design }} · #{{ $section->sort_order }}</div>
                             </div>
                         </div>
-                        @if(!empty($definition['settings']))
+                        @if(!empty($definition['fields']))
                             <form method="POST" action="{{ route('admin.homepages.sections.update', [$homepage, $section]) }}" class="w-100 row g-2 align-items-end">
                                 @csrf
                                 @method('PATCH')
-                                @foreach($definition['settings'] as $field)
-                                    <div class="col-md-5">
-                                        <label class="form-label small text-capitalize" for="section-{{ $section->id }}-{{ $field }}">{{ $field }}</label>
-                                        <input class="form-control form-control-sm" id="section-{{ $section->id }}-{{ $field }}" name="config[{{ $field }}]" value="{{ old('config.'.$field, $section->config[$field] ?? '') }}" maxlength="180">
+                                @foreach($definition['fields'] as $field => $schema)
+                                    @php($fieldValue = old('config.'.$field, $section->config[$field] ?? ''))
+                                    <div class="{{ in_array($schema['type'], ['textarea'], true) ? 'col-12' : 'col-md-6' }}">
+                                        <label class="form-label small" for="section-{{ $section->id }}-{{ $field }}">{{ $schema['label'] }}</label>
+                                        @if($schema['type'] === 'textarea')
+                                            <textarea class="form-control form-control-sm" id="section-{{ $section->id }}-{{ $field }}" name="config[{{ $field }}]" rows="2" maxlength="{{ $schema['max'] ?? 1500 }}">{{ $fieldValue }}</textarea>
+                                        @elseif($schema['type'] === 'select')
+                                            <select class="form-select form-select-sm" id="section-{{ $section->id }}-{{ $field }}" name="config[{{ $field }}]">
+                                                <option value="">Use template default</option>
+                                                @foreach($schema['options'] as $optionValue => $optionLabel)
+                                                    <option value="{{ $optionValue }}" @selected((string) $fieldValue === (string) $optionValue)>{{ $optionLabel }}</option>
+                                                @endforeach
+                                            </select>
+                                        @elseif($schema['type'] === 'checkbox')
+                                            <input type="hidden" name="config[{{ $field }}]" value="0">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="section-{{ $section->id }}-{{ $field }}" name="config[{{ $field }}]" value="1" @checked((bool) $fieldValue)>
+                                                <label class="form-check-label small" for="section-{{ $section->id }}-{{ $field }}">Enabled</label>
+                                            </div>
+                                        @else
+                                            <input
+                                                class="form-control form-control-sm"
+                                                id="section-{{ $section->id }}-{{ $field }}"
+                                                name="config[{{ $field }}]"
+                                                type="{{ $schema['type'] === 'number' ? 'number' : ($schema['type'] === 'color' ? 'color' : 'text') }}"
+                                                value="{{ $fieldValue }}"
+                                                @if(isset($schema['max']) && $schema['type'] !== 'number') maxlength="{{ $schema['max'] }}" @endif
+                                                @if($schema['type'] === 'number') min="{{ $schema['min'] ?? 0 }}" max="{{ $schema['max'] ?? 9999 }}" @endif
+                                                @if($schema['type'] === 'color') pattern="#[0-9A-Fa-f]{6}" @endif
+                                                @if(in_array($schema['type'], ['url', 'image'], true)) placeholder="{{ $schema['type'] === 'url' ? '/properties or https://example.com' : 'theme-assets/img/... or media path' }}" @endif
+                                            >
+                                        @endif
                                     </div>
                                 @endforeach
-                                <div class="col-md-2"><button class="btn btn-sm btn-outline-primary" type="submit">Save text</button></div>
+                                <div class="col-12"><button class="btn btn-sm btn-outline-primary" type="submit">Save section settings</button></div>
                             </form>
                         @endif
                         <div class="d-flex gap-2">
