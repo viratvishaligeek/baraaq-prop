@@ -112,6 +112,30 @@ class UniversalPageBuilderTest extends TestCase
         $this->assertSame($newer->id, $resolved['testimonials']->first()->id);
     }
 
+    public function test_page_widget_can_switch_between_original_piller_designs_in_the_same_family(): void
+    {
+        $page = Page::create([
+            'title' => 'About design switch',
+            'slug' => 'about-design-switch-test',
+            'status' => 'draft',
+        ]);
+
+        $builder = app(PageBuilderService::class);
+        $section = $builder->add($page, 'about.home-4');
+        $builder->save($page, $section, [
+            'section_key' => 'about.home-7',
+            'config' => ['heading' => 'Preserved editorial content'],
+            'data_source' => [],
+        ]);
+
+        $saved = $section->fresh();
+
+        $this->assertSame('about.home-7', $saved->section_key);
+        $this->assertSame('home-7', $saved->source_design);
+        $this->assertSame('Preserved editorial content', $saved->config['heading']);
+        $this->assertSame('about-composition', $saved->section_type);
+    }
+
     public function test_published_cms_page_renders_its_registered_widget_on_the_frontend(): void
     {
         $page = Page::create([
