@@ -8,14 +8,14 @@
         <div class="row gy-40 gx-100 justify-content-center align-items-end">
             <div class="col-lg-4">
                 <div class="testi-3-rating me-xxl-5">
-                    <div class="rating-count"><h2>{{ $sectionConfig['rating'] ?? '4.9' }}</h2><div class="star-shape spin"><img src="{{ asset('theme-assets/img/shape/download-circle.png') }}" alt="Decorative shape"></div></div>
+                    <div class="rating-count"><h2>{{ $sectionConfig['rating'] ?? '4.9' }}</h2><div class="star-shape spin">@if(!empty($sectionConfig['rating_shape_image']))<img src="{{ $sectionConfig['rating_shape_image'] }}" alt="Decorative shape">@endif</div></div>
                     <div class="reviews-star">
                         <div class="th-social"><i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i></div>
                         <h4 class="review-title"><span class="number">Trust-score on <span class="counter-number">{{ $sectionConfig['review_count'] ?? 0 }}</span>+</span> reviews</h4>
                     </div>
                     <a class="th-btn tab-btn style3 radius" href="{{ $sectionConfig['view_all_url'] ?? '#' }}">{{ $sectionConfig['view_all_label'] ?? 'View All Reviews' }}</a>
                     <div class="testi-bottom-item">
-                        <div class="trust-content"><div class="icon"><img src="{{ asset('theme-assets/img/icon/star-icon.svg') }}" alt="Star"></div><h4 class="box-title">{{ $sectionConfig['trust_brand'] ?? '' }}</h4></div>
+                        <div class="trust-content"><div class="icon">@if(!empty($sectionConfig['star_icon_image']))<img src="{{ $sectionConfig['star_icon_image'] }}" alt="Star">@endif</div><h4 class="box-title">{{ $sectionConfig['trust_brand'] ?? '' }}</h4></div>
                         <div class="bottom"><div class="avatar">@if(!empty($sectionConfig['avatar_group_image']))<img src="{{ $sectionConfig['avatar_group_image'] }}" alt="Reviewers">@endif</div></div>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                                 @if(!empty($sectionConfig['item_'.$i.'_name']))
                                     <div class="swiper-slide">
                                         <div class="testi-block style-2 style-3" dir="ltr">
-                                            <div class="top-wrap"><div class="quote"><img src="{{ asset('theme-assets/img/icon/testi-2quote.svg') }}" alt="quote"></div></div>
+                                            <div class="top-wrap"><div class="quote">@if(!empty($sectionConfig['quote_icon_image']))<img src="{{ $sectionConfig['quote_icon_image'] }}" alt="quote">@endif</div></div>
                                             <div class="testi-content"><p class="box-text mb-40">“{{ $sectionConfig['item_'.$i.'_quote'] ?? '' }}”</p><p class="box-text">“{{ $sectionConfig['item_'.$i.'_quote_2'] ?? '' }}”</p></div>
                                             <div class="bottom-wrap">
                                                 <div class="team-img">@if(!empty($sectionConfig['item_'.$i.'_image']))<img src="{{ $sectionConfig['item_'.$i.'_image'] }}" alt="{{ $sectionConfig['item_'.$i.'_name'] }}">@endif</div>
