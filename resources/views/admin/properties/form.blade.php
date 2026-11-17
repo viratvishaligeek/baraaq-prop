@@ -191,7 +191,8 @@
                         data-media-preview @if (!$property->featured_image) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                     <small class="text-muted">Image up to 5 MB.</small>
                     <label class="form-label mt-3">Gallery images</label>
-                    <input type="file" class="form-control" name="gallery[]" accept="image/*" multiple>
+                    <input type="file" class="form-control" name="gallery[]" id="upload-property-gallery" accept="image/*" multiple data-preview-container-id="property-gallery-local-previews">
+                    <div id="property-gallery-local-previews" class="d-flex flex-wrap gap-2 mt-2" aria-live="polite"></div>
                     <button type="button" class="btn btn-sm btn-outline-primary mt-2"
                         data-open-media-picker data-media-multiple data-target="property-gallery-media-selection">
                         Add images from Media Library
