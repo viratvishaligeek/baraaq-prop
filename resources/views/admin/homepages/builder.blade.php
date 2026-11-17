@@ -18,12 +18,17 @@
         </form>
     </div>
 </div>
+@if(!$homepage->is_composition_complete)
+    <div class="alert alert-warning" role="status">
+        This draft is an incomplete section composition. Its preview is for the sections currently added to the canvas only. The live site continues to use the original complete homepage until every source block has been converted and verified.
+    </div>
+@endif
 
 <div class="row g-4">
     <div class="col-xl-4">
         <div class="content-card">
             <h2 class="section-title">Section library</h2>
-            <p class="text-muted small">The initial library includes all ten source hero designs and dynamic property, team and blog sections. More source sections are being added in the theme conversion phase.</p>
+            <p class="text-muted small">Available now: ten hero variants and the first property, team and blog sections. This is not yet the complete source library; the remaining original blocks are being converted design by design.</p>
             @foreach($availableSections as $section)
                 <form method="POST" action="{{ route('admin.homepages.sections.store', $homepage) }}" class="d-flex justify-content-between align-items-center gap-2 border rounded p-2 mb-2">
                     @csrf
@@ -98,7 +103,7 @@
                                                 class="form-control form-control-sm"
                                                 id="section-{{ $section->id }}-{{ $field }}"
                                                 name="config[{{ $field }}]"
-                                                type="{{ $schema['type'] === 'number' ? 'number' : ($schema['type'] === 'color' ? 'color' : 'text') }}"
+                                                type="{{ $schema['type'] === 'number' ? 'number' : 'text' }}"
                                                 value="{{ $fieldValue }}"
                                                 @if(isset($schema['max']) && $schema['type'] !== 'number') maxlength="{{ $schema['max'] }}" @endif
                                                 @if($schema['type'] === 'number') min="{{ $schema['min'] ?? 0 }}" max="{{ $schema['max'] ?? 9999 }}" @endif
