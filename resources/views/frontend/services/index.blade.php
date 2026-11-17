@@ -1,5 +1,5 @@
 @extends('frontend.layouts.theme')
-@section('title', 'Services · '.\\App\\Models\\Setting::read('site_title', config('app.name')))
+@section('title', 'Services · '.\App\Models\Setting::read('site_title', config('app.name')))
 @section('content')
 <div class="breadcumb-wrapper"><div class="container"><div class="breadcumb-content"><h1 class="breadcumb-title">Our Services</h1></div></div></div>
 <section class="space"><div class="container"><div class="row gy-4">
