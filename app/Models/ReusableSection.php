@@ -13,6 +13,8 @@ class ReusableSection extends Model
         'name',
         'slug',
         'section_type',
+        'section_key',
+        'source_design',
         'config',
         'status',
         'created_by',
