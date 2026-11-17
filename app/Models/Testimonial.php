@@ -10,7 +10,7 @@ class Testimonial extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'name', 'designation', 'company', 'quote', 'photo', 'rating', 'sort_order', 'is_active',
+        'name', 'designation', 'company', 'quote', 'photo', 'rating', 'sort_order', 'is_active', 'status',
     ];
 
     protected function casts(): array
