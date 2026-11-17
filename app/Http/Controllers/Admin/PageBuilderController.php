@@ -110,7 +110,17 @@ class PageBuilderController extends Controller
         $this->authorizeDraft($page);
         abort_unless($section->page_id === $page->id, 404);
 
-        $definition = $this->registry->find($section->section_key);
+        $requested = $request->validate([
+            'section_key' => ['sometimes', 'string', 'max:120'],
+        ]);
+        $sectionKey = $requested['section_key'] ?? $section->section_key;
+        $allowedDesigns = collect($this->registry->all())
+            ->filter(fn (array $candidate) => ($candidate['type'] ?? null) === $section->section_type)
+            ->keys()
+            ->all();
+        abort_unless(in_array($sectionKey, $allowedDesigns, true), 422, 'Choose a registered design from the same widget family.');
+
+        $definition = $this->registry->find($sectionKey);
         abort_unless($definition, 422, 'The widget design is no longer registered.');
 
         $rules = ['config' => ['nullable', 'array'], 'data_source' => ['nullable', 'array']];
@@ -161,6 +171,7 @@ class PageBuilderController extends Controller
         }
 
         $this->builder->save($page, $section, [
+            'section_key' => $sectionKey,
             'config' => $data['config'] ?? [],
             'data_source' => $source,
         ]);
