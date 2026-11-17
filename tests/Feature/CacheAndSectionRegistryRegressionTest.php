@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\Frontend\HomeController;
+use App\Models\Homepage;
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
@@ -22,7 +24,7 @@ class CacheAndSectionRegistryRegressionTest extends TestCase
             'published_at' => now(),
         ]);
 
-        Cache::put('homepage:published-default', new \\stdClass());
+        Cache::put('homepage:published-default', new \stdClass());
 
         app(HomeController::class)->__invoke();
 
