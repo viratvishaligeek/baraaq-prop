@@ -10,16 +10,25 @@ class Setting extends Model
 
     public static function read(string $key, mixed $default = null): mixed
     {
-        $setting = cache()->remember('setting:' . $key, 3600, fn() => static::where('key', $key)->first(['value', 'type']));
+        // Cache scalar data only. Older releases cached a Setting model here,
+        // which can become an incomplete object after a deployment.
+        cache()->forget('setting:' . $key);
+        cache()->forget('setting:data:' . $key);
 
-        if (!$setting || $setting->value === null) {
+        $setting = cache()->remember(
+            'setting:data:' . $key,
+            3600,
+            fn () => static::query()->where('key', $key)->first(['value', 'type'])?->only(['value', 'type'])
+        );
+
+        if (!$setting || ($setting['value'] ?? null) === null) {
             return $default;
         }
 
-        return match ($setting->type) {
-            'json' => json_decode($setting->value, true) ?? $default,
-            'boolean' => filter_var($setting->value, FILTER_VALIDATE_BOOLEAN),
-            default => $setting->value,
+        return match ($setting['type'] ?? 'string') {
+            'json' => json_decode($setting['value'], true) ?? $default,
+            'boolean' => filter_var($setting['value'], FILTER_VALIDATE_BOOLEAN),
+            default => $setting['value'],
         };
     }
 
