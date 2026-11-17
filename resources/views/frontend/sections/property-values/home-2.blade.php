@@ -12,9 +12,10 @@
     $spacing = $sectionConfig['vertical_spacing'] ?? 'space';
     $backgroundImage = $sectionConfig['background_image'] ?? null;
     $animation = ($sectionConfig['animate_cards'] ?? true);
+    $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
 
-<section class="property-values-sec-2 {{ $spacing }} overflow-hidden" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif @if($backgroundImage) data-bg-src="{{ $backgroundImage }}" @endif>
+<section class="property-values-sec-2 {{ $spacing }} overflow-hidden {{ $visibility }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif @if($backgroundImage) data-bg-src="{{ $backgroundImage }}" @endif>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-xl-7">
