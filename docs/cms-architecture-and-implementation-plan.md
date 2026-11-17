@@ -295,3 +295,36 @@ Widget types are PHP-registered and include settings schema, validation, rendere
 - Keep code readable and PSR-12 formatted; avoid one-line controllers/routes in new code.
 - Each implementation phase ends with a change summary, exact files changed, verification performed, and limitations. Tests not executed are reported as not run.
 - No PR is created unless the user explicitly asks for one or an existing PR needs its description updated.
+
+
+## 11. Implementation status on `feat/property-cms-foundation`
+
+This status reflects GitHub-side source changes only; it is not a claim that the application has been executed.
+
+### Implemented in the current work
+
+- Added the architecture plan and a separate ten-homepage theme fidelity inventory.
+- Added additive, table-specific migrations for `homepages`, `reusable_sections`, `homepage_sections`, `widgets`, `widget_areas`, `widget_area_items`, and per-property CTA fields.
+- Added Eloquent models for homepage composition, reusable sections and widget placements.
+- Added an idempotent seeder for all ten original homepage design records.
+- Added homepage selection, draft-copy, publish and default-selection workflows.
+- Added a first section catalog: hero variants from all ten designs, plus database-driven property, team and blog sections from the primary design.
+- Extracted the ten hero blocks into registered Blade partials. The primary hero uses the existing banner records; the other hero headings support per-instance builder overrides.
+- Added a draft-only section builder with add, remove, enable/disable, editable heading fields, and server-persisted HTML5 drag-and-drop ordering.
+- Added frontend rendering of the saved section order using a code-owned view registry; database values cannot choose arbitrary Blade paths.
+- Added per-property CTA mode and WhatsApp fields. The default is `both` to preserve the existing contact form and global WhatsApp action; an unavailable WhatsApp number safely falls back to the enquiry form.
+- Split admin routes from public routes and moved the catch-all CMS page route after admin route registration to avoid route shadowing.
+
+### Still in progress
+
+- Extract and register the remaining non-hero sections from all ten original designs; the initial section catalog is intentionally not presented as the complete final catalog.
+- Replace all remaining static headings, body copy, image selections, counters, links, testimonials, service cards, project cards, FAQ items and footer/header content with CMS records or section settings.
+- Build the full widget administration and widget-area placement interface.
+- Upgrade menu items with typed internal entity/route selectors, cycle-safe tree editing and recursive rendering.
+- Add analytics, page-view aggregation and admin activity history.
+- Add service/testimonial/comment modules where required by the final approved scope.
+- Complete desktop/tablet/mobile side-by-side browser verification against all ten original HTML files.
+
+### Verification status
+
+No Composer install, Artisan command, migration, seeder, PHPUnit/Pest test, route-list check or browser screenshot was executed in this environment. The GitHub connection accepted the source changes, but runtime behavior and database compatibility remain unverified until the branch is run against the project's Laravel/MySQL environment.
