@@ -30,6 +30,11 @@ class WidgetRenderer
     private function payload(Widget $widget): array
     {
         $config = $widget->config ?? [];
+        if (isset($config['image_url']) && ctype_digit((string) $config['image_url'])) {
+            $media = Media::query()->find((int) $config['image_url']);
+            $config['image_alt'] = $media?->alt_text ?? '';
+            $config['image_url'] = $media?->url ?? '';
+        }
         $data = match ($widget->type) {
             'recent_posts' => Post::published()->latest('published_at')->limit((int) ($config['limit'] ?? 5))->get(),
             'categories' => Category::where('type', 'property')->where('is_active', true)->orderBy('sort_order')->limit((int) ($config['limit'] ?? 12))->get(),
