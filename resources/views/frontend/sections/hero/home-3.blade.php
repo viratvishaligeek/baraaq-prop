@@ -5,8 +5,8 @@
 @endphp
 
 <div class="th-hero-wrapper bg-smoke hero-3 {{ $visibility }}" id="hero-{{ $section->id }}">
-    <div class="shape-mockup d-none d-xl-block" data-top="0" data-right="0"><img src="{{ asset('theme-assets/img/hero/hero-3-right-shape.png') }}" alt="img"></div>
-    <div class="shape-mockup spin d-none d-xxl-block" data-left="3%" data-bottom="5%"><img src="{{ asset('theme-assets/img/shape/hero-3-left-shape.png') }}" alt="img"></div>
+    @if(!empty($sectionConfig['right_shape_image']))<div class="shape-mockup d-none d-xl-block" data-top="0" data-right="0"><img src="{{ $sectionConfig['right_shape_image'] }}" alt="img"></div>@endif
+    @if(!empty($sectionConfig['left_shape_image']))<div class="shape-mockup spin d-none d-xxl-block" data-left="3%" data-bottom="5%"><img src="{{ $sectionConfig['left_shape_image'] }}" alt="img"></div>@endif
     <div class="container">
         <div class="row gy-4 align-items-center">
             <div class="col-xl-6 col-lg-12">
@@ -99,14 +99,14 @@
                         @foreach($mapProperties as $index => $property)
                             @php($markerIndex = $index + 1)
                             <li class="map-icon map-icon{{ $markerIndex }}" style="left: {{ $sectionConfig['map_marker_'.$markerIndex.'_x'] ?? [18,38,61,80][$index] }}%;top: {{ $sectionConfig['map_marker_'.$markerIndex.'_y'] ?? [24,66,34,72][$index] }}%">
-                                <img src="{{ asset('theme-assets/img/icon/map-marker.svg') }}" alt="{{ $property->title }}">
+                                <img src="{{ $sectionConfig['map_marker_image'] ?? asset('theme-assets/img/icon/map-marker.svg') }}" alt="{{ $property->title }}">
                             </li>
                         @endforeach
                     </ul>
                     @foreach($mapProperties as $index => $property)
                         @php
                             $mapIndex = $index + 1;
-                            $propertyImage = $property->featured_image ? Storage::disk('public')->url($property->featured_image) : $property->images->first()?->url;
+                            $propertyImage = $property->featured_image ? Storage::disk('public')->url($property->featured_image) : ($property->images->first()?->path ? Storage::disk('public')->url($property->images->first()->path) : null);
                         @endphp
                         <div class="map-popular-list map-popular-list{{ $mapIndex }} {{ $mapIndex === 4 ? 'show' : '' }}">
                             <div class="popular-list-1">
