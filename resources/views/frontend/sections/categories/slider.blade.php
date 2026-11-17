@@ -23,7 +23,7 @@
 @endphp
 
 <section
-    id="category-sec"
+    id="category-sec-{{ $section->id }}"
     class="{{ $wrapperClass }} {{ $sectionConfig['vertical_spacing'] ?? 'space' }} {{ $visibility }}"
     @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif
     @if($backgroundImage) data-bg-src="{{ $backgroundImage }}" @endif
