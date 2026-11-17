@@ -85,7 +85,7 @@
                 <div class="col-xl-5">
                     <div class="content-card">
                         <h2 class="section-title">Section inspector</h2>
-                        <p class="small text-muted">Select a section on the page preview to jump to its settings. Save each section after editing.</p>
+                        <p class="small text-muted">Click a section in the rendered preview to open its settings here. Save each section after editing.</p>
                         <div id="page-builder-list" data-sort-url="{{ route('admin.pages.widgets.reorder', $page) }}" style="max-height:1000px;overflow:auto;padding-right:4px">
                     @forelse ($page->sections as $section)
                         @php
@@ -206,6 +206,39 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('[data-preview-width]').forEach(item => item.classList.remove('active'));
             button.classList.add('active');
             previewWrap.style.width = button.dataset.previewWidth;
+        });
+    });
+    const selectSection = id => {
+        document.querySelectorAll('.page-builder-item').forEach(item => {
+            item.classList.toggle('border-primary', item.dataset.sectionId === String(id));
+            item.classList.toggle('shadow-sm', item.dataset.sectionId === String(id));
+        });
+        const inspectorItem = document.querySelector('.page-builder-item[data-section-id="' + id + '"]');
+        inspectorItem?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    };
+    const bindPreviewSections = () => {
+        try {
+            const previewDocument = previewFrame.contentDocument;
+            previewDocument?.querySelectorAll('.cms-widget-instance').forEach(section => {
+                section.style.cursor = 'pointer';
+                section.title = 'Click to edit this section';
+                section.addEventListener('click', event => {
+                    const sectionId = section.id.replace('cms-widget-', '');
+                    if (!document.querySelector('.page-builder-item[data-section-id="' + sectionId + '"]')) return;
+                    event.preventDefault();
+                    event.stopPropagation();
+                    selectSection(sectionId);
+                }, true);
+            });
+        } catch (error) {
+            // Preview remains usable even if the browser blocks same-origin frame access.
+        }
+    };
+    previewFrame.addEventListener('load', bindPreviewSections);
+    document.querySelectorAll('.page-builder-item').forEach(item => {
+        item.addEventListener('click', event => {
+            if (event.target.closest('button, input, select, textarea, a, form')) return;
+            selectSection(item.dataset.sectionId);
         });
     });
     document.getElementById('refresh-page-preview')?.addEventListener('click', () => {
