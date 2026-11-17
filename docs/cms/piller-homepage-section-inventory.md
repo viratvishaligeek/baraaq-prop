@@ -15,7 +15,7 @@ This inventory records the source HTML review for the ten original homepage desi
 | `home-7.html` | Hero; categories; property grid; editorial about; agents; testimonials; articles | Added reusable Piller about design `about.home-7`; existing category, property, team, testimonial and blog families cover the other data types. |
 | `home-8.html` | Local-agency hero; property grid; customer process; local-agency about with statistics; agents; property-value gallery; testimonials; articles | Added reusable Piller about design `about.home-8`; property, team, property-value and blog families exist. Process and testimonial variants remain. |
 | `home-9.html` | Agency hero; about/mission/vision; services; property grid; agents; trust-score testimonials; articles | Added reusable Piller about design `about.home-9` and database-driven service design `services.home-9`. |
-| `home-10.html` | Modern hero; category/logo showcase; property grid; services; modern about with image pair and statistics; testimonials; agents; project gallery; articles | Added reusable Piller about design `about.home-10` and database-driven service design `services.home-10`. Category/logo and project-gallery variants remain. |
+| `home-10.html` | Modern hero; category/logo showcase; property grid; services; modern about with image pair and statistics; testimonials; agents; project gallery; articles | Added reusable Piller about design `about.home-10` and database-driven service design `services.home-10`. Added a tabbed category/property design based on the Home 10 category section. Project-gallery variants remain. |
 
 ## Designs added in this implementation checkpoint
 
@@ -26,4 +26,4 @@ Added Testimonials designs: Home 1 classic centered slider, Home 4 editorial spl
 
 ## Remaining conversion work
 
-This is an inventory and progress record, not a claim that every section is migrated. Dedicated work remains for the complete target variations for Categories, FAQ, CTA, Statistics, Contact and Client Logos, plus room/project galleries and further original homepage-specific layouts. Testimonials now has five registered designs in total when the existing Home 2 and Home 3 templates are included. Existing original HTML files and assets must remain until those layouts have been implemented and visually verified.
+This is an inventory and progress record, not a claim that every section is migrated. Dedicated work remains for the complete target variations for FAQ, CTA, Statistics, Contact and Client Logos, plus room/project galleries and further original homepage-specific layouts. Property Categories now has three distinct layouts: the Home 2/7 category slider, Home 3 style-2 slider, and Home 10 tabbed property showcase. Testimonials now has five registered designs in total when the existing Home 2 and Home 3 templates are included. Existing original HTML files and assets must remain until those layouts have been implemented and visually verified.

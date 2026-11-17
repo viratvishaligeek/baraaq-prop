@@ -131,7 +131,8 @@ class SectionDataResolver
     private function categories(array $config, array $ids, string $direction): Collection
     {
         $query = Category::query()->where('type', 'property')->where('is_active', true)
-            ->withCount(['properties' => fn ($q) => $q->published()]);
+            ->withCount(['properties' => fn ($q) => $q->published()])
+            ->with(['properties' => fn ($q) => $q->published()->with('images')->latest('published_at')->limit(3)]);
         if ($ids !== []) $query->whereIn('id', $ids);
         $sort = in_array($config['sort_by'] ?? 'sort_order', ['sort_order', 'created_at', 'name'], true) ? ($config['sort_by'] ?? 'sort_order') : 'sort_order';
 

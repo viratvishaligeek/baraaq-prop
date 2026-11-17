@@ -6,6 +6,7 @@ $categoryVariants = [
     'categories.home-2' => ['design' => 'home-2', 'label' => 'Property categories — Home 2', 'view' => 'frontend.sections.categories.slider'],
     'categories.home-3' => ['design' => 'home-3', 'label' => 'Property categories — Home 3', 'view' => 'frontend.sections.categories.slider'],
     'categories.home-7' => ['design' => 'home-7', 'label' => 'Property categories — Home 7', 'view' => 'frontend.sections.categories.slider'],
+    'categories.home-10' => ['design' => 'home-10', 'label' => 'Property categories — Tabbed property types (Home 10)', 'view' => 'frontend.sections.categories.home-10'],
 ];
 
 foreach ($categoryVariants as $key => $variant) {
