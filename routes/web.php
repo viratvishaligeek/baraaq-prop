@@ -4,11 +4,13 @@ use App\Http\Controllers\Frontend\ContentController as FrontendContentController
 use App\Http\Controllers\Frontend\EnquiryController as FrontendEnquiryController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\NewsletterController;
+use App\Http\Controllers\Frontend\SitemapController;
 use App\Http\Controllers\Frontend\PropertyController as FrontendPropertyController;
 use App\Http\Controllers\Frontend\ThemePageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
 Route::get('/properties', [FrontendPropertyController::class, 'index'])->name('properties.index');
 Route::get('/properties/{property:slug}', [FrontendPropertyController::class, 'show'])->name('properties.show');
