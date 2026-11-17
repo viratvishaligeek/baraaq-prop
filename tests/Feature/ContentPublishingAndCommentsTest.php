@@ -82,7 +82,7 @@ class ContentPublishingAndCommentsTest extends TestCase
             ->assertOk();
 
         $this->assertDatabaseCount('page_views', 2);
-        $this->assertSame(1, \Illuminate\\Support\\Facades\\DB::table('page_views')->distinct()->count('visitor_hash'));
+        $this->assertSame(1, DB::table('page_views')->distinct()->count('visitor_hash'));
         $this->assertDatabaseHas('page_views', [
             'path' => '/services/rental-management',
             'content_type' => 'service',

@@ -15,6 +15,7 @@ class TrackPageView
 
         if (
             !$request->isMethod('GET')
+            || $request->is('admin')
             || $request->is('admin/*')
             || $request->is('storage/*')
             || $request->is('build/*')
@@ -71,6 +72,7 @@ class TrackPageView
             $response->headers->setCookie(cookie('site_visitor', $visitor, 60 * 24 * 365, '/', null, $request->isSecure(), true, false, 'Lax'));
         }
 
+        // Sliding 30-minute expiry means a visit ends after 30 minutes of inactivity.
         $response->headers->setCookie(cookie('site_visit', $visit, 30, '/', null, $request->isSecure(), true, false, 'Lax'));
 
         return $response;
