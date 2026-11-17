@@ -9,6 +9,39 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaPickerController extends Controller
 {
+    public function upload(Request $request)
+    {
+        $data = $request->validate([
+            'files' => ['required', 'array', 'min:1', 'max:20'],
+            'files.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240'],
+        ]);
+
+        $uploaded = collect($data['files'])->map(function ($file) use ($request) {
+            $path = $file->store('media', 'public');
+
+            $media = Media::create([
+                'uploaded_by' => $request->user()->id,
+                'disk' => 'public',
+                'path' => $path,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'size' => $file->getSize(),
+            ]);
+
+            return [
+                'id' => $media->id,
+                'name' => $media->original_name,
+                'url' => $media->url,
+                'alt' => $media->alt_text,
+                'mime_type' => $media->mime_type,
+                'size' => $media->size,
+                'disk' => $media->disk,
+            ];
+        });
+
+        return response()->json(['uploaded' => true, 'data' => $uploaded], 201);
+    }
+
     public function __invoke(Request $request)
     {
         $search = trim((string) $request->query('search', ''));
