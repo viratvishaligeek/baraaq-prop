@@ -133,7 +133,7 @@
                                     <div class="row g-3">
                                         @foreach ($definition['fields'] as $field => $schema)
                                             @php $value = old('config.'.$field, $config[$field] ?? ''); @endphp
-                                            <div class="{{ in_array($schema['type'], ['textarea'], true) ? 'col-12' : 'col-md-6' }}">
+                                            <div class="{{ in_array($schema['type'], ['textarea', 'richtext'], true) ? 'col-12' : 'col-md-6' }}">
                                                 <label class="form-label small">{{ $schema['label'] }}</label>
                                                 @if ($schema['type'] === 'textarea')
                                                     <textarea class="form-control form-control-sm" name="config[{{ $field }}]" rows="2" maxlength="{{ $schema['max'] ?? 1500 }}">{{ $value }}</textarea>
