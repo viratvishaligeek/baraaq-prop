@@ -29,7 +29,7 @@ class SectionMediaResolver
             return $config;
         }
 
-        $attachments = $section->mediaAttachments()->with('media')->get()->keyBy('field_key');
+        $attachments = ($section->relationLoaded('mediaAttachments') ? $section->mediaAttachments : $section->mediaAttachments()->with('media')->get())->keyBy('field_key');
         $reusableAttachments = $section->reusableSection
             ? $section->reusableSection->mediaAttachments()->with('media')->get()->keyBy('field_key')
             : collect();
