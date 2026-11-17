@@ -28,7 +28,7 @@
     <div class="col-xl-4">
         <div class="content-card">
             <h2 class="section-title">Section library</h2>
-            <p class="text-muted small">Available now: ten hero variants and the first property, team and blog sections. This is not yet the complete source library; the remaining original blocks are being converted design by design.</p>
+            <p class="text-muted small">The catalog includes the sections extracted so far from the original designs. A section being available here does not mean it has passed the strict visual, interaction and responsive completion checks.</p>
             @foreach($availableSections as $section)
                 <form method="POST" action="{{ route('admin.homepages.sections.store', $homepage) }}" class="d-flex justify-content-between align-items-center gap-2 border rounded p-2 mb-2">
                     @csrf
