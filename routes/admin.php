@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\PropertyController;
+use App\Http\Controllers\Admin\ReusableSectionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SettingsController;
@@ -55,6 +56,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::patch('/homepages/{homepage}/default', [HomepageController::class, 'setDefault'])
             ->middleware('permission:settings.manage')
             ->name('homepages.default');
+
+        Route::post('/homepages/{homepage}/sections/{section}/save-reusable', [ReusableSectionController::class, 'storeFromSection'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.sections.save-reusable');
+        Route::post('/homepages/{homepage}/reusable-sections/{reusableSection}', [ReusableSectionController::class, 'attach'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.reusable-sections.attach');
 
         Route::post('/homepages/{homepage}/sections', [HomepageSectionController::class, 'store'])
             ->middleware('permission:settings.manage')
