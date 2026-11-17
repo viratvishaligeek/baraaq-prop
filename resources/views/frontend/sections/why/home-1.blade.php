@@ -48,7 +48,7 @@
                         @endif
                         <div class="why-card-1__content">
                             <h3 class="box-title">{{ $sectionConfig['item_'.$i.'_title'] ?? '' }}</h3>
-                            <div class="box-text">{!! AppSupportHtmlSanitizer::sanitize($sectionConfig['item_'.$i.'_text'] ?? '') !!}</div>
+                            <div class="box-text">{!! \App\Support\HtmlSanitizer::sanitize($sectionConfig['item_'.$i.'_text'] ?? '') !!}</div>
                         </div>
                         @if (!empty($sectionConfig['item_'.$i.'_button']))
                             <div class="why-card-1__bottom">
