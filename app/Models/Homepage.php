@@ -16,6 +16,7 @@ class Homepage extends Model
         'design_key',
         'status',
         'is_default',
+        'is_composition_complete',
         'meta_title',
         'meta_description',
         'published_at',
@@ -27,6 +28,7 @@ class Homepage extends Model
     {
         return [
             'is_default' => 'boolean',
+            'is_composition_complete' => 'boolean',
             'published_at' => 'datetime',
         ];
     }
