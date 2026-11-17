@@ -22,7 +22,8 @@ class ReusableSectionController extends Controller
             'name' => ['required', 'string', 'max:120'],
         ]);
 
-        $definition = config('cms-sections.sections.' . $section->section_key);
+        $sectionDefinitions = config('cms-sections.sections', []);
+        $definition = $sectionDefinitions[$section->section_key] ?? null;
         abort_unless($definition, 422, 'The section is not registered.');
 
         $baseSlug = Str::slug($data['name']);
@@ -75,7 +76,8 @@ class ReusableSectionController extends Controller
         abort_unless($homepage->status === 'draft', 409);
         abort_unless($reusableSection->status === 'published', 404);
 
-        $definition = config('cms-sections.sections.' . $reusableSection->section_key);
+        $sectionDefinitions = config('cms-sections.sections', []);
+        $definition = $sectionDefinitions[$reusableSection->section_key] ?? null;
         abort_unless($definition, 422, 'This reusable section is no longer registered.');
 
         $homepage->sections()->create([
