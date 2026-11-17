@@ -5,6 +5,7 @@ namespace App\Services\Homepage;
 use App\Models\Category;
 use App\Models\HomepageSection;
 use App\Models\TeamMember;
+use App\Models\Property;
 use Illuminate\Support\Collection;
 
 class SectionDataResolver
@@ -17,8 +18,29 @@ class SectionDataResolver
         return match ($section->section_type) {
             'category-slider' => ['categories' => $this->categories($config)],
             'team-slider' => ['teamMembers' => $this->teamMembers($config)],
+            'property-slider-grid' => $this->properties($config),
             default => [],
         };
+    }
+
+    private function properties(array $config): array
+    {
+        $properties = Property::published()
+            ->with(['images', 'category'])
+            ->latest('published_at')
+            ->limit(max(1, min(16, (int) ($config['items_limit'] ?? 8))))
+            ->get();
+
+        $categories = Category::query()
+            ->where('type', 'property')
+            ->where('is_active', true)
+            ->withCount(['properties' => fn ($query) => $query->published()])
+            ->having('properties_count', '>', 0)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
+
+        return ['properties' => $properties, 'propertyCategories' => $categories];
     }
 
     private function teamMembers(array $config): Collection
