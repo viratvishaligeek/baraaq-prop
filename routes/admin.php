@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\WidgetController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -147,6 +148,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/settings', [SettingsController::class, 'update'])
             ->middleware('permission:settings.manage')
             ->name('settings.update');
+
+        Route::patch('/widget-areas/{area}/reorder', [WidgetController::class, 'reorder'])->name('widget-areas.reorder')->middleware('permission:widgets.manage');
+        Route::resource('widgets', WidgetController::class)->except(['show'])->middleware('permission:widgets.manage');
 
         Route::resource('menus', MenuController::class)
             ->except(['show'])
