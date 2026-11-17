@@ -16,15 +16,20 @@ class HomeController extends Controller
         $homepage = cache()->remember(
             'homepage:published-default',
             300,
-            fn () => Homepage::published()->default()->first()
+            fn () => Homepage::published()->default()->with('sections')->first()
         );
 
-        $view = match ($homepage?->design_key) {
-            'home-2', 'home-3', 'home-4', 'home-5', 'home-6',
-            'home-7', 'home-8', 'home-9', 'home-10' =>
-                'frontend.theme-pages.'.$homepage->design_key,
-            default => 'frontend.home',
-        };
+        $hasCustomSections = $homepage
+            && $homepage->sections->contains(fn ($section) => $section->is_enabled);
+
+        $view = $hasCustomSections
+            ? 'frontend.home-builder'
+            : match ($homepage?->design_key) {
+                'home-2', 'home-3', 'home-4', 'home-5', 'home-6',
+                'home-7', 'home-8', 'home-9', 'home-10' =>
+                    'frontend.theme-pages.'.$homepage->design_key,
+                default => 'frontend.home',
+            };
 
         return view($view, [
             'homepage' => $homepage,
