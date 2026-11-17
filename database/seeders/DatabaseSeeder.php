@@ -1,57 +1,41 @@
 <?php
+
 namespace Database\Seeders;
-use App\Models\Menu;
-use App\Models\MenuItem;
+
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    public function run():void
+    public function run(): void
     {
-        $this->call([RolePermissionSeeder::class, HomepageTemplateSeeder::class, WidgetAreaSeeder::class]);
-        $this->seedPrimaryMenu();
-        $email=env('CMS_ADMIN_EMAIL');
-        $password=env('CMS_ADMIN_PASSWORD');
-        if($email&&$password){
-            $user=User::updateOrCreate(['email'=>$email],[
-                'name'=>env('CMS_ADMIN_NAME','Site Administrator'),
-                'password'=>Hash::make($password),
-                'is_active'=>true,
-            ]);
-            $user->roles()->syncWithoutDetaching([Role::where('slug','administrator')->value('id')]);
-        }
-    }
+        $this->call([
+            RolePermissionSeeder::class,
+            HomepageTemplateSeeder::class,
+            WidgetAreaSeeder::class,
+            DefaultThemeSeeder::class,
+        ]);
 
-    private function seedPrimaryMenu():void
-    {
-        $menu=Menu::firstOrCreate(['location'=>'primary'],['name'=>'Primary navigation']);
-        if($menu->allItems()->exists())return;
-        $items=[
-            ['Home','/',null,0],
-            ['Properties','/properties',null,1],
-            ['For Sale','/properties?listing_type=sale','Properties',2],
-            ['For Rent','/properties?listing_type=rent','Properties',3],
-            ['About Us','/about.html',null,4],
-            ['Blog','/blog',null,5],
-            ['Contact','/contact.html',null,6],
-        ];
-        $parents=[];
-        foreach($items as [$label,$url,$parent,$order]){
-            $parentId=$parent?$parents[$parent]->id:null;
-            $parents[$label]=MenuItem::create([
-                'menu_id'=>$menu->id,
-                'label'=>$label,
-                'url'=>$url,
-                'parent_id'=>$parentId,
-                'target'=>'_self',
-                'sort_order'=>$order,
-                'is_active'=>true,
-            ]);
+        $email = env('CMS_ADMIN_EMAIL');
+        $password = env('CMS_ADMIN_PASSWORD');
+
+        if ($email && $password) {
+            $user = User::updateOrCreate(
+                ['email' => $email],
+                [
+                    'name' => env('CMS_ADMIN_NAME', 'Site Administrator'),
+                    'password' => Hash::make($password),
+                    'is_active' => true,
+                ]
+            );
+
+            $administratorId = Role::query()->where('slug', 'administrator')->value('id');
+
+            if ($administratorId) {
+                $user->roles()->syncWithoutDetaching([$administratorId]);
+            }
         }
-        Cache::forget('menu:primary');
     }
 }
