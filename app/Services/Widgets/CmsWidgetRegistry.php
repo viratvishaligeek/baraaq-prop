@@ -7,6 +7,7 @@ class CmsWidgetRegistry
     private const GROUPS = [
         'hero' => 'Hero sections',
         'about-composition' => 'About sections',
+        'why-choose' => 'Why choose us',
         'service-list' => 'Services',
         'category-slider' => 'Property categories',
         'property-list' => 'Property listings',
