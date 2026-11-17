@@ -20,9 +20,28 @@ class ContentController extends Controller
 
     private function model(string $type): string
     {
-        abort_unless(isset($this->types[$type]),404);
-        $permission = ['posts'=>'posts.manage','pages'=>'pages.manage','categories'=>'categories.manage','banners'=>'banners.manage','team'=>'team.manage','services'=>'services.manage','testimonials'=>'testimonials.manage'][$type];
-        abort_unless(request()->user()->isAdministrator() || request()->user()->hasPermission($permission),403);
+        abort_unless(isset($this->types[$type]), 404);
+
+        $user = request()->user();
+        $managePermission = $type.'.manage';
+        $action = match (true) {
+            request()->routeIs('admin.content.create', 'admin.content.store') => 'create',
+            request()->routeIs('admin.content.edit', 'admin.content.update') => 'edit',
+            request()->routeIs('admin.content.destroy') => 'delete',
+            default => 'view',
+        };
+
+        abort_unless(
+            $user->isAdministrator()
+                || $user->hasPermission($managePermission)
+                || $user->hasPermission($type.'.'.$action),
+            403
+        );
+
+        if (in_array($action, ['create', 'edit']) && request()->input('status') === 'published') {
+            abort_unless($user->isAdministrator() || $user->hasPermission($managePermission) || $user->hasPermission($type.'.publish'), 403);
+        }
+
         return $this->types[$type];
     }
 
