@@ -37,7 +37,7 @@ return [
             'chat_link_url' => ['label' => 'Chat link URL', 'type' => 'url', 'max' => 2048],
             'card_background' => ['label' => 'Team card background image', 'type' => 'image', 'max' => 2048],
             'decorative_shape' => ['label' => 'Decorative shape image', 'type' => 'image', 'max' => 2048],
-            'vertical_spacing' => ['label' => 'Section spacing', 'type' => 'select', 'options' => ['space' => 'Bottom only', 'space' => 'Theme spacing', 'py-0' => 'No vertical spacing']],
+            'vertical_spacing' => ['label' => 'Section spacing', 'type' => 'select', 'options' => ['space' => 'Theme spacing', 'space-bottom' => 'Bottom only', 'py-0' => 'No vertical spacing']],
             'animate_cards' => ['label' => 'Enable entrance animations', 'type' => 'checkbox'],
             'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
             'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
