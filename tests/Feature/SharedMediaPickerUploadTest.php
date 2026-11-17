@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Controllers\Admin\MediaPickerController;
 use App\Models\Media;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
@@ -19,6 +20,7 @@ class SharedMediaPickerUploadTest extends TestCase
     {
         Storage::fake('public');
         $user = User::factory()->create();
+        $user->roles()->attach(Role::create(['name' => 'Administrator', 'slug' => 'administrator']));
         $file = UploadedFile::fake()->image('piller-widget-image.png', 640, 480);
 
         $request = Request::create('/admin/media/picker', 'POST');
@@ -44,6 +46,7 @@ class SharedMediaPickerUploadTest extends TestCase
     {
         Storage::fake('public');
         $user = User::factory()->create();
+        $user->roles()->attach(Role::create(['name' => 'Administrator', 'slug' => 'administrator']));
         $file = UploadedFile::fake()->create('not-an-image.pdf', 20, 'application/pdf');
 
         $request = Request::create('/admin/media/picker', 'POST');
