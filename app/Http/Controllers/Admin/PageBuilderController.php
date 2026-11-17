@@ -165,6 +165,10 @@ class PageBuilderController extends Controller
             'data_source' => $source,
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json(['saved' => true, 'section_id' => $section->id]);
+        }
+
         return back()->with('success', 'Widget configuration saved.');
     }
 
