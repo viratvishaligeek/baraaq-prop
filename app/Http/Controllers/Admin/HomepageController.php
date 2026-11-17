@@ -61,6 +61,7 @@ class HomepageController extends Controller
                         $sectionKeys[] = 'properties.home-3';
                         $sectionKeys[] = 'why.home-3';
                         $sectionKeys[] = 'team.home-3';
+                        $sectionKeys[] = 'gallery.home-3';
                     }
                     if ($homepage->design_key === 'home-2') {
                         $sectionKeys[] = 'about.home-2';
