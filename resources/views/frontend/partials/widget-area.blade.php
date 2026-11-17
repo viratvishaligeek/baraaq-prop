@@ -3,7 +3,7 @@
 @endphp
 @if ($renderedWidgets->isNotEmpty())
     @foreach ($renderedWidgets as $widget)
-        <section class="widget cms-widget cms-widget-{{ $widget['type'] }}" data-widget-id="{{ $widget['id'] }}">
+        <section class="widget {{ str_starts_with($location, 'footer-') ? 'footer-widget' : '' }} cms-widget cms-widget-{{ $widget['type'] }}" data-widget-id="{{ $widget['id'] }}">
             @if (!empty($widget['config']['title']))
                 <h3 class="widget_title">{{ $widget['config']['title'] }}</h3>
             @endif
