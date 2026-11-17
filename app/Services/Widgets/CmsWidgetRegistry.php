@@ -88,7 +88,7 @@ class CmsWidgetRegistry
     public function queryableTypes(): array
     {
         $propertyFilters = [
-            'listing_type' => ['label' => 'Listing type', 'type' => 'select', 'options' => ['all' => 'All', 'sale' => 'For sale', 'rent' => 'For rent']],
+            'listing_type' => ['label' => 'Listing type', 'type' => 'select', 'options' => ['all' => 'All', 'sale' => 'For sale', 'rent' => 'For rent', 'lease' => 'For lease']],
             'category_id' => ['label' => 'Property category ID', 'type' => 'integer', 'min' => 1, 'category_type' => 'property'],
             'city' => ['label' => 'City contains', 'type' => 'text', 'max' => 100],
             'property_type' => ['label' => 'Property type', 'type' => 'text', 'max' => 100],
