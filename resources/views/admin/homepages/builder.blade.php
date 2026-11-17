@@ -97,6 +97,10 @@
                             </form>
                         @endif
                         <div class="d-flex gap-2">
+                            <form method="POST" action="{{ route('admin.homepages.sections.duplicate', [$homepage, $section]) }}">
+                                @csrf
+                                <button class="btn btn-sm btn-outline-primary" type="submit">Duplicate</button>
+                            </form>
                             <form method="POST" action="{{ route('admin.homepages.sections.toggle', [$homepage, $section]) }}">
                                 @csrf
                                 @method('PATCH')
