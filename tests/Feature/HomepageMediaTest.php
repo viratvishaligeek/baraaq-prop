@@ -84,6 +84,23 @@ class HomepageMediaTest extends TestCase
         $this->assertSame($media->url, $rendered['background_image']);
     }
 
+    public function test_dotted_registered_section_key_resolves_its_image_field_definition(): void
+    {
+        $media = $this->createMedia('homepage/dotted-registry-image.png');
+        $section = $this->createSection([
+            'background_image' => (string) $media->id,
+        ]);
+        $section->update(['section_key' => 'hero.index']);
+        $section->mediaAttachments()->create([
+            'field_key' => 'background_image',
+            'media_id' => $media->id,
+        ]);
+
+        $rendered = app(SectionMediaResolver::class)->forRendering($section, $section->config);
+
+        $this->assertSame($media->url, $rendered['background_image']);
+    }
+
     public function test_legacy_url_based_section_media_remains_backward_compatible(): void
     {
         $legacyUrl = '/theme-assets/img/hero/hero-3-right.jpg';
