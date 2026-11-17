@@ -1,7 +1,7 @@
 @extends('frontend.layouts.theme')
-@section('title',($property->meta_title?:$property->title).' · '.config('app.name'))
+@section('title', ($property->meta_title ?: $property->title).' · '.($siteSettings['site_title'] ?? config('app.name')))
 @section('meta_description',$property->meta_description?:($property->description?\Illuminate\Support\Str::limit(strip_tags($property->description),155):\App\Models\Setting::read('meta_description',''))) 
-@section('canonical_url',$property->canonical_url ?: route('properties.show',$property)) @section('og_image',$property->og_image ? asset('storage/'.$property->og_image) : ($property->featured_image ? Storage::disk('public')->url($property->featured_image) : asset('storage/'.($siteSettings['default_og_image'] ?? '')))) @section('structured_data')
+@section('canonical_url',$property->canonical_url ?: route('properties.show',$property)) @section('og_image',$property->og_image ? asset('storage/'.$property->og_image) : ($property->featured_image ? Storage::disk('public')->url($property->featured_image) : (!empty($siteSettings['default_og_image']) ? asset('storage/'.$siteSettings['default_og_image']) : asset('theme-assets/img/hero/hero-10-1.jpg')))) @section('structured_data')
 <script type="application/ld+json">@json([
     '@context' => 'https://schema.org',
     '@type' => 'RealEstateListing',

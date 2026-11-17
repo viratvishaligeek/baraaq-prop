@@ -71,9 +71,7 @@ class TrackPageView
             $response->headers->setCookie(cookie('site_visitor', $visitor, 60 * 24 * 365, '/', null, $request->isSecure(), true, false, 'Lax'));
         }
 
-        if ($newVisit) {
-            $response->headers->setCookie(cookie('site_visit', $visit, 30, '/', null, $request->isSecure(), true, false, 'Lax'));
-        }
+        $response->headers->setCookie(cookie('site_visit', $visit, 30, '/', null, $request->isSecure(), true, false, 'Lax'));
 
         return $response;
     }

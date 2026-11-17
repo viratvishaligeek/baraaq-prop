@@ -1,4 +1,4 @@
-@extends('frontend.layouts.theme') @section('title',$page->meta_title?:$page->title) @section('meta_description',$page->meta_description?:\App\Models\Setting::read('meta_description','')) @section('canonical_url',$page->canonical_url ?: route('pages.show',$page)) @section('og_image',$page->og_image ? asset('storage/'.$page->og_image) : asset('storage/'.($siteSettings['default_og_image'] ?? ''))) @section('structured_data')
+@extends('frontend.layouts.theme') @section('title',$page->meta_title?:$page->title) @section('meta_description',$page->meta_description?:\App\Models\Setting::read('meta_description','')) @section('canonical_url',$page->canonical_url ?: route('pages.show',$page)) @section('og_image',$page->og_image ? asset('storage/'.$page->og_image) : (!empty($siteSettings['default_og_image']) ? asset('storage/'.$siteSettings['default_og_image']) : asset('theme-assets/img/hero/hero-10-1.jpg'))) @section('structured_data')
 <script type="application/ld+json">@json([
     '@context' => 'https://schema.org',
     '@type' => 'WebPage',
