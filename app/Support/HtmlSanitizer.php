@@ -10,8 +10,9 @@ use DOMXPath;
 class HtmlSanitizer
 {
     private const ALLOWED_TAGS = [
-        'p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li',
-        'a', 'h2', 'h3', 'h4', 'blockquote', 'span',
+        'p', 'br', 'hr', 'strong', 'b', 'em', 'i', 'u', 's', 'del',
+        'ul', 'ol', 'li', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'blockquote', 'pre', 'code', 'sub', 'sup', 'mark', 'span',
     ];
 
     private const DROP_TAGS = ['script', 'style', 'iframe', 'object', 'embed', 'svg', 'math'];
