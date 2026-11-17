@@ -185,6 +185,20 @@
                                         <div class="col-md-4"><label class="form-label small">Sort by</label><select class="form-select form-select-sm" name="data_source[sort_by]">@foreach($querySchema['sort'] as $sort)<option value="{{ $sort }}" @selected(($dataSource['sort_by'] ?? 'published_at') === $sort)>{{ ucfirst(str_replace('_',' ',$sort)) }}</option>@endforeach</select></div>
                                         <div class="col-md-2"><label class="form-label small">Direction</label><select class="form-select form-select-sm" name="data_source[sort_direction]"><option value="desc" @selected(($dataSource['sort_direction'] ?? 'desc') === 'desc')>DESC</option><option value="asc" @selected(($dataSource['sort_direction'] ?? '') === 'asc')>ASC</option></select></div>
                                         <div class="col-md-3"><label class="form-label small">Columns</label><input class="form-control form-control-sm" type="number" min="1" max="6" name="data_source[columns]" value="{{ $dataSource['columns'] ?? ($config['columns'] ?? 3) }}"></div>
+                                        @foreach($querySchema['filters'] ?? [] as $filter => $filterSchema)
+                                            <div class="col-md-4">
+                                                <label class="form-label small">{{ $filterSchema['label'] }}</label>
+                                                @if(($filterSchema['type'] ?? '') === 'select')
+                                                    <select class="form-select form-select-sm" name="data_source[filters][{{ $filter }}]">
+                                                        @foreach($filterSchema['options'] as $option => $label)
+                                                            <option value="{{ $option }}" @selected(($dataSource['filters'][$filter] ?? '') === (string) $option)>{{ $label }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                @else
+                                                    <input class="form-control form-control-sm" type="{{ in_array($filterSchema['type'] ?? '', ['integer', 'number'], true) ? 'number' : 'text' }}" name="data_source[filters][{{ $filter }}]" value="{{ $dataSource['filters'][$filter] ?? '' }}" @if(isset($filterSchema['min'])) min="{{ $filterSchema['min'] }}" @endif @if(isset($filterSchema['max'])) max="{{ $filterSchema['max'] }}" @endif @if(isset($filterSchema['max']) && ($filterSchema['type'] ?? '') === 'text') maxlength="{{ $filterSchema['max'] }}" @endif>
+                                                @endif
+                                            </div>
+                                        @endforeach
                                         <div class="col-md-6"><label class="form-label small">Only these record IDs (comma separated, optional)</label><input class="form-control form-control-sm" name="data_source[selected_ids]" value="{{ implode(',', $dataSource['selected_ids'] ?? []) }}" placeholder="e.g. 2,5,8"></div>
                                         @if($querySchema['slider'] ?? true)<div class="col-md-3 pt-4"><input type="hidden" name="data_source[slider]" value="0"><div class="form-check"><input class="form-check-input" type="checkbox" name="data_source[slider]" value="1" @checked($dataSource['slider'] ?? true)><label class="form-check-label small">Enable slider</label></div></div>@endif
                                     </div>
