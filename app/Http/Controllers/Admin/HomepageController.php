@@ -46,6 +46,7 @@ class HomepageController extends Controller
             $copy->slug = Str::slug($homepage->slug . '-draft-' . now()->format('YmdHis') . '-' . Str::lower(Str::random(5)));
             $copy->status = 'draft';
             $copy->is_default = false;
+            $copy->is_composition_complete = false;
             $copy->published_at = null;
             $copy->created_by = request()->user()->id;
             $copy->updated_by = request()->user()->id;
@@ -130,6 +131,45 @@ class HomepageController extends Controller
                 ->get(),
             'isHomepagePreview' => true,
         ]);
+    }
+
+    public function verifyComposition(Homepage $homepage)
+    {
+        abort_unless($homepage->status === 'draft', 409, 'Only a draft homepage can be verified.');
+
+        $required = array_merge(
+            ['hero.' . $homepage->design_key],
+            config('cms-homepage-presets.' . $homepage->design_key, [])
+        );
+        $sections = $homepage->sections()->get();
+        $present = $sections->pluck('section_key')->all();
+        $missing = array_values(array_diff($required, $present));
+
+        if ($missing !== []) {
+            return back()->withErrors([
+                'composition' => 'The original homepage composition is missing: ' . implode(', ', $missing),
+            ]);
+        }
+
+        $invalid = $sections->filter(function ($section) {
+            $definition = config('cms-sections.sections.' . $section->section_key);
+
+            return ! $definition || empty($definition['view']) || ! view()->exists($definition['view']);
+        })->pluck('section_key')->all();
+
+        if ($invalid !== []) {
+            return back()->withErrors([
+                'composition' => 'These sections do not resolve to registered frontend views: ' . implode(', ', $invalid),
+            ]);
+        }
+
+        $homepage->update([
+            'is_composition_complete' => true,
+            'updated_by' => request()->user()->id,
+        ]);
+
+        return redirect()->route('admin.homepages.builder', $homepage)
+            ->with('success', 'Section coverage and registered frontend views are valid. Your manual desktop, tablet and mobile visual review is still required before publishing.');
     }
 
     public function publish(Homepage $homepage)
