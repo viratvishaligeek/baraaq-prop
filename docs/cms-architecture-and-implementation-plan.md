@@ -368,3 +368,12 @@ Section definitions are split across dedicated files under `config/cms-sections/
 ### Home 3 section sequence follow-up — 2026-11-17
 
 Home 3 now seeds six currently extracted sections in source order: hero, category slider, published-property grid, seven-card amenities carousel, team carousel and neighborhood feature gallery. The category and property sections resolve real property taxonomy/data; the team section resolves active TeamMember records. The gallery and amenities sections have per-card content/media schemas and preserve their source-specific layout classes. Home 3 is still incomplete: the app download, featured gallery, testimonials, FAQ, enquiry, marquee, blog and brand-strip source blocks remain to be extracted/registered, and responsive visual verification has not run.
+
+
+### Home 3 extraction and Media Library relationship work — 2026-11-17
+
+Home 3's empty-draft initializer now seeds fourteen registered major sections in source order. Its map/counter/search hero is editable and resolves map cards, city options, property types and bedroom options from published property records. The featured gallery resolves featured published properties; the blog layout resolves published posts; the enquiry block submits through the existing `enquiries.store` route. Download QR/store details, testimonial content, FAQ entries, marquee items and brand logos are section-specific configuration values. The Blade renderers retain the source layout classes and original JavaScript hooks for tabs, accordion, Swiper, animation, popup video and map hover behavior.
+
+The Media Library now uses a relational `media_attachments` table with a polymorphic owner (homepage section or reusable section), field key and foreign key to the media row. Section JSON stores the Media ID, while `SectionMediaResolver` resolves it to a public URL only when rendering. Legacy URL values continue to work during the transition. Replacement updates the relation; clearing removes it; deletion cascades attachment rows and stale IDs render as empty media. Section and homepage duplication copy their local media attachment records; reusable-section media stays shared.
+
+**Strict status:** Home 3 has fourteen major blocks extracted/registered and section schemas present, but zero sections can yet be declared strictly complete because Laravel database execution, interaction tests and desktop/tablet/mobile browser comparison remain pending. The same completion gate applies to all ten designs. Do not start widgets, navigation or analytics before every template passes it.
