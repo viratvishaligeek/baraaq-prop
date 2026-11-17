@@ -16,7 +16,7 @@ class HomeController extends Controller
         $homepage = cache()->remember(
             'homepage:published-default',
             300,
-            fn () => Homepage::published()->default()->with('sections')->first()
+            fn () => Homepage::published()->default()->with('sections.reusableSection')->first()
         );
 
         $hasCustomSections = $homepage
