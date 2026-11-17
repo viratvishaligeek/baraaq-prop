@@ -34,7 +34,7 @@ jobs:
           php artisan config:clear
 
       - name: Run Laravel feature and unit tests
-        run: php artisan test --stop-on-failure
+        run: php artisan test
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
