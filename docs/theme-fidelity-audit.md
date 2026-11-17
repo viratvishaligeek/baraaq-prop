@@ -81,3 +81,102 @@ The original HTML loads Inter and Plus Jakarta Sans from Google Fonts and refere
 - The contents of the large `app.min.js` bundle still need inspection in a local checkout or browser.
 - All ten pages still need desktop/tablet/mobile screenshot comparison and interaction testing. No browser fidelity result is claimed here.
 
+
+## Detailed homepage section checklist (HTML-source pass)
+
+**Counting rule:** the following total counts literal top-level-inventory candidates matched by the source HTML `<section>...</section>` wrappers. Hero regions are implemented as `<div>` wrappers in this theme and are listed separately. Header, footer, search overlays, mobile navigation, floating controls and nested cards are global/component landmarks, not counted as homepage content sections. Some pages use large `<div>` blocks instead of `<section>`; these are not included in the 57-wrapper subtotal and remain in the structural follow-up pass.
+
+**Initial explicit section-wrapper total: 57 across ten source files.** This is an auditable lower-bound inventory, not a claim that 57 represents every content block in the ten designs.
+
+| Homepage | # | Source wrapper / content family | Data expected | Current extraction/admin status |
+|---|---:|---|---|---|
+| index | 1 | Popular properties — first card presentation | Properties, categories, price/status, images, features, links | Not independently extracted |
+| index | 2 | Featured luxury properties — alternate card presentation | Properties, images, price, badges, metadata, CTAs | Not independently extracted |
+| index | 3 | Property values / counters | Editable heading, image, counters, labels/icons | Not extracted |
+| index | 4 | Explore cities / location feature cards | Location records, images, descriptions, property counts, links | Not extracted |
+| index | 5 | Team members | Team/agent records, photos, role, social links | Extracted in part; heading settings only |
+| index | 6 | Testimonials | Testimonial records, avatar/logo, quote, rating, slider settings | Not extracted |
+| index | 7 | Blog/news slider | Published posts, author/date/image, comments, CTA | Extracted in part; heading settings only |
+| home-2 | 1 | Property categories | Property categories, icons, counts, links, decorative shapes | Not extracted |
+| home-2 | 2 | Featured properties — standard cards | Properties, images, price/status, features, actions | Not extracted |
+| home-2 | 3 | Property values / expert-rated villas | Editable intro and property/value cards | Not extracted |
+| home-2 | 4 | Team members — home-2 card variant | Team records, images, socials, slider settings | Not extracted |
+| home-2 | 5 | Featured property spotlight — alternate card | Featured property, location, beds/baths, image, CTA | Not extracted |
+| home-2 | 6 | Testimonials — style 2 | Testimonial records, avatars, quote, slider | Not extracted |
+| home-2 | 7 | Blog/news — style 2 | Posts, author/date, excerpts, images, links | Not extracted |
+| home-3 | 1 | Property categories — style 2 | Categories, SVG icons, labels, counts, links | Not extracted |
+| home-3 | 2 | Popular properties | Properties, price/status, feature icons, links | Not extracted |
+| home-3 | 3 | Team members — home-2 variant | Team records, photos, social links | Not extracted |
+| home-3 | 4 | Testimonials — rating/trust layout | Testimonials, rating summary, trust mark, avatars | Not extracted |
+| home-3 | 5 | Blog/news — style 3 | Posts, author, date, excerpt, images, links | Not extracted |
+| home-4 | 1 | Featured luxury properties — style 2 | Properties, price, status, images, feature details | Not extracted |
+| home-4 | 2 | Virtual tour / featured locations | Location/property records, gallery images, labels, links | Not extracted |
+| home-4 | 3 | Testimonials — style 4 | Testimonials, avatars, quote marks, heading | Not extracted |
+| home-4 | 4 | Team members | Team records, image, role, socials | Not extracted |
+| home-4 | 5 | Blog/news | Posts, authors, dates, images, CTA | Not extracted |
+| home-5 | 1 | Room details gallery | Room/feature items, number, title, description, image, detail link | Not extracted |
+| home-5 | 2 | Property values / craftsmanship gallery | Editable intro, value cards, images, links | Not extracted |
+| home-5 | 3 | Testimonials — dark panel | Testimonials, role, avatars, quote, slider | Not extracted |
+| home-5 | 4 | Team members | Team records, photos, role, socials | Not extracted |
+| home-5 | 5 | Blog/news | Posts, author/date, images, CTA | Not extracted |
+| home-6 | 1 | Featured projects | Project records, images, location, labels, links | Not extracted |
+| home-6 | 2 | Testimonials — trust score layout | Testimonials, score, review count, trust mark | Not extracted |
+| home-6 | 3 | Feature highlights / corporate values | Feature records, icons, headings, body copy | Not extracted |
+| home-6 | 4 | Executive/team profiles | Team records, portrait, name, title, socials | Not extracted |
+| home-6 | 5 | Blog insights — style 5 | Posts, images, title, metadata, links | Not extracted |
+| home-7 | 1 | Property categories | Categories, icons, counts, links, decorative shapes | Not extracted |
+| home-7 | 2 | Popular properties | Properties, price/status, images, feature icons, CTAs | Not extracted |
+| home-7 | 3 | Team members | Team records, photos, role, social links | Not extracted |
+| home-7 | 4 | Testimonials — trust score layout | Testimonials, score, review count, avatars, trust mark | Not extracted |
+| home-7 | 5 | Blog/news | Posts, authors, dates, excerpts, images | Not extracted |
+| home-8 | 1 | Popular properties | Properties, price/status, images, feature icons, CTAs | Not extracted |
+| home-8 | 2 | Buying process steps | Ordered steps, icons/illustrations, titles, descriptions, background | Not extracted |
+| home-8 | 3 | Local agent/team feature | Team records, featured portrait, images, contact links | Not extracted |
+| home-8 | 4 | Property values / craftsmanship | Editable intro, value cards, images, links | Not extracted |
+| home-8 | 5 | Testimonials — trust score layout | Testimonials, score, review count, trust mark, avatars | Not extracted |
+| home-8 | 6 | Blog/news — style 6 | Posts, author/date, image, title, CTA | Not extracted |
+| home-9 | 1 | Services — style 2 | Services, SVG icons, title, excerpt, detail links | Not extracted |
+| home-9 | 2 | Popular properties | Properties, price/status, images, feature icons, CTAs | Not extracted |
+| home-9 | 3 | Team members | Team records, photos, role, social links | Not extracted |
+| home-9 | 4 | Testimonials — trust score layout | Testimonials, score, review count, avatars, trust mark | Not extracted |
+| home-9 | 5 | Blog/news — style 6 | Posts, author/date, images, title, links | Not extracted |
+| home-10 | 1 | Property type / design gallery | Category/project records, gallery images, titles, tabs, links | Not extracted |
+| home-10 | 2 | Featured properties | Properties, price/status, images, feature icons, CTAs | Not extracted |
+| home-10 | 3 | Modern housing services — style 3 | Services, images, headings, descriptions, links | Not extracted |
+| home-10 | 4 | Testimonials | Testimonials, quote, brand logo, avatar, heading | Not extracted |
+| home-10 | 5 | Team members — style 6 | Team records, featured images, profiles, socials | Not extracted |
+| home-10 | 6 | Projects — tabbed gallery | Project records, category tabs, image sets, titles, descriptions, CTA | Not extracted |
+| home-10 | 7 | Blog/news | Posts, metadata, images, title, links | Not extracted |
+
+### Hero and shared chrome checklist
+
+| Source family | Count | Required fields/settings | Current status |
+|---|---:|---|---|
+| Hero variants | 10 | Slides, title fragments, subtitle, image/background, overlay, decorative media, trust/social proof, CTA labels/URLs, search form visibility and fields, slider/animation options, responsive alignment | Ten hero partials exist; only limited heading settings are exposed. Not complete. |
+| Header variants | To be counted by structural pass | Logo variants, top-bar contacts, social links, menu location, CTA, search/mobile controls, sticky behavior, responsive breakpoints | Shared/global header not yet fully CMS-configurable. |
+| Footer variants | To be counted by structural pass | About copy, contacts, menu columns, social links, map, gallery, copyright, background assets | Not yet fully CMS-configurable. |
+| Search/lead forms | To be counted by structural pass | Field visibility/order, labels/placeholders, property filters, submit label/action, validation, responsive layout | Not yet a reusable section configuration. |
+| Non-section wrappers | To be counted by structural pass | About, stats, FAQ, app download, marquee, CTA, enquiry form, gallery and other div-based blocks | Not yet comprehensively inventoried or registered. |
+
+### Per-design verification gates
+
+Each checkbox is independent. A source section is not considered complete until all gates are checked against that exact design variant.
+
+| Homepage | Source HTML inspected | All content blocks inventoried | Extracted to Blade partial | Section-specific admin form | Database/data-provider binding | Draft preview | Publish/default regression | Desktop/tablet/mobile comparison |
+|---|---|---|---|---|---|---|---|---|
+| index | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-2 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-3 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-4 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-5 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-6 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-7 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-8 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-9 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-10 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+
+**Current measured status:** 57 explicit section wrappers identified; 13 registered section partials currently exist (10 hero variants plus primary-design properties, team and blog partials). Of these, the three non-hero sections have only limited heading/eyebrow configuration, not complete field-level editing. Therefore the number of fully extracted, fully admin-connected and fully dynamic source sections is **0** under the strict completion definition above. This conservative status avoids treating a partial Blade extraction as a finished CMS section.
+
+### Element-level inventory still required
+
+The 57-wrapper pass records representative headings, paragraph samples, image paths and per-wrapper counts of links/buttons/inputs. It does not yet enumerate every nested text node, SVG path, icon class, responsive data attribute, CSS pseudo-element, CSS background URL or JavaScript interaction. Those require the next extraction pass against the original HTML and theme CSS/JS. The exact source file remains the authority for each field. No default text should be considered safely editable until its source node has been mapped to a schema field and rendered from the saved configuration/content record.
