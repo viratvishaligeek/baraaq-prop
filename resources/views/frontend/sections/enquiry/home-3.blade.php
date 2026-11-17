@@ -3,7 +3,7 @@
 @endphp
 
 <div class="download-sec-3 {{ $sectionConfig['vertical_spacing'] ?? 'space-top' }} {{ $visibility }}">
-    <div class="download-3-bg-inner" @if(!empty($sectionConfig['background_image'])) data-bg-src="{{ $sectionConfig['background_image'] }}" @endif>
+    <div class="download-3-bg-inner" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif @if(!empty($sectionConfig['background_image'])) data-bg-src="{{ $sectionConfig['background_image'] }}" @endif>
         <div class="container">
             <div class="row gy-4 align-items-center">
                 <div class="col-lg-5 col-xl-5 col-xxl-6">
