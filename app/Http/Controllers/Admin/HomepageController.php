@@ -51,6 +51,11 @@ class HomepageController extends Controller
             if ($homepage->sections->isEmpty()) {
                 $sectionKeys = ['hero.'.$homepage->design_key];
 
+                // These two source designs place the category slider immediately after the hero.
+                if (in_array($homepage->design_key, ['home-2', 'home-7'], true)) {
+                    $sectionKeys[] = 'categories.'.$homepage->design_key;
+                }
+
                 if ($homepage->design_key === 'index') {
                     $sectionKeys = array_merge($sectionKeys, [
                         'properties.index',
