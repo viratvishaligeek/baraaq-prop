@@ -29,10 +29,30 @@ for (const homepage of homepages) {
       expect(response.status(), `${homepage.name} should return HTTP 200 on ${viewport.name}`).toBe(200);
       await expect(page.locator('body')).toBeVisible();
 
-      const dimensions = await page.evaluate(() => ({
-        viewport: document.documentElement.clientWidth,
-        document: document.documentElement.scrollWidth,
-      }));
+      const dimensions = await page.evaluate(() => {
+        const viewport = document.documentElement.clientWidth;
+        const offenders = Array.from(document.body.querySelectorAll('*'))
+          .map(element => {
+            const rect = element.getBoundingClientRect();
+            return {
+              tag: element.tagName.toLowerCase(),
+              id: element.id,
+              className: typeof element.className === 'string' ? element.className : '',
+              left: Math.round(rect.left),
+              right: Math.round(rect.right),
+              width: Math.round(rect.width),
+              position: getComputedStyle(element).position,
+            };
+          })
+          .filter(element => element.right > viewport + 2 || element.left < -2)
+          .slice(0, 12);
+
+        return {
+          viewport,
+          document: document.documentElement.scrollWidth,
+          offenders,
+        };
+      });
 
       expect(
         dimensions.document,
