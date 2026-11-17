@@ -157,7 +157,7 @@ class PageBuilderController extends Controller
         $queryable = $this->registry->queryableTypes()[$section->section_type] ?? null;
         if ($queryable) {
             $request->merge(['data_source' => $source]);
-            $source = $request->validate([
+            $queryRules = [
                 'data_source.limit' => ['nullable', 'integer', 'min:1', 'max:24'],
                 'data_source.sort_by' => ['nullable', Rule::in($queryable['sort'])],
                 'data_source.sort_direction' => ['nullable', Rule::in(['asc', 'desc'])],
@@ -165,7 +165,36 @@ class PageBuilderController extends Controller
                 'data_source.slider' => ['nullable', 'boolean'],
                 'data_source.selected_ids' => ['nullable', 'array', 'max:100'],
                 'data_source.selected_ids.*' => ['integer', 'distinct', Rule::exists($queryable['table'], 'id')],
-            ])['data_source'] ?? [];
+                'data_source.filters' => ['nullable', 'array'],
+            ];
+
+            foreach ($queryable['filters'] ?? [] as $filter => $schema) {
+                $filterRules = ['nullable'];
+                switch ($schema['type'] ?? 'text') {
+                    case 'select':
+                        $filterRules[] = 'string';
+                        $filterRules[] = Rule::in(array_map('strval', array_keys($schema['options'] ?? [])));
+                        break;
+                    case 'integer':
+                        $filterRules[] = 'integer';
+                        $filterRules[] = 'min:' . ($schema['min'] ?? 0);
+                        if (isset($schema['max'])) $filterRules[] = 'max:' . $schema['max'];
+                        if ($filter === 'category_id') $filterRules[] = Rule::exists('categories', 'id');
+                        break;
+                    case 'number':
+                        $filterRules[] = 'numeric';
+                        $filterRules[] = 'min:' . ($schema['min'] ?? 0);
+                        if (isset($schema['max'])) $filterRules[] = 'max:' . $schema['max'];
+                        break;
+                    default:
+                        $filterRules[] = 'string';
+                        $filterRules[] = 'max:' . ($schema['max'] ?? 120);
+                        break;
+                }
+                $queryRules['data_source.filters.' . $filter] = $filterRules;
+            }
+
+            $source = $request->validate($queryRules)['data_source'] ?? [];
         } else {
             $source = [];
         }
