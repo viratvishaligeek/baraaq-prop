@@ -12,13 +12,13 @@
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
 
-<div class="marquee-section-2 overflow-hidden {{ $visibility }}">
+<div class="marquee-section-2 overflow-hidden {{ $visibility }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif>
     @if(!empty($sectionConfig['shape_image']))
         <div class="shape-mockup movingX d-none d-xl-block" style="bottom: 6%; left: 6%;"><img src="{{ $sectionConfig['shape_image'] }}" alt="Decorative shape"></div>
     @endif
     <div class="marquee-wrapper">
         <div class="marquee">
-            @for($group = 0; $group < 2; $group++)
+            @for($group = 0; $group < max(1, min(4, (int) ($sectionConfig['duplicate_groups'] ?? 2))); $group++)
                 <div class="marquee-group">
                     @for($repeat = 0; $repeat < 4; $repeat++)
                         @foreach($items as $item)
