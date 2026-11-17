@@ -13,8 +13,6 @@ return new class extends Migration {
 
     public function down(): void
     {
-        if (Schema::hasTable('categorizables') && ! Schema::hasTable('categoryables')) {
-            Schema::rename('categorizables', 'categoryables');
-        }
+        // Keep the current Laravel morph pivot convention on rollback.
     }
 };
