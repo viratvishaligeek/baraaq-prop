@@ -15,8 +15,19 @@ class SectionDataResolver
     {
         return match ($section->section_type) {
             'category-slider' => ['categories' => $this->categories($config)],
+            'team-slider' => ['teamMembers' => $this->teamMembers($config)],
             default => [],
         };
+    }
+
+    private function teamMembers(array $config): Collection
+    {
+        return TeamMember::query()
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->limit(max(1, min(12, (int) ($config['items_limit'] ?? 6))))
+            ->get();
     }
 
     private function categories(array $config): Collection
