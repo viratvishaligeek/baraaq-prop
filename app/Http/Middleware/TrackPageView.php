@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class TrackPageView
@@ -29,7 +28,7 @@ class TrackPageView
         $visitor = $request->cookie('site_visitor');
         $newVisitor = !is_string($visitor) || !preg_match('/^[a-f0-9]{64}$/', $visitor);
         if ($newVisitor) {
-            $visitor = Str::random(64);
+            $visitor = bin2hex(random_bytes(32));
         }
 
         $visit = $request->cookie('site_visit');
