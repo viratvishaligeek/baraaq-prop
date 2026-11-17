@@ -25,6 +25,7 @@ foreach ($heroDesigns as $design => $definition) {
         'source_design' => $design,
         'view' => $definition['view'],
         'defaults' => [],
+        'settings' => $design === 'index' ? [] : ['heading'],
     ];
 }
 
