@@ -22,6 +22,8 @@ return [
             'email_placeholder' => 'Email Address',
             'date_label' => 'Desired Date',
             'time_label' => 'Desired Time',
+            'time_placeholder' => 'Desired Time',
+            'animate_content' => true,
             'message_label' => 'Additional Message',
             'message_placeholder' => 'Please write any note here...',
             'submit_label' => 'Submit Now',
