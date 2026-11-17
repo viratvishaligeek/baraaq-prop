@@ -1,5 +1,6 @@
 @extends('frontend.layouts.theme') @section('title',$post->meta_title?:$post->title) @section('meta_description',$post->meta_description?:($post->excerpt?:\App\Models\Setting::read('meta_description',''))) @section('canonical_url',$post->canonical_url ?: route('blog.show',$post)) @section('og_image',$post->og_image ? asset('storage/'.$post->og_image) : ($post->featured_image ? Storage::disk('public')->url($post->featured_image) : (!empty($siteSettings['default_og_image']) ? asset('storage/'.$siteSettings['default_og_image']) : asset('theme-assets/img/hero/hero-10-1.jpg')))) @section('structured_data')
-<script type="application/ld+json">@json([
+    @php
+        $structuredData = [
     '@context' => 'https://schema.org',
     '@type' => 'BlogPosting',
     'headline' => $post->title,
@@ -8,7 +9,10 @@
     'dateModified' => $post->updated_at?->toAtomString(),
     'mainEntityOfPage' => route('blog.show', $post),
     'image' => $post->featured_image ? Storage::disk('public')->url($post->featured_image) : null,
-])</script>
+
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($structuredData, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
 @endsection
 @section('content')<div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcumb-bg.jpg') }}">
 <div class="container">
