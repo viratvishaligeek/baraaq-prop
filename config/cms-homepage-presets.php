@@ -99,7 +99,7 @@ return [
         'about.home-10',
         'testimonials.home-10',
         'gallery.home-10-projects',
-        'team.home-2',
+        'team.home-10',
         'blog.home-2',
     ],
 ];
