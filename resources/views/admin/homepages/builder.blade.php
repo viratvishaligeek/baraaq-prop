@@ -125,9 +125,9 @@
                                             class="{{ in_array($schema['type'], ['textarea', 'richtext'], true) ? 'col-12' : 'col-md-6' }}">
                                             <label class="form-label small"
                                                 for="section-{{ $section->id }}-{{ $field }}">{{ $schema['label'] }}</label>
-                                            @if ($schema['type'] === 'textarea')
+                                            @if (in_array($schema['type'], ['textarea', 'richtext'], true))
                                                 <textarea class="form-control form-control-sm" id="section-{{ $section->id }}-{{ $field }}"
-                                                    name="config[{{ $field }}]" rows="2" maxlength="{{ $schema['max'] ?? 1500 }}">{{ $fieldValue }}</textarea>
+                                                    name="config[{{ $field }}]" rows="3" maxlength="{{ $schema['max'] ?? 1500 }}" @if ($schema['type'] === 'richtext') data-rich-editor @endif>{{ $fieldValue }}</textarea>
                                             @elseif($schema['type'] === 'select')
                                                 <select class="form-select form-select-sm"
                                                     id="section-{{ $section->id }}-{{ $field }}"
