@@ -10,8 +10,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const more = document.getElementById('shared-media-more');
     const searchForm = document.getElementById('shared-media-search');
     const query = document.getElementById('shared-media-query');
+    const applyMultiple = document.getElementById('shared-media-apply-multiple');
     let targetInput = null;
     let nextPage = null;
+    let multipleMode = false;
+    const selectedItems = new Map();
 
     function updateTarget(item) {
         if (!targetInput) return;
@@ -64,7 +67,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 name.className = 'small d-block text-break';
                 name.textContent = item.name;
                 button.append(image, name);
-                button.addEventListener('click', () => updateTarget(item));
+                if (multipleMode && selectedItems.has(item.id)) {
+                    button.classList.remove('btn-light');
+                    button.classList.add('btn-primary');
+                    button.setAttribute('aria-pressed', 'true');
+                }
+                button.addEventListener('click', () => {
+                    if (!multipleMode) {
+                        updateTarget(item);
+                        return;
+                    }
+                    if (selectedItems.has(item.id)) {
+                        selectedItems.delete(item.id);
+                        button.classList.remove('btn-primary');
+                        button.classList.add('btn-light');
+                        button.setAttribute('aria-pressed', 'false');
+                    } else {
+                        selectedItems.set(item.id, item);
+                        button.classList.remove('btn-light');
+                        button.classList.add('btn-primary');
+                        button.setAttribute('aria-pressed', 'true');
+                    }
+                    status.textContent = selectedItems.size + ' image(s) selected.';
+                });
                 column.append(button);
                 results.append(column);
             });
@@ -84,6 +109,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (openButton) {
             targetInput = document.getElementById(openButton.dataset.target);
             if (!targetInput) return;
+            multipleMode = openButton.hasAttribute('data-media-multiple');
+            selectedItems.clear();
+            if (multipleMode) targetInput.replaceChildren();
+            applyMultiple.hidden = !multipleMode;
             query.value = '';
             modal.show();
             loadMedia(endpoint, false);
@@ -117,6 +146,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const url = new URL(endpoint, window.location.origin);
         if (query.value.trim()) url.searchParams.set('search', query.value.trim());
         loadMedia(url.toString(), false);
+    });
+
+    applyMultiple?.addEventListener('click', () => {
+        if (!multipleMode || !targetInput) return;
+        targetInput.replaceChildren();
+        selectedItems.forEach(item => {
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = targetInput.dataset.inputName || 'gallery_media_ids[]';
+            hidden.value = String(item.id);
+            const image = document.createElement('img');
+            image.src = item.url;
+            image.alt = item.alt || item.name;
+            image.className = 'rounded border me-2 mb-2';
+            image.style.cssText = 'width:76px;height:58px;object-fit:cover';
+            targetInput.append(hidden, image);
+        });
+        modal.hide();
     });
 
     more?.addEventListener('click', () => {
