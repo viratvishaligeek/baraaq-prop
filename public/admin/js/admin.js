@@ -111,7 +111,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!targetInput) return;
             multipleMode = openButton.hasAttribute('data-media-multiple');
             selectedItems.clear();
-            if (multipleMode) targetInput.replaceChildren();
             applyMultiple.hidden = !multipleMode;
             query.value = '';
             modal.show();
@@ -150,8 +149,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     applyMultiple?.addEventListener('click', () => {
         if (!multipleMode || !targetInput) return;
-        targetInput.replaceChildren();
+        const existingIds = new Set([...targetInput.querySelectorAll('input[type="hidden"]')].map(input => input.value));
         selectedItems.forEach(item => {
+            if (existingIds.has(String(item.id))) return;
             const hidden = document.createElement('input');
             hidden.type = 'hidden';
             hidden.name = targetInput.dataset.inputName || 'gallery_media_ids[]';
