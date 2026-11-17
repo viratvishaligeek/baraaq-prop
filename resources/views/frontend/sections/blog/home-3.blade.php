@@ -24,7 +24,8 @@
                     <div class="blog-card style-3{{ $animateCards ? ' fadeinup wow' : '' }}" data-wow-delay="0.3s">
                         <div class="blog-img">
                             <a href="{{ route('blog.show', $firstPost) }}">
-                                <img src="{{ $firstPost->featured_image ? Storage::disk('public')->url($firstPost->featured_image) : ($sectionConfig['fallback_image_1'] ?? '') }}" alt="{{ $firstPost->title }}">
+                                @php($firstImage = $firstPost->featured_image ? Storage::disk('public')->url($firstPost->featured_image) : ($sectionConfig['fallback_image_1'] ?? null))
+                                @if($firstImage)<img src="{{ $firstImage }}" alt="{{ $firstPost->title }}">@endif
                             </a>
                         </div>
                         <div class="blog-content pe-xl-5">
@@ -50,7 +51,8 @@
                         @foreach($posts->skip(1) as $post)
                             <div class="blog-card style-3 grid-style{{ $animateCards ? ' fadeinright wow' : '' }}" data-wow-delay="{{ $loop->first ? '0.5s' : '0.7s' }}">
                                 <div class="blog-img">
-                                    <a href="{{ route('blog.show', $post) }}"><img src="{{ $post->featured_image ? Storage::disk('public')->url($post->featured_image) : ($sectionConfig['fallback_image_'.($loop->iteration + 1)] ?? '') }}" alt="{{ $post->title }}"></a>
+                                    <a href="{{ route('blog.show', $post) }}">@php($postImage = $post->featured_image ? Storage::disk('public')->url($post->featured_image) : ($sectionConfig['fallback_image_'.($loop->iteration + 1)] ?? null))
+                                        @if($postImage)<img src="{{ $postImage }}" alt="{{ $post->title }}">@endif</a>
                                 </div>
                                 <div class="blog-content">
                                     <div class="blog-meta">@if(($sectionConfig['show_date'] ?? true) && $post->published_at)<a href="{{ route('blog.show', $post) }}">{{ $post->published_at->format('F d, Y') }}</a>@endif</div>
