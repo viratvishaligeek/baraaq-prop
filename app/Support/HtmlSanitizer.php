@@ -5,6 +5,7 @@ namespace App\Support;
 use DOMDocument;
 use DOMElement;
 use DOMNode;
+use DOMXPath;
 
 class HtmlSanitizer
 {
@@ -30,7 +31,7 @@ class HtmlSanitizer
         libxml_clear_errors();
         libxml_use_internal_errors($previous);
 
-        $root = $document->getElementById('cms-safe-root');
+        $root = (new DOMXPath($document))->query('//*[@id="cms-safe-root"]')->item(0);
         if (! $root) {
             return e(strip_tags($html));
         }
