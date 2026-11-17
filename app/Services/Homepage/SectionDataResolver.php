@@ -143,7 +143,7 @@ class SectionDataResolver
     private function applyPropertyFilters($query, array $filters): void
     {
         $listingType = $filters['listing_type'] ?? null;
-        if (in_array($listingType, ['sale', 'rent'], true)) {
+        if (in_array($listingType, ['sale', 'rent', 'lease'], true)) {
             $query->where('listing_type', $listingType);
         }
         if (! empty($filters['category_id'])) {
