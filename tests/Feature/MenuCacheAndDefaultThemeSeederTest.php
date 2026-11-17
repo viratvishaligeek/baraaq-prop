@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Menu;
 use App\Models\MenuItem;
+use App\Models\Setting;
 use Database\Seeders\DefaultThemeSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
@@ -59,7 +60,7 @@ class MenuCacheAndDefaultThemeSeederTest extends TestCase
         $this->assertSame('Homepage', Menu::cached('primary')->items->first()->label);
     }
 
-    public function test_default_theme_seeder_is_idempotent_and_does_not_overwrite_site_settings(): void
+    public function test_default_theme_seeder_is_idempotent_and_preserves_site_configuration(): void
     {
         $this->seed(DefaultThemeSeeder::class);
         $this->seed(DefaultThemeSeeder::class);
@@ -74,10 +75,12 @@ class MenuCacheAndDefaultThemeSeederTest extends TestCase
         ]);
         $this->assertSame(8, Menu::where('location', 'primary')->first()->allItems()->count());
         $this->assertSame(6, Menu::where('location', 'footer')->first()->allItems()->count());
+        $this->assertDatabaseHas('categories', ['slug' => 'apartment', 'type' => 'property']);
+        $this->assertDatabaseHas('categories', ['slug' => 'buying-guides', 'type' => 'post']);
 
-        \App\Models\Setting::write('site_title', 'My Custom Brand');
+        Setting::write('site_title', 'My Custom Brand');
         $this->seed(DefaultThemeSeeder::class);
 
-        $this->assertSame('My Custom Brand', \App\Models\Setting::read('site_title'));
+        $this->assertSame('My Custom Brand', Setting::read('site_title'));
     }
 }

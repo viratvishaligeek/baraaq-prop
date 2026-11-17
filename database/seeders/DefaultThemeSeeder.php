@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\Setting;
@@ -47,6 +48,8 @@ class DefaultThemeSeeder extends Seeder
             }
         }
 
+        $this->seedCategories();
+
         $this->seedMenu('primary', 'Primary navigation', [
             ['Home', '/', null, 0],
             ['Properties', '/properties', null, 1],
@@ -68,6 +71,29 @@ class DefaultThemeSeeder extends Seeder
         ]);
     }
 
+    private function seedCategories(): void
+    {
+        $categories = [
+            ['name' => 'Apartment', 'slug' => 'apartment', 'type' => 'property', 'sort_order' => 1],
+            ['name' => 'House', 'slug' => 'house', 'type' => 'property', 'sort_order' => 2],
+            ['name' => 'Villa', 'slug' => 'villa', 'type' => 'property', 'sort_order' => 3],
+            ['name' => 'Office', 'slug' => 'office', 'type' => 'property', 'sort_order' => 4],
+            ['name' => 'Land', 'slug' => 'land', 'type' => 'property', 'sort_order' => 5],
+            ['name' => 'Commercial Property', 'slug' => 'commercial-property', 'type' => 'property', 'sort_order' => 6],
+            ['name' => 'Buying Guides', 'slug' => 'buying-guides', 'type' => 'post', 'sort_order' => 1],
+            ['name' => 'Selling Guides', 'slug' => 'selling-guides', 'type' => 'post', 'sort_order' => 2],
+            ['name' => 'Market Insights', 'slug' => 'market-insights', 'type' => 'post', 'sort_order' => 3],
+            ['name' => 'Property Tips', 'slug' => 'property-tips', 'type' => 'post', 'sort_order' => 4],
+        ];
+
+        foreach ($categories as $category) {
+            Category::query()->firstOrCreate(
+                ['slug' => $category['slug']],
+                $category + ['is_active' => true]
+            );
+        }
+    }
+
     private function seedMenu(string $location, string $name, array $items): void
     {
         $menu = Menu::query()->firstOrCreate(
@@ -75,15 +101,13 @@ class DefaultThemeSeeder extends Seeder
             ['name' => $name]
         );
 
-        $menu->updateQuietly(['name' => $name]);
-
         $parents = [];
 
         DB::transaction(function () use ($menu, $items, &$parents): void {
             foreach ($items as [$label, $url, $parentLabel, $sortOrder]) {
                 $parentId = $parentLabel ? ($parents[$parentLabel] ?? null) : null;
 
-                $item = MenuItem::query()->updateOrCreate(
+                $item = MenuItem::query()->firstOrCreate(
                     ['menu_id' => $menu->id, 'label' => $label],
                     [
                         'parent_id' => $parentId,
