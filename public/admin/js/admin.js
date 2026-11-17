@@ -16,6 +16,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateTarget(item) {
         if (!targetInput) return;
         targetInput.value = String(item.id);
+        if (targetInput.dataset.mediaUploadInput) {
+            const upload = document.getElementById(targetInput.dataset.mediaUploadInput);
+            if (upload) upload.value = '';
+        }
         targetInput.dispatchEvent(new Event('input', { bubbles: true }));
         targetInput.dispatchEvent(new Event('change', { bubbles: true }));
 
