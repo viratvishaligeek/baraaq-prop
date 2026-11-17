@@ -61,7 +61,7 @@ class PillerWidgetLibraryTest extends TestCase
             'Property listings' => ['properties.index', 'properties.home-2', 'properties.home-3', 'featured-properties.home-2'],
             'Property categories' => ['categories.home-2', 'categories.home-3', 'categories.home-7', 'categories.home-10'],
             'Team members' => ['team.index', 'team.home-2', 'team.home-3', 'team.home-10'],
-            'Blog posts' => ['blog.index', 'blog.home-2', 'blog.home-3'],
+            'Blog posts' => ['blog.index', 'blog.home-2', 'blog.home-3', 'blog.home-6'],
             'Image galleries' => ['gallery.home-3', 'featured-gallery.home-3', 'neighborhoods.home-2', 'property-values.home-2', 'gallery.home-5-rooms', 'gallery.home-10-projects'],
             'FAQ' => ['faq.home-2', 'faq.home-3', 'faq.home-10'],
             'Call to action' => ['cta.download-home-2', 'cta.download-home-3', 'cta.enquiry-home-3', 'cta.home-10'],
@@ -78,7 +78,7 @@ class PillerWidgetLibraryTest extends TestCase
             }
         }
 
-        $this->assertSame(55, array_sum(array_map('count', $designGroups)));
+        $this->assertSame(56, array_sum(array_map('count', $designGroups)));
     }
 
     public function test_service_widget_query_honours_selected_ids_limit_sorting_and_published_scope(): void
