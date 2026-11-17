@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EnquiryController;
 use App\Http\Controllers\Admin\HomepageController;
+use App\Http\Controllers\Admin\HomepageSectionController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\NewsletterController;
@@ -38,9 +39,31 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/homepages', [HomepageController::class, 'index'])
             ->middleware('permission:settings.manage')
             ->name('homepages.index');
+        Route::post('/homepages/{homepage}/duplicate', [HomepageController::class, 'duplicate'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.duplicate');
+        Route::get('/homepages/{homepage}/builder', [HomepageController::class, 'builder'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.builder');
+        Route::patch('/homepages/{homepage}/publish', [HomepageController::class, 'publish'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.publish');
         Route::patch('/homepages/{homepage}/default', [HomepageController::class, 'setDefault'])
             ->middleware('permission:settings.manage')
             ->name('homepages.default');
+
+        Route::post('/homepages/{homepage}/sections', [HomepageSectionController::class, 'store'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.sections.store');
+        Route::patch('/homepages/{homepage}/sections/reorder', [HomepageSectionController::class, 'reorder'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.sections.reorder');
+        Route::patch('/homepages/{homepage}/sections/{section}/toggle', [HomepageSectionController::class, 'toggle'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.sections.toggle');
+        Route::delete('/homepages/{homepage}/sections/{section}', [HomepageSectionController::class, 'destroy'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.sections.destroy');
 
         Route::get('/seo', [SeoController::class, 'index'])
             ->middleware('permission:settings.manage')
