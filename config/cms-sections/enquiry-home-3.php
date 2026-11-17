@@ -9,6 +9,7 @@ return [
         'view' => 'frontend.sections.enquiry.home-3',
         'defaults' => [
             'background_image' => '/theme-assets/img/bg/download-bg-3.jpg',
+            'background_color' => '',
             'map_image' => '/theme-assets/img/download/download-3-map.png',
             'map_url' => '/properties',
             'icon_image' => '/theme-assets/img/download/download-3-icon.png',
@@ -31,6 +32,7 @@ return [
         ],
         'fields' => [
             'background_image' => ['label' => 'Background image', 'type' => 'image', 'max' => 2048],
+            'background_color' => ['label' => 'Section background color', 'type' => 'color'],
             'map_image' => ['label' => 'Map illustration', 'type' => 'image', 'max' => 2048],
             'map_url' => ['label' => 'Map link URL', 'type' => 'url', 'max' => 2048],
             'icon_image' => ['label' => 'Property search icon', 'type' => 'image', 'max' => 2048],
