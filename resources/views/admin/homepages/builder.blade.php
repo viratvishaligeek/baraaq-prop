@@ -231,8 +231,25 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            if (window.tinymce) {
+                tinymce.init({
+                    selector: 'textarea[data-rich-editor]',
+                    license_key: 'gpl',
+                    menubar: false,
+                    plugins: 'lists link',
+                    toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link | removeformat',
+                    height: 240,
+                    branding: false,
+                    promotion: false,
+                    setup: editor => editor.on('change keyup undo redo', () => editor.save())
+                });
+                document.querySelectorAll('form').forEach(form => {
+                    form.addEventListener('submit', () => tinymce.triggerSave());
+                });
+            }
             const list = document.getElementById('homepage-section-list');
             const status = document.getElementById('section-save-status');
             if (!list) return;
