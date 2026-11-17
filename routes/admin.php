@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EnquiryController;
+use App\Http\Controllers\Admin\HomepageController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\NewsletterController;
@@ -34,10 +35,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->middleware('permission:newsletters.manage')
             ->name('newsletters.destroy');
 
-        Route::get('/homepages', [\\App\\Http\\Controllers\\Admin\\HomepageController::class, 'index'])
+        Route::get('/homepages', [HomepageController::class, 'index'])
             ->middleware('permission:settings.manage')
             ->name('homepages.index');
-        Route::patch('/homepages/{homepage}/default', [\\App\\Http\\Controllers\\Admin\\HomepageController::class, 'setDefault'])
+        Route::patch('/homepages/{homepage}/default', [HomepageController::class, 'setDefault'])
             ->middleware('permission:settings.manage')
             ->name('homepages.default');
 
