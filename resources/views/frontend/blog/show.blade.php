@@ -31,7 +31,7 @@
 <article class="row justify-content-center">
 <div class="col-lg-9">@if($post->featured_image)<img class="w-100 rounded mb-4" src="{{ Storage::disk('public')->url($post->featured_image) }}" alt="{{ $post->title }}">@endif<h2>{{ $post->title }}</h2>
 <div class="text-muted mb-4">{{ $post->published_at?->format('d M Y') }}</div>
-<div>{!! \\App\\Support\\HtmlSanitizer::sanitize($post->content) !!}</div>
+<div>{!! \App\Support\HtmlSanitizer::sanitize($post->content) !!}</div>
 </div>
 </article>
 </div>
