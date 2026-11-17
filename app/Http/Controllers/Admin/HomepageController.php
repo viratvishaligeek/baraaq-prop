@@ -52,43 +52,49 @@ class HomepageController extends Controller
             $copy->updated_by = request()->user()->id;
             $copy->save();
 
-            if ($homepage->sections->isEmpty()) {
-                $sectionKeys = array_merge(
-                    ['hero.' . $homepage->design_key],
-                    config('cms-homepage-presets.' . $homepage->design_key, [])
-                );
+            $presentKeys = [];
 
-                foreach ($sectionKeys as $sectionKey) {
-                    $definition = $sectionDefinitions[$sectionKey] ?? null;
+            foreach ($homepage->sections as $section) {
+                $sectionCopy = $section->replicate();
+                $sectionCopy->homepage_id = $copy->id;
+                $sectionCopy->instance_key = (string) Str::uuid();
+                $sectionCopy->save();
+                $presentKeys[] = $section->section_key;
 
-                    if (!$definition) {
-                        continue;
-                    }
-
-                    $copy->sections()->create([
-                        'instance_key' => (string) Str::uuid(),
-                        'section_key' => $definition['key'],
-                        'section_type' => $definition['type'],
-                        'source_design' => $definition['source_design'],
-                        'sort_order' => $copy->sections()->count() + 1,
-                        'is_enabled' => true,
-                        'config' => $definition['defaults'] ?? [],
+                foreach ($section->mediaAttachments as $attachment) {
+                    $sectionCopy->mediaAttachments()->create([
+                        'field_key' => $attachment->field_key,
+                        'media_id' => $attachment->media_id,
                     ]);
                 }
-            } else {
-                foreach ($homepage->sections as $section) {
-                    $sectionCopy = $section->replicate();
-                    $sectionCopy->homepage_id = $copy->id;
-                    $sectionCopy->instance_key = (string) Str::uuid();
-                    $sectionCopy->save();
+            }
 
-                    foreach ($section->mediaAttachments as $attachment) {
-                        $sectionCopy->mediaAttachments()->create([
-                            'field_key' => $attachment->field_key,
-                            'media_id' => $attachment->media_id,
-                        ]);
-                    }
+            // Complete an existing partial composition without replacing or duplicating
+            // any section that an administrator has already configured.
+            $requiredKeys = array_merge(
+                ['hero.' . $homepage->design_key],
+                config('cms-homepage-presets.' . $homepage->design_key, [])
+            );
+
+            foreach (array_values(array_unique($requiredKeys)) as $sectionKey) {
+                if (in_array($sectionKey, $presentKeys, true)) {
+                    continue;
                 }
+
+                $definition = $sectionDefinitions[$sectionKey] ?? null;
+                if (! $definition) {
+                    continue;
+                }
+
+                $copy->sections()->create([
+                    'instance_key' => (string) Str::uuid(),
+                    'section_key' => $definition['key'],
+                    'section_type' => $definition['type'],
+                    'source_design' => $definition['source_design'],
+                    'sort_order' => ((int) $copy->sections()->max('sort_order')) + 1,
+                    'is_enabled' => true,
+                    'config' => $definition['defaults'] ?? [],
+                ]);
             }
 
             return $copy;
