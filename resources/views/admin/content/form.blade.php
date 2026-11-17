@@ -261,7 +261,7 @@
                     @endif
                     <div class="col-12">
                         <label class="form-label">Content</label>
-                        <textarea class="form-control" rows="12" name="content">{{ old('content', $item->content) }}</textarea>
+                        <textarea class="form-control" rows="12" name="content" data-rich-editor>{{ old('content', $item->content) }}</textarea>
                     </div>
                     @if (in_array($type, ['posts', 'services']))
                         <div class="col-md-6">
@@ -367,6 +367,28 @@
                     }
                     $('[name="type"]').on('change', filterParentCategories);
                     filterParentCategories();
+                });
+            </script>
+        @endpush
+    @endif
+    @if (in_array($type, ['posts', 'pages', 'services']))
+        @push('scripts')
+            <script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    if (!window.tinymce) return;
+                    tinymce.init({
+                        selector: 'textarea[data-rich-editor]',
+                        license_key: 'gpl',
+                        menubar: false,
+                        plugins: 'lists link',
+                        toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link | removeformat',
+                        height: 420,
+                        branding: false,
+                        promotion: false,
+                        setup: editor => editor.on('change keyup undo redo', () => editor.save())
+                    });
+                    document.querySelector('form')?.addEventListener('submit', () => tinymce.triggerSave());
                 });
             </script>
         @endpush
