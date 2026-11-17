@@ -189,6 +189,7 @@ class HomepageController extends Controller
 
         Cache::forget('homepage:published-default');
         Cache::forget('homepage:published-default:id');
+        Cache::forget('homepage:published-default:id');
 
         return redirect()
             ->route('admin.homepages.index')
@@ -210,6 +211,7 @@ class HomepageController extends Controller
         });
 
         Cache::forget('homepage:published-default');
+        Cache::forget('homepage:published-default:id');
 
         return redirect()
             ->route('admin.homepages.index')
