@@ -59,9 +59,21 @@ class PropertyController extends Controller
             $query->where('listing_type', $listingType);
         }
 
-        $categoryId = $filters['category'] ?? $filters['category_id'] ?? null;
-        if ($categoryId) {
-            $query->where('category_id', $categoryId);
+        $categoryValue = $filters['category'] ?? $filters['category_id'] ?? null;
+        if ($categoryValue) {
+            $category = Category::where('type', 'property')
+                ->where(function ($builder) use ($categoryValue) {
+                    $builder->where('slug', $categoryValue);
+                    if (is_numeric($categoryValue)) {
+                        $builder->orWhereKey((int) $categoryValue);
+                    }
+                })->first();
+
+            if ($category) {
+                $query->where('category_id', $category->id);
+            } else {
+                $query->whereRaw('1 = 0');
+            }
         }
 
         foreach (['min_price' => '>=', 'max_price' => '<=', 'min_bedrooms' => '>=', 'max_bedrooms' => '<='] as $field => $operator) {
