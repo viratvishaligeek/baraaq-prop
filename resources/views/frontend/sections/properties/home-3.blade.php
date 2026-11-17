@@ -34,7 +34,7 @@
                     if ($images->isEmpty() && $property->featured_image) $images = collect([$property->featured_image]);
                     $images = $images->take(5);
                     $firstImagePath = $images->first();
-                    $firstImageUrl = $firstImagePath ? Storage::disk('public')->url($firstImagePath) : asset('theme-assets/img/popular/popular-1-1.jpg');
+                    $firstImageUrl = $firstImagePath ? Storage::disk('public')->url($firstImagePath) : ($sectionConfig['fallback_image'] ?? null);
                     $categoryClass = $property->category?->slug ?: \Illuminate\Support\Str::slug($property->property_type ?: 'other');
                 @endphp
                 <div class="col-xxl-{{ $columns }} col-xl-4 col-lg-6 col-md-6 filter-item cat-{{ $categoryClass }}">
@@ -59,18 +59,18 @@
                                 <div class="actions-style-2-wrapper"><div class="actions style-2"><a href="{{ $firstImageUrl }}" class="icon-btn popular-popup-image"><span class="action-text">View all img</span><i class="fa-solid fa-camera"></i></a></div></div>
                             @endif
                             @if($sectionConfig['show_property_badge'] ?? true)
-                                <div class="popular-badge"><img src="{{ asset('theme-assets/img/icon/sell_rent_icon.svg') }}" alt="icon"><p>{{ $property->listing_type === 'rent' ? 'For Rent' : 'For Sale' }}</p></div>
+                                <div class="popular-badge"><img src="{{ ($sectionConfig['badge_icon'] ?? asset('theme-assets/img/icon/sell_rent_icon.svg')) }}" alt="icon"><p>{{ $property->listing_type === 'rent' ? 'For Rent' : 'For Sale' }}</p></div>
                             @endif
                         </div>
                         <div class="property-content">
                             <div class="media-body">
                                 <h3 class="box-title"><a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a></h3>
-                                <div class="box-text"><div class="icon"><img src="{{ asset('theme-assets/img/icon/popular-location.svg') }}" alt="icon"></div>{{ $property->address }} {{ $property->city }}</div>
+                                <div class="box-text"><div class="icon"><img src="{{ ($sectionConfig['location_icon'] ?? asset('theme-assets/img/icon/popular-location.svg')) }}" alt="icon"></div>{{ $property->address }} {{ $property->city }}</div>
                             </div>
                             <ul class="property-featured">
-                                <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bed.svg') }}" alt="icon"></div>Bed {{ $property->bedrooms ?? '—' }}</li>
-                                <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bath.svg') }}" alt="icon"></div>Bath {{ $property->bathrooms ?? '—' }}</li>
-                                <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="icon"></div>{{ $property->area ? number_format((float) $property->area).' '.$property->area_unit : '—' }}</li>
+                                <li><div class="icon"><img src="{{ ($sectionConfig['bed_icon'] ?? asset('theme-assets/img/icon/bed.svg')) }}" alt="icon"></div>Bed {{ $property->bedrooms ?? '—' }}</li>
+                                <li><div class="icon"><img src="{{ ($sectionConfig['bath_icon'] ?? asset('theme-assets/img/icon/bath.svg')) }}" alt="icon"></div>Bath {{ $property->bathrooms ?? '—' }}</li>
+                                <li><div class="icon"><img src="{{ ($sectionConfig['area_icon'] ?? asset('theme-assets/img/icon/sqft.svg')) }}" alt="icon"></div>{{ $property->area ? number_format((float) $property->area).' '.$property->area_unit : '—' }}</li>
                             </ul>
                             <div class="property-bottom">
                                 <h6 class="box-title">{{ $property->price ? number_format((float) $property->price, 2) : $property->price_label }}</h6>
