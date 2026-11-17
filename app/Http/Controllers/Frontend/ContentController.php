@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Page;
 use App\Models\Post;
 use App\Models\Service;
+use App\Models\TeamMember;
+use App\Models\Testimonial;
 use Illuminate\Http\Request;
 
 class ContentController extends Controller
@@ -53,6 +55,18 @@ class ContentController extends Controller
     {
         abort_unless($service->status === 'published' && $service->published_at && $service->published_at->lte(now()), 404);
         return view('frontend.services.show', compact('service'));
+    }
+
+    public function team()
+    {
+        $members = TeamMember::where('is_active', true)->orderBy('sort_order')->orderBy('name')->paginate(12);
+        return view('frontend.team.index', compact('members'));
+    }
+
+    public function testimonials()
+    {
+        $testimonials = Testimonial::where('is_active', true)->orderBy('sort_order')->latest()->paginate(12);
+        return view('frontend.testimonials.index', compact('testimonials'));
     }
 
     public function page(Page $page)
