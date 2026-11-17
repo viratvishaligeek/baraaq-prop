@@ -160,8 +160,9 @@ class HomepageController extends Controller
             ]);
         }
 
-        $invalid = $sections->filter(function ($section) {
-            $definition = config('cms-sections.sections.' . $section->section_key);
+        $sectionDefinitions = config('cms-sections.sections', []);
+        $invalid = $sections->filter(function ($section) use ($sectionDefinitions) {
+            $definition = $sectionDefinitions[$section->section_key] ?? null;
 
             return ! $definition || empty($definition['view']) || ! view()->exists($definition['view']);
         })->pluck('section_key')->all();
