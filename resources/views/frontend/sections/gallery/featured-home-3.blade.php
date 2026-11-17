@@ -12,10 +12,10 @@
             @forelse($featuredProperties as $property)
                 @php
                     $propertyImagePath = $property->featured_image ?: $property->images->first()?->path;
-                    $propertyImage = $propertyImagePath ? Storage::disk('public')->url($propertyImagePath) : null;
+                    $propertyImage = $propertyImagePath ? Storage::disk('public')->url($propertyImagePath) : null;\n                    $slideBackground = $sectionConfig['slide_background_'.($loop->iteration)] ?? null;
                 @endphp
                 <div class="swiper-slide">
-                    <div class="gallery-4-inner" @if($propertyImage) data-bg-src="{{ $propertyImage }}" @endif>
+                    <div class="gallery-4-inner" @if($slideBackground) data-bg-src="{{ $slideBackground }}" @elseif($propertyImage) data-bg-src="{{ $propertyImage }}" @endif>
                         <div class="container">
                             <div class="row gy-4 align-items-center">
                                 <div class="col-md-9 col-lg-7 col-xl-6 col-xxl-5">
@@ -40,7 +40,7 @@
                                                     <a class="th-btn sm style3 radius bg-theme text-white" href="{{ route('properties.show', $property) }}">{{ $sectionConfig['card_button_label'] ?? 'View More' }}</a>
                                                 </div>
                                                 @if(($sectionConfig['show_agent'] ?? true) && $property->creator)
-                                                    <div class="agent-wrap"><div class="content"><h4 class="box-title">{{ $property->creator->name }}</h4><p class="box-text">{{ $sectionConfig['agent_role_label'] ?? 'Sale Agent' }}</p></div></div>
+                                                    <div class="agent-wrap"><div class="thumb">@if(!empty($sectionConfig['agent_avatar_image']))<img src="{{ $sectionConfig['agent_avatar_image'] }}" alt="{{ $property->creator->name }}">@endif</div><div class="content"><h4 class="box-title">{{ $property->creator->name }}</h4><p class="box-text">{{ $sectionConfig['agent_role_label'] ?? 'Sale Agent' }}</p></div></div>
                                                 @endif
                                             </div>
                                         </div>
