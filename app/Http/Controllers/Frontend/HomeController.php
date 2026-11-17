@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use App\Models\Homepage;
+use App\Models\Page;
 use App\Models\Post;
 use App\Models\Property;
 use App\Models\TeamMember;
@@ -14,6 +15,18 @@ class HomeController extends Controller
 {
     public function __invoke()
     {
+        $selectedPage = Page::query()
+            ->where('homepage_key', 'primary')
+            ->where('status', 'published')
+            ->first();
+
+        if ($selectedPage) {
+            return view('frontend.pages.show', [
+                'page' => $selectedPage,
+                'isHomepage' => true,
+            ]);
+        }
+
         // Cache only the scalar ID; never serialize an Eloquent model or its relationships.
         $homepageId = Cache::remember(
             'homepage:published-default:id',
