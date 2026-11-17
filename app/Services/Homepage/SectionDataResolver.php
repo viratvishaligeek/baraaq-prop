@@ -5,6 +5,7 @@ namespace App\Services\Homepage;
 use App\Models\Category;
 use App\Models\HomepageSection;
 use App\Models\Post;
+use App\Models\Service;
 use App\Models\Property;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
@@ -42,6 +43,7 @@ class SectionDataResolver
         }
 
         return match ($section->section_type) {
+            'service-list' => ['services' => $this->services($config, $ids, $direction)],
             'category-slider' => ['categories' => $this->categories($config, $ids, $direction)],
             'team-slider' => ['teamMembers' => $this->teamMembers($config, $ids, $direction)],
             'testimonial-slider' => $this->testimonials($config, $ids, $direction),
@@ -54,6 +56,23 @@ class SectionDataResolver
             ],
             default => [],
         };
+    }
+
+
+    private function services(array $config, array $ids, string $direction): Collection
+    {
+        $query = Service::published();
+        if ($ids !== []) {
+            $query->whereIn('id', $ids);
+        }
+
+        $sort = in_array($config['sort_by'] ?? 'published_at', ['published_at', 'created_at', 'title'], true)
+            ? ($config['sort_by'] ?? 'published_at')
+            : 'published_at';
+
+        return $query->orderBy($sort, $direction)
+            ->limit(max(1, min(24, (int) ($config['items_limit'] ?? 8))))
+            ->get();
     }
 
     private function testimonials(array $config, array $ids, string $direction): array

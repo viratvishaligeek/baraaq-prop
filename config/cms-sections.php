@@ -255,6 +255,8 @@ $sections['blog.index'] = [
 
 $sections = array_merge($sections, require __DIR__.'/cms-sections/categories.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/about.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/about-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/services-piller.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/property-values.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/neighborhoods.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/team.php');

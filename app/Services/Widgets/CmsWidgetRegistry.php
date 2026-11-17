@@ -7,6 +7,7 @@ class CmsWidgetRegistry
     private const GROUPS = [
         'hero' => 'Hero sections',
         'about-composition' => 'About sections',
+        'service-list' => 'Services',
         'category-slider' => 'Property categories',
         'property-list' => 'Property listings',
         'property-slider-grid' => 'Property listings',
@@ -58,6 +59,7 @@ class CmsWidgetRegistry
     public function queryableTypes(): array
     {
         return [
+            'service-list' => ['label' => 'Services', 'table' => 'services', 'sort' => ['published_at', 'created_at', 'title']],
             'property-slider-grid' => ['label' => 'Properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price']],
             'property-list' => ['label' => 'Properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price']],
             'testimonial-slider' => ['label' => 'Testimonials', 'table' => 'testimonials', 'sort' => ['sort_order', 'created_at', 'name']],
