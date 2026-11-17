@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('properties', function (Blueprint $table) {
-            $table->string('cta_mode', 30)->default('contact_form')->after('is_featured');
+            $table->string('cta_mode', 30)->default('both')->after('is_featured');
             $table->string('whatsapp_number', 30)->nullable()->after('cta_mode');
             $table->string('whatsapp_message', 500)->nullable()->after('whatsapp_number');
         });
