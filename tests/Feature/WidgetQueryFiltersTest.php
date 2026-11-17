@@ -63,6 +63,14 @@ class WidgetQueryFiltersTest extends TestCase
             'is_default' => false,
             'is_composition_complete' => false,
         ]);
+        $first = Testimonial::create([
+            'name' => 'First client', 'quote' => 'Great service.', 'rating' => 5,
+            'sort_order' => 1, 'is_active' => true, 'status' => 'published',
+        ]);
+        $second = Testimonial::create([
+            'name' => 'Second client', 'quote' => 'Great service.', 'rating' => 4,
+            'sort_order' => 2, 'is_active' => true, 'status' => 'published',
+        ]);
         $section = HomepageSection::create([
             'homepage_id' => $homepage->id,
             'instance_key' => (string) \Illuminate\Support\Str::uuid(),
@@ -81,7 +89,7 @@ class WidgetQueryFiltersTest extends TestCase
                 'limit' => '8',
                 'sort_by' => 'sort_order',
                 'sort_direction' => 'asc',
-                'selected_ids' => '2,5',
+                'selected_ids' => $first->id.','.$second->id,
                 'filters' => ['min_rating' => '4'],
             ],
         ]);
@@ -91,7 +99,7 @@ class WidgetQueryFiltersTest extends TestCase
         $saved = $section->fresh();
         $this->assertSame('Client stories', $saved->config['heading']);
         $this->assertSame(8, $saved->data_source['limit']);
-        $this->assertSame([2, 5], $saved->data_source['selected_ids']);
+        $this->assertSame([$first->id, $second->id], $saved->data_source['selected_ids']);
         $this->assertSame(4, $saved->data_source['filters']['min_rating']);
     }
 
