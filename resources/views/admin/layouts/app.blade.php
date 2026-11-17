@@ -21,6 +21,7 @@
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('categories.manage'))<a href="{{ route('admin.content.index','categories') }}"><i class="fa-solid fa-tags"></i> Categories</a>@endif
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('banners.manage'))<a href="{{ route('admin.content.index','banners') }}"><i class="fa-regular fa-images"></i> Banners</a>@endif
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('team.manage'))<a href="{{ route('admin.content.index','team') }}"><i class="fa-solid fa-users"></i> Team members</a>@endif
+@if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('widgets.manage'))<a href="{{ route('admin.widgets.index') }}" class="{{ request()->routeIs('admin.widgets.*')?'active':'' }}"><i class="fa-solid fa-puzzle-piece"></i> Widgets</a>@endif
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('media.manage'))<a href="{{ route('admin.media.index') }}"><i class="fa-regular fa-folder-open"></i> Media library</a>@endif
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('newsletters.manage'))<a href="{{ route('admin.newsletters.index') }}" class="{{ request()->routeIs('admin.newsletters.*')?'active':'' }}"><i class="fa-regular fa-envelope"></i> Newsletter subscribers</a>@endif
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage'))
