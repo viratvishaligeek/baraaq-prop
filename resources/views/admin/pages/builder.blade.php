@@ -116,7 +116,7 @@
                                 </div>
                             </div>
 
-                            <form method="POST" action="{{ route('admin.pages.widgets.update', [$page, $section]) }}">
+                            <form method="POST" action="{{ route('admin.pages.widgets.update', [$page, $section]) }}" data-widget-save>
                                 @csrf @method('PATCH')
                                 @if (!empty($definition['fields']))
                                     <div class="row g-3">
@@ -275,6 +275,46 @@ document.addEventListener('DOMContentLoaded', () => {
         const term = event.target.value.trim().toLowerCase();
         document.querySelectorAll('.widget-library-item').forEach(item => {
             item.hidden = !item.dataset.search.includes(term);
+        });
+    });
+    document.querySelectorAll('form[data-widget-save]').forEach(form => {
+        form.addEventListener('submit', async event => {
+            event.preventDefault();
+            const submitButton = form.querySelector('button[type="submit"], button:not([type])');
+            const originalLabel = submitButton?.textContent;
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Saving…';
+            }
+            const status = document.getElementById('page-builder-status');
+            if (status) status.textContent = 'Saving section settings…';
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                const payload = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    const messages = Object.values(payload.errors || {}).flat();
+                    throw new Error(messages[0] || payload.message || 'Could not save this section.');
+                }
+                if (previewFrame) {
+                    const separator = previewFrame.src.includes('?') ? '&' : '?';
+                    previewFrame.src = previewFrame.src.split('&_preview=')[0] + separator + '_preview=' + Date.now();
+                }
+                if (status) status.textContent = 'Settings saved. Frontend preview refreshed.';
+            } catch (error) {
+                if (status) status.textContent = error.message;
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalLabel || 'Save widget settings';
+                }
+            }
         });
     });
     const list = document.getElementById('page-builder-list');
