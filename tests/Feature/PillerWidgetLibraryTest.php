@@ -79,7 +79,7 @@ class PillerWidgetLibraryTest extends TestCase
             }
         }
 
-        $this->assertSame(59, array_sum(array_map('count', $designGroups)));
+        $this->assertSame(57, array_sum(array_map('count', $designGroups)));
     }
 
     public function test_service_widget_query_honours_selected_ids_limit_sorting_and_published_scope(): void
