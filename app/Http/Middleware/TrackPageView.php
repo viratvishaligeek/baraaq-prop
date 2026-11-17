@@ -26,17 +26,21 @@ class TrackPageView
             return $response;
         }
 
-        $visitor = $request->cookie('site_visitor');
+        // The cookie is the browser-facing identifier; the session fallback
+        // keeps the same visitor stable when a client blocks or omits cookies.
+        $visitor = $request->cookie('site_visitor') ?: $request->session()->get('site_visitor');
         $newVisitor = !is_string($visitor) || !preg_match('/^[a-f0-9]{64}$/', $visitor);
         if ($newVisitor) {
             $visitor = bin2hex(random_bytes(32));
         }
+        $request->session()->put('site_visitor', $visitor);
 
-        $visit = $request->cookie('site_visit');
+        $visit = $request->cookie('site_visit') ?: $request->session()->get('site_visit');
         $newVisit = !is_string($visit) || !preg_match('/^[a-f0-9]{64}$/', $visit);
         if ($newVisit) {
             $visit = bin2hex(random_bytes(32));
         }
+        $request->session()->put('site_visit', $visit);
 
         $route = $request->route();
         $routeName = $route?->getName();
