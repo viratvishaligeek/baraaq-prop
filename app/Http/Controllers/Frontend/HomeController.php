@@ -16,7 +16,7 @@ class HomeController extends Controller
         $homepage = cache()->remember(
             'homepage:published-default',
             300,
-            fn () => Homepage::published()->default()->with('sections.reusableSection')->first()
+            fn () => Homepage::published()->default()->with(['sections.reusableSection.mediaAttachments.media', 'sections.mediaAttachments.media'])->first()
         );
 
         $hasCustomSections = $homepage
