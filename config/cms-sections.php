@@ -16,7 +16,7 @@ $heroDesigns = [
 $heroFields = [
     'eyebrow' => ['label' => 'Eyebrow / small heading', 'type' => 'text', 'max' => 120],
     'heading' => ['label' => 'Main heading', 'type' => 'textarea', 'max' => 500],
-    'description' => ['label' => 'Description', 'type' => 'textarea', 'max' => 1500],
+    'description' => ['label' => 'Description', 'type' => 'richtext', 'max' => 1500],
     'primary_button_label' => ['label' => 'Primary button label', 'type' => 'text', 'max' => 80],
     'primary_button_url' => ['label' => 'Primary button URL', 'type' => 'url', 'max' => 2048],
     'secondary_button_label' => ['label' => 'Secondary button label', 'type' => 'text', 'max' => 80],
@@ -185,6 +185,310 @@ for ($i = 1; $i <= 4; $i++) {
 }
 
 $sections = [];
+
+$heroVariantFields = [
+    'home-4' => [
+        'logo_video_url' => ['label' => 'Logo video URL', 'type' => 'url', 'max' => 2048],
+        'logo_text' => ['label' => 'Circular logo text', 'type' => 'text', 'max' => 180],
+        'avatar_image' => ['label' => 'Review avatar image', 'type' => 'image', 'max' => 2048],
+        'rating_text' => ['label' => 'Review rating text', 'type' => 'text', 'max' => 120],
+        'slide_1_background_image' => ['label' => 'Slide 1 background', 'type' => 'image', 'max' => 2048],
+        'slide_2_background_image' => ['label' => 'Slide 2 background', 'type' => 'image', 'max' => 2048],
+        'slide_3_background_image' => ['label' => 'Slide 3 background', 'type' => 'image', 'max' => 2048],
+        'slide_4_background_image' => ['label' => 'Slide 4 background', 'type' => 'image', 'max' => 2048],
+    ],
+    'home-5' => [
+        'logo_text' => ['label' => 'Circular logo text', 'type' => 'text', 'max' => 180],
+        'avatar_image' => ['label' => 'Review avatar image', 'type' => 'image', 'max' => 2048],
+        'rating_text' => ['label' => 'Review rating text', 'type' => 'text', 'max' => 120],
+        'counter_1_value' => ['label' => 'Counter 1 value', 'type' => 'number', 'min' => 0, 'max' => 999999],
+        'counter_1_suffix' => ['label' => 'Counter 1 suffix', 'type' => 'text', 'max' => 12],
+        'counter_1_label' => ['label' => 'Counter 1 label', 'type' => 'text', 'max' => 80],
+        'counter_2_prefix' => ['label' => 'Counter 2 prefix', 'type' => 'text', 'max' => 12],
+        'counter_2_value' => ['label' => 'Counter 2 value', 'type' => 'number', 'min' => 0, 'max' => 999999],
+        'counter_2_suffix' => ['label' => 'Counter 2 suffix', 'type' => 'text', 'max' => 12],
+        'counter_2_label' => ['label' => 'Counter 2 label', 'type' => 'text', 'max' => 80],
+        'property_address' => ['label' => 'Featured property address', 'type' => 'text', 'max' => 180],
+        'property_title' => ['label' => 'Featured property title', 'type' => 'text', 'max' => 180],
+        'bedrooms' => ['label' => 'Bedrooms', 'type' => 'number', 'min' => 0, 'max' => 50],
+        'bathrooms' => ['label' => 'Bathrooms', 'type' => 'number', 'min' => 0, 'max' => 50],
+        'area_value' => ['label' => 'Area value', 'type' => 'number', 'min' => 0, 'max' => 999999],
+        'area_unit' => ['label' => 'Area unit', 'type' => 'text', 'max' => 20],
+        'parking_label' => ['label' => 'Parking label', 'type' => 'text', 'max' => 60],
+        'property_price' => ['label' => 'Property price', 'type' => 'text', 'max' => 80],
+        'agent_name' => ['label' => 'Agent name', 'type' => 'text', 'max' => 120],
+        'agent_designation' => ['label' => 'Agent designation', 'type' => 'text', 'max' => 80],
+        'listing_badge' => ['label' => 'Listing badge', 'type' => 'text', 'max' => 40],
+        'tour_button_label' => ['label' => 'Tour button label', 'type' => 'text', 'max' => 80],
+        'tour_button_url' => ['label' => 'Tour button URL', 'type' => 'url', 'max' => 2048],
+        'slide_1_background_image' => ['label' => 'Slide 1 background', 'type' => 'image', 'max' => 2048],
+        'slide_2_background_image' => ['label' => 'Slide 2 background', 'type' => 'image', 'max' => 2048],
+        'slide_3_background_image' => ['label' => 'Slide 3 background', 'type' => 'image', 'max' => 2048],
+        'slide_4_background_image' => ['label' => 'Slide 4 background', 'type' => 'image', 'max' => 2048],
+    ],
+    'home-6' => [
+        'slide_2_heading' => ['label' => 'Slide 2 heading', 'type' => 'text', 'max' => 180],
+        'slide_3_heading' => ['label' => 'Slide 3 heading', 'type' => 'text', 'max' => 180],
+        'slide_1_background_image' => ['label' => 'Slide 1 background', 'type' => 'image', 'max' => 2048],
+        'slide_2_background_image' => ['label' => 'Slide 2 background', 'type' => 'image', 'max' => 2048],
+        'slide_3_background_image' => ['label' => 'Slide 3 background', 'type' => 'image', 'max' => 2048],
+    ],
+    'home-7' => [
+        'logo_video_url' => ['label' => 'Logo video URL', 'type' => 'url', 'max' => 2048],
+        'logo_text' => ['label' => 'Circular logo text', 'type' => 'text', 'max' => 180],
+        'slide_2_heading' => ['label' => 'Slide 2 heading', 'type' => 'text', 'max' => 240],
+        'slide_3_heading' => ['label' => 'Slide 3 heading', 'type' => 'text', 'max' => 240],
+        'slide_1_background_image' => ['label' => 'Slide 1 background', 'type' => 'image', 'max' => 2048],
+        'slide_2_background_image' => ['label' => 'Slide 2 background', 'type' => 'image', 'max' => 2048],
+        'slide_3_background_image' => ['label' => 'Slide 3 background', 'type' => 'image', 'max' => 2048],
+    ],
+    'home-8' => [
+        'foreground_image' => ['label' => 'Foreground image', 'type' => 'image', 'max' => 2048],
+    ],
+    'home-9' => [
+        'eyebrow' => ['label' => 'Eyebrow', 'type' => 'text', 'max' => 120],
+        'foreground_image' => ['label' => 'Foreground image', 'type' => 'image', 'max' => 2048],
+    ],
+    'home-10' => [
+        'logo_video_url' => ['label' => 'Logo video URL', 'type' => 'url', 'max' => 2048],
+        'logo_text' => ['label' => 'Circular logo text', 'type' => 'text', 'max' => 180],
+        'rating_icon' => ['label' => 'Review rating icon', 'type' => 'image', 'max' => 2048],
+        'avatar_image' => ['label' => 'Review avatar image', 'type' => 'image', 'max' => 2048],
+        'trust_label' => ['label' => 'Trust platform label', 'type' => 'text', 'max' => 80],
+        'client_count' => ['label' => 'Client count', 'type' => 'number', 'min' => 0, 'max' => 999999],
+        'client_suffix' => ['label' => 'Client count suffix', 'type' => 'text', 'max' => 12],
+        'client_label' => ['label' => 'Client count label', 'type' => 'text', 'max' => 80],
+        'image_1' => ['label' => 'Hero image 1', 'type' => 'image', 'max' => 2048],
+        'image_2' => ['label' => 'Hero image 2', 'type' => 'image', 'max' => 2048],
+        'image_3' => ['label' => 'Hero image 3', 'type' => 'image', 'max' => 2048],
+    ],
+];
+
+$heroVariantDefaults = [
+    'home-4' => [
+        'eyebrow' => 'Welcome To Pillar',
+        'heading' => 'Find your Perfect Luxury Home',
+        'primary_button_label' => 'Explore Properties',
+        'primary_button_url' => '/properties',
+        'logo_video_url' => 'https://www.youtube.com/watch?v=_sI_Ps7JSEk',
+        'logo_text' => 'PILLAR REAL ESTATE HOME * REAL ESTATE',
+        'avatar_image' => '/theme-assets/img/hero/heror-4-avator-group.png',
+        'rating_text' => '5.0 Rating on The Reviews',
+        'slide_1_background_image' => '/theme-assets/img/hero/hero_bg_4_1.jpg',
+        'slide_2_background_image' => '/theme-assets/img/hero/hero_bg_4_2.jpg',
+        'slide_3_background_image' => '/theme-assets/img/hero/hero_bg_4_3.jpg',
+        'slide_4_background_image' => '/theme-assets/img/hero/hero_bg_4_4.jpg',
+    ],
+    'home-5' => [
+        'heading' => 'Discover Your Dream Living Space',
+        'description' => 'Explore top listings and let our expert agents guide you every step of the way to your new home.',
+        'primary_button_label' => 'Explore Properties',
+        'primary_button_url' => '/properties',
+        'secondary_button_label' => 'Request A Visit',
+        'secondary_button_url' => '/contact',
+        'logo_text' => 'LUXURY HOME ** REAL ESTATE SOLUTION **',
+        'avatar_image' => '/theme-assets/img/hero/heror-4-avator-group.png',
+        'rating_text' => '5.0 Rating on The Reviews',
+        'counter_1_value' => 1250, 'counter_1_suffix' => '+', 'counter_1_label' => 'Project Completed',
+        'counter_2_prefix' => '
+    $key = 'hero.'.$design;
+
+    $sections[$key] = [
+        'key' => $key,
+        'label' => $definition['label'],
+        'type' => 'hero',
+        'source_design' => $design,
+        'view' => $definition['view'],
+        'defaults' => $design === 'home-2' ? $home2HeroDefaults : ($design === 'home-3' ? $home3HeroDefaults : ($heroVariantDefaults[$design] ?? [])),
+        'fields' => $design === 'home-2' ? $home2HeroFields : ($design === 'home-3' ? $home3HeroFields : array_merge($heroFields, $heroVariantFields[$design] ?? [])),
+    ];
+}
+
+$sections['properties.index'] = [
+    'key' => 'properties.index',
+    'label' => 'Featured properties — Home 1',
+    'type' => 'property-list',
+    'source_design' => 'index',
+    'view' => 'frontend.sections.properties.index',
+    'defaults' => [
+        'eyebrow' => 'Popular Properties',
+        'heading' => 'Best Properties Sale',
+        'items_limit' => 4,
+        'listing_filter' => 'featured',
+        'button_label' => 'View All Properties',
+        'button_url' => '/properties',
+    ],
+    'fields' => [
+        'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
+        'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
+        'description' => ['label' => 'Introductory text', 'type' => 'textarea', 'max' => 1000],
+        'items_limit' => ['label' => 'Number of properties', 'type' => 'number', 'min' => 1, 'max' => 6],
+        'listing_filter' => ['label' => 'Listing filter', 'type' => 'select', 'options' => ['all' => 'All listings', 'sale' => 'For sale', 'rent' => 'For rent', 'featured' => 'Featured only']],
+        'button_label' => ['label' => 'View-all button label', 'type' => 'text', 'max' => 80],
+        'button_url' => ['label' => 'View-all button URL', 'type' => 'url', 'max' => 2048],
+    ],
+];
+
+$sections['team.index'] = [
+    'key' => 'team.index',
+    'label' => 'Team members — Home 1',
+    'type' => 'team',
+    'source_design' => 'index',
+    'view' => 'frontend.sections.team.index',
+    'defaults' => [],
+    'fields' => [
+        'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
+        'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
+        'description' => ['label' => 'Introductory text', 'type' => 'textarea', 'max' => 1000],
+        'items_limit' => ['label' => 'Number of team members', 'type' => 'number', 'min' => 1, 'max' => 4],
+        'show_email' => ['label' => 'Show email address', 'type' => 'checkbox'],
+    ],
+];
+
+$sections['blog.index'] = [
+    'key' => 'blog.index',
+    'label' => 'Latest articles — Home 1',
+    'type' => 'blog',
+    'source_design' => 'index',
+    'view' => 'frontend.sections.blog.index',
+    'defaults' => [],
+    'fields' => [
+        'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
+        'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
+        'description' => ['label' => 'Introductory text', 'type' => 'textarea', 'max' => 1000],
+        'items_limit' => ['label' => 'Number of articles', 'type' => 'number', 'min' => 1, 'max' => 3],
+        'button_label' => ['label' => 'View-all button label', 'type' => 'text', 'max' => 80],
+        'button_url' => ['label' => 'View-all button URL', 'type' => 'url', 'max' => 2048],
+        'show_author' => ['label' => 'Show author', 'type' => 'checkbox'],
+        'show_date' => ['label' => 'Show publish date', 'type' => 'checkbox'],
+    ],
+];
+
+$sections = array_merge($sections, require __DIR__.'/cms-sections/categories.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/about.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/about-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/services-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/property-values.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/property-values-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/neighborhoods.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/team.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/team-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/team-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/gallery-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/why.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/why-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/why-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/properties.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/properties-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/properties-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/faq.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/faq-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/faq-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/download-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/featured-gallery-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/gallery-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/gallery-home-6.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/city-explore-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/process-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/testimonials-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/enquiry-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/marquee-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/blog-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/blog-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/brands-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/brands-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/contact-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/statistics-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/cta-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/download.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/marquee.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/testimonials.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/testimonials-piller.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/featured-properties.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/blog.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/search.php');
+
+return [
+    'sections' => $sections,
+];
+, 'counter_2_value' => 25, 'counter_2_suffix' => 'M', 'counter_2_label' => 'Monthly Visitors',
+        'property_address' => 'Property address text', 'property_title' => 'Luxurious Modern Home',
+        'bedrooms' => 4, 'bathrooms' => 2, 'area_value' => 1500, 'area_unit' => 'sqft',
+        'parking_label' => 'Parking Slot', 'property_price' => '$895,000.00',
+        'agent_name' => 'Walter Deckow', 'agent_designation' => 'Sale Agent',
+        'listing_badge' => 'For Sale', 'tour_button_label' => 'Request A Tour',
+        'tour_button_url' => '/contact',
+        'slide_1_background_image' => '/theme-assets/img/hero/hero_bg_5_1.jpg',
+        'slide_2_background_image' => '/theme-assets/img/hero/hero_bg_5_2.jpg',
+        'slide_3_background_image' => '/theme-assets/img/hero/hero_bg_5_3.jpg',
+        'slide_4_background_image' => '/theme-assets/img/hero/hero_bg_5_4.jpg',
+    ],
+    'home-6' => [
+        'eyebrow' => 'Welcome To Pillar',
+        'heading' => 'Exclusive Suites',
+        'slide_2_heading' => 'Premium Suites',
+        'slide_3_heading' => 'Dream Suites',
+        'description' => 'Premium Living. Affordable Prices',
+        'primary_button_label' => 'View All Service',
+        'primary_button_url' => '/services',
+        'slide_1_background_image' => '/theme-assets/img/hero/hero_bg_6_1.jpg',
+        'slide_2_background_image' => '/theme-assets/img/hero/hero_bg_6_2.jpg',
+        'slide_3_background_image' => '/theme-assets/img/hero/hero_bg_6_3.jpg',
+    ],
+    'home-7' => [
+        'heading' => 'Discover Homes Tailored to Your Lifestyle.',
+        'description' => 'Explore top listings and let our expert agents guide you every step of the way to your new home.',
+        'primary_button_label' => 'Explore Properties',
+        'primary_button_url' => '/properties',
+        'secondary_button_label' => 'Request A Visit',
+        'secondary_button_url' => '/contact',
+        'logo_video_url' => 'https://www.youtube.com/watch?v=_sI_Ps7JSEk',
+        'logo_text' => 'PILLAR REAL ESTATE HOME * REAL ESTATE',
+        'slide_2_heading' => 'Browse Homes Tailored to Elevate Your Living.',
+        'slide_3_heading' => 'Unlock Homes Created to Match Your Daily Living.',
+        'slide_1_background_image' => '/theme-assets/img/hero/hero_bg_7_1.jpg',
+        'slide_2_background_image' => '/theme-assets/img/hero/hero_bg_7_2.jpg',
+        'slide_3_background_image' => '/theme-assets/img/hero/hero_bg_7_3.jpg',
+    ],
+    'home-8' => [
+        'heading' => 'Find Your Local Home.',
+        'description' => 'Explore top listings and let our expert agents guide you every step of the way to your new home.',
+        'primary_button_label' => 'Explore Properties',
+        'primary_button_url' => '/properties',
+        'secondary_button_label' => 'Request A Visit',
+        'secondary_button_url' => '/contact',
+        'background_image' => '/theme-assets/img/hero/hero-8-bg.png',
+        'foreground_image' => '/theme-assets/img/hero/hero-8-left.jpg',
+    ],
+    'home-9' => [
+        'eyebrow' => 'Don’t Missed Out',
+        'heading' => 'Discover Most Suitable Property',
+        'description' => 'Explore top listings and let our expert agents guide you every step of the way to your new home.',
+        'primary_button_label' => 'Explore Properties',
+        'primary_button_url' => '/properties',
+        'secondary_button_label' => 'Request A Visit',
+        'secondary_button_url' => '/contact',
+        'background_image' => '/theme-assets/img/hero/hero-9-bg.png',
+        'foreground_image' => '/theme-assets/img/hero/hero-9-right.png',
+    ],
+    'home-10' => [
+        'heading' => 'Inspired Living for the Modern World',
+        'description' => 'Explore top listings and let our expert agents guide you every step of the way to your new home.',
+        'primary_button_label' => 'Explore Properties',
+        'primary_button_url' => '/properties',
+        'secondary_button_label' => 'Request A Visit',
+        'secondary_button_url' => '/contact',
+        'logo_video_url' => 'https://www.youtube.com/watch?v=_sI_Ps7JSEk',
+        'logo_text' => 'PILLAR REAL ESTATE HOME * REAL ESTATE',
+        'rating_icon' => '/theme-assets/img/icon/star-icon.svg',
+        'avatar_image' => '/theme-assets/img/hero/heror-1-avator-group.png',
+        'trust_label' => 'Trustipilot',
+        'client_count' => 19, 'client_suffix' => 'k+', 'client_label' => 'clients',
+        'image_1' => '/theme-assets/img/hero/hero-10-1.jpg',
+        'image_2' => '/theme-assets/img/hero/hero-10-2.jpg',
+        'image_3' => '/theme-assets/img/hero/hero-10-3.jpg',
+    ],
+];
 
 foreach ($heroDesigns as $design => $definition) {
     $key = 'hero.'.$design;
