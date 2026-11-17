@@ -33,6 +33,8 @@ class SettingsController extends Controller
             'footer_description' => ['nullable', 'string', 'max:1500'],
             'footer_copyright' => ['nullable', 'string', 'max:255'],
             'header_menu_location' => ['required', 'string', 'max:60'],
+            'header_cta_label' => ['nullable', 'string', 'max:80'],
+            'header_cta_url' => ['nullable', 'string', 'max:2048', 'regex:/^(https?:\\/\\/|\\/|mailto:|tel:|#)/i'],
             'footer_menu_location' => ['required', 'string', 'max:60'],
             'sticky_header' => ['sometimes', 'boolean'],
             'social_facebook' => ['nullable', 'url', 'max:500'],
