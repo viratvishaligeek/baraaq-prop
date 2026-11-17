@@ -206,8 +206,22 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    if (window.tinymce) {
+        tinymce.init({
+            selector: 'textarea[data-rich-editor]',
+            license_key: 'gpl',
+            menubar: false,
+            plugins: 'lists link',
+            toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link | removeformat',
+            height: 240,
+            branding: false,
+            promotion: false,
+            setup: editor => editor.on('change keyup undo redo', () => editor.save())
+        });
+    }
     const previewFrame = document.getElementById('page-builder-preview');
     const previewWrap = document.getElementById('page-builder-preview-frame');
     document.querySelectorAll('[data-preview-width]').forEach(button => {
@@ -297,6 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const status = document.getElementById('page-builder-status');
             if (status) status.textContent = 'Saving section settings…';
             try {
+                if (window.tinymce) window.tinymce.triggerSave();
                 const response = await fetch(form.action, {
                     method: 'POST',
                     body: new FormData(form),
