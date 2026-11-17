@@ -128,6 +128,7 @@ $home3HeroDefaults = [
     'advanced_type_label' => 'Property Type', 'advanced_bedrooms_label' => 'Max of Bedrooms',
     'advanced_location_label' => 'Location',
     'map_card_limit' => 4,
+    'animate_content' => true,
     'show_mobile' => true, 'show_tablet' => true, 'show_desktop' => true,
 ];
 $home3HeroFields = [
@@ -154,6 +155,7 @@ $home3HeroFields = [
     'advanced_bedrooms_label' => ['label' => 'Advanced bedrooms label', 'type' => 'text', 'max' => 80],
     'advanced_location_label' => ['label' => 'Advanced location label', 'type' => 'text', 'max' => 80],
     'map_card_limit' => ['label' => 'Map property cards', 'type' => 'number', 'min' => 1, 'max' => 4],
+    'animate_content' => ['label' => 'Enable hero entrance animations', 'type' => 'checkbox'],
     'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
     'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
     'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
