@@ -9,8 +9,10 @@
  */
 return [
     'index' => [
-        'gallery.home-1-city-explore',
         'properties.index',
+        'properties.featured-index',
+        'property-values.home-1',
+        'gallery.home-1-city-explore',
         'team.index',
         'testimonials.index',
         'blog.index',
