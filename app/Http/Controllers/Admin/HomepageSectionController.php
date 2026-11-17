@@ -115,6 +115,9 @@ class HomepageSectionController extends Controller
                 case 'image':
                     $fieldRules[] = 'string';
                     $fieldRules[] = 'max:' . ($schema['max'] ?? 255);
+                    if (($schema['type'] ?? '') === 'url') {
+                        $fieldRules[] = 'regex:~^(https?://|/|#|mailto:|tel:)~i';
+                    }
                     break;
 
                 case 'color':
