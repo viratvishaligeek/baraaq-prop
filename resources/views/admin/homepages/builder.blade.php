@@ -55,6 +55,19 @@
                                 <div class="small text-muted">{{ $section->section_type }} · Source: {{ $section->source_design }} · #{{ $section->sort_order }}</div>
                             </div>
                         </div>
+                        @if(!empty($definition['settings']))
+                            <form method="POST" action="{{ route('admin.homepages.sections.update', [$homepage, $section]) }}" class="w-100 row g-2 align-items-end">
+                                @csrf
+                                @method('PATCH')
+                                @foreach($definition['settings'] as $field)
+                                    <div class="col-md-5">
+                                        <label class="form-label small text-capitalize" for="section-{{ $section->id }}-{{ $field }}">{{ $field }}</label>
+                                        <input class="form-control form-control-sm" id="section-{{ $section->id }}-{{ $field }}" name="config[{{ $field }}]" value="{{ old('config.'.$field, $section->config[$field] ?? '') }}" maxlength="180">
+                                    </div>
+                                @endforeach
+                                <div class="col-md-2"><button class="btn btn-sm btn-outline-primary" type="submit">Save text</button></div>
+                            </form>
+                        @endif
                         <div class="d-flex gap-2">
                             <form method="POST" action="{{ route('admin.homepages.sections.toggle', [$homepage, $section]) }}">
                                 @csrf
