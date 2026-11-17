@@ -72,7 +72,7 @@ class SettingsController extends Controller
 
         DB::transaction(function () use ($data) {
             foreach ($data as $key => $value) {
-                Setting::write($key, $value, in_array($key, ['meta_title', 'meta_description', 'meta_keywords', 'default_og_image']) ? 'seo' : 'general');
+                Setting::write($key, $value, in_array($key, ['meta_title', 'meta_description', 'meta_keywords', 'meta_robots', 'default_og_image']) ? 'seo' : 'general');
             }
         });
 
