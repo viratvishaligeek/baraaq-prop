@@ -55,6 +55,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/homepages/{homepage}/sections', [HomepageSectionController::class, 'store'])
             ->middleware('permission:settings.manage')
             ->name('homepages.sections.store');
+        Route::post('/homepages/{homepage}/sections/{section}/duplicate', [HomepageSectionController::class, 'duplicate'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.sections.duplicate');
+
         Route::patch('/homepages/{homepage}/sections/reorder', [HomepageSectionController::class, 'reorder'])
             ->middleware('permission:settings.manage')
             ->name('homepages.sections.reorder');
