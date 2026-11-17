@@ -57,6 +57,7 @@ class PillerWidgetLibraryTest extends TestCase
         $designGroups = [
             'About' => ['about.home-2', 'about.home-4', 'about.home-7', 'about.home-8', 'about.home-9', 'about.home-10'],
             'Services' => ['services.home-4', 'services.home-6', 'services.home-9', 'services.home-10'],
+            'Why choose us' => ['why.home-1'],
             'Testimonials' => ['testimonials.home-2', 'testimonials.home-3', 'testimonials.index', 'testimonials.home-4', 'testimonials.home-5', 'testimonials.home-10'],
             'Property listings' => ['properties.index', 'properties.featured-index', 'properties.home-2', 'properties.home-3', 'featured-properties.home-2'],
             'Property categories' => ['categories.home-2', 'categories.home-3', 'categories.home-7', 'categories.home-10'],
@@ -78,7 +79,7 @@ class PillerWidgetLibraryTest extends TestCase
             }
         }
 
-        $this->assertSame(58, array_sum(array_map('count', $designGroups)));
+        $this->assertSame(59, array_sum(array_map('count', $designGroups)));
     }
 
     public function test_service_widget_query_honours_selected_ids_limit_sorting_and_published_scope(): void
