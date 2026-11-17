@@ -14,6 +14,7 @@
 <a class="brand" href="{{ route('admin.dashboard') }}">{{ config('app.name') }}</a>
 <div class="nav-label">WORKSPACE</div>
 <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard')?'active':'' }}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+@if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('analytics.view'))<a href="{{ route('admin.analytics.index') }}" class="{{ request()->routeIs('admin.analytics.*')?'active':'' }}"><i class="fa-solid fa-chart-line"></i> Analytics</a>@endif
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('properties.manage'))<a href="{{ route('admin.properties.index') }}" class="{{ request()->routeIs('admin.properties.*')?'active':'' }}"><i class="fa-solid fa-house"></i> Properties</a>@endif
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('enquiries.manage'))<a href="{{ route('admin.enquiries.index') }}" class="{{ request()->routeIs('admin.enquiries.*')?'active':'' }}"><i class="fa-regular fa-message"></i> Enquiries</a>@endif
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('posts.manage'))<a href="{{ route('admin.content.index','posts') }}"><i class="fa-regular fa-newspaper"></i> Blog posts</a>@endif
