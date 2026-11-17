@@ -87,7 +87,7 @@ $sections['blog.index'] = [
         'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
         'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
         'description' => ['label' => 'Introductory text', 'type' => 'textarea', 'max' => 1000],
-        'items_limit' => ['label' => 'Number of articles', 'type' => 'number', 'min' => 1, 'max' => 24],
+        'items_limit' => ['label' => 'Number of articles', 'type' => 'number', 'min' => 1, 'max' => 3],
         'button_label' => ['label' => 'View-all button label', 'type' => 'text', 'max' => 80],
         'button_url' => ['label' => 'View-all button URL', 'type' => 'url', 'max' => 2048],
         'show_author' => ['label' => 'Show author', 'type' => 'checkbox'],
