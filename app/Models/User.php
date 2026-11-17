@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -34,7 +33,7 @@ class User extends Authenticatable
         $this->loadMissing('roles.permissions');
 
         return $this->roles->contains(
-            fn ($role) => $role->permissions->contains('slug', $slug)
+            fn($role) => $role->permissions->contains('slug', $slug)
         );
     }
 
@@ -43,7 +42,7 @@ class User extends Authenticatable
         $this->loadMissing('roles.permissions');
 
         return $this->roles
-            ->flatMap(fn ($role) => $role->permissions->pluck('slug'))
+            ->flatMap(fn($role) => $role->permissions->pluck('slug'))
             ->unique()
             ->values()
             ->all();

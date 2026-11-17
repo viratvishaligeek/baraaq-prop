@@ -14,13 +14,16 @@
 
 <div class="gallery-sec-3 overflow-hidden bg-smoke {{ $sectionConfig['vertical_spacing'] ?? 'space' }} {{ $visibility }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif @if(!empty($sectionConfig['background_image'])) data-bg-src="{{ $sectionConfig['background_image'] }}" @endif>
     @if(!empty($sectionConfig['shape_image']))
-        <div class="shape-mockup animation-infinite" style="left: 0; bottom: 0;" data-bg-src="{{ $sectionConfig['shape_image'] }}"></div>
+        <div class="shape-mockup animation-infinite" style="left: 0; bottom: 0;" data-bg-src="{{ $sectionConfig['shape_image'] }}">
+</div>
     @endif
     <div class="container">
         <div class="row justify-content-lg-between text-center text-lg-start gy-4 justify-content-center align-items-center mb-40">
             <div class="col-lg-7">
                 <div class="title-area text-left mb-2">
-                    <p class="sub-title{{ $animation ? ' text-anime-style-1' : '' }}"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
+                    <p class="sub-title{{ $animation ? ' text-anime-style-1' : '' }}">
+<span class="double-line">
+</span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
                     <h2 class="sec-title{{ $animation ? ' text-anime-style-2' : '' }}">{{ $sectionConfig['heading'] ?? '' }}</h2>
                     <p class="box-text{{ $animation ? ' text-anime-style-3' : '' }}">{{ $sectionConfig['description'] ?? '' }}</p>
                 </div>

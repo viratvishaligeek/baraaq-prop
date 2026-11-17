@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Homepage;
 use App\Models\Banner;
+use App\Models\Homepage;
 use App\Models\Post;
 use App\Models\Property;
 use App\Models\ReusableSection;
@@ -39,8 +39,8 @@ class HomepageController extends Controller
     {
         $draft = DB::transaction(function () use ($homepage) {
             $copy = $homepage->replicate();
-            $copy->name = $homepage->name.' (Draft)';
-            $copy->slug = Str::slug($homepage->slug.'-draft-'.now()->format('YmdHis').'-'.Str::lower(Str::random(5)));
+            $copy->name = $homepage->name . ' (Draft)';
+            $copy->slug = Str::slug($homepage->slug . '-draft-' . now()->format('YmdHis') . '-' . Str::lower(Str::random(5)));
             $copy->status = 'draft';
             $copy->is_default = false;
             $copy->published_at = null;
@@ -49,7 +49,7 @@ class HomepageController extends Controller
             $copy->save();
 
             if ($homepage->sections->isEmpty()) {
-                $sectionKeys = ['hero.'.$homepage->design_key];
+                $sectionKeys = ['hero.' . $homepage->design_key];
 
                 if ($homepage->design_key === 'home-2') {
                     $sectionKeys[] = 'search.home-2';
@@ -101,9 +101,9 @@ class HomepageController extends Controller
                 }
 
                 foreach ($sectionKeys as $sectionKey) {
-                    $definition = config('cms-sections.sections.'.$sectionKey);
+                    $definition = config('cms-sections.sections.' . $sectionKey);
 
-                    if (! $definition) {
+                    if (!$definition) {
                         continue;
                     }
 
@@ -140,7 +140,6 @@ class HomepageController extends Controller
             ->route('admin.homepages.builder', $draft)
             ->with('success', 'Draft copy created. The published homepage has not changed.');
     }
-
 
     public function preview(Homepage $homepage)
     {

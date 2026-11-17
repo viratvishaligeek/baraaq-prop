@@ -1,7 +1,70 @@
 @extends('admin.layouts.app')
-@section('title','Appearance')
+@section('title', 'Appearance')
 @section('content')
-<div class="mb-4"><h1 class="page-title">Appearance</h1><p class="text-muted">Manage the active website theme and its navigation.</p></div>
-<div class="content-card mb-4"><div class="row align-items-center g-3"><div class="col-md-8"><span class="badge text-bg-success mb-2">Active theme</span><h2 class="section-title mb-1">Piller — Real Estate</h2><p class="text-muted mb-0">The original supplied theme is retained as the site's active visual foundation. Theme switching is intentionally disabled to protect the approved design.</p></div><div class="col-md-4 text-md-end"><a href="{{ route('home') }}" target="_blank" rel="noopener" class="btn btn-outline-primary">Preview website</a></div></div><hr><div class="row g-3 small"><div class="col-md-6"><strong>Source:</strong> theme-files-html/</div><div class="col-md-6"><strong>Assets:</strong> public/theme-assets/</div></div></div>
-<div class="content-card"><div class="d-flex justify-content-between align-items-center mb-3"><div><h2 class="section-title mb-1">Navigation menus</h2><p class="text-muted mb-0">Manage primary navigation and nested links.</p></div><a href="{{ route('admin.menus.create') }}" class="btn btn-primary">Create menu</a></div><div class="table-responsive"><table class="table align-middle"><thead><tr><th>Menu</th><th>Location</th><th>Items</th><th></th></tr></thead><tbody>@forelse($menus as $menu)<tr><td>{{ $menu->name }}</td><td><code>{{ $menu->location }}</code></td><td>{{ $menu->all_items_count }}</td><td class="text-end"><a class="btn btn-sm btn-light" href="{{ route('admin.menus.edit',$menu) }}">Edit</a></td></tr>@empty<tr><td colspan="4" class="text-center text-muted">No menus created yet.</td></tr>@endforelse</tbody></table></div><a href="{{ route('admin.menus.index') }}">Manage all menus</a></div>
+    <div class="mb-4">
+        <h1 class="page-title">Appearance</h1>
+        <p class="text-muted">Manage the active website theme and its navigation.</p>
+    </div>
+    <div class="content-card mb-4">
+        <div class="row align-items-center g-3">
+            <div class="col-md-8">
+                <span class="badge text-bg-success mb-2">Active theme</span>
+                <h2 class="section-title mb-1">Piller — Real Estate</h2>
+                <p class="text-muted mb-0">The original supplied theme is retained as the site's active visual foundation.
+                    Theme switching is intentionally disabled to protect the approved design.</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <a href="{{ route('home') }}" target="_blank" rel="noopener" class="btn btn-outline-primary">Preview
+                    website</a>
+            </div>
+        </div>
+        <hr>
+        <div class="row g-3 small">
+            <div class="col-md-6">
+                <strong>Source:</strong> theme-files-html/
+            </div>
+            <div class="col-md-6">
+                <strong>Assets:</strong> public/theme-assets/
+            </div>
+        </div>
+    </div>
+    <div class="content-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h2 class="section-title mb-1">Navigation menus</h2>
+                <p class="text-muted mb-0">Manage primary navigation and nested links.</p>
+            </div>
+            <a href="{{ route('admin.menus.create') }}" class="btn btn-primary">Create menu</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Menu</th>
+                        <th>Location</th>
+                        <th>Items</th>
+                        <th>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($menus as $menu)
+                        <tr>
+                            <td>{{ $menu->name }}</td>
+                            <td>
+                                <code>{{ $menu->location }}</code>
+                            </td>
+                            <td>{{ $menu->all_items_count }}</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-light" href="{{ route('admin.menus.edit', $menu) }}">Edit</a>
+                            </td>
+                    </tr>@empty<tr>
+                            <td colspan="4" class="text-center text-muted">No menus created yet.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <a href="{{ route('admin.menus.index') }}">Manage all menus</a>
+    </div>
 @endsection

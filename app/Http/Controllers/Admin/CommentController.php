@@ -13,7 +13,7 @@ class CommentController extends Controller
         $user = request()->user();
 
         abort_unless(
-            $user && ($user->isAdministrator() || $user->hasPermission('comments.manage') || $user->hasPermission('comments.'.$action)),
+            $user && ($user->isAdministrator() || $user->hasPermission('comments.manage') || $user->hasPermission('comments.' . $action)),
             403
         );
     }
@@ -25,12 +25,12 @@ class CommentController extends Controller
         $comments = Comment::with('post:id,title,slug')
             ->when($request->filled('search'), function ($query) use ($request) {
                 $term = $request->string('search');
-                $query->where(fn ($where) => $where->where('name', 'like', '%'.$term.'%')
-                    ->orWhere('email', 'like', '%'.$term.'%')
-                    ->orWhere('body', 'like', '%'.$term.'%')
-                    ->orWhereHas('post', fn ($post) => $post->where('title', 'like', '%'.$term.'%')));
+                $query->where(fn($where) => $where->where('name', 'like', '%' . $term . '%')
+                    ->orWhere('email', 'like', '%' . $term . '%')
+                    ->orWhere('body', 'like', '%' . $term . '%')
+                    ->orWhereHas('post', fn($post) => $post->where('title', 'like', '%' . $term . '%')));
             })
-            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->input('status')))
+            ->when($request->filled('status'), fn($query) => $query->where('status', $request->input('status')))
             ->latest()
             ->paginate(25)
             ->withQueryString();

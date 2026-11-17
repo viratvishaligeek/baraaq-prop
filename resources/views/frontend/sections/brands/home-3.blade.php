@@ -18,7 +18,9 @@
 
 <div class="brand-area-1 {{ $sectionConfig['vertical_spacing'] ?? '' }} overflow-hidden {{ $visibility }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif>
     @if(!empty($sectionConfig['shape_image']))
-        <div class="shape-mockup spin z-index-1 d-none d-xxl-block z-index-5" style="top: 5%; right: 0%;"><img src="{{ $sectionConfig['shape_image'] }}" alt="Decorative shape"></div>
+        <div class="shape-mockup spin z-index-1 d-none d-xxl-block z-index-5" style="top: 5%; right: 0%;">
+<img src="{{ $sectionConfig['shape_image'] }}" alt="Decorative shape">
+</div>
     @endif
     <div class="container">
         <div class="row justify-content-center">
@@ -27,7 +29,13 @@
                     <div class="swiper-wrapper">
                         @for($repeat = 0; $repeat < 2; $repeat++)
                             @foreach($items as $item)
-                                <div class="swiper-slide"><div class="brand-box"><a href="{{ $item['url'] }}"><img src="{{ $item['image'] }}" alt="Brand logo"></a></div></div>
+                                <div class="swiper-slide">
+<div class="brand-box">
+<a href="{{ $item['url'] }}">
+<img src="{{ $item['image'] }}" alt="Brand logo">
+</a>
+</div>
+</div>
                             @endforeach
                         @endfor
                     </div>

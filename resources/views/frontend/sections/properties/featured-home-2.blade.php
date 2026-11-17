@@ -26,12 +26,16 @@
         <div class="row justify-content-lg-between gy-4 justify-content-center align-items-center mb-40">
             <div class="col-lg-6">
                 <div class="title-area text-left mb-2">
-                    <p class="sub-title feature-sec-v2 text-anime-style-2"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
+                    <p class="sub-title feature-sec-v2 text-anime-style-2">
+<span class="double-line">
+</span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
                     <h2 class="sec-title feature-sec-v2 text-anime-style-3">{{ $sectionConfig['heading'] ?? '' }}</h2>
                 </div>
             </div>
             @if(!empty($sectionConfig['button_label']))
-                <div class="col-lg-auto"><a href="{{ $sectionConfig['button_url'] ?? '#' }}" class="th-btn tab-btn style3 pill feature-sec-v2 fadeinup wow" data-wow-delay="0.4s">{{ $sectionConfig['button_label'] }}</a></div>
+                <div class="col-lg-auto">
+<a href="{{ $sectionConfig['button_url'] ?? '#' }}" class="th-btn tab-btn style3 pill feature-sec-v2 fadeinup wow" data-wow-delay="0.4s">{{ $sectionConfig['button_label'] }}</a>
+</div>
             @endif
         </div>
         <div class="slider-area">
@@ -45,17 +49,34 @@
                             <div class="popular-list-1 style-2{{ ($sectionConfig['animate_cards'] ?? true) ? ' fadeinup wow' : '' }}">
                                 <div class="thumb-wrapper">
                                     <img src="{{ $imagePath ? Storage::disk('public')->url($imagePath) : asset('theme-assets/img/popular/feature-1-1.jpg') }}" alt="{{ $property->title }}">
-                                    <div class="popular-badge"><img src="{{ asset('theme-assets/img/icon/sell_rent_icon.svg') }}" alt="icon"><p>{{ $property->listing_type === 'rent' ? 'For Rent' : 'For Sale' }}</p></div>
+                                    <div class="popular-badge">
+<img src="{{ asset('theme-assets/img/icon/sell_rent_icon.svg') }}" alt="icon">
+<p>{{ $property->listing_type === 'rent' ? 'For Rent' : 'For Sale' }}</p>
+</div>
                                 </div>
                                 <div class="property-content">
                                     <div class="media-body">
-                                        <h3 class="box-title"><a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a></h3>
-                                        <div class="box-text"><div class="icon"><img src="{{ asset('theme-assets/img/icon/popular-location.svg') }}" alt="icon"></div>{{ $property->address }} {{ $property->city }}</div>
+                                        <h3 class="box-title">
+<a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a>
+</h3>
+                                        <div class="box-text">
+<div class="icon">
+<img src="{{ asset('theme-assets/img/icon/popular-location.svg') }}" alt="icon">
+</div>{{ $property->address }} {{ $property->city }}</div>
                                     </div>
                                     <ul class="property-featured">
-                                        <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bed.svg') }}" alt="icon"></div>Bed {{ $property->bedrooms ?? '—' }}</li>
-                                        <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bath.svg') }}" alt="icon"></div>Bath {{ $property->bathrooms ?? '—' }}</li>
-                                        <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="icon"></div>{{ $property->area ? number_format((float) $property->area).' '.$property->area_unit : '—' }}</li>
+                                        <li>
+<div class="icon">
+<img src="{{ asset('theme-assets/img/icon/bed.svg') }}" alt="icon">
+</div>Bed {{ $property->bedrooms ?? '—' }}</li>
+                                        <li>
+<div class="icon">
+<img src="{{ asset('theme-assets/img/icon/bath.svg') }}" alt="icon">
+</div>Bath {{ $property->bathrooms ?? '—' }}</li>
+                                        <li>
+<div class="icon">
+<img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="icon">
+</div>{{ $property->area ? number_format((float) $property->area).' '.$property->area_unit : '—' }}</li>
                                     </ul>
                                     <div class="property-bottom">
                                         <h6 class="box-title">{{ $property->price ? number_format((float) $property->price, 2) : $property->price_label }}</h6>
@@ -63,20 +84,35 @@
                                     </div>
                                     @if($sectionConfig['show_agent'] ?? true)
                                         <div class="agent-wrap">
-                                            <div class="agent-thumb"><img src="{{ asset('theme-assets/img/popular/agent-thumb-'.($loop->iteration % 2 ? '1' : '2').'.jpg') }}" alt="Agent"></div>
-                                            <div class="agent-content"><h4 class="box-title">{{ $property->creator?->name ?? 'Property Consultant' }}</h4><p class="box-text">{{ $property->listing_type === 'rent' ? 'Rental Agent' : 'Sale Agent' }}</p></div>
+                                            <div class="agent-thumb">
+<img src="{{ asset('theme-assets/img/popular/agent-thumb-'.($loop->iteration % 2 ? '1' : '2').'.jpg') }}" alt="Agent">
+</div>
+                                            <div class="agent-content">
+<h4 class="box-title">{{ $property->creator?->name ?? 'Property Consultant' }}</h4>
+<p class="box-text">{{ $property->listing_type === 'rent' ? 'Rental Agent' : 'Sale Agent' }}</p>
+</div>
                                         </div>
                                     @endif
                                 </div>
                             </div>
                         </div>
                     @empty
-                        <div class="swiper-slide"><div class="popular-list-1 style-2"><div class="property-content">Featured properties will appear here once published.</div></div></div>
+                        <div class="swiper-slide">
+<div class="popular-list-1 style-2">
+<div class="property-content">Featured properties will appear here once published.</div>
+</div>
+</div>
                     @endforelse
                 </div>
             </div>
-            <button data-slider-prev="#featuresSlider-{{ $section->id }}" class="slider-arrow slider-prev"><i class="far fa-arrow-left"></i></button>
-            <button data-slider-next="#featuresSlider-{{ $section->id }}" class="slider-arrow slider-next"><i class="far fa-arrow-right"></i></button>
+            <button data-slider-prev="#featuresSlider-{{ $section->id }}" class="slider-arrow slider-prev">
+<i class="far fa-arrow-left">
+</i>
+</button>
+            <button data-slider-next="#featuresSlider-{{ $section->id }}" class="slider-arrow slider-next">
+<i class="far fa-arrow-right">
+</i>
+</button>
         </div>
     </div>
 </section>

@@ -10,8 +10,15 @@ class ReusableSection extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'name', 'slug', 'section_type', 'section_key', 'source_design',
-        'config', 'status', 'created_by', 'updated_by',
+        'name',
+        'slug',
+        'section_type',
+        'section_key',
+        'source_design',
+        'config',
+        'status',
+        'created_by',
+        'updated_by',
     ];
 
     protected function casts(): array

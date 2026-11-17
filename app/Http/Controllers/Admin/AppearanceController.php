@@ -6,6 +6,8 @@ class AppearanceController extends Controller
 {
     public function index()
     {
-        return view('admin.appearance.index',['menus'=>Menu::withCount('allItems')->orderBy('name')->get()]);
+        return view('admin.appearance.index', [
+            'menus' => Menu::withCount('allItems')->orderBy('name')->get()
+        ]);
     }
 }

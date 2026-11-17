@@ -15,12 +15,12 @@ class MediaPickerController extends Controller
 
         $media = Media::query()
             ->where('mime_type', 'like', 'image/%')
-            ->when($search !== '', fn ($query) => $query->where('original_name', 'like', '%'.$search.'%'))
+            ->when($search !== '', fn($query) => $query->where('original_name', 'like', '%' . $search . '%'))
             ->latest()
             ->paginate(24);
 
         return response()->json([
-            'data' => $media->getCollection()->map(fn (Media $item) => [
+            'data' => $media->getCollection()->map(fn(Media $item) => [
                 'id' => $item->id,
                 'name' => $item->original_name,
                 'url' => Storage::disk($item->disk)->url($item->path),

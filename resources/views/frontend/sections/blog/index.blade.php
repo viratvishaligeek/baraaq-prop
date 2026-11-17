@@ -3,7 +3,9 @@
         <div class="row justify-content-center">
             <div class="col-xl-7">
                 <div class="title-area text-center">
-                    <p class="sub-title text-anime-style-2"><span class="double-line"></span> {{ $sectionConfig['eyebrow'] ?? 'Latest News' }}</p>
+                    <p class="sub-title text-anime-style-2">
+<span class="double-line">
+</span> {{ $sectionConfig['eyebrow'] ?? 'Latest News' }}</p>
                     <h2 class="sec-title text-anime-style-3">{{ $sectionConfig['heading'] ?? 'Helpful Real Estate Articles' }}</h2>
                     @if(!empty($sectionConfig['description']))
                         <p class="mt-3">{{ $sectionConfig['description'] }}</p>
@@ -22,25 +24,47 @@
                                         <img src="{{ $post->featured_image ? Storage::disk('public')->url($post->featured_image) : asset('theme-assets/img/blog/blog_1_1.jpg') }}" alt="{{ $post->title }}">
                                     </a>
                                     @if($sectionConfig['show_date'] ?? true)
-                                        <div class="date"><a href="{{ route('blog.show', $post) }}"><span>{{ $post->published_at?->format('d') }}</span> <span>{{ $post->published_at?->format('M') }}</span></a></div>
+                                        <div class="date">
+<a href="{{ route('blog.show', $post) }}">
+<span>{{ $post->published_at?->format('d') }}</span> <span>{{ $post->published_at?->format('M') }}</span>
+</a>
+</div>
                                     @endif
                                 </div>
                                 <div class="blog-content">
                                     @if($sectionConfig['show_author'] ?? true)
-                                        <div class="blog-meta"><a href="{{ route('blog.show', $post) }}"><i class="fa-solid fa-user"></i> {{ $post->author?->name ?? config('app.name') }}</a></div>
+                                        <div class="blog-meta">
+<a href="{{ route('blog.show', $post) }}">
+<i class="fa-solid fa-user">
+</i> {{ $post->author?->name ?? config('app.name') }}</a>
+</div>
                                     @endif
-                                    <h3 class="box-title"><a href="{{ route('blog.show', $post) }}">{{ $post->title }}</a></h3>
+                                    <h3 class="box-title">
+<a href="{{ route('blog.show', $post) }}">{{ $post->title }}</a>
+</h3>
                                     <a href="{{ route('blog.show', $post) }}" class="th-btn pill style3">Read More</a>
                                 </div>
                             </div>
                         </div>
                     @empty
-                        <div class="swiper-slide"><div class="blog-card style-2"><div class="blog-content"><h3 class="box-title">News and articles will appear here when published.</h3></div></div></div>
+                        <div class="swiper-slide">
+<div class="blog-card style-2">
+<div class="blog-content">
+<h3 class="box-title">News and articles will appear here when published.</h3>
+</div>
+</div>
+</div>
                     @endforelse
                 </div>
             </div>
-            <button data-slider-prev="#blogSlider-{{ $section->id }}" class="slider-arrow slider-prev"><i class="far fa-arrow-left"></i></button>
-            <button data-slider-next="#blogSlider-{{ $section->id }}" class="slider-arrow slider-next"><i class="far fa-arrow-right"></i></button>
+            <button data-slider-prev="#blogSlider-{{ $section->id }}" class="slider-arrow slider-prev">
+<i class="far fa-arrow-left">
+</i>
+</button>
+            <button data-slider-next="#blogSlider-{{ $section->id }}" class="slider-arrow slider-next">
+<i class="far fa-arrow-right">
+</i>
+</button>
         </div>
         @if(!empty($sectionConfig['button_label']))
             <div class="text-center mt-4">

@@ -34,14 +34,14 @@ class ActivityLogObserver
             ?: data_get($model, 'email')
             ?: data_get($model, 'key')
             ?: data_get($model, 'slug')
-            ?: 'ID '.$model->getKey();
+            ?: 'ID ' . $model->getKey();
 
         ActivityLog::create([
             'causer_id' => auth()->id(),
             'subject_type' => $model::class,
             'subject_id' => $model->getKey(),
             'event' => $event,
-            'description' => Str::limit(Str::headline(class_basename($model)).' "'.$label.'" '.$event, 255),
+            'description' => Str::limit(Str::headline(class_basename($model)) . ' "' . $label . '" ' . $event, 255),
             'properties' => $changed === [] ? null : ['changed_fields' => $changed],
             'created_at' => now(),
         ]);

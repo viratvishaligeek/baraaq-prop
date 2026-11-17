@@ -15,7 +15,7 @@ class WidgetRenderer
         $area = WidgetArea::query()
             ->where('location', $location)
             ->where('is_active', true)
-            ->with(['items' => fn ($query) => $query->where('is_active', true)->orderBy('sort_order')->with('widget')])
+            ->with(['items' => fn($query) => $query->where('is_active', true)->orderBy('sort_order')->with('widget')])
             ->first();
 
         if (! $area) {
@@ -23,8 +23,8 @@ class WidgetRenderer
         }
 
         return $area->items
-            ->filter(fn ($item) => $item->widget && $item->widget->status === 'published')
-            ->map(fn ($item) => $this->payload($item->widget));
+            ->filter(fn($item) => $item->widget && $item->widget->status === 'published')
+            ->map(fn($item) => $this->payload($item->widget));
     }
 
     private function payload(Widget $widget): array

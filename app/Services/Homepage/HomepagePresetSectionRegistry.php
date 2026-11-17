@@ -10,8 +10,8 @@ class HomepagePresetSectionRegistry
     public function forDesign(string $designKey): array
     {
         return array_values(array_merge(
-            ['hero.'.$designKey],
-            config('cms-homepage-presets.'.$designKey, [])
+            ['hero.' . $designKey],
+            config('cms-homepage-presets.' . $designKey, [])
         ));
     }
 }

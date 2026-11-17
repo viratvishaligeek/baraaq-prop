@@ -4,10 +4,10 @@ namespace App\Services\Homepage;
 
 use App\Models\Category;
 use App\Models\HomepageSection;
+use App\Models\Post;
+use App\Models\Property;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
-use App\Models\Property;
-use App\Models\Post;
 use Illuminate\Support\Collection;
 
 class SectionDataResolver
@@ -27,8 +27,8 @@ class SectionDataResolver
                 ->limit(max(1, min(4, (int) ($config['map_card_limit'] ?? 4))))
                 ->get();
 
-            $latitudes = $mapProperties->map(fn (Property $property) => (float) $property->latitude);
-            $longitudes = $mapProperties->map(fn (Property $property) => (float) $property->longitude);
+            $latitudes = $mapProperties->map(fn(Property $property) => (float) $property->latitude);
+            $longitudes = $mapProperties->map(fn(Property $property) => (float) $property->longitude);
 
             return [
                 'mapProperties' => $mapProperties,
@@ -112,7 +112,7 @@ class SectionDataResolver
         $categories = Category::query()
             ->where('type', 'property')
             ->where('is_active', true)
-            ->withCount(['properties' => fn ($query) => $query->published()])
+            ->withCount(['properties' => fn($query) => $query->published()])
             ->having('properties_count', '>', 0)
             ->orderBy('sort_order')
             ->orderBy('name')
@@ -137,7 +137,7 @@ class SectionDataResolver
         return Category::query()
             ->where('type', 'property')
             ->where('is_active', true)
-            ->withCount(['properties' => fn ($query) => $query->published()])
+            ->withCount(['properties' => fn($query) => $query->published()])
             ->orderBy('sort_order')
             ->orderBy('name')
             ->limit(max(1, min(20, (int) ($config['items_limit'] ?? 7))))

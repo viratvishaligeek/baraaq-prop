@@ -25,7 +25,9 @@
                         <form action="{{ route('enquiries.store') }}" method="POST" class="homepage-property-enquiry">
                             @csrf
                             <div class="title-area text-left mb-70">
-                                <p class="sub-title{{ $animateContent ? ' text-anime-style-2' : '' }}"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
+                                <p class="sub-title{{ $animateContent ? ' text-anime-style-2' : '' }}">
+<span class="double-line">
+</span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
                                 <h2 class="sec-title{{ $animateContent ? ' text-anime-style-3' : '' }}">{{ $sectionConfig['heading'] ?? '' }}</h2>
                             </div>
                             <div class="row">
@@ -49,7 +51,9 @@
                                     <label for="home3-enquiry-message-{{ $section->id }}">{{ $sectionConfig['message_label'] ?? 'Additional Message' }}</label>
                                     <textarea name="message" id="home3-enquiry-message-{{ $section->id }}" cols="30" rows="3" class="form-control" placeholder="{{ $sectionConfig['message_placeholder'] ?? '' }}">{{ old('message') }}</textarea>
                                 </div>
-                                <div class="form-btn col-12 text-end"><button type="submit" class="th-btn bg-theme radius">{{ $sectionConfig['submit_label'] ?? 'Submit Now' }}</button></div>
+                                <div class="form-btn col-12 text-end">
+<button type="submit" class="th-btn bg-theme radius">{{ $sectionConfig['submit_label'] ?? 'Submit Now' }}</button>
+</div>
                             </div>
                             @if(session('enquiry_success'))<p class="form-messages mb-0 mt-3 text-success">{{ session('enquiry_success') }}</p>@endif
                             @if($errors->any())<div class="form-messages mb-0 mt-3 text-danger">{{ $errors->first() }}</div>@endif

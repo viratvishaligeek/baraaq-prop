@@ -61,7 +61,7 @@ class TrackPageView
         DB::table('page_views')->insert([
             'visitor_hash' => hash('sha256', $visitor),
             'visit_hash' => hash('sha256', $visit),
-            'path' => '/'.ltrim($request->path(), '/'),
+            'path' => '/' . ltrim($request->path(), '/'),
             'route_name' => $routeName,
             'content_type' => $contentType,
             'content_id' => $contentId,

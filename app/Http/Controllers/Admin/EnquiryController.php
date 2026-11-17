@@ -12,16 +12,16 @@ class EnquiryController extends Controller
     public function index(Request $request)
     {
         $enquiries = Enquiry::with('property:id,title,slug')
-            ->when($request->filled('status'), fn ($query) => $query->where('status', $request->input('status')))
-            ->when($request->filled('source'), fn ($query) => $query->where('source', $request->input('source')))
+            ->when($request->filled('status'), fn($query) => $query->where('status', $request->input('status')))
+            ->when($request->filled('source'), fn($query) => $query->where('source', $request->input('source')))
             ->when($request->filled('q'), function ($query) use ($request) {
-                $term = '%'.$request->string('q')->trim().'%';
+                $term = '%' . $request->string('q')->trim() . '%';
                 $query->where(function ($search) use ($term) {
                     $search->where('name', 'like', $term)
                         ->orWhere('email', 'like', $term)
                         ->orWhere('phone', 'like', $term)
                         ->orWhere('message', 'like', $term)
-                        ->orWhereHas('property', fn ($property) => $property->where('title', 'like', $term));
+                        ->orWhereHas('property', fn($property) => $property->where('title', 'like', $term));
                 });
             })
             ->latest()
@@ -41,7 +41,7 @@ class EnquiryController extends Controller
             'admin_notes' => ['nullable', 'string', 'max:5000'],
         ]);
 
-        if ($data['status'] === 'contacted' && ! $enquiry->contacted_at) {
+        if ($data['status'] === 'contacted' && !$enquiry->contacted_at) {
             $data['contacted_at'] = now();
         }
 

@@ -10,7 +10,7 @@ class Setting extends Model
 
     public static function read(string $key, mixed $default = null): mixed
     {
-        $setting = cache()->remember('setting:'.$key, 3600, fn () => static::where('key', $key)->first(['value', 'type']));
+        $setting = cache()->remember('setting:' . $key, 3600, fn() => static::where('key', $key)->first(['value', 'type']));
 
         if (!$setting || $setting->value === null) {
             return $default;
@@ -49,8 +49,8 @@ class Setting extends Model
             'type' => $type,
         ]);
 
-        cache()->forget('setting:'.$key);
-        cache()->forget('settings:'.$group);
+        cache()->forget('setting:' . $key);
+        cache()->forget('settings:' . $group);
         cache()->forget('settings:all');
     }
 }

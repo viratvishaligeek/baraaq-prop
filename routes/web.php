@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
-Route::get('/robots.txt', fn () => response(implode(PHP_EOL, ['User-agent: *', 'Allow: /', 'Disallow: /admin', '', 'Sitemap: '.route('sitemap'), '']), 200, ['Content-Type' => 'text/plain']))->name('robots');
+Route::get('/robots.txt', fn() => response(implode(PHP_EOL, ['User-agent: *', 'Allow: /', 'Disallow: /admin', '', 'Sitemap: ' . route('sitemap'), '']), 200, ['Content-Type' => 'text/plain']))->name('robots');
 
 Route::get('/properties', [FrontendPropertyController::class, 'index'])->name('properties.index');
 Route::get('/properties/{property:slug}', [FrontendPropertyController::class, 'show'])->name('properties.show');
@@ -32,11 +32,11 @@ Route::get('/services/{service:slug}', [FrontendContentController::class, 'servi
 Route::post('/blog/{post:slug}/comments', [FrontendContentController::class, 'storeComment'])->middleware('throttle:3,10')->name('blog.comments.store');
 Route::get('/pages/{page:slug}', [FrontendContentController::class, 'page'])->name('pages.show');
 
-Route::get('/index.html', fn () => redirect()->route('home'));
-Route::get('/property.html', fn () => redirect()->route('properties.index'));
-Route::get('/blog.html', fn () => redirect()->route('blog.index'));
-Route::get('/property-details.html', fn () => redirect()->route('properties.index'));
-Route::get('/blog-details.html', fn () => redirect()->route('blog.index'));
+Route::get('/index.html', fn() => redirect()->route('home'));
+Route::get('/property.html', fn() => redirect()->route('properties.index'));
+Route::get('/blog.html', fn() => redirect()->route('blog.index'));
+Route::get('/property-details.html', fn() => redirect()->route('properties.index'));
+Route::get('/blog-details.html', fn() => redirect()->route('blog.index'));
 
 Route::get('/{template}.html', [ThemePageController::class, 'show'])
     ->where('template', 'about|agency|agency-details|blog-grid-left-sidebar|blog-grid-right-sidebar|contact|error|faq|gallery|home-10|home-2|home-3|home-4|home-5|home-6|home-7|home-8|home-9|neighborhood-guide|pricing|service|service-details|service-right-sidebar|team|team-details')

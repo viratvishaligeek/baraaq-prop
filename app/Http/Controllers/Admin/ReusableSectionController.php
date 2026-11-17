@@ -8,8 +8,8 @@ use App\Models\HomepageSection;
 use App\Models\Media;
 use App\Models\ReusableSection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ReusableSectionController extends Controller
 {
@@ -22,7 +22,7 @@ class ReusableSectionController extends Controller
             'name' => ['required', 'string', 'max:120'],
         ]);
 
-        $definition = config('cms-sections.sections.'.$section->section_key);
+        $definition = config('cms-sections.sections.' . $section->section_key);
         abort_unless($definition, 422, 'The section is not registered.');
 
         $baseSlug = Str::slug($data['name']);
@@ -30,7 +30,7 @@ class ReusableSectionController extends Controller
         $suffix = 2;
 
         while (ReusableSection::withTrashed()->where('slug', $slug)->exists()) {
-            $slug = $baseSlug.'-'.$suffix++;
+            $slug = $baseSlug . '-' . $suffix++;
         }
 
         $sharedConfig = array_merge(
@@ -75,7 +75,7 @@ class ReusableSectionController extends Controller
         abort_unless($homepage->status === 'draft', 409);
         abort_unless($reusableSection->status === 'published', 404);
 
-        $definition = config('cms-sections.sections.'.$reusableSection->section_key);
+        $definition = config('cms-sections.sections.' . $reusableSection->section_key);
         abort_unless($definition, 422, 'This reusable section is no longer registered.');
 
         $homepage->sections()->create([

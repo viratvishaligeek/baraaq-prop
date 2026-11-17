@@ -1,14 +1,16 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePropertyRequest;
 use App\Models\Category;
 use App\Models\Property;
 use App\Models\PropertyImage;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class PropertyController extends Controller
@@ -16,7 +18,7 @@ class PropertyController extends Controller
     private function authorizeAction(string $action): void
     {
         $user = request()->user();
-        abort_unless($user && ($user->isAdministrator() || $user->hasPermission('properties.manage') || $user->hasPermission('properties.'.$action)), 403);
+        abort_unless($user && ($user->isAdministrator() || $user->hasPermission('properties.manage') || $user->hasPermission('properties.' . $action)), 403);
     }
 
     private function slug(string $value, ?int $ignoreId = null): string
@@ -24,8 +26,8 @@ class PropertyController extends Controller
         $base = Str::slug($value) ?: Str::random(8);
         $slug = $base;
         $i = 2;
-        while (Property::withTrashed()->where('slug', $slug)->when($ignoreId, fn ($q) => $q->whereKeyNot($ignoreId))->exists()) {
-            $slug = $base.'-'.$i++;
+        while (Property::withTrashed()->where('slug', $slug)->when($ignoreId, fn($q) => $q->whereKeyNot($ignoreId))->exists()) {
+            $slug = $base . '-' . $i++;
         }
         return $slug;
     }

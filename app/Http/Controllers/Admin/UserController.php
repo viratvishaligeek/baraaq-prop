@@ -22,12 +22,12 @@ class UserController extends Controller
 
         $roles = Role::query()->with('permissions')->whereIn('id', $roleIds)->get();
         $requestedPermissions = $roles
-            ->flatMap(fn ($role) => $role->permissions->pluck('slug'))
+            ->flatMap(fn($role) => $role->permissions->pluck('slug'))
             ->unique()
             ->all();
 
         abort_if(
-            $roles->contains(fn ($role) => $role->slug === 'administrator')
+            $roles->contains(fn($role) => $role->slug === 'administrator')
                 || array_diff($requestedPermissions, $actor->permissionSlugs()) !== [],
             403,
             'You cannot assign a role that grants permissions you do not have.'
@@ -114,7 +114,7 @@ class UserController extends Controller
                 ->with('permissions')
                 ->whereIn('id', $roleIds)
                 ->get()
-                ->flatMap(fn ($role) => $role->permissions->pluck('slug'));
+                ->flatMap(fn($role) => $role->permissions->pluck('slug'));
 
             abort_unless($assignedPermissions->contains('dashboard.view'), 422, 'Your account must retain dashboard access.');
 
@@ -126,7 +126,7 @@ class UserController extends Controller
 
         if ($user->isAdministrator() && !in_array('administrator', Role::whereIn('id', $roleIds)->pluck('slug')->all(), true)) {
             abort_if(
-                User::whereHas('roles', fn ($query) => $query->where('slug', 'administrator'))->count() <= 1,
+                User::whereHas('roles', fn($query) => $query->where('slug', 'administrator'))->count() <= 1,
                 422,
                 'The last Administrator account cannot lose its role.'
             );
@@ -162,7 +162,7 @@ class UserController extends Controller
 
         if ($user->isAdministrator()) {
             abort_if(
-                User::whereHas('roles', fn ($query) => $query->where('slug', 'administrator'))->count() <= 1,
+                User::whereHas('roles', fn($query) => $query->where('slug', 'administrator'))->count() <= 1,
                 422,
                 'The last Administrator account cannot be deleted.'
             );

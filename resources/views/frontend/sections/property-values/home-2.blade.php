@@ -20,7 +20,9 @@
         <div class="row justify-content-center">
             <div class="col-xl-7">
                 <div class="title-area text-center">
-                    <p class="sub-title text-anime-style-2"><span class="double-line"></span> {{ $sectionConfig['eyebrow'] ?? '' }}</p>
+                    <p class="sub-title text-anime-style-2">
+<span class="double-line">
+</span> {{ $sectionConfig['eyebrow'] ?? '' }}</p>
                     <h2 class="sec-title text-anime-style-3">{{ $sectionConfig['heading'] ?? '' }}</h2>
                 </div>
             </div>
