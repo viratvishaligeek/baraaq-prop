@@ -30,7 +30,7 @@
         <section class="space">
             <div class="container">
                 <div class="row justify-content-center">
-                    <div class="col-lg-9">{!! nl2br(e($page->content)) !!}</div>
+                    <div class="col-lg-9">{!! \\App\\Support\\HtmlSanitizer::sanitize($page->content) !!}</div>
                 </div>
             </div>
         </section>
