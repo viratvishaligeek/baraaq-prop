@@ -16,16 +16,22 @@ class Setting extends Model
             return $default;
         }
 
-        return $setting->type === 'json'
-            ? (json_decode($setting->value, true) ?? $default)
-            : $setting->value;
+        return match ($setting->type) {
+            'json' => json_decode($setting->value, true) ?? $default,
+            'boolean' => filter_var($setting->value, FILTER_VALIDATE_BOOLEAN),
+            default => $setting->value,
+        };
     }
 
     public static function allValues(): array
     {
         return cache()->remember('settings:all', 3600, function () {
             return static::query()->get(['key', 'value', 'type'])->mapWithKeys(function ($setting) {
-                $value = $setting->type === 'json' ? json_decode($setting->value, true) : $setting->value;
+                $value = match ($setting->type) {
+                    'json' => json_decode($setting->value, true),
+                    'boolean' => filter_var($setting->value, FILTER_VALIDATE_BOOLEAN),
+                    default => $setting->value,
+                };
 
                 return [$setting->key => $value];
             })->all();
@@ -34,8 +40,8 @@ class Setting extends Model
 
     public static function write(string $key, mixed $value, string $group = 'general', ?string $type = null): void
     {
-        $type ??= is_array($value) || is_object($value) ? 'json' : 'string';
-        $stored = $type === 'json' ? json_encode($value, JSON_THROW_ON_ERROR) : (is_bool($value) ? ($value ? '1' : '0') : (string) $value);
+        $type ??= is_array($value) || is_object($value) ? 'json' : (is_bool($value) ? 'boolean' : 'string');
+        $stored = $type === 'json' ? json_encode($value, JSON_THROW_ON_ERROR) : ($type === 'boolean' ? ($value ? '1' : '0') : (string) $value);
 
         static::updateOrCreate(['key' => $key], [
             'group' => $group,
