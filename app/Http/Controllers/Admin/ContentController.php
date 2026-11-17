@@ -93,8 +93,8 @@ class ContentController extends Controller
     {
         $model=$this->model($type);
         $data=$this->validated($request,$type);$categoryIds=$data['category_ids']??[];unset($data['category_ids']);
-        if(isset($data['title'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['title']);
-        if(isset($data['name'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['name']);
+        if(isset($data['title']) && in_array($type,['posts','pages','services'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['title']);
+        if(isset($data['name']) && $type==='categories') $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['name']);
         if(in_array($type,['posts','pages'])) $data['author_id']=$request->user()->id;
         foreach(['image','featured_image','photo','icon_path','og_image'] as $field) if($request->hasFile($field)) $data[$field]=$request->file($field)->store($type,'public');
         if(in_array($type,['posts','services']) && ($data['status']??null)==='published') $data['published_at']=now();
@@ -116,8 +116,8 @@ class ContentController extends Controller
         $model=$this->model($type);
         $item=$model::findOrFail($id);
         $data=$this->validated($request,$type,$item->id);$categoryIds=$data['category_ids']??[];unset($data['category_ids']);
-        if(isset($data['title'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['title'],$item->id);
-        if(isset($data['name'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['name'],$item->id);
+        if(isset($data['title']) && in_array($type,['posts','pages','services'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['title'],$item->id);
+        if(isset($data['name']) && $type==='categories') $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['name'],$item->id);
         $oldFiles=[];
         foreach(['image','featured_image','photo','icon_path','og_image'] as $field) if($request->hasFile($field)) {
             if($item->$field) $oldFiles[]=$item->$field;
