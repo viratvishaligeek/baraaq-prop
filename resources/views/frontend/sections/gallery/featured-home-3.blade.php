@@ -12,7 +12,8 @@
             @forelse($featuredProperties as $property)
                 @php
                     $propertyImagePath = $property->featured_image ?: $property->images->first()?->path;
-                    $propertyImage = $propertyImagePath ? Storage::disk('public')->url($propertyImagePath) : null;\n                    $slideBackground = $sectionConfig['slide_background_'.($loop->iteration)] ?? null;
+                    $propertyImage = $propertyImagePath ? Storage::disk('public')->url($propertyImagePath) : null;
+                    $slideBackground = $sectionConfig['slide_background_'.($loop->iteration)] ?? null;
                 @endphp
                 <div class="swiper-slide">
                     <div class="gallery-4-inner" @if($slideBackground) data-bg-src="{{ $slideBackground }}" @elseif($propertyImage) data-bg-src="{{ $propertyImage }}" @endif>
