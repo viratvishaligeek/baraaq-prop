@@ -59,13 +59,13 @@ class ContentController extends Controller
 
     public function team()
     {
-        $members = TeamMember::where('is_active', true)->orderBy('sort_order')->orderBy('name')->paginate(12);
+        $members = TeamMember::where('status', 'published')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->paginate(12);
         return view('frontend.team.index', compact('members'));
     }
 
     public function testimonials()
     {
-        $testimonials = Testimonial::where('is_active', true)->orderBy('sort_order')->latest()->paginate(12);
+        $testimonials = Testimonial::where('status', 'published')->where('is_active', true)->orderBy('sort_order')->latest()->paginate(12);
         return view('frontend.testimonials.index', compact('testimonials'));
     }
 
