@@ -1,7 +1,4 @@
 @php
-    $image = fn ($path) => $path && (str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, '/'))
-        ? $path
-        : asset($path);
     $items = [];
     for ($i = 1; $i <= 4; $i++) {
         $items[] = [
@@ -25,23 +22,22 @@
             </div>
         </div>
         <div class="row gy-4 justify-content-center align-items-center">
-            @foreach($items as $item)
-                <div class="col-lg-4 col-md-12">
-                    <div class="property-values-2-item {{ $loop->first ? 'fadeinleft wow' : ($loop->last ? 'fadeinright wow' : '') }}" @if($loop->first) data-wow-delay="0.2s" @elseif($loop->last) data-wow-delay="0.8s" @endif>
-                        <div class="thumb @if($loop->index === 1 || $loop->index === 2) fadeinup wow @endif" @if($loop->index === 1) data-wow-delay="0.4s" @elseif($loop->index === 2) data-wow-delay="0.6s" @endif>
-                            <img src="{{ $image($item['image']) }}" alt="{{ $item['title'] }}">
-                            <div class="plus-icon"><i class="fa-solid fa-plus"></i></div>
-                            <div class="hover-content">
-                                <h4 class="box-title"><a href="{{ $item['url'] }}">{{ $item['title'] }}</a></h4>
-                                <p class="box-text">{{ $item['text'] }}</p>
-                                @if($item['button'])
-                                    <a class="th-btn bg-theme pill" href="{{ $item['url'] }}">{{ $item['button'] }}</a>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
+            <div class="col-lg-4 col-md-12">
+                <div class="property-values-2-item fadeinleft wow">
+                    @include('frontend.sections.property-values._card', ['item' => $items[0], 'thumbClass' => '', 'delay' => '0.2s'])
                 </div>
-            @endforeach
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <div class="property-values-2-item">
+                    @include('frontend.sections.property-values._card', ['item' => $items[1], 'thumbClass' => 'fadeinup wow', 'delay' => '0.4s'])
+                    @include('frontend.sections.property-values._card', ['item' => $items[2], 'thumbClass' => 'fadeinup wow', 'delay' => '0.6s'])
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <div class="property-values-2-item fadeinright wow">
+                    @include('frontend.sections.property-values._card', ['item' => $items[3], 'thumbClass' => '', 'delay' => '0.8s'])
+                </div>
+            </div>
         </div>
     </div>
 </section>
