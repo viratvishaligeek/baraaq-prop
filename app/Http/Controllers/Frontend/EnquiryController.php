@@ -12,7 +12,7 @@ class EnquiryController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'property_id' => ['nullable', Rule::exists('properties', 'id')->where(fn ($query) => $query->where('status', 'published')->whereNotNull('published_at')->where('published_at', '<=', now()))],
+            'property_id' => ['nullable', Rule::exists('properties', 'id')->where(fn($query) => $query->where('status', 'published')->whereNotNull('published_at')->where('published_at', '<=', now()))],
             'name' => ['required', 'string', 'max:150'],
             'subject' => ['nullable', 'string', 'max:120'],
             'email' => ['nullable', 'required_without:phone', 'email', 'max:190'],

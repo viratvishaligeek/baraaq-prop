@@ -1,1 +1,48 @@
-@extends('admin.layouts.app') @section('title',$user->exists?'Edit user':'Add user') @section('content')<h1 class="page-title mb-4">{{ $user->exists?'Edit user':'Add user' }}</h1><form method="POST" action="{{ $user->exists?route('admin.users.update',$user):route('admin.users.store') }}">@csrf @if($user->exists)@method('PUT')@endif<div class="content-card"><div class="row g-3"><div class="col-md-6"><label class="form-label">Name</label><input class="form-control" name="name" value="{{ old('name',$user->name) }}" required></div><div class="col-md-6"><label class="form-label">Email</label><input class="form-control" type="email" name="email" value="{{ old('email',$user->email) }}" required></div><div class="col-md-6"><label class="form-label">Phone</label><input class="form-control" name="phone" value="{{ old('phone',$user->phone) }}"></div><div class="col-md-6"><label class="form-label">Password {{ $user->exists?'(leave blank to keep current)':'' }}</label><input class="form-control" type="password" name="password" {{ $user->exists?'':'required' }} minlength="12"></div><div class="col-12"><label class="form-label d-block">Roles</label>@foreach($roles as $role)<label class="form-check form-check-inline"><input class="form-check-input" type="checkbox" name="roles[]" value="{{ $role->id }}" @checked(in_array($role->id,old('roles',$user->roles->pluck('id')->all())))><span class="form-check-label">{{ $role->name }}</span></label>@endforeach</div><div class="col-12"><label class="form-check"><input class="form-check-input" type="checkbox" name="is_active" value="1" @checked(old('is_active',$user->exists?$user->is_active:true))><span class="form-check-label">Account active</span></label></div></div><button class="btn btn-primary mt-4">Save user</button></div></form>@endsection
+@extends('admin.layouts.app') @section('title', $user->exists ? 'Edit user' : 'Add user') @section('content')<h1
+    class="page-title mb-4">
+    {{ $user->exists ? 'Edit user' : 'Add user' }}</h1>
+<form method="POST" action="{{ $user->exists ? route('admin.users.update', $user) : route('admin.users.store') }}">@csrf
+    @if ($user->exists)
+        @method('PUT')
+    @endif
+    <div class="content-card">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Name</label>
+                <input class="form-control" name="name" value="{{ old('name', $user->name) }}" required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input class="form-control" type="email" name="email" value="{{ old('email', $user->email) }}"
+                    required>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Phone</label>
+                <input class="form-control" name="phone" value="{{ old('phone', $user->phone) }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Password {{ $user->exists ? '(leave blank to keep current)' : '' }}</label>
+                <input class="form-control" type="password" name="password" {{ $user->exists ? '' : 'required' }}
+                    minlength="12">
+            </div>
+            <div class="col-12">
+                <label class="form-label d-block">Roles</label>
+                @foreach ($roles as $role)
+                    <label class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" name="roles[]" value="{{ $role->id }}"
+                            @checked(in_array($role->id, old('roles', $user->roles->pluck('id')->all())))>
+                        <span class="form-check-label">{{ $role->name }}</span>
+                    </label>
+                @endforeach
+            </div>
+            <div class="col-12">
+                <label class="form-check">
+                    <input class="form-check-input" type="checkbox" name="is_active" value="1"
+                        @checked(old('is_active', $user->exists ? $user->is_active : true))>
+                    <span class="form-check-label">Account active</span>
+                </label>
+            </div>
+        </div>
+        <button class="btn btn-primary mt-4">Save user</button>
+    </div>
+</form>@endsection

@@ -35,7 +35,7 @@ class MenuController extends Controller
             return $menu;
         });
 
-        Cache::forget('menu:'.$menu->location);
+        Cache::forget('menu:' . $menu->location);
 
         return redirect()->route('admin.menus.edit', $menu)->with('success', 'Menu created.');
     }
@@ -63,8 +63,8 @@ class MenuController extends Controller
             $this->syncItems($menu, $data['items'] ?? []);
         });
 
-        Cache::forget('menu:'.$oldLocation);
-        Cache::forget('menu:'.$menu->location);
+        Cache::forget('menu:' . $oldLocation);
+        Cache::forget('menu:' . $menu->location);
 
         return back()->with('success', 'Menu updated.');
     }
@@ -73,7 +73,7 @@ class MenuController extends Controller
     {
         $location = $menu->location;
         $menu->delete();
-        Cache::forget('menu:'.$location);
+        Cache::forget('menu:' . $location);
 
         return back()->with('success', 'Menu deleted.');
     }
@@ -115,14 +115,14 @@ class MenuController extends Controller
 
             if ($parent !== null && (! isset($created[(int) $parent]) || (int) $parent >= $index)) {
                 throw ValidationException::withMessages([
-                    'items.'.$index.'.parent_index' => 'Choose a parent item positioned above this item.',
+                    'items.' . $index . '.parent_index' => 'Choose a parent item positioned above this item.',
                 ]);
             }
 
             $depth = $parent !== null ? $depths[(int) $parent] + 1 : 0;
             if ($depth > 4) {
                 throw ValidationException::withMessages([
-                    'items.'.$index.'.parent_index' => 'Menus support up to five levels of nesting.',
+                    'items.' . $index . '.parent_index' => 'Menus support up to five levels of nesting.',
                 ]);
             }
 
@@ -130,15 +130,15 @@ class MenuController extends Controller
             $linkId = $item['link_id'] ?? null;
 
             if ($linkType === 'page' && (! $linkId || ! Page::whereKey($linkId)->where('status', 'published')->exists())) {
-                throw ValidationException::withMessages(['items.'.$index.'.link_id' => 'Choose a published page.']);
+                throw ValidationException::withMessages(['items.' . $index . '.link_id' => 'Choose a published page.']);
             }
 
             if ($linkType === 'blog_category' && (! $linkId || ! Category::whereKey($linkId)->where('type', 'post')->exists())) {
-                throw ValidationException::withMessages(['items.'.$index.'.link_id' => 'Choose a blog category.']);
+                throw ValidationException::withMessages(['items.' . $index . '.link_id' => 'Choose a blog category.']);
             }
 
             if ($linkType === 'property_category' && (! $linkId || ! Category::whereKey($linkId)->where('type', 'property')->exists())) {
-                throw ValidationException::withMessages(['items.'.$index.'.link_id' => 'Choose a property category.']);
+                throw ValidationException::withMessages(['items.' . $index . '.link_id' => 'Choose a property category.']);
             }
 
             $created[$index] = $menu->allItems()->create([

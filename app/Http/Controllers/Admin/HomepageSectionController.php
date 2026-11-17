@@ -20,7 +20,7 @@ class HomepageSectionController extends Controller
             'section_key' => ['required', 'string', 'max:100'],
         ]);
 
-        $definition = config('cms-sections.sections.'.$data['section_key']);
+        $definition = config('cms-sections.sections.' . $data['section_key']);
         abort_unless($definition, 422, 'The selected section is not registered.');
 
         $homepage->sections()->create([
@@ -36,7 +36,6 @@ class HomepageSectionController extends Controller
         return redirect()->route('admin.homepages.builder', $homepage)
             ->with('success', 'Section added to the draft homepage.');
     }
-
 
     public function duplicate(Homepage $homepage, HomepageSection $section)
     {
@@ -95,7 +94,7 @@ class HomepageSectionController extends Controller
         abort_unless($homepage->status === 'draft', 409);
         abort_unless($section->homepage_id === $homepage->id, 404);
 
-        $definition = config('cms-sections.sections.'.$section->section_key);
+        $definition = config('cms-sections.sections.' . $section->section_key);
         abort_unless($definition, 422, 'The section is not registered.');
 
         $rules = ['config' => ['nullable', 'array']];
@@ -109,7 +108,7 @@ class HomepageSectionController extends Controller
                 case 'url':
                 case 'image':
                     $fieldRules[] = 'string';
-                    $fieldRules[] = 'max:'.($schema['max'] ?? 255);
+                    $fieldRules[] = 'max:' . ($schema['max'] ?? 255);
                     break;
 
                 case 'color':
@@ -118,8 +117,8 @@ class HomepageSectionController extends Controller
 
                 case 'number':
                     $fieldRules[] = 'integer';
-                    $fieldRules[] = 'min:'.($schema['min'] ?? 0);
-                    $fieldRules[] = 'max:'.($schema['max'] ?? 9999);
+                    $fieldRules[] = 'min:' . ($schema['min'] ?? 0);
+                    $fieldRules[] = 'max:' . ($schema['max'] ?? 9999);
                     break;
 
                 case 'checkbox':
@@ -128,11 +127,11 @@ class HomepageSectionController extends Controller
 
                 case 'select':
                     $fieldRules[] = 'string';
-                    $fieldRules[] = 'in:'.implode(',', array_keys($schema['options'] ?? []));
+                    $fieldRules[] = 'in:' . implode(',', array_keys($schema['options'] ?? []));
                     break;
             }
 
-            $rules['config.'.$field] = $fieldRules;
+            $rules['config.' . $field] = $fieldRules;
         }
 
         $data = $request->validate($rules);
@@ -177,7 +176,7 @@ class HomepageSectionController extends Controller
         abort_unless($homepage->status === 'draft', 409);
         abort_unless($section->homepage_id === $homepage->id, 404);
 
-        $section->update(['is_enabled' => ! $section->is_enabled]);
+        $section->update(['is_enabled' => !$section->is_enabled]);
 
         return back()->with('success', 'Section visibility updated.');
     }

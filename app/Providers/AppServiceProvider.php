@@ -42,31 +42,33 @@ class AppServiceProvider extends ServiceProvider
             $view->with('siteSettings', Setting::allValues());
         });
 
-        foreach ([
-            Banner::class,
-            Category::class,
-            Comment::class,
-            Enquiry::class,
-            Menu::class,
-            MenuItem::class,
-            Media::class,
-            Permission::class,
-            Role::class,
-            Homepage::class,
-            HomepageSection::class,
-            ReusableSection::class,
-            WidgetArea::class,
-            WidgetAreaItem::class,
-            Widget::class,
-            Setting::class,
-            Page::class,
-            Post::class,
-            Property::class,
-            Service::class,
-            TeamMember::class,
-            Testimonial::class,
-            User::class,
-        ] as $model) {
+        foreach (
+            [
+                Banner::class,
+                Category::class,
+                Comment::class,
+                Enquiry::class,
+                Menu::class,
+                MenuItem::class,
+                Media::class,
+                Permission::class,
+                Role::class,
+                Homepage::class,
+                HomepageSection::class,
+                ReusableSection::class,
+                WidgetArea::class,
+                WidgetAreaItem::class,
+                Widget::class,
+                Setting::class,
+                Page::class,
+                Post::class,
+                Property::class,
+                Service::class,
+                TeamMember::class,
+                Testimonial::class,
+                User::class,
+            ] as $model
+        ) {
             $model::observe(ActivityLogObserver::class);
         }
     }

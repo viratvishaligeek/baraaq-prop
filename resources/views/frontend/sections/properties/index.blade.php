@@ -3,7 +3,9 @@
         <div class="row justify-content-center">
             <div class="col-xl-7">
                 <div class="title-area text-center">
-                    <p class="sub-title text-anime-style-2"><span class="double-line"></span> {{ $sectionConfig['eyebrow'] ?? 'Listing Property' }}</p>
+                    <p class="sub-title text-anime-style-2">
+<span class="double-line">
+</span> {{ $sectionConfig['eyebrow'] ?? 'Listing Property' }}</p>
                     <h2 class="sec-title text-anime-style-3">{{ $sectionConfig['heading'] ?? 'Featured Luxury Properties' }}</h2>
                     @if(!empty($sectionConfig['description']))
                         <p class="mt-3">{{ $sectionConfig['description'] }}</p>
@@ -40,13 +42,27 @@
                         </div>
                         <div class="property-content">
                             <div class="media-body">
-                                <h3 class="box-title"><a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a></h3>
-                                <div class="box-text"><div class="icon"><img src="{{ asset('theme-assets/img/icon/popular-location.svg') }}" alt="icon"></div>{{ $property->address }} {{ $property->city }}</div>
+                                <h3 class="box-title">
+<a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a>
+</h3>
+                                <div class="box-text">
+<div class="icon">
+<img src="{{ asset('theme-assets/img/icon/popular-location.svg') }}" alt="icon">
+</div>{{ $property->address }} {{ $property->city }}</div>
                             </div>
                             <ul class="property-featured">
-                                <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bed.svg') }}" alt="icon"></div>Bed {{ $property->bedrooms ?? '—' }}</li>
-                                <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bath.svg') }}" alt="icon"></div>Bath {{ $property->bathrooms ?? '—' }}</li>
-                                <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="icon"></div>{{ $property->area ? number_format((float) $property->area).' '.$property->area_unit : '—' }}</li>
+                                <li>
+<div class="icon">
+<img src="{{ asset('theme-assets/img/icon/bed.svg') }}" alt="icon">
+</div>Bed {{ $property->bedrooms ?? '—' }}</li>
+                                <li>
+<div class="icon">
+<img src="{{ asset('theme-assets/img/icon/bath.svg') }}" alt="icon">
+</div>Bath {{ $property->bathrooms ?? '—' }}</li>
+                                <li>
+<div class="icon">
+<img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="icon">
+</div>{{ $property->area ? number_format((float) $property->area).' '.$property->area_unit : '—' }}</li>
                             </ul>
                             <div class="property-bottom">
                                 <h6 class="box-title">{{ $property->price ? number_format((float) $property->price, 2) : $property->price_label }}</h6>

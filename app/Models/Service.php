@@ -10,8 +10,17 @@ class Service extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'title', 'slug', 'excerpt', 'content', 'featured_image', 'status',
-        'published_at', 'meta_title', 'meta_description', 'canonical_url', 'og_image',
+        'title',
+        'slug',
+        'excerpt',
+        'content',
+        'featured_image',
+        'status',
+        'published_at',
+        'meta_title',
+        'meta_description',
+        'canonical_url',
+        'og_image',
     ];
 
     protected function casts(): array

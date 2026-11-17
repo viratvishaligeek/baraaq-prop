@@ -13,15 +13,15 @@ class SectionMediaResolver
      */
     public function forRendering(HomepageSection $section, array $config): array
     {
-        $definition = config('cms-sections.sections.'.$section->section_key, []);
+        $definition = config('cms-sections.sections.' . $section->section_key, []);
         $imageFields = collect($definition['fields'] ?? [])
-            ->filter(fn (array $schema) => ($schema['type'] ?? null) === 'image')
+            ->filter(fn(array $schema) => ($schema['type'] ?? null) === 'image')
             ->keys();
 
         $mediaIds = $imageFields
-            ->map(fn (string $field) => $config[$field] ?? null)
-            ->filter(fn ($value) => (is_string($value) || is_int($value)) && ctype_digit((string) $value))
-            ->map(fn ($value) => (int) $value)
+            ->map(fn(string $field) => $config[$field] ?? null)
+            ->filter(fn($value) => (is_string($value) || is_int($value)) && ctype_digit((string) $value))
+            ->map(fn($value) => (int) $value)
             ->unique()
             ->values();
 
@@ -52,8 +52,8 @@ class SectionMediaResolver
             }
             // Missing/deleted records safely render as no image, never as a broken numeric URL.
             $config[$field] = $record?->url;
-            $config[$field.'_alt'] = $record?->alt_text;
-            $config[$field.'_media_name'] = $record?->original_name;
+            $config[$field . '_alt'] = $record?->alt_text;
+            $config[$field . '_media_name'] = $record?->original_name;
         }
 
         return $config;

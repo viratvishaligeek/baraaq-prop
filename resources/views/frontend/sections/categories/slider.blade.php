@@ -29,13 +29,19 @@
     @if($backgroundImage) data-bg-src="{{ $backgroundImage }}" @endif
 >
     @if($section->source_design !== 'home-3')
-        <div class="shape-mockup moving d-none d-md-block" data-top="12%" data-left="7%"><img src="{{ asset('theme-assets/img/shape/category-1-left.png') }}" alt=""></div>
-        <div class="shape-mockup jump d-none d-md-block" data-top="14%" data-right="2%"><img src="{{ asset('theme-assets/img/shape/category-1-right.png') }}" alt=""></div>
+        <div class="shape-mockup moving d-none d-md-block" data-top="12%" data-left="7%">
+<img src="{{ asset('theme-assets/img/shape/category-1-left.png') }}" alt="">
+</div>
+        <div class="shape-mockup jump d-none d-md-block" data-top="14%" data-right="2%">
+<img src="{{ asset('theme-assets/img/shape/category-1-right.png') }}" alt="">
+</div>
     @endif
     <div class="container">
         <div class="title-area text-{{ $alignment }} mb-50">
             @if(!empty($sectionConfig['eyebrow']))
-                <h3 class="sub-title text-anime-style-2"><span class="double-line"></span> {{ $sectionConfig['eyebrow'] }}</h3>
+                <h3 class="sub-title text-anime-style-2">
+<span class="double-line">
+</span> {{ $sectionConfig['eyebrow'] }}</h3>
             @endif
             @if(!empty($sectionConfig['heading']))
                 <h2 class="sec-title text-anime-style-3">{{ $sectionConfig['heading'] }}</h2>
@@ -53,7 +59,9 @@
                                 <div class="box-icon">
                                     <img src="{{ $category->icon_path ? asset('storage/'.$category->icon_path) : asset('theme-assets/img/icon/category_card_'.((($loop->iteration - 1) % 6) + 1).'.svg') }}" alt="{{ $category->name }}">
                                 </div>
-                                <h3 class="box-title"><a href="{{ url('/properties?category='.$category->id) }}">{{ $category->name }}</a></h3>
+                                <h3 class="box-title">
+<a href="{{ url('/properties?category='.$category->id) }}">{{ $category->name }}</a>
+</h3>
                                 @if($sectionConfig['show_property_count'] ?? true)
                                     <p class="box-subtitle">{{ $category->properties_count }} {{ \Illuminate\Support\Str::plural('Property', $category->properties_count) }}</p>
                                 @endif
@@ -62,7 +70,8 @@
                     @endforeach
                 </div>
                 @if($section->source_design === 'home-3')
-                    <div class="slider-pagination style-2"></div>
+                    <div class="slider-pagination style-2">
+</div>
                 @endif
             </div>
         </div>

@@ -63,7 +63,7 @@ class RoleController extends Controller
         $suffix = 2;
 
         while (Role::where('slug', $slug)->exists()) {
-            $slug = $base.'-'.$suffix++;
+            $slug = $base . '-' . $suffix++;
         }
 
         DB::transaction(function () use ($data, $permissionIds, $slug) {

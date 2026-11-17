@@ -31,12 +31,16 @@
         <div class="row justify-content-lg-between gy-4 text-center text-lg-start justify-content-center align-items-center mb-40">
             <div class="col-lg-7">
                 <div class="title-area text-left mb-2">
-                    <p class="sub-title text-anime-style-2"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
+                    <p class="sub-title text-anime-style-2">
+<span class="double-line">
+</span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
                     <h2 class="sec-title text-anime-style-3">{{ $sectionConfig['heading'] ?? '' }}</h2>
                 </div>
             </div>
             @if(!empty($sectionConfig['button_label']))
-                <div class="col-lg-auto text-center text-lg-start"><a class="th-btn style3 radius fadeinup wow" href="{{ $sectionConfig['button_url'] ?? '#' }}" data-wow-delay="0.5s">{{ $sectionConfig['button_label'] }}</a></div>
+                <div class="col-lg-auto text-center text-lg-start">
+<a class="th-btn style3 radius fadeinup wow" href="{{ $sectionConfig['button_url'] ?? '#' }}" data-wow-delay="0.5s">{{ $sectionConfig['button_label'] }}</a>
+</div>
             @endif
         </div>
         <div class="slider-area">
@@ -51,12 +55,15 @@
                                     <h3 class="box-title">{{ $item['title'] }}</h3>
                                     <p class="box-text">{{ $item['text'] }}</p>
                                 </div>
-                                <div class="why-card-1__bottom"><a class="th-btn style3 radius bg-white" href="{{ $item['url'] }}">{{ $item['button'] }}</a></div>
+                                <div class="why-card-1__bottom">
+<a class="th-btn style3 radius bg-white" href="{{ $item['url'] }}">{{ $item['button'] }}</a>
+</div>
                             </div>
                         </div>
                     @endforeach
                 </div>
-                <div class="slider-pagination style-2 mt-5"></div>
+                <div class="slider-pagination style-2 mt-5">
+</div>
             </div>
         </div>
     </div>

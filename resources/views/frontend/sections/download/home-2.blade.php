@@ -8,14 +8,18 @@
 
 <div class="download-sec-1 overflow-hidden {{ $visibility }}" @if(!empty($sectionConfig['background_image'])) data-bg-src="{{ $image($sectionConfig['background_image']) }}" @endif>
     @if(!empty($sectionConfig['shape_image']))
-        <div class="shape-mockup jump" style="top: 7%; right: 6%;"><img src="{{ $image($sectionConfig['shape_image']) }}" alt="img"></div>
+        <div class="shape-mockup jump" style="top: 7%; right: 6%;">
+<img src="{{ $image($sectionConfig['shape_image']) }}" alt="img">
+</div>
     @endif
     <div class="container">
         <div class="row gy-4 align-items-center">
             <div class="col-xl-{{ $textWidth }}">
                 <div class="download-text-left">
                     <div class="title-area text-left white-style mb-30">
-                        <p class="sub-title text-anime-style-1"><span class="double-line"></span> {{ $sectionConfig['eyebrow'] ?? '' }}</p>
+                        <p class="sub-title text-anime-style-1">
+<span class="double-line">
+</span> {{ $sectionConfig['eyebrow'] ?? '' }}</p>
                         <h2 class="sec-title text-white text-anime-style-2">{{ $sectionConfig['heading'] ?? '' }}</h2>
                         <p class="sec-text fs-18 pe-xl-4 me-xl-5 text-white text-anime-style-3">{{ $sectionConfig['description'] ?? '' }}</p>
                     </div>
@@ -25,15 +29,22 @@
                 <div class="scan-download-wrap">
                     <div class="download-logo-circle hero-img-shape-2{{ $animation ? ' fadeinup wow' : '' }}" @if($animation) data-wow-delay="0.2s" @endif>
                         <div class="logo-icon-wrap">
-                            <a href="{{ $sectionConfig['video_url'] ?? '#' }}" class="logo-icon popup-video" aria-label="Play app introduction"><i class="{{ $sectionConfig['play_icon'] ?? 'fa-sharp fa-solid fa-play' }}"></i></a>
-                            <div class="logo-icon-wrap__text"><span class="logo-animation">{{ $sectionConfig['logo_text'] ?? '' }}</span></div>
+                            <a href="{{ $sectionConfig['video_url'] ?? '#' }}" class="logo-icon popup-video" aria-label="Play app introduction">
+<i class="{{ $sectionConfig['play_icon'] ?? 'fa-sharp fa-solid fa-play' }}">
+</i>
+</a>
+                            <div class="logo-icon-wrap__text">
+<span class="logo-animation">{{ $sectionConfig['logo_text'] ?? '' }}</span>
+</div>
                         </div>
                     </div>
                     <div class="scan-download-card">
                         <div class="scan-download-card-inner">
                             <h5>{{ $sectionConfig['qr_label'] ?? '' }}</h5>
                             @if(!empty($sectionConfig['arrow_image']))<img class="shape" src="{{ $image($sectionConfig['arrow_image']) }}" alt="img">@endif
-                            <div class="qr-code-box"><img class="qr-code" src="{{ $image($sectionConfig['qr_image'] ?? '') }}" alt="QR code"></div>
+                            <div class="qr-code-box">
+<img class="qr-code" src="{{ $image($sectionConfig['qr_image'] ?? '') }}" alt="QR code">
+</div>
                         </div>
                     </div>
                     <div class="download-thumb{{ $animation ? ' fadeinup wow' : '' }}" @if($animation) data-wow-delay="0.4s" @endif>

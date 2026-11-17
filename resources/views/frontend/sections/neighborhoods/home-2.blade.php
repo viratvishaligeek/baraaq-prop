@@ -27,12 +27,16 @@
 @endphp
 
 <div class="gallery-sec-2 overflow-hidden bg-smoke {{ $sectionConfig['vertical_spacing'] ?? 'space' }} {{ $visibility }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif @if($backgroundImage) data-bg-src="{{ $backgroundImage }}" @endif>
-    <div class="shape-mockup moving d-none d-md-block" style="top: 12%; left: 7%;"><img src="{{ $sectionConfig['shape_image'] ?? '/theme-assets/img/shape/gallery-sec-1-left.png' }}" alt="img"></div>
+    <div class="shape-mockup moving d-none d-md-block" style="top: 12%; left: 7%;">
+<img src="{{ $sectionConfig['shape_image'] ?? '/theme-assets/img/shape/gallery-sec-1-left.png' }}" alt="img">
+</div>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-xl-7">
                 <div class="title-area text-center">
-                    <p class="sub-title text-anime-style-1"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
+                    <p class="sub-title text-anime-style-1">
+<span class="double-line">
+</span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
                     <h2 class="sec-title mb-2 text-anime-style-2">{{ $sectionConfig['heading'] ?? '' }}</h2>
                     <p class="box-text text-anime-style-3">{{ $sectionConfig['description'] ?? '' }}</p>
                 </div>
@@ -51,9 +55,16 @@
                                             <div class="gallery-content-wrapper">
                                                 <div class="left-content">
                                                     <p class="box-text">{{ $item['count'] }}</p>
-                                                    <h2 class="box-title"><a href="{{ $item['url'] }}">{{ $item['title'] }}</a></h2>
+                                                    <h2 class="box-title">
+<a href="{{ $item['url'] }}">{{ $item['title'] }}</a>
+</h2>
                                                 </div>
-                                                <div class="link"><a href="{{ $item['url'] }}"><i class="far fa-arrow-right"></i></a></div>
+                                                <div class="link">
+<a href="{{ $item['url'] }}">
+<i class="far fa-arrow-right">
+</i>
+</a>
+</div>
                                             </div>
                                         </div>
                                     </div>
@@ -61,8 +72,14 @@
                             </div>
                         @endforeach
                     </div>
-                    <button data-slider-prev="#neighborhoodSlider-{{ $section->id }}" class="slider-arrow slider-prev style2"><i class="far fa-arrow-left"></i></button>
-                    <button data-slider-next="#neighborhoodSlider-{{ $section->id }}" class="slider-arrow slider-next style2"><i class="far fa-arrow-right"></i></button>
+                    <button data-slider-prev="#neighborhoodSlider-{{ $section->id }}" class="slider-arrow slider-prev style2">
+<i class="far fa-arrow-left">
+</i>
+</button>
+                    <button data-slider-next="#neighborhoodSlider-{{ $section->id }}" class="slider-arrow slider-next style2">
+<i class="far fa-arrow-right">
+</i>
+</button>
                 </div>
             </div>
         </div>

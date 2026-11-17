@@ -1,85 +1,129 @@
 @extends('admin.layouts.app')
 @section('title', 'Analytics')
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="page-title">Website analytics</h1>
-        <p class="text-muted mb-0">Measured from real frontend requests, CMS changes and stored enquiry submissions. Visitor and visit counts use first-party cookies; visitors who block cookies may be counted separately.</p>
-    </div>
-</div>
-<div class="content-card mb-4">
-    <form method="GET" class="row g-2 align-items-end">
-        <div class="col-md-3"><label class="form-label">From</label><input class="form-control" type="date" name="from" value="{{ $from }}"></div>
-        <div class="col-md-3"><label class="form-label">To</label><input class="form-control" type="date" name="to" value="{{ $to }}"></div>
-        <div class="col-auto"><button class="btn btn-primary">Apply range</button></div>
-    </form>
-</div>
-<div class="row g-3 mb-4">
-    @foreach([
-        ['Visits', $totalVisits],
-        ['Unique visitors', $uniqueVisitors],
-        ['Page views', $totalPageViews],
-        ['Property views', $propertyViews],
-        ['Blog views', $blogViews],
-        ['Service views', $serviceViews],
-        ['Property inquiries', $propertyInquiries],
-        ['Contact queries', $contactQueries],
-    ] as [$label, $value])
-        <div class="col-sm-6 col-xl-3"><div class="content-card h-100"><div class="text-muted small">{{ $label }}</div><div class="display-6 fw-semibold">{{ number_format($value) }}</div></div></div>
-    @endforeach
-</div>
-<div class="row g-4">
-    <div class="col-lg-7">
-        <div class="content-card">
-            <h4 class="mb-3">Popular pages</h4>
-            <div class="table-responsive"><table class="table">
-                <thead><tr><th>Path</th><th>Route</th><th class="text-end">Views</th></tr></thead>
-                <tbody>
-                @forelse($popularPages as $page)
-                    <tr><td>{{ $page->path }}</td><td>{{ $page->route_name ?: '—' }}</td><td class="text-end">{{ number_format($page->views) }}</td></tr>
-                @empty
-                    <tr><td colspan="3" class="text-muted text-center py-4">No page views recorded for this period.</td></tr>
-                @endforelse
-                </tbody>
-            </table></div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="page-title">Website analytics</h1>
+            <p class="text-muted mb-0">Measured from real frontend requests, CMS changes and stored enquiry submissions.
+                Visitor and visit counts use first-party cookies; visitors who block cookies may be counted separately.</p>
         </div>
     </div>
-    <div class="col-lg-5">
-        <div class="content-card">
-            <h4 class="mb-3">Recent visits</h4>
-            @forelse($recentViews as $visit)
-                <div class="d-flex justify-content-between border-bottom py-2">
-                    <div><div class="fw-semibold">{{ $visit->path }}</div><small class="text-muted">{{ $visit->route_name ?: 'Page view' }}</small></div>
-                    <small class="text-muted">{{ \Illuminate\Support\Carbon::parse($visit->created_at)->format('d M H:i') }}</small>
+    <div class="content-card mb-4">
+        <form method="GET" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">From</label>
+                <input class="form-control" type="date" name="from" value="{{ $from }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">To</label>
+                <input class="form-control" type="date" name="to" value="{{ $to }}">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary">Apply range</button>
+            </div>
+        </form>
+    </div>
+    <div class="row g-3 mb-4">
+        @foreach ([['Visits', $totalVisits], ['Unique visitors', $uniqueVisitors], ['Page views', $totalPageViews], ['Property views', $propertyViews], ['Blog views', $blogViews], ['Service views', $serviceViews], ['Property inquiries', $propertyInquiries], ['Contact queries', $contactQueries]] as [$label, $value])
+            <div class="col-sm-6 col-xl-3">
+                <div class="content-card h-100">
+                    <div class="text-muted small">{{ $label }}</div>
+                    <div class="display-6 fw-semibold">{{ number_format($value) }}</div>
                 </div>
-            @empty
-                <p class="text-muted">No tracked visits yet.</p>
-            @endforelse
+            </div>
+        @endforeach
+    </div>
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="content-card">
+                <h4 class="mb-3">Popular pages</h4>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Path</th>
+                                <th>Route</th>
+                                <th class="text-end">Views</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($popularPages as $page)
+                                <tr>
+                                    <td>{{ $page->path }}</td>
+                                    <td>{{ $page->route_name ?: '—' }}</td>
+                                    <td class="text-end">{{ number_format($page->views) }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-muted text-center py-4">No page views recorded for this
+                                        period.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="content-card">
+                <h4 class="mb-3">Recent visits</h4>
+                @forelse($recentViews as $visit)
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <div>
+                            <div class="fw-semibold">{{ $visit->path }}</div>
+                            <small class="text-muted">{{ $visit->route_name ?: 'Page view' }}</small>
+                        </div>
+                        <small
+                            class="text-muted">{{ \Illuminate\Support\Carbon::parse($visit->created_at)->format('d M H:i') }}</small>
+                    </div>
+                @empty
+                    <p class="text-muted">No tracked visits yet.</p>
+                @endforelse
+            </div>
         </div>
     </div>
-</div>
-<div class="content-card mt-4">
-    <h4 class="mb-3">Recent inquiries</h4>
-    <div class="table-responsive"><table class="table">
-        <thead><tr><th>Name</th><th>Type</th><th>Status</th><th>Date</th></tr></thead>
-        <tbody>
-        @forelse($recentEnquiries as $enquiry)
-            <tr><td>{{ $enquiry->name }}</td><td>{{ ucfirst($enquiry->source) }}</td><td>{{ ucfirst($enquiry->status) }}</td><td>{{ $enquiry->created_at->format('d M Y H:i') }}</td></tr>
-        @empty
-            <tr><td colspan="4" class="text-center text-muted py-4">No inquiries recorded for this period.</td></tr>
-        @endforelse
-        </tbody>
-    </table></div>
-</div>
-<div class="content-card mt-4">
-    <h4 class="mb-3">Recent CMS activity</h4>
-    @forelse($recentActivities as $activity)
-        <div class="d-flex justify-content-between align-items-start border-bottom py-2">
-            <div><div class="fw-semibold">{{ $activity->description }}</div><small class="text-muted">{{ $activity->causer?->name ?? 'System' }}</small></div>
-            <small class="text-muted text-nowrap">{{ $activity->created_at->format('d M Y H:i') }}</small>
+    <div class="content-card mt-4">
+        <h4 class="mb-3">Recent inquiries</h4>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($recentEnquiries as $enquiry)
+                        <tr>
+                            <td>{{ $enquiry->name }}</td>
+                            <td>{{ ucfirst($enquiry->source) }}</td>
+                            <td>{{ ucfirst($enquiry->status) }}</td>
+                            <td>{{ $enquiry->created_at->format('d M Y H:i') }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">No inquiries recorded for this period.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-    @empty
-        <p class="text-muted mb-0">No CMS activity recorded for this period yet.</p>
-    @endforelse
-</div>
+    </div>
+    <div class="content-card mt-4">
+        <h4 class="mb-3">Recent CMS activity</h4>
+        @forelse($recentActivities as $activity)
+            <div class="d-flex justify-content-between align-items-start border-bottom py-2">
+                <div>
+                    <div class="fw-semibold">{{ $activity->description }}</div>
+                    <small class="text-muted">{{ $activity->causer?->name ?? 'System' }}</small>
+                </div>
+                <small class="text-muted text-nowrap">{{ $activity->created_at->format('d M Y H:i') }}</small>
+            </div>
+        @empty
+            <p class="text-muted mb-0">No CMS activity recorded for this period yet.</p>
+        @endforelse
+    </div>
 @endsection

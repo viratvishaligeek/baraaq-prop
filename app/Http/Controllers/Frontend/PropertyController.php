@@ -36,16 +36,16 @@ class PropertyController extends Controller
         if (! empty($filters['q'])) {
             $term = trim($filters['q']);
             $query->where(function ($builder) use ($term) {
-                $builder->where('title', 'like', '%'.$term.'%')
-                    ->orWhere('reference', 'like', '%'.$term.'%')
-                    ->orWhere('address', 'like', '%'.$term.'%')
-                    ->orWhere('description', 'like', '%'.$term.'%');
+                $builder->where('title', 'like', '%' . $term . '%')
+                    ->orWhere('reference', 'like', '%' . $term . '%')
+                    ->orWhere('address', 'like', '%' . $term . '%')
+                    ->orWhere('description', 'like', '%' . $term . '%');
             });
         }
 
         $city = $filters['city'] ?? $filters['location'] ?? null;
         if ($city !== null && $city !== '') {
-            $query->where('city', 'like', '%'.trim($city).'%');
+            $query->where('city', 'like', '%' . trim($city) . '%');
         }
 
         foreach (['state', 'postal_code', 'property_type'] as $field) {
