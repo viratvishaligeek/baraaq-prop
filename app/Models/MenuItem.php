@@ -3,15 +3,39 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Service;
 
 class MenuItem extends Model
 {
-    protected $fillable = ['menu_id', 'parent_id', 'label', 'url', 'link_type', 'link_id', 'target', 'sort_order', 'is_active'];
+    protected $fillable = [
+        'menu_id', 'parent_id', 'label', 'url', 'link_type', 'link_id',
+        'target', 'sort_order', 'is_active',
+    ];
 
     protected function casts(): array
     {
         return ['is_active' => 'boolean'];
+    }
+
+    protected static function booted(): void
+    {
+        $flushMenuCache = static function (MenuItem $item): void {
+            $menuIds = array_filter([
+                $item->menu_id,
+                $item->getOriginal('menu_id'),
+            ]);
+
+            if ($menuIds === []) {
+                return;
+            }
+
+            Menu::query()
+                ->whereIn('id', $menuIds)
+                ->pluck('location')
+                ->each(fn (string $location) => Menu::forgetLocationCache($location));
+        };
+
+        static::saved($flushMenuCache);
+        static::deleted($flushMenuCache);
     }
 
     public function menu()
@@ -21,18 +45,25 @@ class MenuItem extends Model
 
     public function children()
     {
-        return $this->hasMany(self::class, 'parent_id')->orderBy('sort_order');
+        return $this->hasMany(self::class, 'parent_id')
+            ->where('is_active', true)
+            ->orderBy('sort_order');
     }
 
     public function getResolvedUrlAttribute(): string
     {
         if (($this->link_type ?? 'custom') === 'page' && $this->link_id) {
             $page = Page::query()->whereKey($this->link_id)->where('status', 'published')->first();
+
             return $page ? route('pages.show', $page->slug) : '#';
         }
 
         if (in_array($this->link_type, ['blog_category', 'property_category'], true) && $this->link_id) {
-            $category = Category::query()->whereKey($this->link_id)->where('type', $this->link_type === 'blog_category' ? 'post' : 'property')->first();
+            $category = Category::query()
+                ->whereKey($this->link_id)
+                ->where('type', $this->link_type === 'blog_category' ? 'post' : 'property')
+                ->first();
+
             if (! $category) {
                 return '#';
             }
@@ -44,6 +75,7 @@ class MenuItem extends Model
 
         if (($this->link_type ?? 'custom') === 'service') {
             $service = $this->link_id ? Service::published()->find($this->link_id) : null;
+
             return $service ? route('services.show', $service->slug) : route('services.index');
         }
 

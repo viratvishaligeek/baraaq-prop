@@ -23,16 +23,29 @@ class HomepageTemplateSeeder extends Seeder
         ];
 
         foreach ($templates as $template) {
-            Homepage::firstOrCreate(
+            Homepage::query()->firstOrCreate(
                 ['slug' => $template['design_key']],
                 [
                     'name' => $template['name'],
                     'design_key' => $template['design_key'],
                     'status' => 'published',
-                    'is_default' => $template['design_key'] === 'index',
+                    'is_default' => false,
                     'published_at' => now(),
                 ]
             );
+        }
+
+        // Keep an administrator-selected published homepage; recover safely if none exists.
+        if (! Homepage::published()->default()->exists()) {
+            Homepage::query()
+                ->where('slug', 'index')
+                ->update([
+                    'name' => 'Home 1 — Real Estate',
+                    'design_key' => 'index',
+                    'status' => 'published',
+                    'is_default' => true,
+                    'published_at' => now(),
+                ]);
         }
     }
 }
