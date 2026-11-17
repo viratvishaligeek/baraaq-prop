@@ -124,6 +124,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/content/{type}/{id}', [ContentController::class, 'update'])->name('content.update');
         Route::delete('/content/{type}/{id}', [ContentController::class, 'destroy'])->name('content.destroy');
 
+        Route::get('/media/picker', MediaPickerController::class)
+            ->middleware('permission:media.manage')
+            ->name('media.picker');
         Route::get('/media', [MediaController::class, 'index'])
             ->middleware('permission:media.manage')
             ->name('media.index');
