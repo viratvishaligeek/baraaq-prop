@@ -128,7 +128,7 @@ class PageBuilderController extends Controller
             $fieldRules = ['sometimes', 'nullable'];
             $type = $schema['type'] ?? 'text';
 
-            if (in_array($type, ['text', 'textarea', 'url', 'image'], true)) {
+            if (in_array($type, ['text', 'textarea', 'richtext', 'url', 'image'], true)) {
                 $fieldRules[] = 'string';
                 $fieldRules[] = 'max:' . ($schema['max'] ?? 2048);
                 if ($type === 'url') $fieldRules[] = 'regex:~^(https?://|/|#)~i';
