@@ -48,7 +48,7 @@ return [
             $fields = [];
             for ($i = 1; $i <= 5; $i++) {
                 $fields['item_'.$i.'_question'] = ['label' => 'Question '.$i, 'type' => 'text', 'max' => 240];
-                $fields['item_'.$i.'_answer'] = ['label' => 'Answer '.$i, 'type' => 'textarea', 'max' => 2000];
+                $fields['item_'.$i.'_answer'] = ['label' => 'Answer '.$i, 'type' => 'richtext', 'max' => 2000];
             }
             return $fields;
         })()),
