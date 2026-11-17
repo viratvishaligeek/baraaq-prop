@@ -102,6 +102,7 @@ $sections = array_merge($sections, require __DIR__.'/cms-sections/neighborhoods.
 $sections = array_merge($sections, require __DIR__.'/cms-sections/team.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/why.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/properties.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/faq.php');
 
 return [
     'sections' => $sections,
