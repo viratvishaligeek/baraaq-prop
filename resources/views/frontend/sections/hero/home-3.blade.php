@@ -25,7 +25,7 @@
                             @endforeach
                         </ul>
                         <div class="tab-content{{ $animateContent ? ' fadeinup wow' : '' }}" id="{{ $tabId }}-content" data-wow-delay="0.7s">
-                            @foreach(['buy' => 'sale', 'sell' => null, 'rent' => 'rent'] as $tab => $listingType)
+                            @foreach(['buy' => 'sale', 'sell' => 'sale', 'rent' => 'rent'] as $tab => $listingType)
                                 <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}" id="{{ $tabId }}-{{ $tab }}" role="tabpanel" aria-labelledby="{{ $tabId }}-{{ $tab }}-tab">
                                     <div class="hero-search-wrapper">
                                         <form action="{{ route('properties.index') }}" method="GET">
@@ -58,25 +58,57 @@
                             <div class="advance-search-wrapper stye-2 hero-3-ad-search">
                                 <form action="{{ route('properties.index') }}" method="GET" class="row gy-3">
                                     <div class="form-group col-md-4">
+                                        <label for="{{ $tabId }}-listing-type">Listing status</label>
+                                        <select name="listing_type" id="{{ $tabId }}-listing-type" class="form-select nice-select">
+                                            <option value="">Any listing status</option>
+                                            @foreach(($listingTypes ?? collect()) as $listingTypeOption)
+                                                <option value="{{ $listingTypeOption }}" @selected($listingTypeOption === 'sale')>{{ ucfirst($listingTypeOption) }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
                                         <label for="{{ $tabId }}-type">{{ $sectionConfig['advanced_type_label'] ?? 'Property Type' }}</label>
                                         <select name="property_type" id="{{ $tabId }}-type" class="form-select nice-select">
-                                            <option value="" selected>{{ $sectionConfig['advanced_type_label'] ?? 'Property Type' }}</option>
+                                            <option value="">{{ $sectionConfig['advanced_type_label'] ?? 'Any property type' }}</option>
                                             @foreach(($propertyTypes ?? collect()) as $type)<option value="{{ $type }}">{{ ucfirst($type) }}</option>@endforeach
                                         </select>
                                     </div>
                                     <div class="form-group col-md-4">
-                                        <label for="{{ $tabId }}-bedrooms">{{ $sectionConfig['advanced_bedrooms_label'] ?? 'Max of Bedrooms' }}</label>
+                                        <label for="{{ $tabId }}-category">Category</label>
+                                        <select name="category" id="{{ $tabId }}-category" class="form-select nice-select">
+                                            <option value="">All categories</option>
+                                            @foreach(($propertyCategories ?? collect()) as $category)<option value="{{ $category->id }}">{{ $category->name }}</option>@endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="{{ $tabId }}-bedrooms">{{ $sectionConfig['advanced_bedrooms_label'] ?? 'Maximum bedrooms' }}</label>
                                         <select name="max_bedrooms" id="{{ $tabId }}-bedrooms" class="form-select nice-select">
-                                            <option value="">Max Bedrooms</option>
+                                            <option value="">Any bedroom count</option>
                                             @foreach(($bedroomOptions ?? collect()) as $bedrooms)<option value="{{ $bedrooms }}">{{ $bedrooms }} {{ $bedrooms === 1 ? 'Bedroom' : 'Bedrooms' }}</option>@endforeach
                                         </select>
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label for="{{ $tabId }}-advanced-location">{{ $sectionConfig['advanced_location_label'] ?? 'Location' }}</label>
                                         <select name="city" id="{{ $tabId }}-advanced-location" class="form-select nice-select">
-                                            <option value="">Location</option>
+                                            <option value="">All locations</option>
                                             @foreach(($cities ?? collect()) as $city)<option value="{{ $city }}">{{ $city }}</option>@endforeach
                                         </select>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="{{ $tabId }}-min-price">Minimum price</label>
+                                        <input class="form-control" type="number" min="0" step="0.01" name="min_price" id="{{ $tabId }}-min-price" placeholder="No minimum">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="{{ $tabId }}-max-price">Maximum price</label>
+                                        <input class="form-control" type="number" min="0" step="0.01" name="max_price" id="{{ $tabId }}-max-price" placeholder="No maximum">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="{{ $tabId }}-min-area">Minimum area</label>
+                                        <input class="form-control" type="number" min="0" step="0.01" name="min_area" id="{{ $tabId }}-min-area" placeholder="Any size">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="{{ $tabId }}-max-area">Maximum area</label>
+                                        <input class="form-control" type="number" min="0" step="0.01" name="max_area" id="{{ $tabId }}-max-area" placeholder="Any size">
                                     </div>
                                     <div class="col-12 text-end"><button type="submit" class="th-btn radius bg-theme"><i class="far fa-search me-2"></i> {{ $sectionConfig['search_button_label'] ?? 'Search' }}</button></div>
                                 </form>
@@ -98,9 +130,15 @@
                     @if(!empty($sectionConfig['map_image']))<img src="{{ $sectionConfig['map_image'] }}" alt="Property locations map">@endif
                     <ul class="map-marker-wrap">
                         @foreach($mapProperties as $index => $property)
-                            @php($markerIndex = $index + 1)
-                            <li class="map-icon map-icon{{ $markerIndex }}" style="left: {{ $sectionConfig['map_marker_'.$markerIndex.'_x'] ?? [18,38,61,80][$index] }}%;top: {{ $sectionConfig['map_marker_'.$markerIndex.'_y'] ?? [24,66,34,72][$index] }}%">
-                                <img src="{{ $sectionConfig['map_marker_image'] ?? asset('theme-assets/img/icon/map-marker.svg') }}" alt="{{ $property->title }}">
+                            @php
+                                $markerIndex = $index + 1;
+                                $latSpan = (float) ($mapBounds['max_lat'] ?? 0) - (float) ($mapBounds['min_lat'] ?? 0);
+                                $lngSpan = (float) ($mapBounds['max_lng'] ?? 0) - (float) ($mapBounds['min_lng'] ?? 0);
+                                $markerLeft = abs($lngSpan) < 0.000001 ? 50 : 12 + (((float) $property->longitude - (float) $mapBounds['min_lng']) / $lngSpan) * 76;
+                                $markerTop = abs($latSpan) < 0.000001 ? 50 : 14 + (((float) $mapBounds['max_lat'] - (float) $property->latitude) / $latSpan) * 72;
+                            @endphp
+                            <li class="map-icon map-icon{{ $markerIndex }}" style="left: {{ number_format($markerLeft, 2, '.', '') }}%;top: {{ number_format($markerTop, 2, '.', '') }}%">
+                                <img src="{{ $sectionConfig['map_marker_image'] ?? '' }}" alt="{{ $property->title }}">
                             </li>
                         @endforeach
                     </ul>
@@ -132,9 +170,6 @@
                             </div>
                         </div>
                     @endforeach
-                    @if($mapProperties->isEmpty())
-                        <div class="map-popular-list map-popular-list1 show"><div class="popular-list-1"><div class="property-content"><div class="media-body"><h3 class="box-title">Explore published properties</h3><div class="box-text">Property markers will appear here when listings with map coordinates are published.</div></div></div></div></div>
-                    @endif
                 </div>
             </div>
         </div>
