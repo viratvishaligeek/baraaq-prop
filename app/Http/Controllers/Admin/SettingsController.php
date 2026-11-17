@@ -47,22 +47,23 @@ class SettingsController extends Controller
             'default_og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'favicon' => ['nullable', 'file', 'mimes:png,ico', 'max:2048'],
-            'default_og_image_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where('mime_type', 'like', 'image/%')],
+            'default_og_image_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
             'logo_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where('mime_type', 'like', 'image/%')],
-            'favicon_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where('mime_type', 'image/png')],
+            'favicon_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'image/png'))],
             'primary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'secondary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'head_scripts' => ['nullable', 'string', 'max:20000'],
             'body_scripts' => ['nullable', 'string', 'max:20000'],
         ]);
 
+        $selectedMediaPaths = [];
         foreach ([
             'logo_media_id' => 'logo',
             'favicon_media_id' => 'favicon',
             'default_og_image_media_id' => 'default_og_image',
         ] as $mediaField => $field) {
             if (! empty($data[$mediaField])) {
-                $data[$field] = Media::query()->whereKey((int) $data[$mediaField])->value('path');
+                $selectedMediaPaths[$field] = Media::query()->whereKey((int) $data[$mediaField])->value('path');
             }
             unset($data[$mediaField]);
         }
@@ -83,7 +84,7 @@ class SettingsController extends Controller
         }
 
         unset($data['logo'], $data['favicon'], $data['default_og_image']);
-        $data = array_merge($data, $uploads);
+        $data = array_merge($data, $selectedMediaPaths, $uploads);
         $data['sticky_header'] = $request->boolean('sticky_header');
 
         DB::transaction(function () use ($data) {
