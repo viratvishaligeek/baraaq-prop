@@ -123,6 +123,13 @@ class HomepageController extends Controller
                     $sectionCopy->homepage_id = $copy->id;
                     $sectionCopy->instance_key = (string) Str::uuid();
                     $sectionCopy->save();
+
+                    foreach ($section->mediaAttachments as $attachment) {
+                        $sectionCopy->mediaAttachments()->create([
+                            'field_key' => $attachment->field_key,
+                            'media_id' => $attachment->media_id,
+                        ]);
+                    }
                 }
             }
 
