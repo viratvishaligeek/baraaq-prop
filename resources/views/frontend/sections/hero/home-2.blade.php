@@ -1,6 +1,7 @@
 @php
     $animate = $sectionConfig['animate_content'] ?? true;
     $animationClass = $animate ? ' fadeinup wow' : '';
+    $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
     $quickTypes = [];
     for ($i = 1; $i <= 4; $i++) {
         $quickTypes[] = [
@@ -10,7 +11,7 @@
     }
 @endphp
 
-<div class="th-hero-wrapper hero-2" id="hero">
+<div class="th-hero-wrapper hero-2 {{ $visibility }}" id="hero">
     <div class="slider-2-scroll-down scroll-down">
         <a href="#about-sec" class="scroll-wrap"><span></span></a>
         <span class="scroll-text">{{ $sectionConfig['scroll_label'] ?? 'Scroll' }}</span>
