@@ -1,0 +1,35 @@
+<section class="team-area-1 space overflow-hidden">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-7">
+                <div class="title-area text-center">
+                    <p class="sub-title text-anime-style-2"><span class="double-line"></span> {{ $sectionConfig['eyebrow'] ?? 'Team Members' }}</p>
+                    <h2 class="sec-title text-anime-style-3">{{ $sectionConfig['heading'] ?? 'Meet Our Team' }}</h2>
+                    @if(!empty($sectionConfig['description']))
+                        <p class="mt-3">{{ $sectionConfig['description'] }}</p>
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="row gy-30">
+            @forelse($teamMembers->take((int) ($sectionConfig['items_limit'] ?? 4)) as $member)
+                <div class="col-xl-3 col-md-6">
+                    <div class="team-card wow fadeinleft">
+                        <div class="team-img" data-bg-src="{{ asset('theme-assets/img/shape/team-bg-pattern.png') }}">
+                            <img src="{{ $member->photo ? Storage::disk('public')->url($member->photo) : asset('theme-assets/img/team/team_1_1.png') }}" alt="{{ $member->name }}">
+                        </div>
+                        <div class="team-content">
+                            <h3 class="box-title">{{ $member->name }}</h3>
+                            <span class="team-desig">{{ $member->designation }}</span>
+                            @if(($sectionConfig['show_email'] ?? false) && $member->email)
+                                <div class="small mt-2"><a href="mailto:{{ $member->email }}">{{ $member->email }}</a></div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-12 text-center">Our team profiles will appear here soon.</div>
+            @endforelse
+        </div>
+    </div>
+</section>

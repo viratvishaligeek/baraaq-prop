@@ -2,23 +2,72 @@
 
 namespace App\Providers;
 
+use App\Models\Banner;
+use App\Models\Category;
+use App\Models\Comment;
+use App\Models\Enquiry;
+use App\Models\Menu;
+use App\Models\MenuItem;
+use App\Models\Media;
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\Homepage;
+use App\Models\HomepageSection;
+use App\Models\ReusableSection;
+use App\Models\WidgetArea;
+use App\Models\WidgetAreaItem;
+use App\Models\Widget;
+use App\Models\Page;
+use App\Models\Post;
+use App\Models\Property;
+use App\Models\Service;
+use App\Models\Setting;
+use App\Models\TeamMember;
+use App\Models\Testimonial;
+use App\Models\User;
+use App\Observers\ActivityLogObserver;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        //
+        View::composer('*', function ($view) {
+            $view->with('siteSettings', Setting::allValues());
+        });
+
+        foreach ([
+            Banner::class,
+            Category::class,
+            Comment::class,
+            Enquiry::class,
+            Menu::class,
+            MenuItem::class,
+            Media::class,
+            Permission::class,
+            Role::class,
+            Homepage::class,
+            HomepageSection::class,
+            ReusableSection::class,
+            WidgetArea::class,
+            WidgetAreaItem::class,
+            Widget::class,
+            Setting::class,
+            Page::class,
+            Post::class,
+            Property::class,
+            Service::class,
+            TeamMember::class,
+            Testimonial::class,
+            User::class,
+        ] as $model) {
+            $model::observe(ActivityLogObserver::class);
+        }
     }
 }

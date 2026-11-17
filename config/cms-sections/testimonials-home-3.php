@@ -1,0 +1,41 @@
+<?php
+
+return [
+    'testimonials.home-3' => [
+        'key' => 'testimonials.home-3',
+        'label' => 'Trust score and testimonials — Home 3',
+        'type' => 'testimonial-slider',
+        'source_design' => 'home-3',
+        'view' => 'frontend.sections.testimonials.home-3',
+        'defaults' => [
+            'view_all_label' => 'View All Reviews',
+            'view_all_url' => '/testimonials',
+            'trust_brand' => 'Client reviews',
+            'rating_shape_image' => '/theme-assets/img/shape/download-circle.png',
+            'star_icon_image' => '/theme-assets/img/icon/star-icon.svg',
+            'quote_icon_image' => '/theme-assets/img/icon/testi-2quote.svg',
+            'eyebrow' => 'Testimonials',
+            'heading' => 'What Our Clients Say',
+            'items_limit' => 4,
+            'vertical_spacing' => 'space',
+            'background_color' => '',
+            'show_mobile' => true, 'show_tablet' => true, 'show_desktop' => true,
+        ],
+        'fields' => [
+            'view_all_label' => ['label' => 'View all button label', 'type' => 'text', 'max' => 80],
+            'view_all_url' => ['label' => 'View all button URL', 'type' => 'url', 'max' => 2048],
+            'trust_brand' => ['label' => 'Review platform name', 'type' => 'text', 'max' => 80],
+            'rating_shape_image' => ['label' => 'Rating decorative shape', 'type' => 'image', 'max' => 2048],
+            'star_icon_image' => ['label' => 'Trust platform icon', 'type' => 'image', 'max' => 2048],
+            'quote_icon_image' => ['label' => 'Testimonial quote icon', 'type' => 'image', 'max' => 2048],
+            'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
+            'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
+            'items_limit' => ['label' => 'Visible testimonials', 'type' => 'number', 'min' => 1, 'max' => 4],
+            'vertical_spacing' => ['label' => 'Section spacing', 'type' => 'select', 'options' => ['space' => 'Theme spacing', 'space-top' => 'Top only', 'space-bottom' => 'Bottom only', 'py-0' => 'No vertical spacing']],
+            'background_color' => ['label' => 'Background color', 'type' => 'color'],
+            'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
+            'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
+            'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
+        ],
+    ],
+];

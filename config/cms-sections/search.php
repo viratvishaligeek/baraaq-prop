@@ -1,0 +1,43 @@
+<?php
+
+return [
+    'search.home-2' => [
+        'key' => 'search.home-2',
+        'label' => 'Advanced property search — Home 2',
+        'type' => 'advanced-search',
+        'source_design' => 'home-2',
+        'view' => 'frontend.sections.search.home-2',
+        'defaults' => [
+            'location_label' => 'Location',
+            'location_placeholder' => 'Select Location',
+            'min_area_label' => 'Mini Area (Sqft)',
+            'min_area_placeholder' => 'Select Area',
+            'min_area_options' => '500,1000,1500',
+            'max_area_label' => 'Max Area (Sqft)',
+            'max_area_placeholder' => 'Select Max Area',
+            'max_area_options' => '2000,3000,4000',
+            'show_location' => true,
+            'show_min_area' => true,
+            'show_max_area' => true,
+            'show_mobile' => true,
+            'show_tablet' => true,
+            'show_desktop' => true,
+        ],
+        'fields' => [
+            'location_label' => ['label' => 'Location label', 'type' => 'text', 'max' => 80],
+            'location_placeholder' => ['label' => 'Location placeholder', 'type' => 'text', 'max' => 80],
+            'min_area_label' => ['label' => 'Minimum area label', 'type' => 'text', 'max' => 80],
+            'min_area_placeholder' => ['label' => 'Minimum area placeholder', 'type' => 'text', 'max' => 80],
+            'min_area_options' => ['label' => 'Minimum area options (comma separated)', 'type' => 'text', 'max' => 300],
+            'max_area_label' => ['label' => 'Maximum area label', 'type' => 'text', 'max' => 80],
+            'max_area_placeholder' => ['label' => 'Maximum area placeholder', 'type' => 'text', 'max' => 80],
+            'max_area_options' => ['label' => 'Maximum area options (comma separated)', 'type' => 'text', 'max' => 300],
+            'show_location' => ['label' => 'Show location filter', 'type' => 'checkbox'],
+            'show_min_area' => ['label' => 'Show minimum area filter', 'type' => 'checkbox'],
+            'show_max_area' => ['label' => 'Show maximum area filter', 'type' => 'checkbox'],
+            'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
+            'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
+            'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
+        ],
+    ],
+];

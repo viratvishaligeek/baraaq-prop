@@ -1,0 +1,296 @@
+# Piller Theme Fidelity Inventory
+
+**Source branch:** `feat/property-cms-foundation`  
+**Original source directory:** `theme-files-html/`  
+**Converted Laravel views:** `resources/views/frontend/home.blade.php` and `resources/views/frontend/theme-pages/home-2.blade.php` through `home-10.blade.php`.
+
+## Source-of-truth rule
+
+The original HTML in `theme-files-html/` is authoritative for markup, layout, class names, spacing, responsive behavior, image selection, iconography, fonts, and interaction. Blade conversion must preserve that design. Dynamic data bindings may replace static content, but they must not flatten or redesign the layout.
+
+All ten source files were fetched from the feature branch and inspected. Their Git blob SHAs match the corresponding files on `main`, and the complete `assets/` directory tree SHA also matches `main`; the feature branch is using the same original design reference. The nine secondary homepage Blade views are present. The primary design is represented by `frontend/home.blade.php`.
+
+## Homepage inventory
+
+The inventory below records the major content blocks visible in the original HTML. It is a structural inventory, not a claim that every text node and image has passed visual regression.
+
+| Source | Major source sections / layout landmarks |
+|---|---|
+| `index.html` | Hero 1, property search, popular properties, why choose us, featured listings, property values, gallery, explore cities, team, testimonials, blog |
+| `home-2.html` | Hero 2, advanced search, categories, about, benefits, properties, city gallery, property values, team, app download, marquee, second property listing, testimonials, FAQ, blog |
+| `home-3.html` | Hero 3, categories, properties, why choose us, team, gallery, app download, featured gallery, testimonials, FAQ, enquiry form, marquee, blog, brand strip |
+| `home-4.html` | Hero 4, about, services, properties, featured CTA, property details/contact, virtual tour, testimonials, FAQ, team, marquee, enquiry form, blog |
+| `home-5.html` | Hero 5, about, room details, property contact/details, property values, testimonials, team, enquiry form, marquee, blog |
+| `home-6.html` | Hero 6, about, featured projects, why choose us, statistics, testimonials, feature highlights, team, enquiry form, marquee, blog |
+| `home-7.html` | Hero 7, property categories, about, property listings, and additional agency/benefit content; the remaining page blocks require a line-by-line visual pass during conversion verification |
+| `home-8.html` | Hero 8, property search, local agency/about, properties, buying process, team, why choose us, property values, testimonials, FAQ, blog |
+| `home-9.html` | Hero 9, about, statistics, services, properties, gallery, property details/contact, team, testimonials, blog |
+| `home-10.html` | Hero 10, advanced search, about, property types, properties, services, testimonials, team, projects, blog |
+
+The ten pages have distinct hero variants and differing section order, composition, CSS classes and footer/header variants. They must remain separate presets. The builder must expose sections from every design and retain each section's source design identity.
+
+## Home 3 implementation checkpoint — 2026-11-17
+
+This matrix records code that is present on `feat/property-cms-foundation`. “Implemented in code” is not the same as passing the strict completion gate: no Laravel runtime, database-backed browser session, or desktop/tablet/mobile screenshot comparison has been executed in this environment.
+
+| Home 3 source block | Current implementation status | Remaining verification / caveat |
+|---|---|---|
+| Hero, map and counters | Hero config and Blade view expose headings, four counters, map artwork, visibility and animation controls. Map cards now come only from published `properties` records with non-null latitude/longitude; marker positions are calculated from those records’ coordinate bounds. Admin property create/edit forms now expose validated latitude/longitude fields. No sample property card or fixed marker coordinates remain. | Counter values remain manually editable because the database has no visitor, customer or project-handover metrics. Geographic pin placement is data-relative to the selected listings, not a geocoded tile map. Browser overlay and responsive layout pending. |
+| Hero search | City, property type, listing type, bedroom options and active property categories are queried from the database. Buy/sell submit `listing_type=sale`; rent submits `listing_type=rent`. Advanced form submits category, location, listing type, property type, bedrooms, price and area filters. | Browser submission and resulting pagination state pending. |
+| Property categories | Source-specific category slider uses active property categories and existing category counts/links. | Theme slider behavior and visual match pending. |
+| Popular properties | Uses published property records, category filters and source-specific card markup/settings. | Image carousel, favorite/gallery actions and responsive card layout pending browser verification. |
+| Why choose us | Seven editable source-style feature cards, icon media, background and animation/visibility settings. | Browser animation and responsive comparison pending. |
+| Team | Uses active team-member records and the Home 3 source-specific team card/carousel view. | Carousel behavior and responsive comparison pending. |
+| Neighborhood feature gallery | Four individually editable cards retain the asymmetric original large-left / stacked-right layout, images, counts, labels and URLs. | Browser visual comparison pending. |
+| App download | Editable copy, store links, QR image, three collage images, decorative media, spacing, background and animation settings. | QR destination/content validity and mobile composition pending. |
+| Featured property gallery | Uses published featured property records in the original Swiper layout; three source slides, editable backgrounds, agent portrait, card copy, icons and visibility/spacing settings. | Swiper initialization and browser comparison pending. |
+| Testimonials / trust score | Four editable testimonial entries, rating summary, trust label and media are stored in section JSON and rendered in the original slider layout. | Content is section configuration, not a separate testimonial-record model. Slider/browser verification pending. |
+| FAQ | Five editable question/answer pairs render in the source accordion structure with visibility, spacing, background and animation controls. | Bootstrap accordion interaction and responsive comparison pending. |
+| Enquiry form | Editable form labels/placeholders and map panel; submits to the existing `enquiries.store` endpoint with CSRF and validation feedback. | End-to-end database submission and error/success browser states pending. |
+| Promotional marquee | Three editable messages, URLs and icons; duplicate group count and background are configurable while retaining the marquee wrapper. | Continuous motion and responsive behavior pending browser verification. |
+| Blog | Uses published post records and the source-specific Home 3 blog card layout with editable display options and fallbacks. | Blog images, author metadata and card interactions pending browser verification. |
+| Brand strip | Six editable logo/media and URL pairs, responsive slide counts, spacing and background; retains Swiper markup. | Swiper initialization and responsive comparison pending. |
+
+### Home 3 data and media integration
+
+- Public property search applies validated filters against published property records, including keyword, city/location, state, postal code, listing type (`sale`, `rent`, `lease`), property type, category, price range, bedroom range and area range. The legacy `mini_area` query name remains accepted alongside `min_area`.
+- Homepage section image fields persist Media Library record IDs in section JSON and a field-keyed polymorphic `media_attachments` relationship. The renderer resolves IDs to media URLs and metadata at render time. Existing non-numeric URL-based settings continue to render unchanged.
+- Reusable sections keep their own media relationships; section duplication copies local attachment rows. Removing a homepage section cleans its attachment rows. Media deletion is blocked while a section/reusable section still references the record; the database foreign key also cascades attachment rows if a media record is removed outside the controller.
+- Added automated feature coverage for coordinate-backed Home 3 map data and multi-field property search, plus the existing media relationship tests. These tests have **not** been executed in this environment.
+
+**Strict completion gate: 0 Home 3 sections certified complete.** The implementation paths above have been added/updated, but Laravel tests, migrations, actual database persistence, JavaScript interaction checks and desktop/tablet/mobile browser verification are still pending. Do not set `is_composition_complete` or switch the live homepage based on this source-level checkpoint alone.
+
+
+## Existing Blade conversion status
+
+- `home.blade.php` is the dynamic primary homepage and already receives property, banner, post and team collections from `HomeController`.
+- `home-2.blade.php` through `home-10.blade.php` are present as converted Blade pages. Their top-level content blocks generally mirror the source composition, including non-`section` wrappers such as hero, about, search, gallery, download, FAQ and lead-form blocks.
+- The secondary pages are still largely static presentation pages. The presence of Blade files and dynamic asset paths does not mean their visible content is already admin/database-driven.
+- The existing `/{template}.html` route is a static preview/compatibility route. It is not itself a homepage builder or published homepage record.
+- The primary route currently uses a single view and fixed data query. The new homepage record/selector is the first step toward CMS-driven homepage selection; section composition is a subsequent builder phase.
+
+## Shared asset inventory
+
+The source HTML pages reference the same Piller asset families, with per-design images and CSS background assets:
+
+- CSS: `assets/css/app.min.css`, `assets/css/fontawesome.min.css`, `assets/css/style.css`.
+- JavaScript: jQuery and theme/vendor scripts referenced in the HTML, including `assets/js/main.js`.
+- Images: `assets/img/hero/`, `about/`, `property/`, `product/`, `gallery/`, `team/`, `testimonial/`, `icon/`, `bg/`, `blog/`, `pages/`, `brand/` and favicons.
+- Typography and icons: theme font-family declarations (Plus Jakarta Sans and Inter), Font Awesome icon font/classes, and SVG icon assets.
+
+The source `theme-files-html/assets/css/style.css` and `public/theme-assets/css/style.css` have the same Git blob SHA, so the main theme stylesheet is already reused rather than duplicated. The original `style.css`, `app.min.css`, and `main.js` were inspected at source level. HTML references and CSS background URLs were inventoried.
+
+## Required fidelity checks still outstanding
+
+The repository/API environment does not render a browser. The following must remain open verification tasks until run in a real Laravel/browser environment:
+
+1. Side-by-side screenshots for each original HTML page and its Blade counterpart at desktop, tablet and mobile widths.
+2. Every original image, SVG, icon font, webfont and vendor script resolves from the public asset path.
+3. Header, footer, hero, search, carousel, tabs, filters, forms, accordions, menus, sliders and sticky interactions behave as in the source.
+4. All ten templates have matching section order and no missing blocks.
+5. Dynamic property/post/team/testimonial data preserves card count, image aspect ratio, spacing and responsive breakpoints.
+6. All hardcoded text, demo contact details, placeholder cards, prices, external links and social URLs are either mapped to CMS settings/content records or intentionally retained as theme chrome with an explicit reason.
+
+No pixel-perfect or browser-interaction verification is claimed by this inventory.
+
+
+## Asset inventory and source/public parity
+
+A recursive Git tree inventory of `theme-files-html/assets/` contains **476 files**:
+
+- 3 CSS files: `app.min.css`, `fontawesome.min.css`, `style.css`.
+- 5 JavaScript files: `app.min.js`, `main.js`, `nice-select.min.js`, `wow.min.js`, and `vendor/jquery-3.7.1.min.js`.
+- 12 Font Awesome font files: six `.woff2` and six `.ttf` variants for brands, duotone, light, regular, solid and thin.
+- 454 image assets across the about, agencies, background, blog, brand, contact, download, error, city, favicon, gallery, hero, icon, normal, pages, popular, product, project, property, service, shape, team, testimonial and why folders.
+
+The recursive Git tree comparison confirms that all **476 source asset files have matching public copies** under `public/theme-assets/`: zero missing files, zero extra files and zero blob-SHA mismatches. This means the repository already reuses the original theme assets without a need to upload or duplicate them.
+
+The original HTML loads Inter and Plus Jakarta Sans from Google Fonts and references the shared CSS/JS files listed above. `main.js` contains references to Swiper, GSAP, ScrollTrigger, SplitText, Isotope and other theme plugins. GitHub's directory metadata confirms `app.min.js` is a 1,116,141-byte file; the text-file fetch interface returned an empty text payload for this large file, so its contents could not be inspected through that interface. **Do not classify it as an empty or missing bundle.**
+
+### Remaining asset verification
+
+- Source/public file parity is verified by Git blob SHA, but binary images and font files were not individually decoded or visually rendered.
+- The contents of the large `app.min.js` bundle still need inspection in a local checkout or browser.
+- All ten pages still need desktop/tablet/mobile screenshot comparison and interaction testing. No browser fidelity result is claimed here.
+
+
+## Detailed homepage section checklist (HTML-source pass)
+
+**Counting rule:** the following total counts literal top-level-inventory candidates matched by the source HTML `<section>...</section>` wrappers. Hero regions are implemented as `<div>` wrappers in this theme and are listed separately. Header, footer, search overlays, mobile navigation, floating controls and nested cards are global/component landmarks, not counted as homepage content sections. Some pages use large `<div>` blocks instead of `<section>`; these are not included in the 57-wrapper subtotal and remain in the structural follow-up pass.
+
+**Initial explicit section-wrapper total: 57 across ten source files.** This is an auditable lower-bound inventory, not a claim that 57 represents every content block in the ten designs.
+
+| Homepage | # | Source wrapper / content family | Data expected | Current extraction/admin status |
+|---|---:|---|---|---|
+| index | 1 | Popular properties — first card presentation | Properties, categories, price/status, images, features, links | Not independently extracted |
+| index | 2 | Featured luxury properties — alternate card presentation | Properties, images, price, badges, metadata, CTAs | Not independently extracted |
+| index | 3 | Property values / counters | Editable heading, image, counters, labels/icons | Not extracted |
+| index | 4 | Explore cities / location feature cards | Location records, images, descriptions, property counts, links | Not extracted |
+| index | 5 | Team members | Team/agent records, photos, role, social links | Extracted in part; heading settings only |
+| index | 6 | Testimonials | Testimonial records, avatar/logo, quote, rating, slider settings | Not extracted |
+| index | 7 | Blog/news slider | Published posts, author/date/image, comments, CTA | Extracted in part; heading settings only |
+| home-2 | 1 | Property categories | Property categories, icons, counts, links, decorative shapes | Registered as a source-specific category slider; data/form/render implemented; visual verification pending |
+| home-2 | 2 | Featured properties — standard cards | Properties, images, price/status, features, actions | Not extracted |
+| home-2 | 3 | Property values / expert-rated villas | Editable intro and property/value cards | Registered with four editable image/content cards and reusable card partial; visual verification pending |
+| home-2 | 4 | Team members — home-2 card variant | Team records, images, socials, slider settings | Not extracted |
+| home-2 | 5 | Featured property spotlight — alternate card | Featured property, location, beds/baths, image, CTA | Not extracted |
+| home-2 | 6 | Testimonials — style 2 | Testimonial records, avatars, quote, slider | Not extracted |
+| home-2 | 7 | Blog/news — style 2 | Posts, author/date, excerpts, images, links | Not extracted |
+| home-3 | 1 | Property categories — style 2 | Categories, SVG icons, labels, counts, links | Registered as style-2 category slider; data/form/render implemented; visual verification pending |
+| home-3 | 2 | Popular properties | Properties, price/status, feature icons, links | Home 3 source-specific property grid and published-property resolver implemented; browser verification pending |
+| home-3 | 3 | Team members — home-2 variant | Team records, photos, social links | Home 3 team view/config and active-team resolver implemented; browser verification pending |
+| home-3 | 4 | Testimonials — rating/trust layout | Testimonials, rating summary, trust mark, avatars | Four editable section-config entries and trust summary implemented; browser verification pending |
+| home-3 | 5 | Blog/news — style 3 | Posts, author, date, excerpt, images, links | Home 3 editorial view/config and published-post resolver implemented; browser verification pending |
+| home-4 | 1 | Featured luxury properties — style 2 | Properties, price, status, images, feature details | Not extracted |
+| home-4 | 2 | Virtual tour / featured locations | Location/property records, gallery images, labels, links | Not extracted |
+| home-4 | 3 | Testimonials — style 4 | Testimonials, avatars, quote marks, heading | Not extracted |
+| home-4 | 4 | Team members | Team records, image, role, socials | Not extracted |
+| home-4 | 5 | Blog/news | Posts, authors, dates, images, CTA | Not extracted |
+| home-5 | 1 | Room details gallery | Room/feature items, number, title, description, image, detail link | Not extracted |
+| home-5 | 2 | Property values / craftsmanship gallery | Editable intro, value cards, images, links | Not extracted |
+| home-5 | 3 | Testimonials — dark panel | Testimonials, role, avatars, quote, slider | Not extracted |
+| home-5 | 4 | Team members | Team records, photos, role, socials | Not extracted |
+| home-5 | 5 | Blog/news | Posts, author/date, images, CTA | Not extracted |
+| home-6 | 1 | Featured projects | Project records, images, location, labels, links | Not extracted |
+| home-6 | 2 | Testimonials — trust score layout | Testimonials, score, review count, trust mark | Not extracted |
+| home-6 | 3 | Feature highlights / corporate values | Feature records, icons, headings, body copy | Not extracted |
+| home-6 | 4 | Executive/team profiles | Team records, portrait, name, title, socials | Not extracted |
+| home-6 | 5 | Blog insights — style 5 | Posts, images, title, metadata, links | Not extracted |
+| home-7 | 1 | Property categories | Categories, icons, counts, links, decorative shapes | Registered as source-specific category slider; data/form/render implemented; visual verification pending |
+| home-7 | 2 | Popular properties | Properties, price/status, images, feature icons, CTAs | Not extracted |
+| home-7 | 3 | Team members | Team records, photos, role, social links | Not extracted |
+| home-7 | 4 | Testimonials — trust score layout | Testimonials, score, review count, avatars, trust mark | Not extracted |
+| home-7 | 5 | Blog/news | Posts, authors, dates, excerpts, images | Not extracted |
+| home-8 | 1 | Popular properties | Properties, price/status, images, feature icons, CTAs | Not extracted |
+| home-8 | 2 | Buying process steps | Ordered steps, icons/illustrations, titles, descriptions, background | Not extracted |
+| home-8 | 3 | Local agent/team feature | Team records, featured portrait, images, contact links | Not extracted |
+| home-8 | 4 | Property values / craftsmanship | Editable intro, value cards, images, links | Not extracted |
+| home-8 | 5 | Testimonials — trust score layout | Testimonials, score, review count, trust mark, avatars | Not extracted |
+| home-8 | 6 | Blog/news — style 6 | Posts, author/date, image, title, CTA | Not extracted |
+| home-9 | 1 | Services — style 2 | Services, SVG icons, title, excerpt, detail links | Not extracted |
+| home-9 | 2 | Popular properties | Properties, price/status, images, feature icons, CTAs | Not extracted |
+| home-9 | 3 | Team members | Team records, photos, role, social links | Not extracted |
+| home-9 | 4 | Testimonials — trust score layout | Testimonials, score, review count, avatars, trust mark | Not extracted |
+| home-9 | 5 | Blog/news — style 6 | Posts, author/date, images, title, links | Not extracted |
+| home-10 | 1 | Property type / design gallery | Category/project records, gallery images, titles, tabs, links | Not extracted |
+| home-10 | 2 | Featured properties | Properties, price/status, images, feature icons, CTAs | Not extracted |
+| home-10 | 3 | Modern housing services — style 3 | Services, images, headings, descriptions, links | Not extracted |
+| home-10 | 4 | Testimonials | Testimonials, quote, brand logo, avatar, heading | Not extracted |
+| home-10 | 5 | Team members — style 6 | Team records, featured images, profiles, socials | Not extracted |
+| home-10 | 6 | Projects — tabbed gallery | Project records, category tabs, image sets, titles, descriptions, CTA | Not extracted |
+| home-10 | 7 | Blog/news | Posts, metadata, images, title, links | Not extracted |
+
+### Hero and shared chrome checklist
+
+| Source family | Count | Required fields/settings | Current status |
+|---|---:|---|---|
+| Hero variants | 10 | Slides, title fragments, subtitle, image/background, overlay, decorative media, trust/social proof, CTA labels/URLs, search form visibility and fields, slider/animation options, responsive alignment | Ten hero partials exist; only limited heading settings are exposed. Not complete. |
+| Header variants | To be counted by structural pass | Logo variants, top-bar contacts, social links, menu location, CTA, search/mobile controls, sticky behavior, responsive breakpoints | Shared/global header not yet fully CMS-configurable. |
+| Footer variants | To be counted by structural pass | About copy, contacts, menu columns, social links, map, gallery, copyright, background assets | Not yet fully CMS-configurable. |
+| Search/lead forms | To be counted by structural pass | Field visibility/order, labels/placeholders, property filters, submit label/action, validation, responsive layout | Not yet a reusable section configuration. |
+| Non-section wrappers | To be counted by structural pass | About, stats, FAQ, app download, marquee, CTA, enquiry form, gallery and other div-based blocks | Not yet comprehensively inventoried or registered. |
+
+### Per-design verification gates
+
+Each checkbox is independent. A source section is not considered complete until all gates are checked against that exact design variant.
+
+| Homepage | Source HTML inspected | All content blocks inventoried | Extracted to Blade partial | Section-specific admin form | Database/data-provider binding | Draft preview | Publish/default regression | Desktop/tablet/mobile comparison |
+|---|---|---|---|---|---|---|---|---|
+| index | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-2 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-3 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-4 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-5 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-6 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-7 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-8 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-9 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+| home-10 | [x] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] | [ ] |
+
+**Current measured status after the latest builder work:** 57 explicit section wrappers identified; 13 registered section partials exist (10 hero variants plus primary-design properties, team and blog partials). The builder now renders typed, section-specific controls from the PHP registry; property/team/blog sections support database-driven records and selected display settings (such as item limits, filters or metadata visibility). Hero settings have a broader typed schema, but several hero variants still do not consume every exposed setting, and the original hero content is not fully data-driven. The section library can save a section configuration and insert linked reusable instances; local overrides are merged over shared configuration. Section duplication and authenticated draft preview are now implemented in source. No source section meets the strict completion definition across all its text, images, links, responsive settings, interactions and visual regression checks yet. Therefore the number of fully complete source sections remains **0**. This is a conservative status, not a claim that the partials have no dynamic behavior.
+
+### Element-level inventory still required
+
+The 57-wrapper pass records representative headings, paragraph samples, image paths and per-wrapper counts of links/buttons/inputs. It does not yet enumerate every nested text node, SVG path, icon class, responsive data attribute, CSS pseudo-element, CSS background URL or JavaScript interaction. Those require the next extraction pass against the original HTML and theme CSS/JS. The exact source file remains the authority for each field. No default text should be considered safely editable until its source node has been mapped to a schema field and rendered from the saved configuration/content record.
+
+## Builder implementation progress (source review only)
+
+The following builder capabilities now have source-level implementations on `feat/property-cms-foundation`:
+
+- Typed section-field schemas are defined per registered section in `config/cms-sections.php` (text, textarea, URL/path, color, number, checkbox and select controls).
+- The admin settings form renders each section's own field schema instead of a universal heading/description form.
+- Section updates validate by field type, whitelist registered fields and merge partial updates rather than clearing previously saved configuration.
+- Property, team and blog section partials consume selected settings and existing database records. The property section supports sale/rent/featured filtering and a bounded item count; team supports bounded count and email visibility; blog supports bounded count and author/date visibility.
+- A draft section can be duplicated without changing the live homepage.
+- An authenticated draft preview route renders the saved draft composition with the same current frontend data collections.
+- Administrators can save a section's effective configuration into `reusable_sections`, then insert it into another draft. Homepage instances reference the shared library record and merge per-instance overrides over the shared configuration.
+- A separate additive migration stores the stable section key and source design on reusable library records.
+
+These are partial foundations. The reusable library does not yet have a complete standalone edit/version/history interface. The section catalog still does not include the 57 source wrappers, hero fields are not all consumed by their Blade partials, and draft duplication cannot yet reconstruct complete source section sequences. The preview currently uses the existing frontend layout and current query limits; it is not a substitute for responsive browser validation.
+
+**No execution claims:** Composer, Artisan migrations/seeders, automated tests, route compilation, and browser screenshot comparisons have not been run in this environment.
+
+### Live-homepage safety guard
+
+An additive `is_composition_complete` flag now protects the production homepage while the source conversion is incomplete. The public controller only renders the custom section composition when this flag is true; otherwise it retains the selected original full-page Blade template. The admin cannot set an incomplete composition as the live default, and the homepage list explains why. This deliberately prevents a draft containing only a hero or a few extracted sections from replacing the complete existing homepage. The flag must only be enabled after the per-design checklist and regression gates are actually complete.
+
+
+### New div-based extraction pass — category and Home 2 about blocks
+
+The next implementation pass confirmed that important content is not bounded by literal section tags. In particular, Home 2's about composition is a large `div.about-1-wrapper` block with a five-image collage, animated circular logo, four icon/feature cards, CTA and telephone action. It is now registered as `about.home-2`, rendered with the original `about-1-wrapper`, `img-box1`, `about-left/middle/right`, `about-1-item` and CTA class structure, and has section-specific controls for all five collage images, logo, four feature icons/titles/descriptions, heading/body, CTA and phone details. The section is included after the category slider when a Home 2 draft is initialized.
+
+The category blocks are registered separately as `categories.home-2`, `categories.home-3` and `categories.home-7`. The Home 3 variant keeps `category-sec-2`, `category-card style-2` and its pagination; Home 2/Home 7 keep `category-sec-1`, source decorative shapes and the standard card. The resolver binds active property categories and published property counts. Category records now support an icon path, sort order and active state. These are source-level implementations; no responsive/browser pass has been run.
+
+The builder's image fields now open a searchable picker backed by the existing Media Library. The endpoint returns only image MIME types and uses the configured storage disk URL. Category record icons can also be uploaded from the category editor. The registry now loads category and about definitions from dedicated files under `config/cms-sections/`, rather than adding all new definitions to the root registry file.
+
+### Homepage verification matrix — current source-level status
+
+Counts below are **minimum identified literal section wrappers** plus separately registered partials. They do not count every div-based block, slider, card collection, search overlay or shared chrome element. “Form / binding / render” records source implementation only, not runtime proof. Responsive verification remains pending for every design.
+
+| Homepage | Major source blocks identified (initial inventory) | Extracted | Registered | Admin forms | Database bindings | Frontend render | Responsive verification | Strictly complete |
+|---|---:|---:|---:|---:|---|---|---|---:|
+| index | 8 | 4 | 4 | 3 complete schemas + hero partial schema | Banners, properties, team, posts | Source-level only | Pending | 0 |
+| home-2 | 15 | 15 | 15 | 15 schema-driven forms; detailed field audit pending | Property categories, published properties, team, posts, property cities | Source-level only | Pending | 0 |
+| home-3 | 14 | 14 | 14 | 14 schema-driven forms; source-to-field parity audit pending | Property map/search, categories, listings, team, featured listings, posts; enquiry writes to Enquiry records | Source-level only | Pending | 0 |
+| home-4 | 6 + uncounted div blocks | 1 | 1 | Hero schema only | None verified | Source-level only | Pending | 0 |
+| home-5 | 6 + uncounted div blocks | 1 | 1 | Hero schema only | None verified | Source-level only | Pending | 0 |
+| home-6 | 6 + uncounted div blocks | 1 | 1 | Hero schema only | None verified | Source-level only | Pending | 0 |
+| home-7 | 6 + uncounted div blocks | 2 | 2 | Category schema + partial hero schema | Property categories/counts | Source-level only | Pending | 0 |
+| home-8 | 7 + uncounted div blocks | 1 | 1 | Hero schema only | None verified | Source-level only | Pending | 0 |
+| home-9 | 6 + uncounted div blocks | 1 | 1 | Hero schema only | None verified | Source-level only | Pending | 0 |
+| home-10 | 8 + uncounted div blocks | 1 | 1 | Hero schema only | None verified | Source-level only | Pending | 0 |
+
+**Strict completion count remains 0.** The table deliberately distinguishes registered partials from fully verified source sections. No homepage has a complete source-block inventory, full section sequence, complete settings coverage, and desktop/tablet/mobile visual regression result yet.
+
+
+The Home 2 property-values gallery is now also registered as `property-values.home-2`. Its source-specific three-column composition (left card, two stacked center cards, right card), hover overlay, plus icon, image and per-card title/description/button/URL are editable. The repeated card markup lives in a small reusable Blade partial. This section is configuration-driven rather than backed by a new database content type.
+
+The Home 2 neighborhood gallery is another extracted div-based component (`gallery-sec-2`). Its original `gallery-card style-2` image overlay, city/count labels, links, decorative shape, slider controls and breakpoint behavior are retained. All eight card images, labels, titles and URLs have individual section settings, with shared slider loop/column and spacing/background controls. This is editable configuration content; it is not yet backed by a dedicated location entity.
+
+The Home 2 agent carousel is now registered as `team.home-2`. It retains the original `team-area-1`, `team-card style-2`, decorative team shape, source Swiper breakpoints, arrows, email/social actions and chat invitation. Its resolver loads active `TeamMember` records in configured order; the team editor now exposes social profile URLs as a validated JSON object so those links can be rendered without hardcoded demo URLs. This section's responsive behavior is represented by the source breakpoints and visibility controls, but browser verification is still pending.
+
+The Home 2 `why-sec-2` benefits block is now registered from its original div-based markup. Its three `why-card-1 style-2` cards retain the hover icon, numbered label, feature icon, text and full-width CTA. Each card's content/icon/link is independently editable; the section exposes desktop columns, spacing, decorative media, background, animation and responsive visibility controls.
+
+The Home 2 `popular-sec-1` listing is now a database-backed property grid using the original `popular-list-1` card, image slider, badge, metadata and filter-menu structure. The section resolver loads published properties with images/categories plus category filters; section controls cover item count, listing filter, columns, category filters, image sliders, card actions, badge, CTA, spacing, background, animation and responsive visibility. Favorite persistence is not implemented by this section yet, and no browser comparison has been performed; therefore it is not marked complete.
+
+The Home 2 featured-property carousel is a separate registered variant from the preceding filtered property grid. It preserves the source `popular-sec-1`, `popular-list-1 style-2`, two-slide Swiper layout, metadata, agent strip and previous/next controls, while resolving published property records, images and creator names. Its carousel controls and listing filters are section-specific. The Home 2 testimonial slider and five-item FAQ accordion are also registered with per-review/per-question settings, avatar/media selection, trust-summary fields, star ratings, unique accordion IDs and source-specific layout classes.
+
+Home 2's current draft initializer now includes the thirteen currently registered blocks in the identified source order. It is still not the complete original sequence: additional source blocks/components and shared header/footer/search behavior remain to be inventoried and converted before the design can pass the completion gate.
+
+The Home 2 advanced-search panel is now extracted as a separate `advance-search-wrapper stye-2` section. It obtains location options from published property cities and exposes min/max area option sets and labels. Its selects use the HTML `form` association to submit with the Home 2 hero search form, matching the existing `properties.index` controller's supported `location`, `mini_area` and `max_area` query parameters. The Home 2 hero now has a dedicated schema for split heading text, background video/mask, logo/video, social URLs, search labels/placeholders, property-type options/icons, animation and responsive visibility. The hero and advanced-search components are separate builder sections but remain connected by the form ID.
+
+**Home 2 current catalog count:** 15 major content blocks identified, extracted into section-specific Blade views, registered, and seeded in the draft initializer in source order. This is the first design with its major content-block sequence represented in the builder. It is not yet certified complete: the field-by-field audit of nested controls/interactions, header/footer and shared chrome verification, and desktop/tablet/mobile browser comparison remain open. Some secondary interactions/content details (for example persistent favorites and comment counts) are not implemented yet.
+
+
+### Home 3 extraction pass
+
+Home 3 now has fourteen major content blocks extracted and registered in the current draft initializer: hero/map/search/counters, categories, property grid, seven-card amenities carousel, team carousel, neighborhood feature gallery, app-download/QR showcase, featured-property fade gallery, trust-score/testimonial carousel, five-item FAQ accordion, property-goal enquiry form, promotional marquee, editorial blog grid and brand-logo strip. The hero map uses published properties with map coordinates, and its search options come from published property data. Featured gallery and blog sections use published database records. The enquiry form posts to the existing Laravel enquiries endpoint and therefore stores enquiries in the existing database table. The download, testimonials, FAQ, marquee and brand-strip content is editable in the homepage section configuration. Original Home 3 classes and theme JavaScript hooks (Bootstrap tabs/accordion, Swiper, WOW/GSAP animation hooks, popup-video and map hover classes) are retained in source markup. This is source-level only: no browser run has confirmed these interactions or responsive fidelity. The Home 3 section sequence is seeded in source order when an empty homepage is duplicated into a draft.
+
+
+### Media Library relationship hardening — 2026-11-17
+
+The section media picker now submits a Media record ID rather than a storage URL. The selected ID remains in the section's JSON configuration for stable, backwards-compatible rendering, and an additive `media_attachments` polymorphic relationship stores the actual `Media` foreign key plus the section field key. Both `HomepageSection` and `ReusableSection` expose these relationships. Replacing an image updates the field relationship; clearing it removes that relationship. Duplicating sections/homepages copies local media attachments; reusable sections keep their shared media relationships. Deleting a Media row cascades attachment rows, and the render resolver returns an empty image value if a stale/deleted ID remains in legacy JSON rather than emitting a broken numeric URL. Existing URL/path configuration values remain supported during migration. Picker metadata includes alt text, MIME type, size and disk; the builder displays the selected media name and size.
+
+**Media caveat:** section config still contains the media ID as well as the normalized relationship row. This deliberate compatibility layer allows existing Blade partials to consume a render-time URL without requiring a breaking rewrite of every section. Database migration, delete/replacement behavior and URL resolution have not been runtime-tested.
+
+**Completion gate:** all ten designs still have zero strictly completed sections. Source extraction and form registration do not equal completed visual/functional verification. Responsive and browser verification remains pending for every homepage.

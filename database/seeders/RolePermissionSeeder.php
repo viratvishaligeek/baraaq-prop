@@ -1,4 +1,70 @@
 <?php
+
 namespace Database\Seeders;
-use App\Models\Permission; use App\Models\Role; use Illuminate\Database\Seeder;
-class RolePermissionSeeder extends Seeder { public function run():void{$items=['dashboard.view'=>'View dashboard','properties.manage'=>'Manage properties','posts.manage'=>'Manage posts','pages.manage'=>'Manage pages','categories.manage'=>'Manage categories','media.manage'=>'Manage media','menus.manage'=>'Manage menus','banners.manage'=>'Manage banners','settings.manage'=>'Manage settings','team.manage'=>'Manage team','enquiries.manage'=>'Manage enquiries','users.manage'=>'Manage users'];foreach($items as $slug=>$name)Permission::updateOrCreate(['slug'=>$slug],['name'=>$name,'group'=>strtok($slug,'.')]);$admin=Role::updateOrCreate(['slug'=>'administrator'],['name'=>'Administrator','description'=>'Full CMS access']);$admin->permissions()->sync(Permission::pluck('id')->all());$editor=Role::updateOrCreate(['slug'=>'editor'],['name'=>'Editor','description'=>'Content editing access']);$editor->permissions()->sync(Permission::whereIn('slug',['dashboard.view','posts.manage','pages.manage','categories.manage','media.manage'])->pluck('id')->all());} }
+
+use App\Models\Permission;
+use App\Models\Role;
+use Illuminate\Database\Seeder;
+
+class RolePermissionSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $permissions = [
+            'dashboard.view' => 'View dashboard',
+            'analytics.view' => 'View analytics',
+        ];
+
+        $modules = [
+            'properties' => 'Properties',
+            'posts' => 'Blog posts',
+            'pages' => 'Pages',
+            'categories' => 'Categories',
+            'banners' => 'Banners',
+            'team' => 'Team members',
+            'services' => 'Services',
+            'testimonials' => 'Testimonials',
+            'comments' => 'Comments',
+            'menus' => 'Navigation menus',
+            'media' => 'Media library',
+            'widgets' => 'Widgets',
+            'enquiries' => 'Enquiries',
+            'newsletters' => 'Newsletter subscribers',
+            'settings' => 'Website settings',
+            'users' => 'Users and roles',
+        ];
+
+        foreach ($modules as $slug => $label) {
+            $permissions[$slug.'.manage'] = 'Manage '.$label;
+
+            foreach (['view' => 'View', 'create' => 'Create', 'edit' => 'Edit', 'delete' => 'Delete', 'publish' => 'Publish'] as $action => $verb) {
+                $permissions[$slug.'.'.$action] = $verb.' '.$label;
+            }
+        }
+
+        foreach ($permissions as $slug => $name) {
+            Permission::updateOrCreate(['slug' => $slug], [
+                'name' => $name,
+                'group' => strtok($slug, '.'),
+            ]);
+        }
+
+        $administrator = Role::updateOrCreate(['slug' => 'administrator'], [
+            'name' => 'Administrator',
+            'description' => 'Full CMS access',
+        ]);
+        $administrator->permissions()->sync(Permission::pluck('id')->all());
+
+        $editor = Role::updateOrCreate(['slug' => 'editor'], [
+            'name' => 'Editor',
+            'description' => 'Content editing access',
+        ]);
+        $editor->permissions()->sync(Permission::whereIn('slug', [
+            'dashboard.view',
+            'posts.view', 'posts.create', 'posts.edit', 'posts.publish',
+            'pages.view', 'pages.create', 'pages.edit', 'pages.publish',
+            'categories.view', 'categories.create', 'categories.edit',
+            'media.manage',
+        ])->pluck('id')->all());
+    }
+}

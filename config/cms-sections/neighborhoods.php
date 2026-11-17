@@ -1,0 +1,80 @@
+<?php
+
+return [
+    'neighborhoods.home-2' => [
+        'key' => 'neighborhoods.home-2',
+        'label' => 'Neighborhood gallery slider — Home 2',
+        'type' => 'neighborhood-gallery',
+        'source_design' => 'home-2',
+        'view' => 'frontend.sections.neighborhoods.home-2',
+        'defaults' => [
+            'eyebrow' => 'Explore Cities',
+            'heading' => 'Explore The Neighborhoods',
+            'description' => 'Find your dream apartment with our listing',
+            'items_limit' => 8,
+            'columns' => 4,
+            'loop' => true,
+            'show_mobile' => true,
+            'show_tablet' => true,
+            'show_desktop' => true,
+            'vertical_spacing' => 'space',
+            'shape_image' => '/theme-assets/img/shape/gallery-sec-1-left.png',
+            'item_1_image' => '/theme-assets/img/gallery/gallery-2-1.jpg',
+            'item_1_count' => '250 Properties',
+            'item_1_title' => 'London, United Kingdom',
+            'item_1_url' => '/properties',
+            'item_2_image' => '/theme-assets/img/gallery/gallery-2-2.jpg',
+            'item_2_count' => '135 Properties',
+            'item_2_title' => 'New Jersey, New York',
+            'item_2_url' => '/properties',
+            'item_3_image' => '/theme-assets/img/gallery/gallery-2-3.jpg',
+            'item_3_count' => '225 Properties',
+            'item_3_title' => 'Cape Town, South Africa',
+            'item_3_url' => '/properties',
+            'item_4_image' => '/theme-assets/img/gallery/gallery-2-4.jpg',
+            'item_4_count' => '143 Properties',
+            'item_4_title' => 'Los Angeles, New York',
+            'item_4_url' => '/properties',
+            'item_5_image' => '/theme-assets/img/gallery/gallery-2-5.jpg',
+            'item_5_count' => '321 Properties',
+            'item_5_title' => 'Seoul, South Korea',
+            'item_5_url' => '/properties',
+            'item_6_image' => '/theme-assets/img/gallery/gallery-2-6.jpg',
+            'item_6_count' => '212 Properties',
+            'item_6_title' => 'Seoul, South Korea',
+            'item_6_url' => '/properties',
+            'item_7_image' => '/theme-assets/img/gallery/gallery-2-7.jpg',
+            'item_7_count' => '432 Properties',
+            'item_7_title' => 'London, United Kingdom',
+            'item_7_url' => '/properties',
+            'item_8_image' => '/theme-assets/img/gallery/gallery-2-8.jpg',
+            'item_8_count' => '211 Properties',
+            'item_8_title' => 'New Jersey, New York',
+            'item_8_url' => '/properties',
+        ],
+        'fields' => array_merge([
+            'eyebrow' => ['label' => 'Eyebrow', 'type' => 'text', 'max' => 120],
+            'heading' => ['label' => 'Heading', 'type' => 'text', 'max' => 180],
+            'description' => ['label' => 'Description', 'type' => 'textarea', 'max' => 500],
+            'items_limit' => ['label' => 'Visible cards', 'type' => 'number', 'min' => 1, 'max' => 8],
+            'columns' => ['label' => 'Desktop slides per view', 'type' => 'select', 'options' => [2 => '2', 3 => '3', 4 => '4']],
+            'loop' => ['label' => 'Loop slider', 'type' => 'checkbox'],
+            'vertical_spacing' => ['label' => 'Section spacing', 'type' => 'select', 'options' => ['space' => 'Theme spacing', 'space-top' => 'Top only', 'space-bottom' => 'Bottom only', 'py-0' => 'No vertical spacing']],
+            'shape_image' => ['label' => 'Decorative shape image', 'type' => 'image', 'max' => 2048],
+            'background_color' => ['label' => 'Background color', 'type' => 'color'],
+            'background_image' => ['label' => 'Background image', 'type' => 'image', 'max' => 2048],
+            'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
+            'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
+            'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
+        ], (function () {
+            $fields = [];
+            for ($i = 1; $i <= 8; $i++) {
+                $fields['item_'.$i.'_image'] = ['label' => 'Card '.$i.' image', 'type' => 'image', 'max' => 2048];
+                $fields['item_'.$i.'_count'] = ['label' => 'Card '.$i.' count label', 'type' => 'text', 'max' => 80];
+                $fields['item_'.$i.'_title'] = ['label' => 'Card '.$i.' title', 'type' => 'text', 'max' => 150];
+                $fields['item_'.$i.'_url'] = ['label' => 'Card '.$i.' URL', 'type' => 'url', 'max' => 2048];
+            }
+            return $fields;
+        })()),
+    ],
+];
