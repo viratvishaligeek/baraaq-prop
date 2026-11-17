@@ -14,6 +14,9 @@ return [
             'items_limit' => 8,
             'columns' => 4,
             'loop' => true,
+            'show_mobile' => true,
+            'show_tablet' => true,
+            'show_desktop' => true,
             'vertical_spacing' => 'space',
             'shape_image' => '/theme-assets/img/shape/gallery-sec-1-left.png',
             'item_1_image' => '/theme-assets/img/gallery/gallery-2-1.jpg',
@@ -59,6 +62,10 @@ return [
             'vertical_spacing' => ['label' => 'Section spacing', 'type' => 'select', 'options' => ['space' => 'Theme spacing', 'space-top' => 'Top only', 'space-bottom' => 'Bottom only', 'py-0' => 'No vertical spacing']],
             'shape_image' => ['label' => 'Decorative shape image', 'type' => 'image', 'max' => 2048],
             'background_color' => ['label' => 'Background color', 'type' => 'color'],
+            'background_image' => ['label' => 'Background image', 'type' => 'image', 'max' => 2048],
+            'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
+            'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
+            'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
         ], (function () {
             $fields = [];
             for ($i = 1; $i <= 8; $i++) {
