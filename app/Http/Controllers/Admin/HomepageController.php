@@ -33,6 +33,7 @@ class HomepageController extends Controller
             'homepage' => $homepage->load('sections.mediaAttachments.media', 'sections.reusableSection.mediaAttachments.media'),
             'reusableSections' => ReusableSection::query()->where('status', 'published')->orderBy('name')->get(),
             'availableSections' => config('cms-sections.sections', []),
+            'queryableTypes' => app(\\App\\Services\\Widgets\\CmsWidgetRegistry::class)->queryableTypes(),
         ]);
     }
 
