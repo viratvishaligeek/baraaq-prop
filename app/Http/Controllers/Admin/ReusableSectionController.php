@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Homepage;
 use App\Models\HomepageSection;
+use App\Models\Media;
 use App\Models\ReusableSection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -53,9 +54,11 @@ class ReusableSectionController extends Controller
             foreach ($definition['fields'] ?? [] as $field => $schema) {
                 $mediaId = $sharedConfig[$field] ?? null;
 
-                if (($schema['type'] ?? null) !== 'image' || ! is_string($mediaId) || ! ctype_digit($mediaId)) {
+                if (($schema['type'] ?? null) !== 'image' || (! is_string($mediaId) && ! is_int($mediaId)) || ! ctype_digit((string) $mediaId)) {
                     continue;
                 }
+
+                abort_unless(Media::whereKey((int) $mediaId)->where('mime_type', 'like', 'image/%')->exists(), 422, 'Select a valid image from the Media Library.');
 
                 $reusableSection->mediaAttachments()->updateOrCreate(
                     ['field_key' => $field],
