@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use App\Models\Homepage;
+use App\Models\Page;
 use App\Models\Post;
 use App\Models\Property;
 use App\Models\ReusableSection;
@@ -202,6 +203,7 @@ class HomepageController extends Controller
 
         DB::transaction(function () use ($homepage) {
             Homepage::query()->lockForUpdate()->update(['is_default' => false]);
+            Page::query()->whereNotNull('homepage_key')->lockForUpdate()->update(['homepage_key' => null]);
 
             $homepage->update([
                 'is_default' => true,

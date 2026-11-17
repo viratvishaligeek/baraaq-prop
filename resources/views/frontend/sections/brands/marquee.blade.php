@@ -1,0 +1,9 @@
+@php
+    $logos = [];
+    for ($i=1; $i<=min(12,(int)($sectionConfig['items_limit'] ?? 6)); $i++) if(!empty($sectionConfig['item_'.$i.'_image'])) $logos[] = ['image'=>$sectionConfig['item_'.$i.'_image'],'url'=>$sectionConfig['item_'.$i.'_url'] ?? '#'];
+    $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
+    $options = json_encode(['loop'=>true,'speed'=>5000,'autoplay'=>['delay'=>0,'disableOnInteraction'=>false],'freeMode'=>true,'breakpoints'=>['0'=>['slidesPerView'=>2],'576'=>['slidesPerView'=>3],'992'=>['slidesPerView'=>5],'1200'=>['slidesPerView'=>6]]], JSON_UNESCAPED_SLASHES);
+@endphp
+@if(count($logos))
+<div class="brand-area-1 space overflow-hidden {{ $visibility }}" id="brands-{{ $section->id }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif><div class="container"><div class="row justify-content-center"><div class="col-lg-8"><div class="title-area text-center"><p class="sub-title">{{ $sectionConfig['eyebrow'] ?? '' }}</p><h2 class="sec-title">{{ $sectionConfig['heading'] ?? '' }}</h2></div><div class="swiper th-slider" id="brand-marquee-{{ $section->id }}" data-slider-options='{{ $options }}'><div class="swiper-wrapper">@for($repeat=0;$repeat<2;$repeat++)@foreach($logos as $logo)<div class="swiper-slide"><div class="brand-box"><a href="{{ $logo['url'] }}"><img src="{{ $logo['image'] }}" alt="Client logo" loading="lazy"></a></div></div>@endforeach @endfor</div></div></div></div></div></div>
+@endif

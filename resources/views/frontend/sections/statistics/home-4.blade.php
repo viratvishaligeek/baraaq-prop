@@ -1,0 +1,6 @@
+@php $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : '')); @endphp
+<section class="counter-box-wrap space overflow-hidden {{ $visibility }}" id="stats-{{ $section->id }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif>
+    <div class="container">@if(!empty($sectionConfig['heading']))<div class="title-area text-center"><p class="sub-title">{{ $sectionConfig['eyebrow'] ?? '' }}</p><h2 class="sec-title">{{ $sectionConfig['heading'] }}</h2>@if(!empty($sectionConfig['description']))<p>{{ $sectionConfig['description'] }}</p>@endif</div>@endif
+        <div class="counter-box-wrap">@for($i=1;$i<=4;$i++)<div class="counter-box fadeinup wow"><div class="media-body"><h4 class="box-number"><span class="counter-number">{{ $sectionConfig['stat_'.$i.'_value'] ?? '' }}</span><span class="plus-simple">{{ $sectionConfig['stat_'.$i.'_suffix'] ?? '' }}</span></h4><p class="box-text">{{ $sectionConfig['stat_'.$i.'_label'] ?? '' }}</p></div></div>@if($i<4)<div class="divider"></div>@endif @endfor</div>
+    </div>
+</section>
