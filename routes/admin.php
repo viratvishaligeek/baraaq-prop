@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AppearanceController;
+use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\CommentController;
