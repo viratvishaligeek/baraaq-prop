@@ -11,7 +11,7 @@ return [
             'rating' => '4.9',
             'review_count' => 189,
             'view_all_label' => 'View All Reviews',
-            'view_all_url' => '/testimonials',
+            'view_all_url' => '/contact.html',
             'trust_brand' => 'Trustipilot',
             'eyebrow' => 'Testimonials',
             'heading' => 'What Clients Say About Pillar',
