@@ -10,12 +10,13 @@
     @if(!empty($sectionConfig['left_shape_image']))<div class="shape-mockup spin d-none d-xxl-block" data-left="3%" data-bottom="5%"><img src="{{ $sectionConfig['left_shape_image'] }}" alt="img"></div>@endif
     <div class="container">
         <div class="row gy-4 align-items-center">
-            <div class="col-xl-6 col-lg-12">
+            <div class="{{ ($sectionConfig['show_map'] ?? true) ? 'col-xl-6' : 'col-xl-12' }} col-lg-12">
                 <div class="hero-style3">
                     <div class="title-area text-left mb-50">
                         <p class="sub-title{{ $animateContent ? ' fadeinup wow' : '' }}" data-wow-delay="0.2s"><span class="double-line"></span> {{ $sectionConfig['eyebrow'] ?? '' }}</p>
                         <h1 class="hero-title{{ $animateContent ? ' fadeinup wow' : '' }}" data-wow-delay="0.3s">{{ $sectionConfig['heading_prefix'] ?? '' }} <span class="title2 text-theme">{{ $sectionConfig['heading_highlight'] ?? '' }}</span> {{ $sectionConfig['heading_suffix'] ?? '' }}</h1>
                     </div>
+                    @if($sectionConfig['show_search_form'] ?? true)
                     <div class="hero-3-search-wrap">
                         <ul class="nav nav-tabs custom{{ $animateContent ? ' fadeinup wow' : '' }}" id="{{ $tabId }}" role="tablist" data-wow-delay="0.5s">
                             @foreach(['buy' => 'buy_tab_label', 'sell' => 'sell_tab_label', 'rent' => 'rent_tab_label'] as $tab => $labelKey)
@@ -115,6 +116,8 @@
                             </div>
                         </div>
                     </div>
+                    @endif
+                    @if($sectionConfig['show_counters'] ?? true)
                     <div class="hero-3-counter-wrap{{ $animateContent ? ' fadeinup wow' : '' }}" data-wow-delay="0.9s">
                         @for($i = 1; $i <= 4; $i++)
                             <div class="hero-3-counter-item">
@@ -123,8 +126,10 @@
                             </div>
                         @endfor
                     </div>
+                    @endif
                 </div>
             </div>
+            @if($sectionConfig['show_map'] ?? true)
             <div class="col-xl-6 col-lg-12">
                 <div class="map-wrapper{{ $animateContent ? ' fadeinright wow' : '' }}" data-wow-delay="0.5s">
                     @if(!empty($sectionConfig['map_image']))<img src="{{ $sectionConfig['map_image'] }}" alt="Property locations map">@endif
@@ -172,6 +177,7 @@
                     @endforeach
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </div>
