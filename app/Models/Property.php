@@ -14,7 +14,7 @@ class Property extends Model
         'property_type', 'listing_type', 'price', 'price_label',
         'bedrooms', 'bathrooms', 'area', 'area_unit', 'address',
         'city', 'state', 'postal_code', 'latitude', 'longitude',
-        'description', 'meta_title', 'meta_description', 'featured_image',
+        'description', 'meta_title', 'meta_description', 'canonical_url', 'og_image', 'featured_image',
         'status', 'is_featured', 'cta_mode', 'whatsapp_number',
         'whatsapp_message', 'published_at', 'features',
     ];
