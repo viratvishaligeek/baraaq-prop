@@ -3,7 +3,7 @@
     '@context' => 'https://schema.org',
     '@type' => 'WebPage',
     'name' => $page->meta_title ?: $page->title,
-    'description' => $page->meta_description ?: $siteSettings['meta_description'] ?? '',
+    'description' => $page->meta_description ?: ($siteSettings['meta_description'] ?? ''),
     'url' => route('pages.show', $page),
 ])</script>
 @endsection
