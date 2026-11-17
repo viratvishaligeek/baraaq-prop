@@ -29,6 +29,38 @@ The inventory below records the major content blocks visible in the original HTM
 
 The ten pages have distinct hero variants and differing section order, composition, CSS classes and footer/header variants. They must remain separate presets. The builder must expose sections from every design and retain each section's source design identity.
 
+## Home 3 implementation checkpoint — 2026-11-17
+
+This matrix records code that is present on `feat/property-cms-foundation`. “Implemented in code” is not the same as passing the strict completion gate: no Laravel runtime, database-backed browser session, or desktop/tablet/mobile screenshot comparison has been executed in this environment.
+
+| Home 3 source block | Current implementation status | Remaining verification / caveat |
+|---|---|---|
+| Hero, map and counters | Hero config and Blade view expose headings, four counters, map artwork, visibility and animation controls. Map cards now come only from published `properties` records with non-null latitude/longitude; marker positions are calculated from those records’ coordinate bounds. No sample property card or fixed marker coordinates remain. | Counter values remain manually editable because the database has no visitor, customer or project-handover metrics. Geographic pin placement is data-relative to the selected listings, not a geocoded tile map. Browser overlay and responsive layout pending. |
+| Hero search | City, property type, listing type, bedroom options and active property categories are queried from the database. Buy/sell submit `listing_type=sale`; rent submits `listing_type=rent`. Advanced form submits category, location, listing type, property type, bedrooms, price and area filters. | Browser submission and resulting pagination state pending. |
+| Property categories | Source-specific category slider uses active property categories and existing category counts/links. | Theme slider behavior and visual match pending. |
+| Popular properties | Uses published property records, category filters and source-specific card markup/settings. | Image carousel, favorite/gallery actions and responsive card layout pending browser verification. |
+| Why choose us | Seven editable source-style feature cards, icon media, background and animation/visibility settings. | Browser animation and responsive comparison pending. |
+| Team | Uses active team-member records and the Home 3 source-specific team card/carousel view. | Carousel behavior and responsive comparison pending. |
+| Neighborhood feature gallery | Four individually editable cards retain the asymmetric original large-left / stacked-right layout, images, counts, labels and URLs. | Browser visual comparison pending. |
+| App download | Editable copy, store links, QR image, three collage images, decorative media, spacing, background and animation settings. | QR destination/content validity and mobile composition pending. |
+| Featured property gallery | Uses published featured property records in the original Swiper layout; three source slides, editable backgrounds, agent portrait, card copy, icons and visibility/spacing settings. | Swiper initialization and browser comparison pending. |
+| Testimonials / trust score | Four editable testimonial entries, rating summary, trust label and media are stored in section JSON and rendered in the original slider layout. | Content is section configuration, not a separate testimonial-record model. Slider/browser verification pending. |
+| FAQ | Five editable question/answer pairs render in the source accordion structure with visibility, spacing, background and animation controls. | Bootstrap accordion interaction and responsive comparison pending. |
+| Enquiry form | Editable form labels/placeholders and map panel; submits to the existing `enquiries.store` endpoint with CSRF and validation feedback. | End-to-end database submission and error/success browser states pending. |
+| Promotional marquee | Three editable messages, URLs and icons; duplicate group count and background are configurable while retaining the marquee wrapper. | Continuous motion and responsive behavior pending browser verification. |
+| Blog | Uses published post records and the source-specific Home 3 blog card layout with editable display options and fallbacks. | Blog images, author metadata and card interactions pending browser verification. |
+| Brand strip | Six editable logo/media and URL pairs, responsive slide counts, spacing and background; retains Swiper markup. | Swiper initialization and responsive comparison pending. |
+
+### Home 3 data and media integration
+
+- Public property search applies validated filters against published property records, including keyword, city/location, state, postal code, listing type (`sale`, `rent`, `lease`), property type, category, price range, bedroom range and area range. The legacy `mini_area` query name remains accepted alongside `min_area`.
+- Homepage section image fields persist Media Library record IDs in section JSON and a field-keyed polymorphic `media_attachments` relationship. The renderer resolves IDs to media URLs and metadata at render time. Existing non-numeric URL-based settings continue to render unchanged.
+- Reusable sections keep their own media relationships; section duplication copies local attachment rows. Removing a homepage section cleans its attachment rows. Media deletion is blocked while a section/reusable section still references the record; the database foreign key also cascades attachment rows if a media record is removed outside the controller.
+- Added automated feature coverage for coordinate-backed Home 3 map data and multi-field property search, plus the existing media relationship tests. These tests have **not** been executed in this environment.
+
+**Strict completion gate: 0 Home 3 sections certified complete.** The implementation paths above have been added/updated, but Laravel tests, migrations, actual database persistence, JavaScript interaction checks and desktop/tablet/mobile browser verification are still pending. Do not set `is_composition_complete` or switch the live homepage based on this source-level checkpoint alone.
+
+
 ## Existing Blade conversion status
 
 - `home.blade.php` is the dynamic primary homepage and already receives property, banner, post and team collections from `HomeController`.
