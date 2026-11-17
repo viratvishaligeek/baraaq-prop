@@ -51,7 +51,7 @@ class ContentController extends Controller
         $base = Str::slug($value) ?: Str::random(8);
         $slug = $base;
         $suffix = 2;
-        while ($model::where('slug',$slug)->when($ignoreId,fn($q)=>$q->whereKeyNot($ignoreId))->exists()) $slug = $base.'-'.$suffix++;
+        while ($model::withTrashed()->where('slug',$slug)->when($ignoreId,fn($q)=>$q->whereKeyNot($ignoreId))->exists()) $slug = $base.'-'.$suffix++;
         return $slug;
     }
 
