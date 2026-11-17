@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Support\\HtmlSanitizer;
-use PHPUnit\\Framework\\TestCase;
+use App\Support\HtmlSanitizer;
+use PHPUnit\Framework\TestCase;
 
 class HtmlSanitizerTest extends TestCase
 {
