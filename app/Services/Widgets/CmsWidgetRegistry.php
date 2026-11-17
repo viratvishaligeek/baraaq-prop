@@ -89,7 +89,7 @@ class CmsWidgetRegistry
     {
         $propertyFilters = [
             'listing_type' => ['label' => 'Listing type', 'type' => 'select', 'options' => ['all' => 'All', 'sale' => 'For sale', 'rent' => 'For rent']],
-            'category_id' => ['label' => 'Property category ID', 'type' => 'integer', 'min' => 1],
+            'category_id' => ['label' => 'Property category ID', 'type' => 'integer', 'min' => 1, 'category_type' => 'property'],
             'city' => ['label' => 'City contains', 'type' => 'text', 'max' => 100],
             'property_type' => ['label' => 'Property type', 'type' => 'text', 'max' => 100],
             'min_price' => ['label' => 'Minimum price', 'type' => 'number', 'min' => 0],
@@ -108,7 +108,7 @@ class CmsWidgetRegistry
                 'designation' => ['label' => 'Designation contains', 'type' => 'text', 'max' => 120],
             ]],
             'blog-slider' => ['label' => 'Blog posts', 'table' => 'posts', 'sort' => ['published_at', 'created_at', 'title'], 'filters' => [
-                'category_id' => ['label' => 'Blog category ID', 'type' => 'integer', 'min' => 1],
+                'category_id' => ['label' => 'Blog category ID', 'type' => 'integer', 'min' => 1, 'category_type' => 'post'],
             ]],
             'featured-gallery-slider' => ['label' => 'Featured properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price'], 'filters' => $propertyFilters],
             'category-slider' => ['label' => 'Categories', 'table' => 'categories', 'sort' => ['sort_order', 'created_at', 'name'], 'filters' => []],
