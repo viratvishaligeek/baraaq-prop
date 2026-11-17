@@ -1,4 +1,5 @@
 @php
+    $animateContent = $sectionConfig['animate_content'] ?? true;
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
 
@@ -8,7 +9,7 @@
     <div class="container">
         <div class="row gy-4">
             <div class="col-xl-4 col-lg-6">
-                <div class="download-2-thumbs fadeinup wow" data-wow-duration="1.5s" data-wow-delay="0.3s">
+                <div class="download-2-thumbs{{ $animateContent ? ' fadeinup wow' : '' }}" data-wow-duration="1.5s" data-wow-delay="0.3s">
                     <div class="top">@if(!empty($sectionConfig['image_1']))<img src="{{ $sectionConfig['image_1'] }}" alt="App preview">@endif</div>
                     <div class="bottom">
                         <div class="left">@if(!empty($sectionConfig['image_2']))<img src="{{ $sectionConfig['image_2'] }}" alt="App preview">@endif</div>
@@ -44,7 +45,7 @@
                 </div>
             </div>
             <div class="col-xl-3 col-lg-6">
-                <div class="download-thumb style-2 fadeinup wow" data-wow-delay="0.5s">
+                <div class="download-thumb style-2{{ $animateContent ? ' fadeinup wow' : '' }}" data-wow-delay="0.5s">
                     @if(!empty($sectionConfig['right_image']))<img src="{{ $sectionConfig['right_image'] }}" alt="Download app">@endif
                     @if(!empty($sectionConfig['round_shape_image']))<div class="download-2-round-bg"><img src="{{ $sectionConfig['round_shape_image'] }}" alt="Decorative shape"></div>@endif
                 </div>
