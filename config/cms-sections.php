@@ -261,6 +261,7 @@ $sections = array_merge($sections, require __DIR__.'/cms-sections/property-value
 $sections = array_merge($sections, require __DIR__.'/cms-sections/neighborhoods.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/team.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/team-home-3.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/team-piller.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/gallery-home-3.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/why.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/why-home-3.php');
