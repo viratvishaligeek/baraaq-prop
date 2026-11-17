@@ -356,3 +356,10 @@ The existing Media Library now has a permission-protected image picker endpoint 
 
 
 The Home 2 section library has expanded to include its source-specific team carousel, property-values gallery and neighborhood gallery. Team and category records are resolved by `SectionDataResolver`; the remaining about/gallery content is stored in per-instance configuration. The team editor accepts validated social-link JSON. The image picker is used by all section fields typed as `image`, including hero, category, about, gallery, property-values and team decorative media. All of these remain pending Laravel/browser execution and responsive screenshot comparison.
+
+
+### Home 2 major content sequence — 2026-11-17
+
+The Home 2 preset now has 15 major source blocks represented as registered builder sections in the source order: hero, advanced search, categories, about, benefits, published-property grid, neighborhood gallery, property values, team carousel, app-download/QR showcase, marquee, second featured-property carousel, testimonials/trust summary, FAQ accordion and blog carousel. The Home 2 draft initializer seeds these 15 sections. The hero and advanced search are separate builder sections but their controls are connected using the HTML form association, so location/min-area/max-area filters submit with the hero's existing property search form and match the current property index query parameters.
+
+Section definitions are split across dedicated files under `config/cms-sections/`; rendering is handled by section-family Blade views and `SectionDataResolver` providers. The Media Library picker is available for image-typed fields. This is a source-level milestone, not a production sign-off: favorites persistence and blog comment counts are not implemented, shared header/footer/global search still need their own complete inventory, and the full field/interaction plus responsive screenshot audits are pending. The strict ten-template completion gate remains closed until all ten designs pass those checks.
