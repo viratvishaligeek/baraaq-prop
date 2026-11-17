@@ -35,3 +35,34 @@ jobs:
 
       - name: Run Laravel feature and unit tests
         run: php artisan test --stop-on-failure
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install Playwright
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+
+      - name: Prepare browser-test database
+        run: |
+          touch database/database.sqlite
+          DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan migrate --seed --force
+
+      - name: Start Laravel for browser tests
+        run: |
+          APP_URL=http://127.0.0.1:8000 DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan serve --host=127.0.0.1 --port=8000 > /tmp/laravel-browser.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --silent --fail http://127.0.0.1:8000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/laravel-browser.log
+          exit 1
+
+      - name: Test all ten Piller homepages at desktop, tablet and mobile sizes
+        run: APP_URL=http://127.0.0.1:8000 DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite npm run test:e2e
