@@ -101,6 +101,7 @@ $sections = array_merge($sections, require __DIR__.'/cms-sections/property-value
 $sections = array_merge($sections, require __DIR__.'/cms-sections/neighborhoods.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/team.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/why.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/properties.php');
 
 return [
     'sections' => $sections,
