@@ -14,7 +14,7 @@ class TrackPageView
     {
         $response = $next($request);
 
-        if (!$request->isMethod('GET') || $request->is('admin/*') || $request->is('storage/*') || $request->is('build/*') || $request->is('theme-assets/*') || $request->is('sitemap.xml')) {
+        if (!$request->isMethod('GET') || $request->is('admin/*') || $request->is('storage/*') || $request->is('build/*') || $request->is('theme-assets/*') || $request->is('sitemap.xml') || $request->is('robots.txt')) {
             return $response;
         }
 
