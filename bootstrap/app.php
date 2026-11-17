@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureAdministrator;
 use App\Http\Middleware\EnsurePermission;
+use App\Http\Middleware\TrackPageView;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
