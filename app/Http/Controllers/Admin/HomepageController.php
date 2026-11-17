@@ -140,7 +140,7 @@ class HomepageController extends Controller
         abort_unless($homepage->status === 'draft', 404);
 
         return view('frontend.home-builder', [
-            'homepage' => $homepage->load(['sections.reusableSection']),
+            'homepage' => $homepage->load(['sections.reusableSection.mediaAttachments.media', 'sections.mediaAttachments.media']),
             'properties' => Property::published()
                 ->with('category:id,name')
                 ->latest('published_at')
