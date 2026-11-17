@@ -133,6 +133,28 @@ class HomepageSectionController extends Controller
             $data['config'] ?? [],
             array_flip($allowedFields)
         );
+        foreach ($submittedConfig as $field => $value) {
+            if (($definition['fields'][$field]['type'] ?? null) !== 'image') {
+                continue;
+            }
+
+            if ($value === null || $value === '') {
+                $section->mediaAttachments()->where('field_key', $field)->delete();
+                continue;
+            }
+
+            if (ctype_digit((string) $value)) {
+                abort_unless(Media::whereKey((int) $value)->where('mime_type', 'like', 'image/%')->exists(), 422, 'Select a valid image from the Media Library.');
+                $section->mediaAttachments()->updateOrCreate(
+                    ['field_key' => $field],
+                    ['media_id' => (int) $value]
+                );
+            } else {
+                // Keep old URL-based configurations working during the migration.
+                $section->mediaAttachments()->where('field_key', $field)->delete();
+            }
+        }
+
         $config = array_merge($section->config ?? [], $submittedConfig);
 
         $section->update(['config' => $config]);
