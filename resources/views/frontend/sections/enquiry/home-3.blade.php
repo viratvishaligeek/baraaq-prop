@@ -1,4 +1,5 @@
 @php
+    $animateContent = $sectionConfig['animate_content'] ?? true;
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
 
@@ -24,8 +25,8 @@
                         <form action="{{ route('enquiries.store') }}" method="POST" class="homepage-property-enquiry">
                             @csrf
                             <div class="title-area text-left mb-70">
-                                <p class="sub-title text-anime-style-2"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
-                                <h2 class="sec-title text-anime-style-3">{{ $sectionConfig['heading'] ?? '' }}</h2>
+                                <p class="sub-title{{ $animateContent ? ' text-anime-style-2' : '' }}"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
+                                <h2 class="sec-title{{ $animateContent ? ' text-anime-style-3' : '' }}">{{ $sectionConfig['heading'] ?? '' }}</h2>
                             </div>
                             <div class="row">
                                 <div class="form-group col-lg-6 col-md-6">
@@ -42,7 +43,7 @@
                                 </div>
                                 <div class="form-group col-lg-6 col-md-6">
                                     <label for="home3-enquiry-time-{{ $section->id }}">{{ $sectionConfig['time_label'] ?? 'Desired Time' }}</label>
-                                    <input type="text" class="form-control" name="preferred_time" id="home3-enquiry-time-{{ $section->id }}" placeholder="Desired Time" value="{{ old('preferred_time') }}">
+                                    <input type="text" class="form-control" name="preferred_time" id="home3-enquiry-time-{{ $section->id }}" placeholder="{{ $sectionConfig['time_placeholder'] ?? 'Desired Time' }}" value="{{ old('preferred_time') }}">
                                 </div>
                                 <div class="form-group col-lg-12">
                                     <label for="home3-enquiry-message-{{ $section->id }}">{{ $sectionConfig['message_label'] ?? 'Additional Message' }}</label>
