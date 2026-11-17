@@ -303,9 +303,9 @@
                         </div>
                         <div class="col-auto d-none d-xl-block">
                             <div class="header-button">
-                                <a href="{{ route('properties.index') }}" class="th-btn outline pill text-white">
+                                <a href="{{ $siteSettings['header_cta_url'] ?? route('properties.index') }}" class="th-btn outline pill text-white">
                                     <i class="fa-regular fa-house-chimney me-2">
-                                    </i> Browse Properties </a>
+                                    </i> {{ $siteSettings['header_cta_label'] ?? 'Browse Properties' }} </a>
                                 <button type="button" class="icon-btn searchBoxToggler text-white">
                                     <i class="far fa-search">
                                     </i>
