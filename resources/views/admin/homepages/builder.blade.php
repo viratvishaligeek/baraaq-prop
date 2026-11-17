@@ -279,7 +279,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (!targetInput) return;
                         targetInput.value = String(item.id);
                         const preview = targetInput.parentElement.querySelector('[data-media-preview]');
-                        if (preview) { preview.src = item.url; preview.alt = item.alt || item.name; preview.hidden = false; }\n                        const meta = targetInput.parentElement.querySelector('[data-media-meta]');\n                        if (meta) meta.textContent = item.name + ' · ' + (Number(item.size || 0) / 1024).toFixed(1) + ' KB';
+                        if (preview) { preview.src = item.url; preview.alt = item.alt || item.name; preview.hidden = false; }
+                        const meta = targetInput.parentElement.querySelector('[data-media-meta]');
+                        if (meta) meta.textContent = item.name + ' · ' + (Number(item.size || 0) / 1024).toFixed(1) + ' KB';
                         modal.hide();
                     });
                     col.append(button);
@@ -307,7 +309,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (!input) return;
                 input.value = '';
                 const preview = input.parentElement.querySelector('[data-media-preview]');
-                if (preview) preview.hidden = true;\n                const meta = input.parentElement.querySelector('[data-media-meta]');\n                if (meta) meta.textContent = '';
+                if (preview) preview.hidden = true;
+                const meta = input.parentElement.querySelector('[data-media-meta]');
+                if (meta) meta.textContent = '';
             });
         });
         document.getElementById('homepage-media-search').addEventListener('submit', (event) => {
