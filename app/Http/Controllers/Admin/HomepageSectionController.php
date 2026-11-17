@@ -106,6 +106,7 @@ class HomepageSectionController extends Controller
 
             switch ($schema['type'] ?? 'text') {
                 case 'textarea':
+                case 'richtext':
                 case 'text':
                 case 'url':
                 case 'image':
