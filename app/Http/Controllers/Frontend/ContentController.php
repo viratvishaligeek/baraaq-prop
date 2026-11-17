@@ -26,7 +26,7 @@ class ContentController extends Controller
         return view('frontend.blog.index', [
             'posts' => $posts,
             'activeCategory' => $request->query('category'),
-            'categories' => Category::where('type', 'post')->orderBy('name')->get(['id', 'name', 'slug']),
+            'categories' => Category::where('type', 'post')->where('is_active', true)->orderBy('name')->get(['id', 'name', 'slug']),
         ]);
     }
 
