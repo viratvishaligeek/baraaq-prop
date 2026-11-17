@@ -1,15 +1,15 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Http\\Controllers\\Admin\\MediaPickerController;
-use App\\Models\\Media;
-use App\\Models\\User;
-use Illuminate\\Foundation\\Testing\\RefreshDatabase;
-use Illuminate\\Http\\Request;
-use Illuminate\\Http\\UploadedFile;
-use Illuminate\\Support\\Facades\\Storage;
-use Tests\\TestCase;
+use App\Http\Controllers\Admin\MediaPickerController;
+use App\Models\Media;
+use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
 
 class SharedMediaPickerUploadTest extends TestCase
 {
@@ -53,7 +53,7 @@ class SharedMediaPickerUploadTest extends TestCase
         try {
             app(MediaPickerController::class)->upload($request);
             $this->fail('A non-image file should not be accepted by the image picker.');
-        } catch (\\Illuminate\\Validation\\ValidationException $exception) {
+        } catch (\Illuminate\Validation\ValidationException $exception) {
             $this->assertArrayHasKey('files.0', $exception->errors());
         }
 
