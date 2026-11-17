@@ -32,6 +32,7 @@ $defaults = [
 $designs = [
     'testimonials.index' => ['label' => 'Testimonials — Classic centered slider (Home 1)', 'design' => 'index', 'view' => 'frontend.sections.testimonials.index'],
     'testimonials.home-4' => ['label' => 'Testimonials — Editorial split cards (Home 4)', 'design' => 'home-4', 'view' => 'frontend.sections.testimonials.home-4'],
+    'testimonials.home-5' => ['label' => 'Testimonials — Dark three-card slider (Home 5)', 'design' => 'home-5', 'view' => 'frontend.sections.testimonials.home-5'],
     'testimonials.home-10' => ['label' => 'Testimonials — Modern card grid (Home 10)', 'design' => 'home-10', 'view' => 'frontend.sections.testimonials.home-10'],
 ];
 
