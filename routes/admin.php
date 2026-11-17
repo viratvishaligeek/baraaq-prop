@@ -45,6 +45,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/homepages/{homepage}/builder', [HomepageController::class, 'builder'])
             ->middleware('permission:settings.manage')
             ->name('homepages.builder');
+        Route::get('/homepages/{homepage}/preview', [HomepageController::class, 'preview'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.preview');
+
         Route::patch('/homepages/{homepage}/publish', [HomepageController::class, 'publish'])
             ->middleware('permission:settings.manage')
             ->name('homepages.publish');
