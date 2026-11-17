@@ -87,9 +87,9 @@ class CmsWidgetRegistry
     public function queryableTypes(): array
     {
         return [
-            'service-list' => ['label' => 'Services', 'table' => 'services', 'sort' => ['published_at', 'created_at', 'title']],
+            'service-list' => ['label' => 'Services', 'table' => 'services', 'sort' => ['published_at', 'created_at', 'title'], 'slider' => false],
             'property-slider-grid' => ['label' => 'Properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price']],
-            'property-list' => ['label' => 'Properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price']],
+            'property-list' => ['label' => 'Properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price'], 'slider' => false],
             'testimonial-slider' => ['label' => 'Testimonials', 'table' => 'testimonials', 'sort' => ['sort_order', 'created_at', 'name']],
             'team-slider' => ['label' => 'Team members', 'table' => 'team_members', 'sort' => ['sort_order', 'created_at', 'name']],
             'blog-slider' => ['label' => 'Blog posts', 'table' => 'posts', 'sort' => ['published_at', 'created_at', 'title']],
