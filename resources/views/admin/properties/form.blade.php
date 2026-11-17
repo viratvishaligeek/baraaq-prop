@@ -192,7 +192,12 @@
                     <small class="text-muted">Image up to 5 MB.</small>
                     <label class="form-label mt-3">Gallery images</label>
                     <input type="file" class="form-control" name="gallery[]" accept="image/*" multiple>
-                    <small class="text-muted">Up to 20 images, 5 MB each.</small>
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                        data-open-media-picker data-media-multiple data-target="property-gallery-media-selection">
+                        Add images from Media Library
+                    </button>
+                    <div id="property-gallery-media-selection" data-input-name="gallery_media_ids[]" class="d-flex flex-wrap gap-2 mt-2"></div>
+                    <small class="text-muted">Up to 20 gallery images total, 5 MB per uploaded file.</small>
                     @if ($property->exists && $property->images->isNotEmpty())
                         <p class="small text-muted mt-3 mb-2">Drag images to reorder. Use the star to set the featured
                             image.</p>
