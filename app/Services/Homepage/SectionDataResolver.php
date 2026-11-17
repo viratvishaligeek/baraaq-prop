@@ -22,6 +22,7 @@ class SectionDataResolver
     private function categories(array $config): Collection
     {
         return Category::query()
+            ->where('type', 'property')
             ->where('is_active', true)
             ->withCount(['properties' => fn ($query) => $query->published()])
             ->orderBy('sort_order')
