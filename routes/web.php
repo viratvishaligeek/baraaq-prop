@@ -32,5 +32,3 @@ Route::get('/blog-details.html', fn () => redirect()->route('blog.index'));
 Route::get('/{template}.html', [ThemePageController::class, 'show'])
     ->where('template', 'about|agency|agency-details|blog-grid-left-sidebar|blog-grid-right-sidebar|contact|error|faq|gallery|home-10|home-2|home-3|home-4|home-5|home-6|home-7|home-8|home-9|neighborhood-guide|pricing|service|service-details|service-right-sidebar|team|team-details')
     ->name('theme.page');
-
-Route::get('/{page:slug}', [FrontendContentController::class, 'page'])->name('pages.show');
