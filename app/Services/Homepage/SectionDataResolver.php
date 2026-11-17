@@ -86,8 +86,8 @@ class SectionDataResolver
 
     private function testimonials(array $config): array
     {
-        $testimonials = Testimonial::where('status', 'published')
-            ->where('is_active', true)
+        $query = Testimonial::where('status', 'published')->where('is_active', true);
+        $testimonials = (clone $query)
             ->orderBy('sort_order')
             ->latest()
             ->limit((int) ($config['items_limit'] ?? 4))
@@ -95,8 +95,8 @@ class SectionDataResolver
 
         return [
             'testimonials' => $testimonials,
-            'averageRating' => round((float) ($testimonials->whereNotNull('rating')->avg('rating') ?? 0), 1),
-            'reviewCount' => $testimonials->count(),
+            'averageRating' => round((float) ((clone $query)->whereNotNull('rating')->avg('rating') ?? 0), 1),
+            'reviewCount' => (clone $query)->count(),
         ];
     }
 
