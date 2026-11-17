@@ -11,19 +11,28 @@
         $whatsappMessage = $property->whatsapp_message ?: 'I am interested in '.$property->title.' - '.route('properties.show', $property);
     @endphp
     @if(in_array($ctaMode, ['contact_form', 'both'], true) || ($ctaMode === 'whatsapp' && !$whatsappNumber))
-        @if(session('enquiry_success'))
-            <div class="alert alert-success">{{ session('enquiry_success') }}</div>
-        @endif
-        <form method="POST" action="{{ route('enquiries.store') }}">
-            @csrf
-            <input type="hidden" name="property_id" value="{{ $property->id }}">
-            <div class="form-group mb-3"><input class="form-control" name="name" placeholder="Your name" required></div>
-            <div class="form-group mb-3"><input class="form-control" name="email" type="email" placeholder="Email address"></div>
-            <div class="form-group mb-3"><input class="form-control" name="phone" placeholder="Phone number" required></div>
-            <div class="form-group mb-3"><textarea class="form-control" name="message" rows="4" placeholder="Your message"></textarea></div>
-            <button class="th-btn w-100">Send enquiry</button>
-        </form>
+        <button type="button" class="th-btn w-100" data-bs-toggle="modal" data-bs-target="#propertyEnquiryModal">Request property details</button>
     @endif
+    @if(session('enquiry_success'))
+        <div class="alert alert-success mt-3">{{ session('enquiry_success') }}</div>
+    @endif
+    <div class="modal fade" id="propertyEnquiryModal" tabindex="-1" aria-labelledby="propertyEnquiryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" id="propertyEnquiryModalLabel">Enquire about {{ $property->title }}</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+            <div class="modal-body">
+                <form method="POST" action="{{ route('enquiries.store') }}">
+                    @csrf
+                    <input type="hidden" name="property_id" value="{{ $property->id }}">
+                    <div class="form-group mb-3"><label class="form-label" for="enquiry-name">Your name</label><input id="enquiry-name" class="form-control" name="name" value="{{ old('name') }}" required maxlength="150"></div>
+                    <div class="form-group mb-3"><label class="form-label" for="enquiry-email">Email</label><input id="enquiry-email" class="form-control" name="email" type="email" value="{{ old('email') }}" maxlength="190"></div>
+                    <div class="form-group mb-3"><label class="form-label" for="enquiry-phone">Phone</label><input id="enquiry-phone" class="form-control" name="phone" value="{{ old('phone') }}" maxlength="30"></div>
+                    <div class="form-group mb-3"><label class="form-label" for="enquiry-message">Message</label><textarea id="enquiry-message" class="form-control" name="message" rows="4" maxlength="5000">{{ old('message') }}</textarea></div>
+                    @if($errors->any())<div class="alert alert-danger">{{ $errors->first() }}</div>@endif
+                    <button class="th-btn w-100" type="submit">Send enquiry</button>
+                </form>
+            </div>
+        </div></div>
+    </div>
     @if(in_array($ctaMode, ['whatsapp', 'both'], true) && $whatsappNumber)
         <a class="th-btn w-100 mt-2" target="_blank" rel="noopener noreferrer" href="https://wa.me/{{ $whatsappNumber }}?text={{ urlencode($whatsappMessage) }}">Enquire on WhatsApp</a>
     @endif
