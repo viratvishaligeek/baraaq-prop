@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MediaPickerController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\NewsletterController;
+use App\Http\Controllers\Admin\PageHomepageController;
 use App\Http\Controllers\Admin\PropertyController;
 use App\Http\Controllers\Admin\ReusableSectionController;
 use App\Http\Controllers\Admin\RoleController;
