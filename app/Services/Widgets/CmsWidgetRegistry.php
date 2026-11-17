@@ -87,16 +87,31 @@ class CmsWidgetRegistry
 
     public function queryableTypes(): array
     {
+        $propertyFilters = [
+            'listing_type' => ['label' => 'Listing type', 'type' => 'select', 'options' => ['all' => 'All', 'sale' => 'For sale', 'rent' => 'For rent']],
+            'category_id' => ['label' => 'Property category ID', 'type' => 'integer', 'min' => 1],
+            'city' => ['label' => 'City contains', 'type' => 'text', 'max' => 100],
+            'property_type' => ['label' => 'Property type', 'type' => 'text', 'max' => 100],
+            'min_price' => ['label' => 'Minimum price', 'type' => 'number', 'min' => 0],
+            'max_price' => ['label' => 'Maximum price', 'type' => 'number', 'min' => 0],
+        ];
+
         return [
-            'service-list' => ['label' => 'Services', 'table' => 'services', 'sort' => ['published_at', 'created_at', 'title'], 'slider' => false],
-            'city-explore-gallery' => ['label' => 'Featured property explorer', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price']],
-            'property-slider-grid' => ['label' => 'Properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price']],
-            'property-list' => ['label' => 'Properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price'], 'slider' => false],
-            'testimonial-slider' => ['label' => 'Testimonials', 'table' => 'testimonials', 'sort' => ['sort_order', 'created_at', 'name']],
-            'team-slider' => ['label' => 'Team members', 'table' => 'team_members', 'sort' => ['sort_order', 'created_at', 'name']],
-            'blog-slider' => ['label' => 'Blog posts', 'table' => 'posts', 'sort' => ['published_at', 'created_at', 'title']],
-            'featured-gallery-slider' => ['label' => 'Properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price']],
-            'category-slider' => ['label' => 'Categories', 'table' => 'categories', 'sort' => ['sort_order', 'created_at', 'name']],
+            'service-list' => ['label' => 'Services', 'table' => 'services', 'sort' => ['published_at', 'created_at', 'title'], 'slider' => false, 'filters' => []],
+            'city-explore-gallery' => ['label' => 'Featured property explorer', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price'], 'filters' => $propertyFilters],
+            'property-slider-grid' => ['label' => 'Properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price'], 'filters' => $propertyFilters],
+            'property-list' => ['label' => 'Properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price'], 'slider' => false, 'filters' => $propertyFilters],
+            'testimonial-slider' => ['label' => 'Testimonials', 'table' => 'testimonials', 'sort' => ['sort_order', 'created_at', 'name'], 'filters' => [
+                'min_rating' => ['label' => 'Minimum rating', 'type' => 'integer', 'min' => 1, 'max' => 5],
+            ]],
+            'team-slider' => ['label' => 'Team members', 'table' => 'team_members', 'sort' => ['sort_order', 'created_at', 'name'], 'filters' => [
+                'designation' => ['label' => 'Designation contains', 'type' => 'text', 'max' => 120],
+            ]],
+            'blog-slider' => ['label' => 'Blog posts', 'table' => 'posts', 'sort' => ['published_at', 'created_at', 'title'], 'filters' => [
+                'category_id' => ['label' => 'Blog category ID', 'type' => 'integer', 'min' => 1],
+            ]],
+            'featured-gallery-slider' => ['label' => 'Featured properties', 'table' => 'properties', 'sort' => ['published_at', 'created_at', 'price'], 'filters' => $propertyFilters],
+            'category-slider' => ['label' => 'Categories', 'table' => 'categories', 'sort' => ['sort_order', 'created_at', 'name'], 'filters' => []],
         ];
     }
-}
+}}
