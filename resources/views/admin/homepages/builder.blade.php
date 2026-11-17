@@ -122,7 +122,7 @@
                                                     : '');
                                         @endphp
                                         <div
-                                            class="{{ in_array($schema['type'], ['textarea'], true) ? 'col-12' : 'col-md-6' }}">
+                                            class="{{ in_array($schema['type'], ['textarea', 'richtext'], true) ? 'col-12' : 'col-md-6' }}">
                                             <label class="form-label small"
                                                 for="section-{{ $section->id }}-{{ $field }}">{{ $schema['label'] }}</label>
                                             @if ($schema['type'] === 'textarea')
