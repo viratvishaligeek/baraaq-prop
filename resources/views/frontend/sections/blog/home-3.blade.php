@@ -24,7 +24,7 @@
                     <div class="blog-card style-3{{ $animateCards ? ' fadeinup wow' : '' }}" data-wow-delay="0.3s">
                         <div class="blog-img">
                             <a href="{{ route('blog.show', $firstPost) }}">
-                                @if($firstPost->featured_image)<img src="{{ Storage::disk('public')->url($firstPost->featured_image) }}" alt="{{ $firstPost->title }}">@endif
+                                <img src="{{ $firstPost->featured_image ? Storage::disk('public')->url($firstPost->featured_image) : ($sectionConfig['fallback_image_1'] ?? '') }}" alt="{{ $firstPost->title }}">
                             </a>
                         </div>
                         <div class="blog-content pe-xl-5">
@@ -36,6 +36,7 @@
                             <div class="blog-bottom">
                                 <div class="blog-auth">
                                     @if($sectionConfig['show_author'] ?? true)
+                                        @if(!empty($sectionConfig['author_avatar_fallback']))<div class="avater"><img src="{{ $sectionConfig['author_avatar_fallback'] }}" alt="Author"></div>@endif
                                         <div class="media-body"><p class="desig">Written by</p><h5 class="name"><a href="{{ route('blog.show', $firstPost) }}">{{ $firstPost->author?->name ?? config('app.name') }}</a></h5></div>
                                     @endif
                                 </div>
@@ -49,14 +50,14 @@
                         @foreach($posts->skip(1) as $post)
                             <div class="blog-card style-3 grid-style{{ $animateCards ? ' fadeinright wow' : '' }}" data-wow-delay="{{ $loop->first ? '0.5s' : '0.7s' }}">
                                 <div class="blog-img">
-                                    <a href="{{ route('blog.show', $post) }}">@if($post->featured_image)<img src="{{ Storage::disk('public')->url($post->featured_image) }}" alt="{{ $post->title }}">@endif</a>
+                                    <a href="{{ route('blog.show', $post) }}"><img src="{{ $post->featured_image ? Storage::disk('public')->url($post->featured_image) : ($sectionConfig['fallback_image_'.($loop->iteration + 1)] ?? '') }}" alt="{{ $post->title }}"></a>
                                 </div>
                                 <div class="blog-content">
                                     <div class="blog-meta">@if(($sectionConfig['show_date'] ?? true) && $post->published_at)<a href="{{ route('blog.show', $post) }}">{{ $post->published_at->format('F d, Y') }}</a>@endif</div>
                                     <h3 class="box-title"><a href="{{ route('blog.show', $post) }}">{{ $post->title }}</a></h3>
                                     <p class="box-text">{{ $post->excerpt }}</p>
                                     <div class="blog-bottom">
-                                        <div class="blog-auth">@if($sectionConfig['show_author'] ?? true)<div class="media-body"><p class="desig">Written by</p><h5 class="name"><a href="{{ route('blog.show', $post) }}">{{ $post->author?->name ?? config('app.name') }}</a></h5></div>@endif</div>
+                                        <div class="blog-auth">@if($sectionConfig['show_author'] ?? true)@if(!empty($sectionConfig['author_avatar_fallback']))<div class="avater"><img src="{{ $sectionConfig['author_avatar_fallback'] }}" alt="Author"></div>@endif<div class="media-body"><p class="desig">Written by</p><h5 class="name"><a href="{{ route('blog.show', $post) }}">{{ $post->author?->name ?? config('app.name') }}</a></h5></div>@endif</div>
                                         <a href="{{ route('blog.show', $post) }}" class="th-btn radius outline">{{ $sectionConfig['card_button_label'] ?? 'Read More' }}</a>
                                     </div>
                                 </div>
