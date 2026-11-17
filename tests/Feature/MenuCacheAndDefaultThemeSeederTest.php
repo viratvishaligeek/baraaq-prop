@@ -79,8 +79,17 @@ class MenuCacheAndDefaultThemeSeederTest extends TestCase
         $this->assertDatabaseHas('categories', ['slug' => 'buying-guides', 'type' => 'post']);
 
         Setting::write('site_title', 'My Custom Brand');
+        MenuItem::where('menu_id', Menu::where('location', 'primary')->value('id'))
+            ->where('label', 'Home')
+            ->update(['url' => '/custom-home']);
         $this->seed(DefaultThemeSeeder::class);
 
         $this->assertSame('My Custom Brand', Setting::read('site_title'));
+        $this->assertSame(
+            '/custom-home',
+            MenuItem::where('menu_id', Menu::where('location', 'primary')->value('id'))
+                ->where('label', 'Home')
+                ->value('url')
+        );
     }
 }
