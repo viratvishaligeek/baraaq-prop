@@ -157,6 +157,7 @@
                                                         <span class="small text-muted" data-empty-image="{{ $section->id }}-{{ $field }}" style="{{ $imagePreview ? 'display:none' : '' }}">No image selected</span>
                                                     </div>
                                                     <small class="text-muted">Select an uploaded image or keep an existing Piller theme asset path.</small>
+                                                    <a class="small d-inline-block mt-1" href="{{ route('admin.media.index') }}" target="_blank" rel="noopener">Open Media Library to upload or manage images</a>
                                                 @elseif ($schema['type'] === 'checkbox')
                                                     <input type="hidden" name="config[{{ $field }}]" value="0">
                                                     <div class="form-check"><input class="form-check-input" type="checkbox" name="config[{{ $field }}]" value="1" @checked((bool)$value)><span class="form-check-label">Enabled</span></div>
