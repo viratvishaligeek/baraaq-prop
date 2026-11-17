@@ -8,6 +8,7 @@ use App\Models\HomepageSection;
 use App\Models\ReusableSection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class ReusableSectionController extends Controller
 {
@@ -36,30 +37,32 @@ class ReusableSectionController extends Controller
             $section->config ?? []
         );
 
-        $reusableSection = ReusableSection::create([
-            'name' => $data['name'],
-            'slug' => $slug,
-            'section_type' => $section->section_type,
-            'section_key' => $section->section_key,
-            'source_design' => $section->source_design,
-            'config' => $sharedConfig,
-            'status' => 'published',
-            'created_by' => $request->user()->id,
-            'updated_by' => $request->user()->id,
-        ]);
+        DB::transaction(function () use ($request, $section, $definition, $sharedConfig, $data, $slug) {
+            $reusableSection = ReusableSection::create([
+                'name' => $data['name'],
+                'slug' => $slug,
+                'section_type' => $section->section_type,
+                'section_key' => $section->section_key,
+                'source_design' => $section->source_design,
+                'config' => $sharedConfig,
+                'status' => 'published',
+                'created_by' => $request->user()->id,
+                'updated_by' => $request->user()->id,
+            ]);
 
-        foreach ($definition['fields'] ?? [] as $field => $schema) {
-            $mediaId = $sharedConfig[$field] ?? null;
+            foreach ($definition['fields'] ?? [] as $field => $schema) {
+                $mediaId = $sharedConfig[$field] ?? null;
 
-            if (($schema['type'] ?? null) !== 'image' || ! is_string($mediaId) || ! ctype_digit($mediaId)) {
-                continue;
+                if (($schema['type'] ?? null) !== 'image' || ! is_string($mediaId) || ! ctype_digit($mediaId)) {
+                    continue;
+                }
+
+                $reusableSection->mediaAttachments()->updateOrCreate(
+                    ['field_key' => $field],
+                    ['media_id' => (int) $mediaId]
+                );
             }
-
-            $reusableSection->mediaAttachments()->updateOrCreate(
-                ['field_key' => $field],
-                ['media_id' => (int) $mediaId]
-            );
-        }
+        });
 
         return back()->with('success', 'Section saved to the reusable section library.');
     }
