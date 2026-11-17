@@ -78,7 +78,7 @@ class SettingsController extends Controller
         $oldFiles = [];
         foreach ($uploads as $key => $path) {
             $old = Setting::read($key);
-            if ($old) {
+            if ($old && ! Media::where('path', $old)->exists()) {
                 $oldFiles[] = $old;
             }
         }
