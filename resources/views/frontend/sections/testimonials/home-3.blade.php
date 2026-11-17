@@ -3,7 +3,7 @@
     $sliderId = 'testiSlide3-'.$section->id;
 @endphp
 
-<section class="testi-card-area-3 space overflow-hidden {{ $visibility }}">
+<section class="testi-card-area-3 {{ $sectionConfig['vertical_spacing'] ?? 'space' }} overflow-hidden {{ $visibility }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif>
     <div class="container">
         <div class="row gy-40 gx-100 justify-content-center align-items-end">
             <div class="col-lg-4">
