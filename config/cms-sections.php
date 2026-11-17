@@ -71,8 +71,7 @@ $sections['team.index'] = [
         'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
         'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
         'description' => ['label' => 'Introductory text', 'type' => 'textarea', 'max' => 1000],
-        'items_limit' => ['label' => 'Number of team members', 'type' => 'number', 'min' => 1, 'max' => 24],
-        'layout' => ['label' => 'Card layout', 'type' => 'select', 'options' => ['grid-4' => 'Four-column grid', 'grid-3' => 'Three-column grid', 'slider' => 'Slider']],
+        'items_limit' => ['label' => 'Number of team members', 'type' => 'number', 'min' => 1, 'max' => 4],
         'show_email' => ['label' => 'Show email address', 'type' => 'checkbox'],
     ],
 ];
