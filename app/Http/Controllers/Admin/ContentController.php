@@ -156,7 +156,7 @@ class ContentController extends Controller
             'testimonials'=>['name'=>['required','string','max:150'],'designation'=>['nullable','string','max:150'],'company'=>['nullable','string','max:150'],'quote'=>['required','string'],'photo'=>['nullable','image','mimes:jpg,jpeg,png,webp','max:5120'],'rating'=>['nullable','integer','between:1,5'],'sort_order'=>['nullable','integer','min:0'],'status'=>['required','in:draft,published'],'is_active'=>['sometimes','boolean']]
         };
         foreach (['image_media_id', 'featured_image_media_id', 'photo_media_id', 'icon_media_id', 'og_image_media_id'] as $field) {
-            $rules[$field] = ['nullable', 'integer', 'exists:media,id'];
+            $rules[$field] = ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))];
         }
 
         return $request->validate($rules);
