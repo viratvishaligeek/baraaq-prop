@@ -20,7 +20,7 @@ class SectionMediaResolver
 
         $mediaIds = $imageFields
             ->map(fn (string $field) => $config[$field] ?? null)
-            ->filter(fn ($value) => is_string($value) && ctype_digit($value))
+            ->filter(fn ($value) => (is_string($value) || is_int($value)) && ctype_digit((string) $value))
             ->map(fn ($value) => (int) $value)
             ->unique()
             ->values();
@@ -34,7 +34,7 @@ class SectionMediaResolver
         foreach ($imageFields as $field) {
             $value = $config[$field] ?? null;
 
-            if (! is_string($value) || ! ctype_digit($value)) {
+            if ((! is_string($value) && ! is_int($value)) || ! ctype_digit((string) $value)) {
                 continue;
             }
 
