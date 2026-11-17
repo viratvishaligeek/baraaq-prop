@@ -94,7 +94,7 @@ class WidgetController extends Controller
 
     private function validated(Request $request): array
     {
-        return $request->validate([
+        $data = $request->validate([
             'name' => ['required', 'string', 'max:120'],
             'type' => ['required', Rule::in(self::TYPES)],
             'status' => ['required', Rule::in(['draft', 'published'])],
@@ -113,6 +113,22 @@ class WidgetController extends Controller
             'social_links.*.label' => ['nullable', 'string', 'max:40'],
             'social_links.*.url' => ['nullable', 'url', 'max:2048'],
         ]);
+
+        if (! empty($data['image_url'])) {
+            if (ctype_digit((string) $data['image_url'])) {
+                $request->validate([
+                    'image_url' => [
+                        Rule::exists('media', 'id')->where('mime_type', 'like', 'image/%'),
+                    ],
+                ]);
+            } else {
+                $request->validate([
+                    'image_url' => ['regex:~^(https?://|/)~i'],
+                ]);
+            }
+        }
+
+        return $data;
     }
 
     private function config(array $data): array
