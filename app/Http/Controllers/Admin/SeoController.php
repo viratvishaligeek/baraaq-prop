@@ -4,6 +4,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Page;
 use App\Models\Post;
 use App\Models\Property;
+use App\Models\Service;
 class SeoController extends Controller
 {
     public function index()
