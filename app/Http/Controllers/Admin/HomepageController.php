@@ -148,6 +148,7 @@ class HomepageController extends Controller
     public function setDefault(Homepage $homepage)
     {
         abort_unless($homepage->status === 'published', 422, 'Only a published homepage can be selected.');
+        abort_unless($homepage->is_composition_complete, 422, 'This homepage cannot become the live default until every source section has been extracted, configured and verified.');
 
         DB::transaction(function () use ($homepage) {
             Homepage::query()->lockForUpdate()->update(['is_default' => false]);
