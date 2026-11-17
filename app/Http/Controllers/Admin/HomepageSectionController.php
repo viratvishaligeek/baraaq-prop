@@ -20,7 +20,8 @@ class HomepageSectionController extends Controller
             'section_key' => ['required', 'string', 'max:100'],
         ]);
 
-        $definition = config('cms-sections.sections.' . $data['section_key']);
+        $sectionDefinitions = config('cms-sections.sections', []);
+        $definition = $sectionDefinitions[$data['section_key']] ?? null;
         abort_unless($definition, 422, 'The selected section is not registered.');
 
         $homepage->sections()->create([
@@ -94,7 +95,8 @@ class HomepageSectionController extends Controller
         abort_unless($homepage->status === 'draft', 409);
         abort_unless($section->homepage_id === $homepage->id, 404);
 
-        $definition = config('cms-sections.sections.' . $section->section_key);
+        $sectionDefinitions = config('cms-sections.sections', []);
+        $definition = $sectionDefinitions[$section->section_key] ?? null;
         abort_unless($definition, 422, 'The section is not registered.');
 
         $rules = ['config' => ['nullable', 'array']];

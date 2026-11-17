@@ -8,16 +8,27 @@ use App\Models\Homepage;
 use App\Models\Post;
 use App\Models\Property;
 use App\Models\TeamMember;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
     public function __invoke()
     {
-        $homepage = cache()->remember(
-            'homepage:published-default',
+        // Cache only the scalar ID; never serialize an Eloquent model or its relationships.
+        $homepageId = Cache::remember(
+            'homepage:published-default:id',
             300,
-            fn() => Homepage::published()->default()->with(['sections.reusableSection.mediaAttachments.media', 'sections.mediaAttachments.media'])->first()
+            fn () => Homepage::published()->default()->value('id')
         );
+
+        // Clear the legacy key written by older releases that cached the model itself.
+        Cache::forget('homepage:published-default');
+
+        $homepage = $homepageId
+            ? Homepage::query()
+                ->with(['sections.reusableSection.mediaAttachments.media', 'sections.mediaAttachments.media'])
+                ->find($homepageId)
+            : null;
 
         $hasCustomSections = $homepage
             && $homepage->is_composition_complete

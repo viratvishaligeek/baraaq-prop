@@ -13,7 +13,8 @@ class SectionMediaResolver
      */
     public function forRendering(HomepageSection $section, array $config): array
     {
-        $definition = config('cms-sections.sections.' . $section->section_key, []);
+        $sectionDefinitions = config('cms-sections.sections', []);
+        $definition = $sectionDefinitions[$section->section_key] ?? [];
         $imageFields = collect($definition['fields'] ?? [])
             ->filter(fn(array $schema) => ($schema['type'] ?? null) === 'image')
             ->keys();
