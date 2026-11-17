@@ -31,7 +31,7 @@
     @endif
 
     <div class="row g-4">
-        <div class="col-xl-4">
+        <div class="col-xl-3">
             <div class="content-card">
                 <h2 class="section-title">Widget library</h2>
                 <p class="small text-muted">Choose a widget and one of its registered Piller designs. The design controls the original theme markup; the instance settings control its content and query.</p>
@@ -52,13 +52,34 @@
             </div>
         </div>
 
-        <div class="col-xl-8">
+        <div class="col-xl-9">
             <div class="content-card">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 class="section-title mb-0">Page canvas</h2>
                     <span class="small text-muted" id="page-builder-status" role="status">Order saves automatically.</span>
                 </div>
-                <div id="page-builder-list" data-sort-url="{{ route('admin.pages.widgets.reorder', $page) }}">
+                
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 p-2 rounded bg-light">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="small fw-semibold">Live page preview</span>
+                            <span class="small text-muted">Rendered with the original Piller frontend</span>
+                        </div>
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Preview device size">
+                            <button type="button" class="btn btn-outline-secondary active" data-preview-width="100%">Desktop</button>
+                            <button type="button" class="btn btn-outline-secondary" data-preview-width="768px">Tablet</button>
+                            <button type="button" class="btn btn-outline-secondary" data-preview-width="390px">Mobile</button>
+                            <button type="button" class="btn btn-outline-secondary" id="refresh-page-preview" title="Refresh preview"><i class="fa-solid fa-rotate"></i></button>
+                        </div>
+                    </div>
+                    <div class="border rounded bg-secondary-subtle p-2 mb-4" style="overflow:auto">
+                        <div id="page-builder-preview-frame" class="mx-auto bg-white shadow-sm" style="width:100%;max-width:100%;transition:width .2s ease">
+                            <iframe id="page-builder-preview" title="Rendered page preview"
+                                src="{{ route('admin.pages.preview', $page) }}"
+                                style="display:block;width:100%;height:720px;border:0;background:#fff"
+                                loading="eager"></iframe>
+                        </div>
+                    </div>
+                    <div id="page-builder-list" data-sort-url="{{ route('admin.pages.widgets.reorder', $page) }}">
                     @forelse ($page->sections as $section)
                         @php
                             $definition = $widgetDefinitions[$section->section_key] ?? null;
@@ -105,14 +126,31 @@
                                                         @endforeach
                                                     </select>
                                                 @elseif ($schema['type'] === 'image')
-                                                    <input class="form-control form-control-sm mb-2" name="config[{{ $field }}]" type="text" value="{{ $value }}" placeholder="Media ID or image URL">
-                                                    <select class="form-select form-select-sm" aria-label="Choose image from Media Library" onchange="this.parentElement.querySelector('input[name=&quot;config[{{ $field }}]&quot;]').value=this.value">
-                                                        <option value="">Choose from Media Library…</option>
-                                                        @foreach ($mediaLibrary as $mediaItem)
-                                                            <option value="{{ $mediaItem->id }}" @selected((string) $value === (string) $mediaItem->id)>{{ $mediaItem->original_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    <small class="text-muted">Paste a public image URL or select an uploaded image.</small>
+                                                    @php
+                                                        $selectedMedia = $mediaLibrary->firstWhere('id', (int) $value);
+                                                        $imagePreview = $selectedMedia?->url ?: (\Illuminate\Support\Str::startsWith((string) $value, ['http://', 'https://', '/']) ? $value : ($value ? asset($value) : ''));
+                                                    @endphp
+                                                    <input class="form-control form-control-sm mb-2" name="config[{{ $field }}]" type="hidden" value="{{ $value }}">
+                                                    <div class="d-flex gap-2 align-items-center mb-2">
+                                                        <select class="form-select form-select-sm" aria-label="Choose image from Media Library"
+                                                            data-media-select
+                                                            data-target="image-preview-{{ $section->id }}-{{ $field }}"
+                                                            data-input="image-value-{{ $section->id }}-{{ $field }}">
+                                                            <option value="">Choose an image…</option>
+                                                            @foreach ($mediaLibrary as $mediaItem)
+                                                                <option value="{{ $mediaItem->id }}" data-url="{{ $mediaItem->url }}" @selected((string) $value === (string) $mediaItem->id)>{{ $mediaItem->original_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <button type="button" class="btn btn-sm btn-outline-secondary" data-clear-image="{{ $section->id }}-{{ $field }}">Remove</button>
+                                                    </div>
+                                                    <input id="image-value-{{ $section->id }}-{{ $field }}" class="form-control form-control-sm mb-2" type="text"
+                                                        name="config[{{ $field }}]" value="{{ $value }}" placeholder="Theme asset path or image URL">
+                                                    <div class="border rounded p-2 bg-light" style="min-height:76px">
+                                                        <img id="image-preview-{{ $section->id }}-{{ $field }}" src="{{ $imagePreview }}" alt="Selected image preview"
+                                                            style="{{ $imagePreview ? 'display:block' : 'display:none' }};max-width:100%;max-height:130px;object-fit:contain">
+                                                        <span class="small text-muted" data-empty-image="{{ $section->id }}-{{ $field }}" style="{{ $imagePreview ? 'display:none' : '' }}">No image selected</span>
+                                                    </div>
+                                                    <small class="text-muted">Select an uploaded image or keep an existing Piller theme asset path.</small>
                                                 @elseif ($schema['type'] === 'checkbox')
                                                     <input type="hidden" name="config[{{ $field }}]" value="0">
                                                     <div class="form-check"><input class="form-check-input" type="checkbox" name="config[{{ $field }}]" value="1" @checked((bool)$value)><span class="form-check-label">Enabled</span></div>
@@ -154,6 +192,44 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    const previewFrame = document.getElementById('page-builder-preview');
+    const previewWrap = document.getElementById('page-builder-preview-frame');
+    document.querySelectorAll('[data-preview-width]').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('[data-preview-width]').forEach(item => item.classList.remove('active'));
+            button.classList.add('active');
+            previewWrap.style.width = button.dataset.previewWidth;
+        });
+    });
+    document.getElementById('refresh-page-preview')?.addEventListener('click', () => {
+        previewFrame.src = previewFrame.src;
+    });
+    document.querySelectorAll('[data-media-select]').forEach(select => {
+        select.addEventListener('change', () => {
+            const option = select.selectedOptions[0];
+            const input = document.getElementById(select.dataset.input);
+            const image = document.getElementById(select.dataset.target);
+            const empty = document.querySelector('[data-empty-image="' + select.dataset.target.replace('image-preview-', '') + '"]');
+            input.value = select.value;
+            image.src = option?.dataset.url || '';
+            image.style.display = image.src ? 'block' : 'none';
+            if (empty) empty.style.display = image.src ? 'none' : 'inline';
+        });
+    });
+    document.querySelectorAll('[data-clear-image]').forEach(button => {
+        button.addEventListener('click', () => {
+            const id = button.dataset.clearImage;
+            const input = document.getElementById('image-value-' + id);
+            const image = document.getElementById('image-preview-' + id);
+            const select = button.parentElement.querySelector('[data-media-select]');
+            input.value = '';
+            select.value = '';
+            image.removeAttribute('src');
+            image.style.display = 'none';
+            const empty = button.closest('.col-12, .col-md-6, .col-md-3, .col-md-4')?.querySelector('[data-empty-image]');
+            if (empty) empty.style.display = 'inline';
+        });
+    });
     const list = document.getElementById('page-builder-list');
     if (!list) return;
     let dragged = null;
