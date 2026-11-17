@@ -315,134 +315,25 @@ $heroVariantDefaults = [
         'logo_text' => 'LUXURY HOME ** REAL ESTATE SOLUTION **',
         'avatar_image' => '/theme-assets/img/hero/heror-4-avator-group.png',
         'rating_text' => '5.0 Rating on The Reviews',
-        'counter_1_value' => 1250, 'counter_1_suffix' => '+', 'counter_1_label' => 'Project Completed',
-        'counter_2_prefix' => '
-    $key = 'hero.'.$design;
-
-    $sections[$key] = [
-        'key' => $key,
-        'label' => $definition['label'],
-        'type' => 'hero',
-        'source_design' => $design,
-        'view' => $definition['view'],
-        'defaults' => $design === 'home-2' ? $home2HeroDefaults : ($design === 'home-3' ? $home3HeroDefaults : ($heroVariantDefaults[$design] ?? [])),
-        'fields' => $design === 'home-2' ? $home2HeroFields : ($design === 'home-3' ? $home3HeroFields : array_merge($heroFields, $heroVariantFields[$design] ?? [])),
-    ];
-}
-
-$sections['properties.index'] = [
-    'key' => 'properties.index',
-    'label' => 'Featured properties — Home 1',
-    'type' => 'property-list',
-    'source_design' => 'index',
-    'view' => 'frontend.sections.properties.index',
-    'defaults' => [
-        'eyebrow' => 'Popular Properties',
-        'heading' => 'Best Properties Sale',
-        'items_limit' => 4,
-        'listing_filter' => 'featured',
-        'button_label' => 'View All Properties',
-        'button_url' => '/properties',
-    ],
-    'fields' => [
-        'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
-        'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
-        'description' => ['label' => 'Introductory text', 'type' => 'textarea', 'max' => 1000],
-        'items_limit' => ['label' => 'Number of properties', 'type' => 'number', 'min' => 1, 'max' => 6],
-        'listing_filter' => ['label' => 'Listing filter', 'type' => 'select', 'options' => ['all' => 'All listings', 'sale' => 'For sale', 'rent' => 'For rent', 'featured' => 'Featured only']],
-        'button_label' => ['label' => 'View-all button label', 'type' => 'text', 'max' => 80],
-        'button_url' => ['label' => 'View-all button URL', 'type' => 'url', 'max' => 2048],
-    ],
-];
-
-$sections['team.index'] = [
-    'key' => 'team.index',
-    'label' => 'Team members — Home 1',
-    'type' => 'team',
-    'source_design' => 'index',
-    'view' => 'frontend.sections.team.index',
-    'defaults' => [],
-    'fields' => [
-        'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
-        'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
-        'description' => ['label' => 'Introductory text', 'type' => 'textarea', 'max' => 1000],
-        'items_limit' => ['label' => 'Number of team members', 'type' => 'number', 'min' => 1, 'max' => 4],
-        'show_email' => ['label' => 'Show email address', 'type' => 'checkbox'],
-    ],
-];
-
-$sections['blog.index'] = [
-    'key' => 'blog.index',
-    'label' => 'Latest articles — Home 1',
-    'type' => 'blog',
-    'source_design' => 'index',
-    'view' => 'frontend.sections.blog.index',
-    'defaults' => [],
-    'fields' => [
-        'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
-        'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
-        'description' => ['label' => 'Introductory text', 'type' => 'textarea', 'max' => 1000],
-        'items_limit' => ['label' => 'Number of articles', 'type' => 'number', 'min' => 1, 'max' => 3],
-        'button_label' => ['label' => 'View-all button label', 'type' => 'text', 'max' => 80],
-        'button_url' => ['label' => 'View-all button URL', 'type' => 'url', 'max' => 2048],
-        'show_author' => ['label' => 'Show author', 'type' => 'checkbox'],
-        'show_date' => ['label' => 'Show publish date', 'type' => 'checkbox'],
-    ],
-];
-
-$sections = array_merge($sections, require __DIR__.'/cms-sections/categories.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/about.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/about-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/services-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/property-values.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/property-values-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/neighborhoods.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/team.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/team-home-3.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/team-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/gallery-home-3.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/why.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/why-home-3.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/why-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/properties.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/properties-home-3.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/properties-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/faq.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/faq-home-3.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/faq-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/download-home-3.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/featured-gallery-home-3.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/gallery-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/gallery-home-6.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/city-explore-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/process-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/testimonials-home-3.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/enquiry-home-3.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/marquee-home-3.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/blog-home-3.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/blog-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/brands-home-3.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/brands-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/contact-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/statistics-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/cta-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/download.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/marquee.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/testimonials.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/testimonials-piller.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/featured-properties.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/blog.php');
-$sections = array_merge($sections, require __DIR__.'/cms-sections/search.php');
-
-return [
-    'sections' => $sections,
-];
-, 'counter_2_value' => 25, 'counter_2_suffix' => 'M', 'counter_2_label' => 'Monthly Visitors',
-        'property_address' => 'Property address text', 'property_title' => 'Luxurious Modern Home',
-        'bedrooms' => 4, 'bathrooms' => 2, 'area_value' => 1500, 'area_unit' => 'sqft',
-        'parking_label' => 'Parking Slot', 'property_price' => '$895,000.00',
-        'agent_name' => 'Walter Deckow', 'agent_designation' => 'Sale Agent',
-        'listing_badge' => 'For Sale', 'tour_button_label' => 'Request A Tour',
+        'counter_1_value' => 1250,
+        'counter_1_suffix' => '+',
+        'counter_1_label' => 'Project Completed',
+        'counter_2_prefix' => chr(36),
+        'counter_2_value' => 25,
+        'counter_2_suffix' => 'M',
+        'counter_2_label' => 'Monthly Visitors',
+        'property_address' => 'Property address text',
+        'property_title' => 'Luxurious Modern Home',
+        'bedrooms' => 4,
+        'bathrooms' => 2,
+        'area_value' => 1500,
+        'area_unit' => 'sqft',
+        'parking_label' => 'Parking Slot',
+        'property_price' => chr(36).'895,000.00',
+        'agent_name' => 'Walter Deckow',
+        'agent_designation' => 'Sale Agent',
+        'listing_badge' => 'For Sale',
+        'tour_button_label' => 'Request A Tour',
         'tour_button_url' => '/contact',
         'slide_1_background_image' => '/theme-assets/img/hero/hero_bg_5_1.jpg',
         'slide_2_background_image' => '/theme-assets/img/hero/hero_bg_5_2.jpg',
@@ -508,6 +399,9 @@ return [
     ],
     'home-10' => [
         'heading' => 'Inspired Living for the Modern World',
+        'heading_line_1' => 'Inspired Living',
+        'heading_line_2' => 'for the Modern',
+        'heading_line_3' => 'World',
         'description' => 'Explore top listings and let our expert agents guide you every step of the way to your new home.',
         'primary_button_label' => 'Explore Properties',
         'primary_button_url' => '/properties',
@@ -515,9 +409,6 @@ return [
         'secondary_button_url' => '/contact',
         'logo_video_url' => 'https://www.youtube.com/watch?v=_sI_Ps7JSEk',
         'logo_text' => 'PILLAR REAL ESTATE HOME * REAL ESTATE',
-        'heading_line_1' => 'Inspired Living',
-        'heading_line_2' => 'for the Modern',
-        'heading_line_3' => 'World',
         'search_property_type_label' => 'Property Type',
         'search_property_type_placeholder' => 'Select Make',
         'search_location_label' => 'Location',
@@ -526,13 +417,18 @@ return [
         'search_keyword_placeholder' => 'Looking For?',
         'advanced_button_label' => 'Advanced',
         'search_button_label' => 'Search',
-        'property_type_1_label' => 'Apartment', 'property_type_1_value' => 'Apartment',
-        'property_type_2_label' => 'House', 'property_type_2_value' => 'House',
-        'property_type_3_label' => 'Villa', 'property_type_3_value' => 'Villa',
+        'property_type_1_label' => 'Apartment',
+        'property_type_1_value' => 'Apartment',
+        'property_type_2_label' => 'House',
+        'property_type_2_value' => 'House',
+        'property_type_3_label' => 'Villa',
+        'property_type_3_value' => 'Villa',
         'rating_icon' => '/theme-assets/img/icon/star-icon.svg',
         'avatar_image' => '/theme-assets/img/hero/heror-1-avator-group.png',
         'trust_label' => 'Trustipilot',
-        'client_count' => 19, 'client_suffix' => 'k+', 'client_label' => 'clients',
+        'client_count' => 19,
+        'client_suffix' => 'k+',
+        'client_label' => 'clients',
         'image_1' => '/theme-assets/img/hero/hero-10-1.jpg',
         'image_2' => '/theme-assets/img/hero/hero-10-2.jpg',
         'image_3' => '/theme-assets/img/hero/hero-10-3.jpg',
