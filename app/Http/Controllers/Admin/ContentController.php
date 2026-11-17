@@ -5,6 +5,8 @@ use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Page;
 use App\Models\Post;
+use App\Models\Service;
+use App\Models\Testimonial;
 use App\Models\TeamMember;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -35,9 +37,31 @@ class ContentController extends Controller
 
     public function index(string $type)
     {
-        $model=$this->model($type);
-        $items=$model::when(request()->filled('search'),function($query){$term=request('search');$query->where(function($where)use($term){foreach(['title','name','slug','email','designation','company'] as $column){if(\\Illuminate\\Support\\Schema::hasColumn($where->getModel()->getTable(),$column))$where->orWhere($column,'like','%'.$term.'%');}});})->when(request()->filled('status') && in_array($type,['posts','pages','services']),fn($q)=>$q->where('status',request('status')))->latest()->paginate(20)->withQueryString();
-        return view('admin.content.index',compact('type','items'));
+        $model = $this->model($type);
+        $searchColumns = match ($type) {
+            'posts', 'pages', 'services' => ['title', 'slug'],
+            'categories' => ['name', 'slug'],
+            'team' => ['name', 'designation', 'email'],
+            'testimonials' => ['name', 'company', 'quote'],
+            'banners' => ['title', 'placement'],
+            default => [],
+        };
+
+        $items = $model::query()
+            ->when(request()->filled('search'), function ($query) use ($searchColumns) {
+                $term = request('search');
+                $query->where(function ($where) use ($term, $searchColumns) {
+                    foreach ($searchColumns as $column) {
+                        $where->orWhere($column, 'like', '%'.$term.'%');
+                    }
+                });
+            })
+            ->when(request()->filled('status') && in_array($type, ['posts', 'pages', 'services']), fn ($query) => $query->where('status', request('status')))
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('admin.content.index', compact('type', 'items'));
     }
 
     public function create(string $type)
