@@ -32,7 +32,7 @@
 <div class="content-card mb-4"><h4 class="mb-3">Global SEO defaults</h4><div class="row g-3">
 <div class="col-12"><label class="form-label">Default meta title</label><input class="form-control" name="meta_title" value="{{ old('meta_title',$settings['meta_title']??'') }}"></div>
 <div class="col-12"><label class="form-label">Default meta description</label><textarea class="form-control" name="meta_description" rows="3">{{ old('meta_description',$settings['meta_description']??'') }}</textarea></div>
-<div class="col-12"><label class="form-label">Meta keywords</label><input class="form-control" name="meta_keywords" value="{{ old('meta_keywords',$settings['meta_keywords']??'') }}"></div>
+<div class="col-12"><label class="form-label">Meta keywords</label><input class="form-control" name="meta_keywords" value="{{ old('meta_keywords',$settings['meta_keywords']??'') }}"></div><div class="col-md-6"><label class="form-label">Robots policy</label><select class="form-select" name="meta_robots">@foreach(['index,follow','index,nofollow','noindex,follow','noindex,nofollow'] as $policy)<option value="{{ $policy }}" @selected(old('meta_robots',$settings['meta_robots']??'index,follow')===$policy)>{{ $policy }}</option>@endforeach</select></div>
 <div class="col-md-6"><label class="form-label">Default social sharing image</label><input class="form-control" type="file" name="default_og_image" accept="image/*">@if(!empty($settings['default_og_image']))<img src="{{ Storage::disk('public')->url($settings['default_og_image']) }}" alt="" class="mt-2" style="max-width:160px">@endif</div>
 </div></div>
 <div class="content-card mb-4"><h4 class="mb-3">Global appearance</h4><div class="row g-3">
