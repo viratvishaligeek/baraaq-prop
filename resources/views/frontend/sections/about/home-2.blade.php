@@ -5,6 +5,8 @@
     $features = [];
     $featureColumns = (int) ($sectionConfig['feature_columns'] ?? 2) === 4 ? 3 : 6;
     $animationClass = ($sectionConfig['animate_images'] ?? true) ? ' fadeinup wow' : '';
+    $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
+    $backgroundImage = $sectionConfig['background_image'] ?? null;
     for ($i = 1; $i <= 4; $i++) {
         $features[] = [
             'icon' => $sectionConfig['feature_'.$i.'_icon'] ?? null,
@@ -14,7 +16,7 @@
     }
 @endphp
 
-<div class="about-1-wrapper {{ $sectionConfig['vertical_spacing'] ?? 'space' }} overflow-hidden" id="about-sec-{{ $section->id }}">
+<div class="about-1-wrapper {{ $sectionConfig['vertical_spacing'] ?? 'space' }} overflow-hidden {{ $visibility }}" id="about-sec-{{ $section->id }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif @if($backgroundImage) data-bg-src="{{ $backgroundImage }}" @endif>
     <div class="shape-mockup" data-bottom="0" data-left="0"><img src="{{ $image($sectionConfig['shape_bottom_image'] ?? '/theme-assets/img/icon/about-2-shape.png') }}" alt="img"></div>
     <div class="shape-mockup spin d-none d-lg-block" data-bottom="11%" data-left="5%"><img src="{{ $image($sectionConfig['shape_spin_image'] ?? '/theme-assets/img/icon/circle-start.png') }}" alt="img"></div>
     <div class="container">
