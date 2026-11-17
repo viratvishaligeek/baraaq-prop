@@ -10,7 +10,7 @@
         @php
             $definition = config('cms-sections.sections.'.$section->section_key);
             $renderConfig = array_merge($section->reusableSection?->config ?? [], $section->config ?? []);
-            $renderConfig = app(\\App\\Services\\Homepage\\SectionMediaResolver::class)->forRendering($section, $renderConfig);
+            $renderConfig = app(\App\Services\Homepage\SectionMediaResolver::class)->forRendering($section, $renderConfig);
             $sectionData = app(\App\Services\Homepage\SectionDataResolver::class)->resolve($section, $renderConfig);
         @endphp
 
