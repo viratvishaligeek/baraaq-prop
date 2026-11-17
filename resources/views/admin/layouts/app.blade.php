@@ -26,7 +26,7 @@
 @if(auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage'))
 <div class="nav-label">WEBSITE</div>
 <a href="{{ route('admin.appearance.index') }}" class="{{ request()->routeIs('admin.appearance.*')?'active':'' }}"><i class="fa-solid fa-palette"></i> Appearance & themes</a>
-<a href="{{ route('admin.homepages.index') }}" class="{{ request()->routeIs('admin.homepages.*')?'active':'' }}"><i class="fa-solid fa-layer-group"></i> Homepage builder</a>
+<a href="{{ route('admin.homepages.index') }}" class="{{ request()->routeIs('admin.homepages.*')?'active':'' }}"><i class="fa-solid fa-layer-group"></i> Homepage designs</a>
 <a href="{{ route('admin.menus.index') }}" class="{{ request()->routeIs('admin.menus.*')?'active':'' }}"><i class="fa-solid fa-list"></i> Navigation menus</a>
 <a href="{{ route('admin.seo.index') }}" class="{{ request()->routeIs('admin.seo.*')?'active':'' }}"><i class="fa-solid fa-magnifying-glass"></i> SEO</a>
 <a href="{{ route('admin.settings.edit') }}" class="{{ request()->routeIs('admin.settings.*')?'active':'' }}"><i class="fa-solid fa-gear"></i> Website settings</a>
