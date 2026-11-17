@@ -18,7 +18,7 @@
 <div class="col-12"><label class="form-label">Business registration / legal detail</label><input class="form-control" name="business_registration" value="{{ old('business_registration',$settings['business_registration']??'') }}"></div>
 </div></div>
 <div class="content-card mb-4"><h4 class="mb-3">Header and footer</h4><div class="row g-3">
-<div class="col-md-6"><label class="form-label">Header menu location</label><input class="form-control" name="header_menu_location" value="{{ old('header_menu_location',$settings['header_menu_location']??'header') }}" required></div>
+<div class="col-md-6"><label class="form-label">Header menu location</label><input class="form-control" name="header_menu_location" value="{{ old('header_menu_location',$settings['header_menu_location']??'primary') }}" required></div>
 <div class="col-md-6"><label class="form-label">Footer menu location</label><input class="form-control" name="footer_menu_location" value="{{ old('footer_menu_location',$settings['footer_menu_location']??'footer') }}" required></div>
 <div class="col-12"><label class="form-label">Footer description</label><textarea class="form-control" name="footer_description" rows="3">{{ old('footer_description',$settings['footer_description']??'') }}</textarea></div>
 <div class="col-md-6"><label class="form-label">Copyright text</label><input class="form-control" name="footer_copyright" value="{{ old('footer_copyright',$settings['footer_copyright']??'') }}"></div>
