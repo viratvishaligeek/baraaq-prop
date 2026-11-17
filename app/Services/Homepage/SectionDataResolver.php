@@ -21,6 +21,7 @@ class SectionDataResolver
             'team-slider' => ['teamMembers' => $this->teamMembers($config)],
             'property-slider-grid' => $this->properties($config),
             'blog-slider' => ['posts' => Post::published()->with('author')->latest('published_at')->limit(max(1, min(12, (int) ($config['items_limit'] ?? 6))))->get()],
+            'advanced-search' => ['cities' => Property::published()->whereNotNull('city')->where('city', '!=', '')->distinct()->orderBy('city')->pluck('city')],
             default => [],
         };
     }
