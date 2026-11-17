@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->appendToGroup('web', TrackPageView::class);
+        $middleware->encryptCookies(except: ['site_visitor', 'site_visit']);
         $middleware->alias([
             'admin.access' => EnsureAdministrator::class,
             'permission' => EnsurePermission::class,
