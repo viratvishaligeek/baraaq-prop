@@ -11,6 +11,7 @@ return [
             'shape_image' => '/theme-assets/img/shape/faq-2-right.png',
             'items_limit' => 3,
             'duplicate_groups' => 2,
+            'background_color' => '',
             'item_1_text' => 'Luxury Home Available - Explore Now!',
             'item_1_url' => '/properties',
             'item_1_icon' => '/theme-assets/img/icon/marquee-icon-1-1.svg',
@@ -25,6 +26,8 @@ return [
         'fields' => array_merge([
             'shape_image' => ['label' => 'Decorative shape image', 'type' => 'image', 'max' => 2048],
             'items_limit' => ['label' => 'Marquee messages', 'type' => 'number', 'min' => 1, 'max' => 3],
+            'duplicate_groups' => ['label' => 'Repeated marquee groups', 'type' => 'number', 'min' => 1, 'max' => 4],
+            'background_color' => ['label' => 'Marquee background color', 'type' => 'color'],
             'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
             'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
             'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
