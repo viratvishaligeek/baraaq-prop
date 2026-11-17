@@ -25,6 +25,9 @@ class MediaPickerController extends Controller
                 'name' => $item->original_name,
                 'url' => Storage::disk($item->disk)->url($item->path),
                 'alt' => $item->alt_text,
+                'mime_type' => $item->mime_type,
+                'size' => $item->size,
+                'disk' => $item->disk,
             ]),
             'next_page_url' => $media->nextPageUrl(),
         ]);
