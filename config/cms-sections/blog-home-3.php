@@ -1,0 +1,39 @@
+<?php
+
+return [
+    'blog.home-3' => [
+        'key' => 'blog.home-3',
+        'label' => 'Editorial article grid — Home 3',
+        'type' => 'blog-slider',
+        'source_design' => 'home-3',
+        'view' => 'frontend.sections.blog.home-3',
+        'defaults' => [
+            'eyebrow' => 'Latest News',
+            'heading' => 'Helpful Real Estate Articles',
+            'button_label' => 'Explore All',
+            'button_url' => '/blog',
+            'items_limit' => 3,
+            'card_button_label' => 'Read More',
+            'show_author' => true,
+            'show_date' => true,
+            'vertical_spacing' => 'space',
+            'show_mobile' => true, 'show_tablet' => true, 'show_desktop' => true,
+        ],
+        'fields' => [
+            'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
+            'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
+            'button_label' => ['label' => 'Explore all button label', 'type' => 'text', 'max' => 80],
+            'button_url' => ['label' => 'Explore all button URL', 'type' => 'url', 'max' => 2048],
+            'items_limit' => ['label' => 'Number of articles', 'type' => 'number', 'min' => 1, 'max' => 3],
+            'card_button_label' => ['label' => 'Article button label', 'type' => 'text', 'max' => 80],
+            'show_author' => ['label' => 'Show author', 'type' => 'checkbox'],
+            'show_date' => ['label' => 'Show publication date', 'type' => 'checkbox'],
+            'vertical_spacing' => ['label' => 'Section spacing', 'type' => 'select', 'options' => ['space' => 'Theme spacing', 'space-top' => 'Top only', 'space-bottom' => 'Bottom only', 'py-0' => 'No vertical spacing']],
+            'background_color' => ['label' => 'Background color', 'type' => 'color'],
+            'background_image' => ['label' => 'Background image', 'type' => 'image', 'max' => 2048],
+            'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
+            'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
+            'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
+        ],
+    ],
+];
