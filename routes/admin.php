@@ -58,6 +58,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::patch('/homepages/{homepage}/sections/reorder', [HomepageSectionController::class, 'reorder'])
             ->middleware('permission:settings.manage')
             ->name('homepages.sections.reorder');
+        Route::patch('/homepages/{homepage}/sections/{section}', [HomepageSectionController::class, 'update'])
+            ->middleware('permission:settings.manage')
+            ->name('homepages.sections.update');
+
         Route::patch('/homepages/{homepage}/sections/{section}/toggle', [HomepageSectionController::class, 'toggle'])
             ->middleware('permission:settings.manage')
             ->name('homepages.sections.toggle');
