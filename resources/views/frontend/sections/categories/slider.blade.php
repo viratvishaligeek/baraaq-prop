@@ -1,7 +1,7 @@
 @php
     $variant = $section->source_design === 'home-3' ? 'style-2' : '';
     $wrapperClass = $section->source_design === 'home-3'
-        ? 'category-sec-2 position-relative bg-white'
+        ? 'category-sec-2 position-relative bg-white space-extra-bottom'
         : 'category-sec-1 position-relative bg-smoke';
     $alignment = $sectionConfig['alignment'] ?? 'center';
     $columns = max(1, min(6, (int) ($sectionConfig['columns'] ?? 6)));
