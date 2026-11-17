@@ -125,7 +125,8 @@ class HomepageController extends Controller
                 ->latest('published_at')
                 ->limit(3)
                 ->get(),
-            'teamMembers' => TeamMember::where('is_active', true)
+            'teamMembers' => TeamMember::where('status', 'published')
+                ->where('is_active', true)
                 ->orderBy('sort_order')
                 ->limit(4)
                 ->get(),
