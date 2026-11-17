@@ -4,6 +4,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Page;
+use App\Models\Media;
 use App\Models\Post;
 use App\Models\Service;
 use App\Models\Testimonial;
@@ -86,13 +87,13 @@ class ContentController extends Controller
     public function create(string $type)
     {
         $model=$this->model($type);
-        return view('admin.content.form',['type'=>$type,'item'=>new $model,'categories'=>$type==='posts'?Category::where('type','post')->orderBy('name')->get():collect(),'parentCategories'=>$type==='categories'?Category::orderBy('name')->get():collect()]);
+        return view('admin.content.form',['type'=>$type,'item'=>new $model,'categories'=>$type==='posts'?Category::where('type','post')->orderBy('name')->get():collect(),'parentCategories'=>$type==='categories'?Category::orderBy('name')->get():collect(),'mediaItems'=>Media::latest()->limit(100)->get(['id','path','original_name'])]);
     }
 
     public function store(Request $request,string $type)
     {
         $model=$this->model($type);
-        $data=$this->validated($request,$type);$categoryIds=$data['category_ids']??[];unset($data['category_ids']);
+        $data=$this->validated($request,$type);$this->applyMediaSelections($data);$categoryIds=$data['category_ids']??[];unset($data['category_ids']);
         if(isset($data['title']) && in_array($type,['posts','pages','services'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['title']);
         if(isset($data['name']) && $type==='categories') $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['name']);
         if(in_array($type,['posts','pages'])) $data['author_id']=$request->user()->id;
@@ -108,19 +109,19 @@ class ContentController extends Controller
     {
         $model=$this->model($type);
         $item=$model::findOrFail($id);
-        return view('admin.content.form',['type'=>$type,'item'=>$item,'categories'=>$type==='posts'?Category::where('type','post')->orderBy('name')->get():collect(),'parentCategories'=>$type==='categories'?Category::where('type',$item->type)->where('id','!=',$item->id)->orderBy('name')->get():collect()]);
+        return view('admin.content.form',['type'=>$type,'item'=>$item,'categories'=>$type==='posts'?Category::where('type','post')->orderBy('name')->get():collect(),'parentCategories'=>$type==='categories'?Category::where('type',$item->type)->where('id','!=',$item->id)->orderBy('name')->get():collect(),'mediaItems'=>Media::latest()->limit(100)->get(['id','path','original_name'])]);
     }
 
     public function update(Request $request,string $type,int $id)
     {
         $model=$this->model($type);
         $item=$model::findOrFail($id);
-        $data=$this->validated($request,$type,$item->id);$categoryIds=$data['category_ids']??[];unset($data['category_ids']);
+        $data=$this->validated($request,$type,$item->id);$this->applyMediaSelections($data);$categoryIds=$data['category_ids']??[];unset($data['category_ids']);
         if(isset($data['title']) && in_array($type,['posts','pages','services'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['title'],$item->id);
         if(isset($data['name']) && $type==='categories') $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['name'],$item->id);
         $oldFiles=[];
         foreach(['image','featured_image','photo','icon_path','og_image'] as $field) if($request->hasFile($field)) {
-            if($item->$field) $oldFiles[]=$item->$field;
+            if($item->$field && !Media::where('path',$item->$field)->exists()) $oldFiles[]=$item->$field;
             $data[$field]=$request->file($field)->store($type,'public');
         }
         if(in_array($type,['posts','services']) && ($data['status']??null)==='published' && !$item->published_at) $data['published_at']=now();
@@ -149,6 +150,20 @@ class ContentController extends Controller
             'services'=>['title'=>['required','string','max:255'],'slug'=>['nullable','string','max:255',Rule::unique('services')->ignore($id)],'excerpt'=>['nullable','string','max:500'],'content'=>['nullable','string'],'featured_image'=>['nullable','image','mimes:jpg,jpeg,png,webp','max:5120'],'status'=>['required','in:draft,published,archived'],'meta_title'=>['nullable','string','max:255'],'meta_description'=>['nullable','string','max:1000'],'canonical_url'=>['nullable','url','max:2048'],'og_image'=>['nullable','image','mimes:jpg,jpeg,png,webp','max:5120']],
             'testimonials'=>['name'=>['required','string','max:150'],'designation'=>['nullable','string','max:150'],'company'=>['nullable','string','max:150'],'quote'=>['required','string'],'photo'=>['nullable','image','mimes:jpg,jpeg,png,webp','max:5120'],'rating'=>['nullable','integer','between:1,5'],'sort_order'=>['nullable','integer','min:0'],'status'=>['required','in:draft,published'],'is_active'=>['sometimes','boolean']]
         };
+        foreach (['image_media_id', 'featured_image_media_id', 'photo_media_id', 'icon_media_id', 'og_image_media_id'] as $field) {
+            $rules[$field] = ['nullable', 'integer', 'exists:media,id'];
+        }
+
         return $request->validate($rules);
+    }
+
+    private function applyMediaSelections(array &$data): void
+    {
+        foreach (['image_media_id' => 'image', 'featured_image_media_id' => 'featured_image', 'photo_media_id' => 'photo', 'icon_media_id' => 'icon_path', 'og_image_media_id' => 'og_image'] as $input => $field) {
+            if (!empty($data[$input])) {
+                $data[$field] = Media::findOrFail($data[$input])->path;
+            }
+            unset($data[$input]);
+        }
     }
 }
