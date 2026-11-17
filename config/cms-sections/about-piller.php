@@ -3,7 +3,7 @@
 $sharedFields = [
     'eyebrow' => ['label' => 'Eyebrow', 'type' => 'text', 'max' => 120],
     'heading' => ['label' => 'Heading', 'type' => 'textarea', 'max' => 240],
-    'description' => ['label' => 'Description', 'type' => 'textarea', 'max' => 1800],
+    'description' => ['label' => 'Description', 'type' => 'richtext', 'max' => 1800],
     'button_label' => ['label' => 'Button label', 'type' => 'text', 'max' => 80],
     'button_url' => ['label' => 'Button URL', 'type' => 'url', 'max' => 2048],
     'image_primary' => ['label' => 'Primary image', 'type' => 'image', 'max' => 2048],
