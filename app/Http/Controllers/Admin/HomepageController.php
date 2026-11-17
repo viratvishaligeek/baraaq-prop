@@ -50,8 +50,8 @@ class HomepageController extends Controller
             $copy->is_default = false;
             $copy->is_composition_complete = false;
             $copy->published_at = null;
-            $copy->created_by = request()->user()->id;
-            $copy->updated_by = request()->user()->id;
+            $copy->created_by = auth()->id();
+            $copy->updated_by = auth()->id();
             $copy->save();
 
             $presentKeys = [];
