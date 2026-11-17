@@ -11,8 +11,9 @@
                     <button class="btn btn-outline-primary" type="submit">Search</button>
                 </form>
                 <div class="row g-3" id="shared-media-results" aria-live="polite"></div>
-                <div class="text-center mt-3">
+                <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
                     <button type="button" class="btn btn-outline-secondary" id="shared-media-more" hidden>Load more</button>
+                    <button type="button" class="btn btn-primary" id="shared-media-apply-multiple" hidden>Use selected images</button>
                 </div>
                 <p class="small text-muted mt-2 mb-0" id="shared-media-status" role="status">Search or select an image.</p>
             </div>
