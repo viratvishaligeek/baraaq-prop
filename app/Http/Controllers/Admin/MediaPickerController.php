@@ -9,8 +9,23 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaPickerController extends Controller
 {
+    private function authorizePicker(Request $request): void
+    {
+        $user = $request->user();
+        $permissions = [
+            'media.manage', 'pages.manage', 'settings.manage', 'properties.manage',
+            'posts.manage', 'services.manage', 'team.manage', 'testimonials.manage',
+            'categories.manage', 'banners.manage', 'widgets.manage',
+        ];
+
+        abort_unless($user && ($user->isAdministrator() || collect($permissions)->contains(
+            fn (string $permission) => $user->hasPermission($permission)
+        )), 403);
+    }
+
     public function upload(Request $request)
     {
+        $this->authorizePicker($request);
         $data = $request->validate([
             'files' => ['required', 'array', 'min:1', 'max:20'],
             'files.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240'],
@@ -44,6 +59,7 @@ class MediaPickerController extends Controller
 
     public function __invoke(Request $request)
     {
+        $this->authorizePicker($request);
         $search = trim((string) $request->query('search', ''));
 
         $media = Media::query()
