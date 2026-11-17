@@ -36,7 +36,7 @@ class ReusableSectionController extends Controller
             $section->config ?? []
         );
 
-        ReusableSection::create([
+        $reusableSection = ReusableSection::create([
             'name' => $data['name'],
             'slug' => $slug,
             'section_type' => $section->section_type,
@@ -47,6 +47,19 @@ class ReusableSectionController extends Controller
             'created_by' => $request->user()->id,
             'updated_by' => $request->user()->id,
         ]);
+
+        foreach ($definition['fields'] ?? [] as $field => $schema) {
+            $mediaId = $sharedConfig[$field] ?? null;
+
+            if (($schema['type'] ?? null) !== 'image' || ! is_string($mediaId) || ! ctype_digit($mediaId)) {
+                continue;
+            }
+
+            $reusableSection->mediaAttachments()->updateOrCreate(
+                ['field_key' => $field],
+                ['media_id' => (int) $mediaId]
+            );
+        }
 
         return back()->with('success', 'Section saved to the reusable section library.');
     }
