@@ -34,7 +34,7 @@ class HomepageController extends Controller
         $draft = DB::transaction(function () use ($homepage) {
             $copy = $homepage->replicate();
             $copy->name = $homepage->name.' (Draft)';
-            $copy->slug = Str::slug($homepage->slug.'-draft-'.now()->format('YmdHis'));
+            $copy->slug = Str::slug($homepage->slug.'-draft-'.now()->format('YmdHis').'-'.Str::lower(Str::random(5)));
             $copy->status = 'draft';
             $copy->is_default = false;
             $copy->published_at = null;
