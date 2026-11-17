@@ -42,11 +42,41 @@ class HomepageController extends Controller
             $copy->updated_by = request()->user()->id;
             $copy->save();
 
-            foreach ($homepage->sections as $section) {
-                $sectionCopy = $section->replicate();
-                $sectionCopy->homepage_id = $copy->id;
-                $sectionCopy->instance_key = (string) Str::uuid();
-                $sectionCopy->save();
+            if ($homepage->sections->isEmpty()) {
+                $sectionKeys = ['hero.'.$homepage->design_key];
+
+                if ($homepage->design_key === 'index') {
+                    $sectionKeys = array_merge($sectionKeys, [
+                        'properties.index',
+                        'team.index',
+                        'blog.index',
+                    ]);
+                }
+
+                foreach ($sectionKeys as $sectionKey) {
+                    $definition = config('cms-sections.sections.'.$sectionKey);
+
+                    if (! $definition) {
+                        continue;
+                    }
+
+                    $copy->sections()->create([
+                        'instance_key' => (string) Str::uuid(),
+                        'section_key' => $definition['key'],
+                        'section_type' => $definition['type'],
+                        'source_design' => $definition['source_design'],
+                        'sort_order' => $copy->sections()->count() + 1,
+                        'is_enabled' => true,
+                        'config' => $definition['defaults'] ?? [],
+                    ]);
+                }
+            } else {
+                foreach ($homepage->sections as $section) {
+                    $sectionCopy = $section->replicate();
+                    $sectionCopy->homepage_id = $copy->id;
+                    $sectionCopy->instance_key = (string) Str::uuid();
+                    $sectionCopy->save();
+                }
             }
 
             return $copy;
