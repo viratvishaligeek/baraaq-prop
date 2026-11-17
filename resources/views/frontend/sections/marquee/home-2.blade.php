@@ -18,7 +18,7 @@
         <div class="marquee-bg-wrap"></div>
     @endif
     <div class="marquee-wrapper">
-        <div class="marquee" style="animation-duration: {{ max(10, min(90, (int) ($sectionConfig['animation_duration'] ?? 28))) }}s;">
+        <div class="marquee" @if(!empty($sectionConfig['animation_duration'])) style="animation-duration: {{ max(10, min(90, (int) $sectionConfig['animation_duration'])) }}s;" @endif>
             @for($group = 0; $group < 2; $group++)
                 <div class="marquee-group">
                     @for($repeat = 0; $repeat < $repeats; $repeat++)
