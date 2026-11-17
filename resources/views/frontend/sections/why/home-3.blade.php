@@ -46,7 +46,7 @@
                         <div class="swiper-slide">
                             <div class="why-card-1 style-2 style-3" @if(!empty($sectionConfig['card_background'])) data-bg-src="{{ $sectionConfig['card_background'] }}" @endif>
                                 <h4 class="count">{{ $item['number'] }}</h4>
-                                <div class="why-card-1__icon"><img src="{{ $item['icon'] }}" alt="image"></div>
+                                <div class="why-card-1__icon">@if(!empty($item['icon']))<img src="{{ $item['icon'] }}" alt="image">@endif</div>
                                 <div class="why-card-1__content">
                                     <h3 class="box-title">{{ $item['title'] }}</h3>
                                     <p class="box-text">{{ $item['text'] }}</p>
