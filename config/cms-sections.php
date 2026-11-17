@@ -206,7 +206,14 @@ $sections['properties.index'] = [
     'type' => 'property-list',
     'source_design' => 'index',
     'view' => 'frontend.sections.properties.index',
-    'defaults' => [],
+    'defaults' => [
+        'eyebrow' => 'Popular Properties',
+        'heading' => 'Best Properties Sale',
+        'items_limit' => 4,
+        'listing_filter' => 'featured',
+        'button_label' => 'View All Properties',
+        'button_url' => '/properties',
+    ],
     'fields' => [
         'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
         'heading' => ['label' => 'Section heading', 'type' => 'text', 'max' => 180],
