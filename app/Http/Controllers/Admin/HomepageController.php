@@ -77,6 +77,14 @@ class HomepageController extends Controller
                         'why.home-3',
                         'team.home-3',
                         'gallery.home-3',
+                        'download.home-3',
+                        'featured-gallery.home-3',
+                        'testimonials.home-3',
+                        'faq.home-3',
+                        'enquiry.home-3',
+                        'marquee.home-3',
+                        'blog.home-3',
+                        'brands.home-3',
                     ]);
                 }
 
