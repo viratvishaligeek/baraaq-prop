@@ -22,7 +22,7 @@
                 @case('image')
                     @if (!empty($widget['config']['image_url']))
                         <a href="{{ $widget['config']['url'] ?? '#' }}"><img class="img-fluid"
-                                src="{{ $widget['config']['image_url'] }}" alt="{{ $widget['config']['title'] ?? '' }}"></a>
+                                src="{{ $widget['config']['image_url'] }}" alt="{{ $widget['config']['image_alt'] ?? ($widget['config']['title'] ?? '') }}"></a>
                     @endif
                 @break
 
