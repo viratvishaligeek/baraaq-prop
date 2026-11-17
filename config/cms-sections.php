@@ -96,6 +96,7 @@ $sections['blog.index'] = [
 ];
 
 $sections = array_merge($sections, require __DIR__.'/cms-sections/categories.php');
+$sections = array_merge($sections, require __DIR__.'/cms-sections/about.php');
 
 return [
     'sections' => $sections,
