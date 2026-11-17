@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\Admin\HomepageController;
 use App\Http\Controllers\Admin\PageHomepageController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Models\Homepage;
@@ -52,6 +53,10 @@ class PageHomepageSelectionTest extends TestCase
 
     public function test_switching_the_published_default_homepage_changes_the_root_route_output(): void
     {
+        $admin = User::factory()->create();
+        $admin->roles()->attach(Role::create(['name' => 'Administrator', 'slug' => 'administrator']));
+        $this->actingAs($admin);
+
         $homeFour = Homepage::create([
             'name' => 'Home 4',
             'slug' => 'root-test-home-four',
@@ -74,10 +79,11 @@ class PageHomepageSelectionTest extends TestCase
         Cache::forget('homepage:published-default:id');
         $this->get('/')->assertOk()->assertSee('Digining Your Luxury Dream Space With Style');
 
-        $homeFour->update(['is_default' => false]);
-        $homeFive->update(['is_default' => true]);
-        Cache::forget('homepage:published-default:id');
+        app(HomepageController::class)->setDefault($homeFive);
 
+        $this->assertFalse($homeFour->fresh()->is_default);
+        $this->assertTrue($homeFive->fresh()->is_default);
+        $this->assertNull(Cache::get('homepage:published-default:id'));
         $this->get('/')->assertOk()->assertSee('Discover Luxury Home Every Rooms');
     }
 
