@@ -76,7 +76,7 @@ class ContentController extends Controller
         if(isset($data['title'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['title'],$item->id);
         if(isset($data['name'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['name'],$item->id);
         $oldFiles=[];
-        foreach(['image','featured_image','photo'] as $field) if($request->hasFile($field)) {
+        foreach(['image','featured_image','photo','icon_path'] as $field) if($request->hasFile($field)) {
             if($item->$field) $oldFiles[]=$item->$field;
             $data[$field]=$request->file($field)->store($type,'public');
         }
