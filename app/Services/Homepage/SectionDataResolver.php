@@ -19,8 +19,6 @@ class SectionDataResolver
         if ($section->section_key === 'hero.home-3') {
             return [
                 'mapProperties' => Property::published()
-                    ->whereNotNull('latitude')
-                    ->whereNotNull('longitude')
                     ->with(['images', 'category'])
                     ->orderByDesc('is_featured')
                     ->latest('published_at')
