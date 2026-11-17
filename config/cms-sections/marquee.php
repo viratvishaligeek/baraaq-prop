@@ -8,8 +8,6 @@ return [
         'source_design' => 'home-2',
         'view' => 'frontend.sections.marquee.home-2',
         'defaults' => [
-            'background_color' => '#f5f5f5',
-            'animation_duration' => 28,
             'repeat_count' => 4,
             'show_mobile' => true,
             'show_tablet' => true,
