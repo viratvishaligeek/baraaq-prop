@@ -17,7 +17,7 @@
                     <p class="sub-title mt-2 text-anime-style-2"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
                     <h2 class="sec-title mb-4 text-anime-style-3">{{ $sectionConfig['heading'] ?? '' }}</h2>
                     @if($sectionConfig['show_filters'] ?? true)
-                        <div class="filter-menu style-2 indicator-active filter-menu-active mt-2 justify-content-center fadeinup wow" data-wow-delay="0.5s">
+                        <div class="filter-menu style-2 indicator-active filter-menu-active mt-2 justify-content-center{{ ($sectionConfig['animate_content'] ?? true) ? ' fadeinup wow' : '' }}" data-wow-delay="0.5s">
                             <button data-filter="*" class="th-btn tab-btn active" type="button">View All</button>
                             @foreach(($propertyCategories ?? collect()) as $category)
                                 <button data-filter=".cat-{{ $category->slug }}" class="th-btn tab-btn" type="button">{{ $category->name }}</button>
