@@ -57,4 +57,33 @@ class ContentPublishingAndCommentsTest extends TestCase
 
         $this->get(route('blog.show', $post))->assertOk()->assertDontSee('This article was helpful.');
     }
+    public function test_frontend_service_views_are_recorded_with_a_persistent_visitor_identifier(): void
+    {
+        $service = Service::create([
+            'title' => 'Rental management',
+            'slug' => 'rental-management',
+            'content' => 'Published service content.',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        $firstResponse = $this->get(route('services.show', $service));
+        $firstResponse->assertOk();
+
+        $visitorCookie = $firstResponse->getCookie('site_visitor');
+        $this->assertNotNull($visitorCookie);
+
+        $this->withCookie('site_visitor', $visitorCookie->getValue())
+            ->get(route('services.show', $service))
+            ->assertOk();
+
+        $this->assertDatabaseCount('page_views', 2);
+        $this->assertSame(1, \\Illuminate\\Support\\Facades\\DB::table('page_views')->distinct()->count('visitor_hash'));
+        $this->assertDatabaseHas('page_views', [
+            'path' => '/services/rental-management',
+            'content_type' => 'service',
+            'content_id' => $service->id,
+        ]);
+    }
+
 }
