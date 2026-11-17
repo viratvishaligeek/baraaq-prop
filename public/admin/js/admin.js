@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 document.addEventListener('DOMContentLoaded', function () {
     const previewUrls = new WeakMap();
-    document.querySelectorAll('input[type="file"][accept*="image"]').forEach(input => {
+    document.querySelectorAll('input[type="file"][accept*="image"]:not(#media-upload-files)').forEach(input => {
         let preview = input.parentElement?.querySelector('[data-local-upload-preview]');
         if (!preview) {
             preview = document.createElement('img');
