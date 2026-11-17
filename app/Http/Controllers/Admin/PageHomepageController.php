@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Homepage;
 use App\Models\Page;
 use Illuminate\Support\Facades\DB;
 
@@ -18,6 +19,8 @@ class PageHomepageController extends Controller
         abort_unless($page->status === 'published', 422, 'Only a published page can be selected as the homepage.');
 
         DB::transaction(function () use ($page): void {
+            Homepage::query()->lockForUpdate()->update(['is_default' => false]);
+
             Page::query()
                 ->whereNotNull('homepage_key')
                 ->lockForUpdate()
