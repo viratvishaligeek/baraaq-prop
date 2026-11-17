@@ -120,6 +120,11 @@ class ContentController extends Controller
         if(isset($data['title']) && in_array($type,['posts','pages','services'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['title'],$item->id);
         if(isset($data['name']) && $type==='categories') $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['name'],$item->id);
         $oldFiles=[];
+        foreach (['image_media_id' => 'image', 'featured_image_media_id' => 'featured_image', 'photo_media_id' => 'photo', 'icon_media_id' => 'icon_path', 'og_image_media_id' => 'og_image'] as $input => $field) {
+            if ($request->filled($input) && $item->$field && !Media::where('path', $item->$field)->exists()) {
+                $oldFiles[] = $item->$field;
+            }
+        }
         foreach(['image','featured_image','photo','icon_path','og_image'] as $field) if($request->hasFile($field)) {
             if($item->$field && !Media::where('path',$item->$field)->exists()) $oldFiles[]=$item->$field;
             $data[$field]=$request->file($field)->store($type,'public');
