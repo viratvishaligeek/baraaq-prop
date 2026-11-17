@@ -19,9 +19,9 @@
             </div>
             <div class="col-xl-5 col-lg-6">
                 <div class="title-area download-2 text-center">
-                    <p class="sub-title text-anime-style-1"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
-                    <h2 class="sec-title text-anime-style-2 mb-4">{{ $sectionConfig['heading'] ?? '' }}</h2>
-                    <p class="box-text text-anime-style-3">{{ $sectionConfig['description'] ?? '' }}</p>
+                    <p class="sub-title{{ $animateContent ? ' text-anime-style-1' : '' }}"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
+                    <h2 class="sec-title{{ $animateContent ? ' text-anime-style-2' : '' }} mb-4">{{ $sectionConfig['heading'] ?? '' }}</h2>
+                    <p class="box-text{{ $animateContent ? ' text-anime-style-3' : '' }}">{{ $sectionConfig['description'] ?? '' }}</p>
                 </div>
                 <div class="scan-download-2-wrap">
                     <div class="scan-download-item-wrap">
