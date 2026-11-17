@@ -8,7 +8,7 @@
 
 The original HTML in `theme-files-html/` is authoritative for markup, layout, class names, spacing, responsive behavior, image selection, iconography, fonts, and interaction. Blade conversion must preserve that design. Dynamic data bindings may replace static content, but they must not flatten or redesign the layout.
 
-All ten source files were fetched from the feature branch and inspected. The nine secondary homepage Blade views are present. The primary design is represented by `frontend/home.blade.php`.
+All ten source files were fetched from the feature branch and inspected. Their Git blob SHAs match the corresponding files on `main`, and the complete `assets/` directory tree SHA also matches `main`; the feature branch is using the same original design reference. The nine secondary homepage Blade views are present. The primary design is represented by `frontend/home.blade.php`.
 
 ## Homepage inventory
 
