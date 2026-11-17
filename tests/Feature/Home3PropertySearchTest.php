@@ -100,7 +100,7 @@ class Home3PropertySearchTest extends TestCase
             'q' => 'apartment',
             'city' => 'Meerut',
             'listing_type' => 'sale',
-            'category' => $category->id,
+            'category' => (string) $category->id,
             'min_price' => 4000000,
             'max_price' => 6000000,
             'min_bedrooms' => 2,
