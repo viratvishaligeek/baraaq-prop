@@ -29,12 +29,12 @@
                                                 </div>
                                                 <div class="media-body">
                                                     <h3 class="box-title"><a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a></h3>
-                                                    <div class="box-text"><div class="icon"><img src="{{ $sectionConfig['location_icon'] ?? '' }}" alt="icon"></div>{{ $property->address }}, {{ $property->city }}</div>
+                                                    <div class="box-text"><div class="icon">@if(!empty($sectionConfig['location_icon']))<img src="{{ $sectionConfig['location_icon'] }}" alt="icon">@endif</div>{{ $property->address }}, {{ $property->city }}</div>
                                                 </div>
                                                 <ul class="property-featured">
-                                                    <li><div class="icon"><img src="{{ $sectionConfig['bed_icon'] ?? '' }}" alt="icon"></div>Bed {{ $property->bedrooms ?? '—' }}</li>
-                                                    <li><div class="icon"><img src="{{ $sectionConfig['bath_icon'] ?? '' }}" alt="icon"></div>Bath {{ $property->bathrooms ?? '—' }}</li>
-                                                    <li><div class="icon"><img src="{{ $sectionConfig['area_icon'] ?? '' }}" alt="icon"></div>{{ $property->area ? number_format((float) $property->area).' '.$property->area_unit : '—' }}</li>
+                                                    <li><div class="icon">@if(!empty($sectionConfig['bed_icon']))<img src="{{ $sectionConfig['bed_icon'] }}" alt="icon">@endif</div>Bed {{ $property->bedrooms ?? '—' }}</li>
+                                                    <li><div class="icon">@if(!empty($sectionConfig['bath_icon']))<img src="{{ $sectionConfig['bath_icon'] }}" alt="icon">@endif</div>Bath {{ $property->bathrooms ?? '—' }}</li>
+                                                    <li><div class="icon">@if(!empty($sectionConfig['area_icon']))<img src="{{ $sectionConfig['area_icon'] }}" alt="icon">@endif</div>{{ $property->area ? number_format((float) $property->area).' '.$property->area_unit : '—' }}</li>
                                                 </ul>
                                                 <div class="property-bottom">
                                                     <h6 class="box-title">{{ $property->price ? number_format((float) $property->price, 2) : $property->price_label }}</h6>
