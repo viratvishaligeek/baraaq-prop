@@ -20,9 +20,9 @@
         <div class="row justify-content-lg-between text-center text-lg-start gy-4 justify-content-center align-items-center mb-40">
             <div class="col-lg-7">
                 <div class="title-area text-left mb-2">
-                    <p class="sub-title text-anime-style-1"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
-                    <h2 class="sec-title text-anime-style-2">{{ $sectionConfig['heading'] ?? '' }}</h2>
-                    <p class="box-text text-anime-style-3">{{ $sectionConfig['description'] ?? '' }}</p>
+                    <p class="sub-title{{ $animation ? ' text-anime-style-1' : '' }}"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? '' }}</p>
+                    <h2 class="sec-title{{ $animation ? ' text-anime-style-2' : '' }}">{{ $sectionConfig['heading'] ?? '' }}</h2>
+                    <p class="box-text{{ $animation ? ' text-anime-style-3' : '' }}">{{ $sectionConfig['description'] ?? '' }}</p>
                 </div>
             </div>
             @if(!empty($sectionConfig['button_label']))
