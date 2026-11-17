@@ -20,8 +20,6 @@ class SectionDataResolver
             $mapProperties = Property::published()
                 ->whereNotNull('latitude')
                 ->whereNotNull('longitude')
-                ->where('latitude', '!=', '')
-                ->where('longitude', '!=', '')
                 ->with(['images', 'category'])
                 ->orderByDesc('is_featured')
                 ->latest('published_at')
