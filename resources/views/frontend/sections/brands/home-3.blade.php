@@ -16,7 +16,7 @@
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
 
-<div class="brand-area-1 overflow-hidden {{ $visibility }}">
+<div class="brand-area-1 {{ $sectionConfig['vertical_spacing'] ?? '' }} overflow-hidden {{ $visibility }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif>
     @if(!empty($sectionConfig['shape_image']))
         <div class="shape-mockup spin z-index-1 d-none d-xxl-block z-index-5" style="top: 5%; right: 0%;"><img src="{{ $sectionConfig['shape_image'] }}" alt="Decorative shape"></div>
     @endif
