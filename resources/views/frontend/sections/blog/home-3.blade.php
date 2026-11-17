@@ -1,4 +1,5 @@
 @php
+    $animateCards = $sectionConfig['animate_cards'] ?? true;
     $posts = $posts->take(max(1, min(3, (int) ($sectionConfig['items_limit'] ?? 3))))->values();
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
@@ -20,7 +21,7 @@
             @if($posts->isNotEmpty())
                 @php($firstPost = $posts->first())
                 <div class="col-lg-6">
-                    <div class="blog-card style-3 fadeinup wow" data-wow-delay="0.3s">
+                    <div class="blog-card style-3{{ $animateCards ? ' fadeinup wow' : '' }}" data-wow-delay="0.3s">
                         <div class="blog-img">
                             <a href="{{ route('blog.show', $firstPost) }}">
                                 @if($firstPost->featured_image)<img src="{{ Storage::disk('public')->url($firstPost->featured_image) }}" alt="{{ $firstPost->title }}">@endif
@@ -46,7 +47,7 @@
                 <div class="col-lg-6">
                     <div class="blog-3-right-wrap">
                         @foreach($posts->skip(1) as $post)
-                            <div class="blog-card style-3 grid-style fadeinright wow" data-wow-delay="{{ $loop->first ? '0.5s' : '0.7s' }}">
+                            <div class="blog-card style-3 grid-style{{ $animateCards ? ' fadeinright wow' : '' }}" data-wow-delay="{{ $loop->first ? '0.5s' : '0.7s' }}">
                                 <div class="blog-img">
                                     <a href="{{ route('blog.show', $post) }}">@if($post->featured_image)<img src="{{ Storage::disk('public')->url($post->featured_image) }}" alt="{{ $post->title }}">@endif</a>
                                 </div>
