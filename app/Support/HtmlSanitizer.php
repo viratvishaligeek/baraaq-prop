@@ -60,6 +60,7 @@ class HtmlSanitizer
             }
 
             if (! in_array($tag, self::ALLOWED_TAGS, true)) {
+                self::cleanNode($child);
                 while ($child->firstChild) {
                     $node->insertBefore($child->firstChild, $child);
                 }
