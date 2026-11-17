@@ -40,7 +40,7 @@ class PageBuilderController extends Controller
             'page' => $page->load('sections.mediaAttachments.media'),
             'widgetGroups' => $this->registry->grouped(),
             'widgetDefinitions' => $this->registry->all(),
-            'mediaLibrary' => Media::query()->where('mime_type', 'like', 'image/%')->latest('id')->limit(200)->get(['id', 'original_name', 'mime_type']),
+            'mediaLibrary' => Media::query()->where('mime_type', 'like', 'image/%')->latest('id')->limit(200)->get(['id', 'original_name', 'mime_type', 'disk', 'path', 'alt_text']),
             'queryableTypes' => $this->registry->queryableTypes(),
         ]);
     }
