@@ -30,8 +30,9 @@ class SectionMediaResolver
         }
 
         $attachments = ($section->relationLoaded('mediaAttachments') ? $section->mediaAttachments : $section->mediaAttachments()->with('media')->get())->keyBy('field_key');
-        $reusableAttachments = $section->reusableSection
-            ? $section->reusableSection->mediaAttachments()->with('media')->get()->keyBy('field_key')
+        $reusableSection = $section->reusableSection;
+        $reusableAttachments = $reusableSection
+            ? ($reusableSection->relationLoaded('mediaAttachments') ? $reusableSection->mediaAttachments : $reusableSection->mediaAttachments()->with('media')->get())->keyBy('field_key')
             : collect();
         $media = Media::query()->whereIn('id', $mediaIds)->get()->keyBy('id');
 
