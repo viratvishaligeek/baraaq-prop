@@ -1,5 +1,5 @@
 <div class="gallery-img">
-    <img src="{{ $item['image'] }}" alt="gallery image">
+    @if(!empty($item['image']))<img src="{{ $item['image'] }}" alt="gallery image">@endif
     <div class="gallery-content">
         <div class="gallery-content-wrapper">
             <div class="left-content">
