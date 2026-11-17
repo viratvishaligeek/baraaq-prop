@@ -25,6 +25,9 @@
                         <span class="badge bg-light text-dark">{{ ucfirst($homepage->status) }}</span>
                     @endif
                 </div>
+                @unless($homepage->is_composition_complete)
+                    <p class="small text-warning mb-0">Section composition is still being completed. This design remains on its original source template and cannot replace the live homepage through the builder yet.</p>
+                @endunless
                 <div class="d-flex flex-wrap gap-2 mt-3">
                     @if($homepage->design_key === 'index')
                         <a class="btn btn-sm btn-outline-secondary" href="{{ route('home') }}" target="_blank" rel="noopener noreferrer">Preview</a>
@@ -38,13 +41,13 @@
                             @csrf
                             <button class="btn btn-sm btn-outline-primary" type="submit">Create draft copy</button>
                         </form>
-                        @unless($homepage->is_default)
+                        @if(!$homepage->is_default && $homepage->is_composition_complete)
                             <form method="POST" action="{{ route('admin.homepages.default', $homepage) }}">
                                 @csrf
                                 @method('PATCH')
                                 <button class="btn btn-sm btn-primary" type="submit">Set as homepage</button>
                             </form>
-                        @endunless
+                        @endif
                     @endif
                 </div>
             </div>
