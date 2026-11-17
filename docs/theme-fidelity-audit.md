@@ -99,7 +99,7 @@ The original HTML loads Inter and Plus Jakarta Sans from Google Fonts and refere
 | index | 7 | Blog/news slider | Published posts, author/date/image, comments, CTA | Extracted in part; heading settings only |
 | home-2 | 1 | Property categories | Property categories, icons, counts, links, decorative shapes | Registered as a source-specific category slider; data/form/render implemented; visual verification pending |
 | home-2 | 2 | Featured properties — standard cards | Properties, images, price/status, features, actions | Not extracted |
-| home-2 | 3 | Property values / expert-rated villas | Editable intro and property/value cards | Not extracted |
+| home-2 | 3 | Property values / expert-rated villas | Editable intro and property/value cards | Registered with four editable image/content cards and reusable card partial; visual verification pending |
 | home-2 | 4 | Team members — home-2 card variant | Team records, images, socials, slider settings | Not extracted |
 | home-2 | 5 | Featured property spotlight — alternate card | Featured property, location, beds/baths, image, CTA | Not extracted |
 | home-2 | 6 | Testimonials — style 2 | Testimonial records, avatars, quote, slider | Not extracted |
@@ -218,7 +218,7 @@ Counts below are **minimum identified literal section wrappers** plus separately
 | Homepage | Literal wrappers identified (minimum) | Registered section partials | Section forms with matching schema | Database bindings in registered sections | Frontend partial rendering | Responsive verification |
 |---|---:|---:|---|---|---|---|
 | index | 7 + hero | 4 (hero, properties, team, blog) | Partial; hero still incomplete | Banner, properties, team, posts | Source-level only | Pending |
-| home-2 | 7 + hero, plus about div block | 3 (hero, categories, about) | Category/about schemas implemented; hero partial | Property categories/counts | Source-level only | Pending |
+| home-2 | 7 + hero, plus about div block | 4 (hero, categories, about, property values) | Category/about/property-values schemas implemented; hero partial | Property categories/counts | Source-level only | Pending |
 | home-3 | 5 + hero | 2 (hero, categories) | Category schema implemented; hero partial | Property categories/counts | Source-level only | Pending |
 | home-4 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
 | home-5 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
@@ -229,3 +229,6 @@ Counts below are **minimum identified literal section wrappers** plus separately
 | home-10 | 7 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
 
 **Strict completion count remains 0.** The table deliberately distinguishes registered partials from fully verified source sections. No homepage has a complete source-block inventory, full section sequence, complete settings coverage, and desktop/tablet/mobile visual regression result yet.
+
+
+The Home 2 property-values gallery is now also registered as `property-values.home-2`. Its source-specific three-column composition (left card, two stacked center cards, right card), hover overlay, plus icon, image and per-card title/description/button/URL are editable. The repeated card markup lives in a small reusable Blade partial. This section is configuration-driven rather than backed by a new database content type.
