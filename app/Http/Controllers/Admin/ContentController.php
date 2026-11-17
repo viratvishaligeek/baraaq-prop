@@ -39,11 +39,15 @@ class ContentController extends Controller
             403
         );
 
-        if (in_array($action, ['create', 'edit']) && request()->input('status') === 'published') {
-            abort_unless($user->isAdministrator() || $user->hasPermission($managePermission) || $user->hasPermission($type.'.publish'), 403);
-        }
-
         return $this->types[$type];
+    }
+
+    private function authorizePublish(string $type, string $status, ?string $currentStatus = null): void
+    {
+        if ($status === 'published' && $currentStatus !== 'published') {
+            $user = request()->user();
+            abort_unless($user->isAdministrator() || $user->hasPermission($type.'.manage') || $user->hasPermission($type.'.publish'), 403);
+        }
     }
 
     private function uniqueSlug(string $model,string $value,?int $ignoreId=null): string
@@ -93,7 +97,7 @@ class ContentController extends Controller
     public function store(Request $request,string $type)
     {
         $model=$this->model($type);
-        $data=$this->validated($request,$type);$this->applyMediaSelections($data);$categoryIds=$data['category_ids']??[];unset($data['category_ids']);
+        $data=$this->validated($request,$type);$this->authorizePublish($type,$data['status']??'draft');$this->applyMediaSelections($data);$categoryIds=$data['category_ids']??[];unset($data['category_ids']);
         if(isset($data['title']) && in_array($type,['posts','pages','services'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['title']);
         if(isset($data['name']) && $type==='categories') $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['name']);
         if(in_array($type,['posts','pages'])) $data['author_id']=$request->user()->id;
@@ -116,7 +120,7 @@ class ContentController extends Controller
     {
         $model=$this->model($type);
         $item=$model::findOrFail($id);
-        $data=$this->validated($request,$type,$item->id);$this->applyMediaSelections($data);$categoryIds=$data['category_ids']??[];unset($data['category_ids']);
+        $data=$this->validated($request,$type,$item->id);$this->authorizePublish($type,$data['status']??$item->status,$item->status);$this->applyMediaSelections($data);$categoryIds=$data['category_ids']??[];unset($data['category_ids']);
         if(isset($data['title']) && in_array($type,['posts','pages','services'])) $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['title'],$item->id);
         if(isset($data['name']) && $type==='categories') $data['slug']=$this->uniqueSlug($model,$data['slug']??$data['name'],$item->id);
         $oldFiles=[];
