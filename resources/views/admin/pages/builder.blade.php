@@ -135,8 +135,8 @@
                                             @php $value = old('config.'.$field, $config[$field] ?? ''); @endphp
                                             <div class="{{ in_array($schema['type'], ['textarea', 'richtext'], true) ? 'col-12' : 'col-md-6' }}">
                                                 <label class="form-label small">{{ $schema['label'] }}</label>
-                                                @if ($schema['type'] === 'textarea')
-                                                    <textarea class="form-control form-control-sm" name="config[{{ $field }}]" rows="2" maxlength="{{ $schema['max'] ?? 1500 }}">{{ $value }}</textarea>
+                                                @if (in_array($schema['type'], ['textarea', 'richtext'], true))
+                                                    <textarea class="form-control form-control-sm" name="config[{{ $field }}]" rows="3" maxlength="{{ $schema['max'] ?? 1500 }}" @if ($schema['type'] === 'richtext') data-rich-editor @endif>{{ $value }}</textarea>
                                                 @elseif ($schema['type'] === 'select')
                                                     <select class="form-select form-select-sm" name="config[{{ $field }}]">
                                                         @foreach ($schema['options'] ?? [] as $option => $label)
