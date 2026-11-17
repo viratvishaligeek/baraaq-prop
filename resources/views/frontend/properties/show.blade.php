@@ -19,7 +19,7 @@
     <h3 class="h4 mb-3">Enquire about this property</h3>
     @php
         $ctaMode = $property->cta_mode ?: 'both';
-        $whatsappNumber = preg_replace('/\\D+/', '', $property->whatsapp_number ?: \\App\\Models\\Setting::read('whatsapp_number', ''));
+        $whatsappNumber = preg_replace('/\\D+/', '', $property->whatsapp_number ?: \App\Models\Setting::read('whatsapp_number', ''));
         $whatsappMessage = $property->whatsapp_message ?: 'I am interested in '.$property->title.' - '.route('properties.show', $property);
     @endphp
     @if(in_array($ctaMode, ['contact_form', 'both'], true) || ($ctaMode === 'whatsapp' && !$whatsappNumber))
