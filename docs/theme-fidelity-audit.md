@@ -60,3 +60,13 @@ The repository/API environment does not render a browser. The following must rem
 6. All hardcoded text, demo contact details, placeholder cards, prices, external links and social URLs are either mapped to CMS settings/content records or intentionally retained as theme chrome with an explicit reason.
 
 No pixel-perfect or browser-interaction verification is claimed by this inventory.
+
+
+## Asset issue discovered during source inspection
+
+- The original HTML references `assets/js/app.min.js`, and the public copy is `public/theme-assets/js/app.min.js`.
+- Both source and public copies currently return an empty file (zero bytes) with the same Git blob SHA. This is not a change introduced by the CMS work; the source copy on `main` is also empty.
+- `assets/js/main.js` references Swiper, GSAP, ScrollTrigger, SplitText, Isotope and other theme plugins. The original page script list only includes jQuery, the empty `app.min.js`, WOW, Nice Select and `main.js`. The required vendor plugin implementations were not found among those HTML script references.
+- Font Awesome CSS declares local Pro font files for brands, duotone, light, regular, solid and thin weights under `assets/fonts/fontawesome/`. The HTML also loads Inter and Plus Jakarta Sans from Google Fonts.
+- This is a genuine frontend verification blocker: do not report carousel, animation, filtering, slider or related theme interactions as working until the missing vendor bundle/dependencies are located or replaced with compatible licensed assets. Do not silently fabricate a replacement bundle.
+
