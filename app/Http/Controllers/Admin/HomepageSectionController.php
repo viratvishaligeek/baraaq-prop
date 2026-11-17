@@ -61,6 +61,30 @@ class HomepageSectionController extends Controller
         return response()->json(['saved' => true]);
     }
 
+    public function update(Request $request, Homepage $homepage, HomepageSection $section)
+    {
+        abort_unless($homepage->status === 'draft', 409);
+        abort_unless($section->homepage_id === $homepage->id, 404);
+
+        $definition = config('cms-sections.sections.'.$section->section_key);
+        abort_unless($definition, 422, 'The section is not registered.');
+
+        $rules = ['config' => ['nullable', 'array']];
+        foreach ($definition['settings'] ?? [] as $field) {
+            $rules['config.'.$field] = ['nullable', 'string', 'max:180'];
+        }
+
+        $data = $request->validate($rules);
+        $config = array_intersect_key(
+            $data['config'] ?? [],
+            array_flip($definition['settings'] ?? [])
+        );
+
+        $section->update(['config' => $config]);
+
+        return back()->with('success', 'Section settings saved.');
+    }
+
     public function toggle(Homepage $homepage, HomepageSection $section)
     {
         abort_unless($homepage->status === 'draft', 409);
