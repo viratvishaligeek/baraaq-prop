@@ -5,7 +5,7 @@
     $animateContent = $sectionConfig['animate_content'] ?? true;
 @endphp
 
-<div class="th-hero-wrapper bg-smoke hero-3 {{ $visibility }}" id="hero-{{ $section->id }}">
+<div class="th-hero-wrapper bg-smoke hero-3 {{ $visibility }}" id="hero-{{ $section->id }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif>
     @if(!empty($sectionConfig['right_shape_image']))<div class="shape-mockup d-none d-xl-block" data-top="0" data-right="0"><img src="{{ $sectionConfig['right_shape_image'] }}" alt="img"></div>@endif
     @if(!empty($sectionConfig['left_shape_image']))<div class="shape-mockup spin d-none d-xxl-block" data-left="3%" data-bottom="5%"><img src="{{ $sectionConfig['left_shape_image'] }}" alt="img"></div>@endif
     <div class="container">
