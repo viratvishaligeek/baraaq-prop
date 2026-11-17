@@ -114,4 +114,4 @@ class CmsWidgetRegistry
             'category-slider' => ['label' => 'Categories', 'table' => 'categories', 'sort' => ['sort_order', 'created_at', 'name'], 'filters' => []],
         ];
     }
-}}
+}
