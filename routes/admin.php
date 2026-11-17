@@ -42,6 +42,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/homepages/{homepage}/duplicate', [HomepageController::class, 'duplicate'])->middleware('permission:settings.manage')->name('homepages.duplicate');
         Route::get('/homepages/{homepage}/builder', [HomepageController::class, 'builder'])->middleware('permission:settings.manage')->name('homepages.builder');
         Route::get('/homepages/{homepage}/preview', [HomepageController::class, 'preview'])->middleware('permission:settings.manage')->name('homepages.preview');
+        Route::patch('/homepages/{homepage}/verify', [HomepageController::class, 'verifyComposition'])->middleware('permission:settings.manage')->name('homepages.verify');
         Route::patch('/homepages/{homepage}/publish', [HomepageController::class, 'publish'])->middleware('permission:settings.manage')->name('homepages.publish');
         Route::patch('/homepages/{homepage}/default', [HomepageController::class, 'setDefault'])->middleware('permission:settings.manage')->name('homepages.default');
 
