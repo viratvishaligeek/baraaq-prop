@@ -4,7 +4,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="page-title">Website analytics</h1>
-        <p class="text-muted mb-0">Measured from real frontend requests, CMS changes and stored enquiry submissions.</p>
+        <p class="text-muted mb-0">Measured from real frontend requests, CMS changes and stored enquiry submissions. Visitor and visit counts use first-party cookies; visitors who block cookies may be counted separately.</p>
     </div>
 </div>
 <div class="content-card mb-4">
