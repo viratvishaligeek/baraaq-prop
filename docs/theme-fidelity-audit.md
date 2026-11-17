@@ -215,18 +215,18 @@ The builder's image fields now open a searchable picker backed by the existing M
 
 Counts below are **minimum identified literal section wrappers** plus separately registered partials. They do not count every div-based block, slider, card collection, search overlay or shared chrome element. “Form / binding / render” records source implementation only, not runtime proof. Responsive verification remains pending for every design.
 
-| Homepage | Literal wrappers identified (minimum) | Registered section partials | Section forms with matching schema | Database bindings in registered sections | Frontend partial rendering | Responsive verification |
-|---|---:|---:|---|---|---|---|
-| index | 7 + hero | 4 (hero, properties, team, blog) | Partial; hero still incomplete | Banner, properties, team, posts | Source-level only | Pending |
-| home-2 | 7 + hero, plus about, benefits, neighborhood, download, marquee and FAQ div blocks | 13 (hero, categories, about, benefits, property grid, neighborhood gallery, property values, team, download, marquee, featured property carousel, testimonials, FAQ) | Twelve non-hero section schemas plus partial hero settings | Property categories/counts, published properties and active team records | Source-level only | Pending |
-| home-3 | 5 explicit wrappers + 9 div-based blocks (14 major blocks total) | 6 (hero, categories, property grid, amenities carousel, team carousel, neighborhood gallery) | Five non-hero schemas/forms registered; full field audit pending | Property categories/counts, published properties and active team records | Source-level only | Pending |
-| home-4 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
-| home-5 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
-| home-6 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
-| home-7 | 5 + hero | 2 (hero, categories) | Category schema implemented; hero partial | Property categories/counts | Source-level only | Pending |
-| home-8 | 6 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
-| home-9 | 5 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
-| home-10 | 7 + hero | 1 (hero) | Hero partial only | None verified for hero | Source-level only | Pending |
+| Homepage | Major source blocks identified (initial inventory) | Extracted | Registered | Admin forms | Database bindings | Frontend render | Responsive verification | Strictly complete |
+|---|---:|---:|---:|---:|---|---|---|---:|
+| index | 8 | 4 | 4 | 3 complete schemas + hero partial schema | Banners, properties, team, posts | Source-level only | Pending | 0 |
+| home-2 | 15 | 15 | 15 | 15 schema-driven forms; detailed field audit pending | Property categories, published properties, team, posts, property cities | Source-level only | Pending | 0 |
+| home-3 | 14 | 14 | 14 | 14 schema-driven forms; source-to-field parity audit pending | Property map/search, categories, listings, team, featured listings, posts; enquiry writes to Enquiry records | Source-level only | Pending | 0 |
+| home-4 | 6 + uncounted div blocks | 1 | 1 | Hero schema only | None verified | Source-level only | Pending | 0 |
+| home-5 | 6 + uncounted div blocks | 1 | 1 | Hero schema only | None verified | Source-level only | Pending | 0 |
+| home-6 | 6 + uncounted div blocks | 1 | 1 | Hero schema only | None verified | Source-level only | Pending | 0 |
+| home-7 | 6 + uncounted div blocks | 2 | 2 | Category schema + partial hero schema | Property categories/counts | Source-level only | Pending | 0 |
+| home-8 | 7 + uncounted div blocks | 1 | 1 | Hero schema only | None verified | Source-level only | Pending | 0 |
+| home-9 | 6 + uncounted div blocks | 1 | 1 | Hero schema only | None verified | Source-level only | Pending | 0 |
+| home-10 | 8 + uncounted div blocks | 1 | 1 | Hero schema only | None verified | Source-level only | Pending | 0 |
 
 **Strict completion count remains 0.** The table deliberately distinguishes registered partials from fully verified source sections. No homepage has a complete source-block inventory, full section sequence, complete settings coverage, and desktop/tablet/mobile visual regression result yet.
 
@@ -252,4 +252,13 @@ The Home 2 advanced-search panel is now extracted as a separate `advance-search-
 
 ### Home 3 extraction pass
 
-Home 3 now has source-specific category, property-grid, seven-card amenities carousel, team carousel and four-card neighborhood feature gallery sections registered in addition to its hero. The property grid uses the published-property/category resolver and preserves the source `popular-sec-1` card/filter markup. The amenities carousel preserves `why-card-1 style-2 style-3` with seven individually configurable cards. The team carousel reuses the shared team renderer with a Home 3 schema/default spacing. The gallery preserves the original asymmetric one-large/one-large-plus-two-small composition and `gallery-card style-2` overlays. Home 3 draft initialization now seeds the currently extracted six blocks in source order. Remaining Home 3 blocks and responsive/browser verification are pending.
+Home 3 now has fourteen major content blocks extracted and registered in the current draft initializer: hero/map/search/counters, categories, property grid, seven-card amenities carousel, team carousel, neighborhood feature gallery, app-download/QR showcase, featured-property fade gallery, trust-score/testimonial carousel, five-item FAQ accordion, property-goal enquiry form, promotional marquee, editorial blog grid and brand-logo strip. The hero map uses published properties with map coordinates, and its search options come from published property data. Featured gallery and blog sections use published database records. The enquiry form posts to the existing Laravel enquiries endpoint and therefore stores enquiries in the existing database table. The download, testimonials, FAQ, marquee and brand-strip content is editable in the homepage section configuration. Original Home 3 classes and theme JavaScript hooks (Bootstrap tabs/accordion, Swiper, WOW/GSAP animation hooks, popup-video and map hover classes) are retained in source markup. This is source-level only: no browser run has confirmed these interactions or responsive fidelity. The Home 3 section sequence is seeded in source order when an empty homepage is duplicated into a draft.
+
+
+### Media Library relationship hardening — 2026-11-17
+
+The section media picker now submits a Media record ID rather than a storage URL. The selected ID remains in the section's JSON configuration for stable, backwards-compatible rendering, and an additive `media_attachments` polymorphic relationship stores the actual `Media` foreign key plus the section field key. Both `HomepageSection` and `ReusableSection` expose these relationships. Replacing an image updates the field relationship; clearing it removes that relationship. Duplicating sections/homepages copies local media attachments; reusable sections keep their shared media relationships. Deleting a Media row cascades attachment rows, and the render resolver returns an empty image value if a stale/deleted ID remains in legacy JSON rather than emitting a broken numeric URL. Existing URL/path configuration values remain supported during migration. Picker metadata includes alt text, MIME type, size and disk; the builder displays the selected media name and size.
+
+**Media caveat:** section config still contains the media ID as well as the normalized relationship row. This deliberate compatibility layer allows existing Blade partials to consume a render-time URL without requiring a breaking rewrite of every section. Database migration, delete/replacement behavior and URL resolution have not been runtime-tested.
+
+**Completion gate:** all ten designs still have zero strictly completed sections. Source extraction and form registration do not equal completed visual/functional verification. Responsive and browser verification remains pending for every homepage.
