@@ -175,7 +175,7 @@ class HomepageController extends Controller
 
         $homepage->update([
             'is_composition_complete' => true,
-            'updated_by' => request()->user()->id,
+            'updated_by' => auth()->id(),
         ]);
 
         return redirect()->route('admin.homepages.builder', $homepage)
