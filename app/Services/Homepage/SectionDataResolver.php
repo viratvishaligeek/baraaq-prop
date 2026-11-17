@@ -5,6 +5,7 @@ namespace App\Services\Homepage;
 use App\Models\Category;
 use App\Models\HomepageSection;
 use App\Models\TeamMember;
+use App\Models\Testimonial;
 use App\Models\Property;
 use App\Models\Post;
 use Illuminate\Support\Collection;
@@ -81,6 +82,22 @@ class SectionDataResolver
             ],
             default => [],
         };
+    }
+
+    private function testimonials(array $config): array
+    {
+        $testimonials = Testimonial::where('status', 'published')
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->latest()
+            ->limit((int) ($config['items_limit'] ?? 4))
+            ->get();
+
+        return [
+            'testimonials' => $testimonials,
+            'averageRating' => round((float) ($testimonials->whereNotNull('rating')->avg('rating') ?? 0), 1),
+            'reviewCount' => $testimonials->count(),
+        ];
     }
 
     private function properties(array $config): array
