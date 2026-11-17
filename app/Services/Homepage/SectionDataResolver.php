@@ -80,6 +80,10 @@ class SectionDataResolver
     {
         $query = Testimonial::query()->where('status', 'published')->where('is_active', true);
         if ($ids !== []) $query->whereIn('id', $ids);
+        $filters = $config['filters'] ?? [];
+        if (isset($filters['min_rating']) && $filters['min_rating'] !== '') {
+            $query->where('rating', '>=', (int) $filters['min_rating']);
+        }
         $sort = in_array($config['sort_by'] ?? 'sort_order', ['sort_order', 'created_at', 'name'], true) ? ($config['sort_by'] ?? 'sort_order') : 'sort_order';
         $items = (clone $query)->orderBy($sort, $direction)->limit(max(1, min(24, (int) ($config['items_limit'] ?? 4))))->get();
 
@@ -90,13 +94,16 @@ class SectionDataResolver
     {
         $query = Property::published()->with(['images', 'category', 'creator:id,name']);
         if ($ids !== []) $query->whereIn('id', $ids);
+        $filters = $config['filters'] ?? [];
+        $this->applyPropertyFilters($query, $filters);
         $filter = $config['listing_filter'] ?? 'all';
         if (in_array($filter, ['sale', 'rent'], true)) $query->where('listing_type', $filter);
         elseif ($filter === 'featured') $query->where('is_featured', true);
         $sort = in_array($config['sort_by'] ?? 'published_at', ['published_at', 'created_at', 'price'], true) ? ($config['sort_by'] ?? 'published_at') : 'published_at';
         $properties = (clone $query)->orderBy($sort, $direction)->limit(max(1, min(24, (int) ($config['items_limit'] ?? 8))))->get();
         $categories = Category::query()->where('type', 'property')->where('is_active', true)
-            ->withCount(['properties' => fn ($q) => $q->published()])->having('properties_count', '>', 0)
+            ->whereHas('properties', fn ($q) => $q->published())
+            ->withCount(['properties' => fn ($q) => $q->published()])
             ->orderBy('sort_order')->orderBy('name')->get();
 
         return ['properties' => $properties, 'propertyCategories' => $categories];
@@ -106,6 +113,7 @@ class SectionDataResolver
     {
         $query = Property::published()->where('is_featured', true)->with(['images', 'creator:id,name']);
         if ($ids !== []) $query->whereIn('id', $ids);
+        $this->applyPropertyFilters($query, $config['filters'] ?? []);
         $sort = in_array($config['sort_by'] ?? 'published_at', ['published_at', 'created_at', 'price'], true) ? ($config['sort_by'] ?? 'published_at') : 'published_at';
 
         return $query->orderBy($sort, $direction)->limit(max(1, min(24, (int) ($config['items_limit'] ?? 3))))->get();
@@ -115,6 +123,8 @@ class SectionDataResolver
     {
         $query = Post::published()->with('author');
         if ($ids !== []) $query->whereIn('id', $ids);
+        $categoryId = $config['filters']['category_id'] ?? null;
+        if ($categoryId) $query->whereHas('categories', fn ($categories) => $categories->whereKey((int) $categoryId));
         $sort = in_array($config['sort_by'] ?? 'published_at', ['published_at', 'created_at', 'title'], true) ? ($config['sort_by'] ?? 'published_at') : 'published_at';
 
         return $query->orderBy($sort, $direction)->limit(max(1, min(24, (int) ($config['items_limit'] ?? 6))))->get();
@@ -124,9 +134,32 @@ class SectionDataResolver
     {
         $query = TeamMember::query()->where('status', 'published')->where('is_active', true);
         if ($ids !== []) $query->whereIn('id', $ids);
+        $designation = trim((string) ($config['filters']['designation'] ?? ''));
+        if ($designation !== '') $query->where('designation', 'like', '%' . $designation . '%');
         $sort = in_array($config['sort_by'] ?? 'sort_order', ['sort_order', 'created_at', 'name'], true) ? ($config['sort_by'] ?? 'sort_order') : 'sort_order';
 
         return $query->orderBy($sort, $direction)->limit(max(1, min(24, (int) ($config['items_limit'] ?? 6))))->get();
+    }
+
+    private function applyPropertyFilters($query, array $filters): void
+    {
+        $listingType = $filters['listing_type'] ?? null;
+        if (in_array($listingType, ['sale', 'rent', 'lease'], true)) {
+            $query->where('listing_type', $listingType);
+        }
+        if (! empty($filters['category_id'])) {
+            $query->where('category_id', (int) $filters['category_id']);
+        }
+        foreach (['city', 'property_type'] as $field) {
+            $value = trim((string) ($filters[$field] ?? ''));
+            if ($value !== '') $query->where($field, 'like', '%' . $value . '%');
+        }
+        if (isset($filters['min_price']) && $filters['min_price'] !== '') {
+            $query->where('price', '>=', (float) $filters['min_price']);
+        }
+        if (isset($filters['max_price']) && $filters['max_price'] !== '') {
+            $query->where('price', '<=', (float) $filters['max_price']);
+        }
     }
 
     private function categories(array $config, array $ids, string $direction): Collection

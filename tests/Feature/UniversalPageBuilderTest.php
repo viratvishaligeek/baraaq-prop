@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Homepage;
 use App\Models\HomepageSection;
+use App\Models\Banner;
 use App\Models\Page;
 use App\Models\Testimonial;
 use App\Services\Homepage\SectionDataResolver;
@@ -112,27 +113,55 @@ class UniversalPageBuilderTest extends TestCase
         $this->assertSame($newer->id, $resolved['testimonials']->first()->id);
     }
 
+    public function test_page_widget_can_switch_between_original_piller_designs_in_the_same_family(): void
+    {
+        $page = Page::create([
+            'title' => 'About design switch',
+            'slug' => 'about-design-switch-test',
+            'status' => 'draft',
+        ]);
+
+        $builder = app(PageBuilderService::class);
+        $section = $builder->add($page, 'about.home-4');
+        $builder->save($page, $section, [
+            'section_key' => 'about.home-7',
+            'config' => ['heading' => 'Preserved editorial content'],
+            'data_source' => [],
+        ]);
+
+        $saved = $section->fresh();
+
+        $this->assertSame('about.home-7', $saved->section_key);
+        $this->assertSame('home-7', $saved->source_design);
+        $this->assertSame('Preserved editorial content', $saved->config['heading']);
+        $this->assertSame('about-composition', $saved->section_type);
+    }
+
     public function test_published_cms_page_renders_its_registered_widget_on_the_frontend(): void
     {
         $page = Page::create([
             'title' => 'Builder render test',
             'slug' => 'builder-render-test',
-            'status' => 'published',
+            'status' => 'draft',
         ]);
 
-        $page->sections()->create([
-            'instance_key' => (string) Str::uuid(),
-            'section_key' => 'hero.index',
-            'section_type' => 'hero',
-            'source_design' => 'index',
+        app(PageBuilderService::class)->add($page, 'hero.index');
+        Banner::create([
+            'title' => 'Database hero title',
+            'subtitle' => 'Database hero subtitle',
+            'description' => 'A banner loaded from the database.',
+            'button_text' => 'Explore listings',
+            'button_url' => '/properties',
+            'placement' => 'home',
             'sort_order' => 1,
-            'is_enabled' => true,
-            'config' => [],
-            'data_source' => [],
+            'is_active' => true,
         ]);
+        $page->update(['status' => 'published']);
 
         $this->get('/pages/builder-render-test')
             ->assertOk()
-            ->assertSee('Journey To Your Perfect Luxury Home');
+            ->assertSee('hero-1', false)
+            ->assertSee('Database hero title')
+            ->assertSee('Database hero subtitle');
     }
 }

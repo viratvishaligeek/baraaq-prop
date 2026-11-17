@@ -26,6 +26,8 @@ class DefaultThemeSeeder extends Seeder
             'logo' => ['', 'branding', 'string'],
             'favicon' => ['', 'branding', 'string'],
             'header_menu_location' => ['primary', 'navigation', 'string'],
+            'header_cta_label' => ['Browse Properties', 'navigation', 'string'],
+            'header_cta_url' => ['/properties', 'navigation', 'string'],
             'footer_menu_location' => ['footer', 'navigation', 'string'],
             'sticky_header' => ['1', 'appearance', 'boolean'],
             'primary_color' => ['#068FFF', 'appearance', 'string'],

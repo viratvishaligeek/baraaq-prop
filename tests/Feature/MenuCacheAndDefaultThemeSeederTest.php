@@ -36,6 +36,26 @@ class MenuCacheAndDefaultThemeSeederTest extends TestCase
         $this->assertInstanceOf(Menu::class, Menu::cached('primary'));
     }
 
+    public function test_header_navigation_renders_the_menu_selected_by_the_site_setting(): void
+    {
+        $menu = Menu::create(['name' => 'Custom header', 'location' => 'custom-header']);
+        MenuItem::create([
+            'menu_id' => $menu->id,
+            'label' => 'Custom landing',
+            'url' => '/custom-landing',
+            'sort_order' => 0,
+            'is_active' => true,
+        ]);
+
+        $html = view('frontend.partials.navigation', [
+            'primaryMenu' => Menu::cached('custom-header'),
+        ])->render();
+
+        $this->assertStringContainsString('Custom landing', $html);
+        $this->assertStringContainsString('/custom-landing', $html);
+        $this->assertStringNotContainsString('Properties', $html);
+    }
+
     public function test_menu_item_changes_invalidate_the_cached_menu_identifier(): void
     {
         $menu = Menu::create(['name' => 'Primary navigation', 'location' => 'primary']);
@@ -72,6 +92,14 @@ class MenuCacheAndDefaultThemeSeederTest extends TestCase
         $this->assertDatabaseHas('settings', [
             'key' => 'footer_menu_location',
             'value' => 'footer',
+        ]);
+        $this->assertDatabaseHas('settings', [
+            'key' => 'header_cta_label',
+            'value' => 'Browse Properties',
+        ]);
+        $this->assertDatabaseHas('settings', [
+            'key' => 'header_cta_url',
+            'value' => '/properties',
         ]);
         $this->assertSame(8, Menu::where('location', 'primary')->first()->allItems()->count());
         $this->assertSame(6, Menu::where('location', 'footer')->first()->allItems()->count());

@@ -12,6 +12,12 @@
             <a href="{{ route('admin.homepages.index') }}" class="btn btn-light">Back</a>
             <a href="{{ route('admin.homepages.preview', $homepage) }}" class="btn btn-outline-primary" target="_blank"
                 rel="noopener">Preview draft</a>
+            <form method="POST" action="{{ route('admin.homepages.verify', $homepage) }}"
+                onsubmit="return confirm('Have you compared every section with the original Piller HTML and checked desktop, tablet and mobile layouts, images, links and interactive behavior? The server will also verify that every required section is registered.')">
+                @csrf
+                @method('PATCH')
+                <button class="btn btn-outline-success" type="submit">Verify composition</button>
+            </form>
             <form method="POST" action="{{ route('admin.homepages.publish', $homepage) }}"
                 onsubmit="return confirm('Publish this draft? It will not become the live homepage until you select it as the default.')">
                 @csrf
@@ -85,6 +91,8 @@
 
                         @php
                             $definition = $availableSections[$section->section_key] ?? null;
+                            $querySchema = $queryableTypes[$section->section_type] ?? null;
+                            $dataSource = $section->data_source ?? [];
                         @endphp
                         <div class="border rounded p-3 mb-2 d-flex flex-wrap justify-content-between align-items-center gap-3 homepage-section-item {{ $section->is_enabled ? '' : 'opacity-50' }}"
                             draggable="true" data-section-id="{{ $section->id }}">
@@ -122,12 +130,12 @@
                                                     : '');
                                         @endphp
                                         <div
-                                            class="{{ in_array($schema['type'], ['textarea'], true) ? 'col-12' : 'col-md-6' }}">
+                                            class="{{ in_array($schema['type'], ['textarea', 'richtext'], true) ? 'col-12' : 'col-md-6' }}">
                                             <label class="form-label small"
                                                 for="section-{{ $section->id }}-{{ $field }}">{{ $schema['label'] }}</label>
-                                            @if ($schema['type'] === 'textarea')
+                                            @if (in_array($schema['type'], ['textarea', 'richtext'], true))
                                                 <textarea class="form-control form-control-sm" id="section-{{ $section->id }}-{{ $field }}"
-                                                    name="config[{{ $field }}]" rows="2" maxlength="{{ $schema['max'] ?? 1500 }}">{{ $fieldValue }}</textarea>
+                                                    name="config[{{ $field }}]" rows="3" maxlength="{{ $schema['max'] ?? 1500 }}" @if ($schema['type'] === 'richtext') data-rich-editor @endif>{{ $fieldValue }}</textarea>
                                             @elseif($schema['type'] === 'select')
                                                 <select class="form-select form-select-sm"
                                                     id="section-{{ $section->id }}-{{ $field }}"
@@ -181,6 +189,59 @@
                                             @endif
                                         </div>
                                     @endforeach
+                                    @if ($querySchema)
+                                        <div class="col-12"><hr><h6 class="mb-2">Database query</h6></div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small">Items limit</label>
+                                            <input class="form-control form-control-sm" type="number" min="1" max="24" name="data_source[limit]" value="{{ $dataSource['limit'] ?? ($section->config['items_limit'] ?? 6) }}">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label small">Sort by</label>
+                                            <select class="form-select form-select-sm" name="data_source[sort_by]">
+                                                @foreach ($querySchema['sort'] as $sort)
+                                                    <option value="{{ $sort }}" @selected(($dataSource['sort_by'] ?? 'published_at') === $sort)>{{ ucfirst(str_replace('_', ' ', $sort)) }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label small">Direction</label>
+                                            <select class="form-select form-select-sm" name="data_source[sort_direction]">
+                                                <option value="desc" @selected(($dataSource['sort_direction'] ?? 'desc') === 'desc')>DESC</option>
+                                                <option value="asc" @selected(($dataSource['sort_direction'] ?? '') === 'asc')>ASC</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small">Columns</label>
+                                            <input class="form-control form-control-sm" type="number" min="1" max="6" name="data_source[columns]" value="{{ $dataSource['columns'] ?? ($section->config['columns'] ?? 3) }}">
+                                        </div>
+                                        @foreach ($querySchema['filters'] ?? [] as $filter => $filterSchema)
+                                            <div class="col-md-4">
+                                                <label class="form-label small">{{ $filterSchema['label'] }}</label>
+                                                @if (($filterSchema['type'] ?? '') === 'select')
+                                                    <select class="form-select form-select-sm" name="data_source[filters][{{ $filter }}]">
+                                                        @foreach ($filterSchema['options'] as $option => $label)
+                                                            <option value="{{ $option }}" @selected(($dataSource['filters'][$filter] ?? '') === (string) $option)>{{ $label }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                @else
+                                                    <input class="form-control form-control-sm" type="{{ in_array($filterSchema['type'] ?? '', ['integer', 'number'], true) ? 'number' : 'text' }}" name="data_source[filters][{{ $filter }}]" value="{{ $dataSource['filters'][$filter] ?? '' }}" @if(isset($filterSchema['min'])) min="{{ $filterSchema['min'] }}" @endif @if(isset($filterSchema['max'])) max="{{ $filterSchema['max'] }}" @endif @if(isset($filterSchema['max']) && ($filterSchema['type'] ?? '') === 'text') maxlength="{{ $filterSchema['max'] }}" @endif>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                        <div class="col-md-6">
+                                            <label class="form-label small">Only these record IDs (comma separated, optional)</label>
+                                            <input class="form-control form-control-sm" name="data_source[selected_ids]" value="{{ implode(',', $dataSource['selected_ids'] ?? []) }}" placeholder="e.g. 2,5,8">
+                                        </div>
+                                        @if ($querySchema['slider'] ?? true)
+                                            <div class="col-md-3 pt-4">
+                                                <input type="hidden" name="data_source[slider]" value="0">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="data_source[slider]" value="1" @checked($dataSource['slider'] ?? true)>
+                                                    <label class="form-check-label small">Enable slider</label>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endif
                                     <div class="col-12">
                                         <button class="btn btn-sm btn-outline-primary" type="submit">Save section
                                             settings</button>
@@ -227,37 +288,29 @@
         </div>
     </div>
 
-    <div class="modal fade" id="homepage-media-picker" tabindex="-1" aria-labelledby="homepage-media-picker-title"
-        aria-hidden="true" data-endpoint="{{ route('admin.media.picker') }}">
-        <div class="modal-dialog modal-xl modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title fs-5" id="homepage-media-picker-title">Choose image from Media Library</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form class="d-flex gap-2 mb-3" id="homepage-media-search">
-                        <input type="search" class="form-control" id="homepage-media-query"
-                            placeholder="Search image filename">
-                        <button class="btn btn-outline-primary" type="submit">Search</button>
-                    </form>
-                    <div class="row g-3" id="homepage-media-results" aria-live="polite">
-                    </div>
-                    <div class="text-center mt-3">
-                        <button type="button" class="btn btn-outline-secondary" id="homepage-media-more" hidden>Load
-                            more</button>
-                    </div>
-                    <p class="small text-muted mt-2 mb-0" id="homepage-media-status">Loading images…</p>
-                </div>
-            </div>
-        </div>
-    </div>
+
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            if (window.tinymce) {
+                tinymce.init({
+                    selector: 'textarea[data-rich-editor]',
+                    license_key: 'gpl',
+                    menubar: false,
+                    plugins: 'lists link',
+                    toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link | removeformat',
+                    height: 240,
+                    branding: false,
+                    promotion: false,
+                    setup: editor => editor.on('change keyup undo redo', () => editor.save())
+                });
+                document.querySelectorAll('form').forEach(form => {
+                    form.addEventListener('submit', () => tinymce.triggerSave());
+                });
+            }
             const list = document.getElementById('homepage-section-list');
             const status = document.getElementById('section-save-status');
             if (!list) return;
@@ -320,101 +373,7 @@
                 dragged = null;
             });
 
-            const picker = document.getElementById('homepage-media-picker');
-            if (picker && window.bootstrap?.Modal) {
-                const modal = bootstrap.Modal.getOrCreateInstance(picker);
-                const results = document.getElementById('homepage-media-results');
-                const status = document.getElementById('homepage-media-status');
-                const more = document.getElementById('homepage-media-more');
-                const query = document.getElementById('homepage-media-query');
-                let targetInput = null;
-                let nextPage = null;
 
-                async function loadMedia(url, append = false) {
-                    status.textContent = 'Loading images…';
-                    more.hidden = true;
-                    try {
-                        const response = await fetch(url, {
-                            headers: {
-                                'Accept': 'application/json'
-                            }
-                        });
-                        if (!response.ok) throw new Error('Media Library could not be loaded.');
-                        const payload = await response.json();
-                        if (!append) results.replaceChildren();
-                        payload.data.forEach((item) => {
-                            const col = document.createElement('div');
-                            col.className = 'col-6 col-sm-4 col-md-3 col-xl-2';
-                            const button = document.createElement('button');
-                            button.type = 'button';
-                            button.className = 'btn btn-light border w-100 h-100 p-2 text-start';
-                            const image = document.createElement('img');
-                            image.src = item.url;
-                            image.alt = item.alt || item.name;
-                            image.className = 'w-100 rounded mb-2';
-                            image.style.cssText = 'height:110px;object-fit:cover';
-                            const name = document.createElement('span');
-                            name.className = 'small d-block text-break';
-                            name.textContent = item.name;
-                            button.append(image, name);
-                            button.addEventListener('click', () => {
-                                if (!targetInput) return;
-                                targetInput.value = String(item.id);
-                                const preview = targetInput.parentElement.querySelector(
-                                    '[data-media-preview]');
-                                if (preview) {
-                                    preview.src = item.url;
-                                    preview.alt = item.alt || item.name;
-                                    preview.hidden = false;
-                                }
-                                const meta = targetInput.parentElement.querySelector(
-                                    '[data-media-meta]');
-                                if (meta) meta.textContent = item.name + ' · ' + (Number(item
-                                    .size || 0) / 1024).toFixed(1) + ' KB';
-                                modal.hide();
-                            });
-                            col.append(button);
-                            results.append(col);
-                        });
-                        nextPage = payload.next_page_url;
-                        more.hidden = !nextPage;
-                        status.textContent = payload.data.length ?
-                            'Select an image to use it in this section.' :
-                            'No images found. Upload images in Media Library first.';
-                    } catch (error) {
-                        status.textContent = error.message;
-                    }
-                }
-
-                document.querySelectorAll('[data-open-media-picker]').forEach((button) => {
-                    button.addEventListener('click', () => {
-                        targetInput = document.getElementById(button.dataset.target);
-                        query.value = '';
-                        modal.show();
-                        loadMedia(picker.dataset.endpoint);
-                    });
-                });
-                document.querySelectorAll('[data-clear-media]').forEach((button) => {
-                    button.addEventListener('click', () => {
-                        const input = document.getElementById(button.dataset.target);
-                        if (!input) return;
-                        input.value = '';
-                        const preview = input.parentElement.querySelector('[data-media-preview]');
-                        if (preview) preview.hidden = true;
-                        const meta = input.parentElement.querySelector('[data-media-meta]');
-                        if (meta) meta.textContent = '';
-                    });
-                });
-                document.getElementById('homepage-media-search').addEventListener('submit', (event) => {
-                    event.preventDefault();
-                    const url = new URL(picker.dataset.endpoint, window.location.origin);
-                    if (query.value.trim()) url.searchParams.set('search', query.value.trim());
-                    loadMedia(url.toString());
-                });
-                more.addEventListener('click', () => {
-                    if (nextPage) loadMedia(nextPage, true);
-                });
-            }
         });
     </script>
 @endpush

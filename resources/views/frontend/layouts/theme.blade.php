@@ -303,9 +303,9 @@
                         </div>
                         <div class="col-auto d-none d-xl-block">
                             <div class="header-button">
-                                <a href="{{ route('properties.index') }}" class="th-btn outline pill text-white">
+                                <a href="{{ $siteSettings['header_cta_url'] ?? route('properties.index') }}" class="th-btn outline pill text-white">
                                     <i class="fa-regular fa-house-chimney me-2">
-                                    </i> Browse Properties </a>
+                                    </i> {{ $siteSettings['header_cta_label'] ?? 'Browse Properties' }} </a>
                                 <button type="button" class="icon-btn searchBoxToggler text-white">
                                     <i class="far fa-search">
                                     </i>
@@ -349,6 +349,10 @@
                 @endif
                 <div class="footer-all-widget-wrapper">
                     <div class="footer-all-widget-item">
+                        @if (app(\App\Services\Widgets\WidgetRenderer::class)->forLocation('footer-1')->isNotEmpty())
+                            @include('frontend.partials.widget-area', ['location' => 'footer-1'])
+                        @else
+
                         <div class="widget footer-widget">
                             <h3 class="widget_title">About {{ $siteSettings['site_title'] ?? config('app.name') }}
                             </h3>
@@ -396,11 +400,17 @@
                                 </div>
                             </div>
                         </div>
+                    
+                        @endif
                     </div>
                     <div class="footer-all-widget-item">
                         <div class="footer-right-wrap">
                             <div class="footer-item-wrap">
                                 <div class="footer-item">
+                                    @if (app(\App\Services\Widgets\WidgetRenderer::class)->forLocation('footer-2')->isNotEmpty())
+                                        @include('frontend.partials.widget-area', ['location' => 'footer-2'])
+                                    @else
+
                                     <div class="widget widget_nav_menu footer-widget">
                                         <h3 class="widget_title">Services</h3>
                                         <div class="menu-all-pages-container">
@@ -414,8 +424,14 @@
                                             </ul>
                                         </div>
                                     </div>
+                                
+                                    @endif
                                 </div>
                                 <div class="footer-item">
+                                    @if (app(\App\Services\Widgets\WidgetRenderer::class)->forLocation('footer-3')->isNotEmpty())
+                                        @include('frontend.partials.widget-area', ['location' => 'footer-3'])
+                                    @else
+
                                     <div class="widget widget_nav_menu footer-widget">
                                         <h3 class="widget_title">Quick Links</h3>
                                         <div class="menu-all-pages-container">
@@ -441,8 +457,14 @@
                                             </ul>
                                         </div>
                                     </div>
+                                
+                                    @endif
                                 </div>
                                 <div class="footer-item">
+                                    @if (app(\App\Services\Widgets\WidgetRenderer::class)->forLocation('footer-4')->isNotEmpty())
+                                        @include('frontend.partials.widget-area', ['location' => 'footer-4'])
+                                    @else
+
                                     <div class="widget widget_nav_menu footer-widget">
                                         <h3 class="widget_title">Support</h3>
                                         <div class="menu-all-pages-container">
@@ -465,6 +487,8 @@
                                             </ul>
                                         </div>
                                     </div>
+                                
+                                    @endif
                                 </div>
                                 <div class="footer-item">
                                     <div class="widget widget_banner footer-widget">

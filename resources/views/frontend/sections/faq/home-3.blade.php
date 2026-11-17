@@ -64,7 +64,7 @@
                                 aria-labelledby="{{ $itemId }}-header"
                                 data-bs-parent="#{{ $accordionId }}-items">
                                 <div class="accordion-body">
-                                    <p class="faq-text">{{ $item['answer'] }}</p>
+                                    <p class="faq-text">{!! \App\Support\HtmlSanitizer::sanitize($item['answer']) !!}</p>
                                 </div>
                             </div>
                         </div>

@@ -57,12 +57,13 @@ class PillerWidgetLibraryTest extends TestCase
         $designGroups = [
             'About' => ['about.home-2', 'about.home-4', 'about.home-7', 'about.home-8', 'about.home-9', 'about.home-10'],
             'Services' => ['services.home-4', 'services.home-6', 'services.home-9', 'services.home-10'],
-            'Testimonials' => ['testimonials.home-2', 'testimonials.home-3', 'testimonials.index', 'testimonials.home-4', 'testimonials.home-10'],
-            'Property listings' => ['properties.index', 'properties.home-2', 'properties.home-3', 'featured-properties.home-2'],
+            'Why choose us' => ['why.home-1'],
+            'Testimonials' => ['testimonials.home-2', 'testimonials.home-3', 'testimonials.index', 'testimonials.home-4', 'testimonials.home-5', 'testimonials.home-10'],
+            'Property listings' => ['properties.index', 'properties.featured-index', 'properties.home-2', 'properties.home-3', 'featured-properties.home-2'],
             'Property categories' => ['categories.home-2', 'categories.home-3', 'categories.home-7', 'categories.home-10'],
-            'Team members' => ['team.index', 'team.home-2', 'team.home-3'],
-            'Blog posts' => ['blog.index', 'blog.home-2', 'blog.home-3'],
-            'Image galleries' => ['gallery.home-3', 'featured-gallery.home-3', 'neighborhoods.home-2', 'property-values.home-2', 'gallery.home-5-rooms', 'gallery.home-10-projects'],
+            'Team members' => ['team.index', 'team.home-2', 'team.home-3', 'team.home-10'],
+            'Blog posts' => ['blog.index', 'blog.home-2', 'blog.home-3', 'blog.home-6'],
+            'Image galleries' => ['gallery.home-3', 'featured-gallery.home-3', 'neighborhoods.home-2', 'property-values.home-1', 'property-values.home-2', 'gallery.home-5-rooms', 'gallery.home-10-projects'],
             'FAQ' => ['faq.home-2', 'faq.home-3', 'faq.home-10'],
             'Call to action' => ['cta.download-home-2', 'cta.download-home-3', 'cta.enquiry-home-3', 'cta.home-10'],
             'Statistics' => ['statistics.home-4', 'statistics.home-6', 'statistics.home-10'],
@@ -78,7 +79,7 @@ class PillerWidgetLibraryTest extends TestCase
             }
         }
 
-        $this->assertSame(53, array_sum(array_map('count', $designGroups)));
+        $this->assertSame(57, array_sum(array_map('count', $designGroups)));
     }
 
     public function test_service_widget_query_honours_selected_ids_limit_sorting_and_published_scope(): void

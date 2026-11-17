@@ -210,7 +210,11 @@ class ContentController extends Controller
     {
         foreach (['image_media_id' => 'image', 'featured_image_media_id' => 'featured_image', 'photo_media_id' => 'photo', 'icon_media_id' => 'icon_path', 'og_image_media_id' => 'og_image'] as $input => $field) {
             if (!empty($data[$input])) {
-                $data[$field] = Media::findOrFail($data[$input])->path;
+                $media = Media::query()
+                    ->whereKey((int) $data[$input])
+                    ->where('mime_type', 'like', 'image/%')
+                    ->firstOrFail();
+                $data[$field] = $media->path;
             }
             unset($data[$input]);
         }

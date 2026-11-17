@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class PageBuilderController extends Controller
 {
@@ -40,7 +41,7 @@ class PageBuilderController extends Controller
             'page' => $page->load('sections.mediaAttachments.media'),
             'widgetGroups' => $this->registry->grouped(),
             'widgetDefinitions' => $this->registry->all(),
-            'mediaLibrary' => Media::query()->where('mime_type', 'like', 'image/%')->latest('id')->limit(200)->get(['id', 'original_name', 'mime_type']),
+            'mediaLibrary' => Media::query()->where('mime_type', 'like', 'image/%')->latest('id')->limit(200)->get(['id', 'original_name', 'mime_type', 'disk', 'path', 'alt_text']),
             'queryableTypes' => $this->registry->queryableTypes(),
         ]);
     }
@@ -110,7 +111,17 @@ class PageBuilderController extends Controller
         $this->authorizeDraft($page);
         abort_unless($section->page_id === $page->id, 404);
 
-        $definition = $this->registry->find($section->section_key);
+        $requested = $request->validate([
+            'section_key' => ['sometimes', 'string', 'max:120'],
+        ]);
+        $sectionKey = $requested['section_key'] ?? $section->section_key;
+        $allowedDesigns = collect($this->registry->all())
+            ->filter(fn (array $candidate) => ($candidate['type'] ?? null) === $section->section_type)
+            ->keys()
+            ->all();
+        abort_unless(in_array($sectionKey, $allowedDesigns, true), 422, 'Choose a registered design from the same widget family.');
+
+        $definition = $this->registry->find($sectionKey);
         abort_unless($definition, 422, 'The widget design is no longer registered.');
 
         $rules = ['config' => ['nullable', 'array'], 'data_source' => ['nullable', 'array']];
@@ -118,7 +129,7 @@ class PageBuilderController extends Controller
             $fieldRules = ['sometimes', 'nullable'];
             $type = $schema['type'] ?? 'text';
 
-            if (in_array($type, ['text', 'textarea', 'url', 'image'], true)) {
+            if (in_array($type, ['text', 'textarea', 'richtext', 'url', 'image'], true)) {
                 $fieldRules[] = 'string';
                 $fieldRules[] = 'max:' . ($schema['max'] ?? 2048);
                 if ($type === 'url') $fieldRules[] = 'regex:~^(https?://|/|#)~i';
@@ -147,7 +158,7 @@ class PageBuilderController extends Controller
         $queryable = $this->registry->queryableTypes()[$section->section_type] ?? null;
         if ($queryable) {
             $request->merge(['data_source' => $source]);
-            $source = $request->validate([
+            $queryRules = [
                 'data_source.limit' => ['nullable', 'integer', 'min:1', 'max:24'],
                 'data_source.sort_by' => ['nullable', Rule::in($queryable['sort'])],
                 'data_source.sort_direction' => ['nullable', Rule::in(['asc', 'desc'])],
@@ -155,15 +166,60 @@ class PageBuilderController extends Controller
                 'data_source.slider' => ['nullable', 'boolean'],
                 'data_source.selected_ids' => ['nullable', 'array', 'max:100'],
                 'data_source.selected_ids.*' => ['integer', 'distinct', Rule::exists($queryable['table'], 'id')],
-            ])['data_source'] ?? [];
+                'data_source.filters' => ['nullable', 'array'],
+            ];
+
+            foreach ($queryable['filters'] ?? [] as $filter => $schema) {
+                $filterRules = ['nullable'];
+                switch ($schema['type'] ?? 'text') {
+                    case 'select':
+                        $filterRules[] = 'string';
+                        $filterRules[] = Rule::in(array_map('strval', array_keys($schema['options'] ?? [])));
+                        break;
+                    case 'integer':
+                        $filterRules[] = 'integer';
+                        $filterRules[] = 'min:' . ($schema['min'] ?? 0);
+                        if (isset($schema['max'])) $filterRules[] = 'max:' . $schema['max'];
+                        if ($filter === 'category_id') {
+                            $filterRules[] = Rule::exists('categories', 'id')
+                                ->where('type', $schema['category_type'] ?? 'property');
+                        }
+                        break;
+                    case 'number':
+                        $filterRules[] = 'numeric';
+                        $filterRules[] = 'min:' . ($schema['min'] ?? 0);
+                        if (isset($schema['max'])) $filterRules[] = 'max:' . $schema['max'];
+                        break;
+                    default:
+                        $filterRules[] = 'string';
+                        $filterRules[] = 'max:' . ($schema['max'] ?? 120);
+                        break;
+                }
+                $queryRules['data_source.filters.' . $filter] = $filterRules;
+            }
+
+            $source = $request->validate($queryRules)['data_source'] ?? [];
+            $filters = $source['filters'] ?? [];
+            if (isset($filters['min_price'], $filters['max_price'])
+                && $filters['min_price'] !== '' && $filters['max_price'] !== ''
+                && (float) $filters['min_price'] > (float) $filters['max_price']) {
+                throw ValidationException::withMessages([
+                    'data_source.filters.max_price' => 'Maximum price must be greater than or equal to minimum price.',
+                ]);
+            }
         } else {
             $source = [];
         }
 
         $this->builder->save($page, $section, [
+            'section_key' => $sectionKey,
             'config' => $data['config'] ?? [],
             'data_source' => $source,
         ]);
+
+        if ($request->expectsJson()) {
+            return response()->json(['saved' => true, 'section_id' => $section->id]);
+        }
 
         return back()->with('success', 'Widget configuration saved.');
     }

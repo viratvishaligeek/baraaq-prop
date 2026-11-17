@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Homepage;
 use App\Models\Page;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class PageHomepageController extends Controller
@@ -28,6 +29,9 @@ class PageHomepageController extends Controller
 
             $page->update(['homepage_key' => 'primary']);
         });
+
+        Cache::forget('homepage:published-default');
+        Cache::forget('homepage:published-default:id');
 
         return redirect()
             ->route('admin.content.index', 'pages')

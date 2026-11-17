@@ -21,19 +21,20 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Logo</label>
-                    <input class="form-control" type="file" name="logo" accept="image/*">
-                    @if (!empty($settings['logo']))
-                        <img src="{{ Storage::disk('public')->url($settings['logo']) }}" alt="Current logo" class="mt-2"
-                            style="max-width:180px;max-height:70px">
-                    @endif
+                    <input class="form-control" type="file" name="logo" id="upload-logo" accept="image/*">
+                    <input type="hidden" name="logo_media_id" id="media-logo" data-media-upload-input="upload-logo">
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-logo">Choose from Media Library</button>
+                    <div class="mt-2"><img src="{{ !empty($settings['logo']) ? Storage::disk('public')->url($settings['logo']) : '' }}"
+                        alt="Current logo" style="max-width:180px;max-height:70px" data-media-preview
+                        @if (empty($settings['logo'])) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Favicon</label>
-                    <input class="form-control" type="file" name="favicon" accept=".png,.ico,image/png">
-                    @if (!empty($settings['favicon']))
-                        <img src="{{ Storage::disk('public')->url($settings['favicon']) }}" alt="Current favicon"
-                            class="mt-2" width="32">
-                    @endif
+                    <input class="form-control" type="file" name="favicon" id="upload-favicon" accept=".png,image/png">
+                    <input type="hidden" name="favicon_media_id" id="media-favicon" data-media-upload-input="upload-favicon">
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-favicon">Choose PNG from Media Library</button>
+                    <div class="mt-2"><img src="{{ !empty($settings['favicon']) ? Storage::disk('public')->url($settings['favicon']) : '' }}"
+                        alt="Current favicon" width="32" data-media-preview @if (empty($settings['favicon'])) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                 </div>
             </div>
         </div>
@@ -78,6 +79,17 @@
                     <label class="form-label">Header menu location</label>
                     <input class="form-control" name="header_menu_location"
                         value="{{ old('header_menu_location', $settings['header_menu_location'] ?? 'primary') }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Header call-to-action label</label>
+                    <input class="form-control" name="header_cta_label"
+                        value="{{ old('header_cta_label', $settings['header_cta_label'] ?? 'Browse Properties') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Header call-to-action URL</label>
+                    <input class="form-control" name="header_cta_url"
+                        value="{{ old('header_cta_url', $settings['header_cta_url'] ?? '/properties') }}"
+                        placeholder="/properties or https://example.com">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Footer menu location</label>
@@ -139,11 +151,12 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Default social sharing image</label>
-                    <input class="form-control" type="file" name="default_og_image" accept="image/*">
-                    @if (!empty($settings['default_og_image']))
-                        <img src="{{ Storage::disk('public')->url($settings['default_og_image']) }}" alt=""
-                            class="mt-2" style="max-width:160px">
-                    @endif
+                    <input class="form-control" type="file" name="default_og_image" id="upload-default-og-image" accept="image/*">
+                    <input type="hidden" name="default_og_image_media_id" id="media-default-og-image" data-media-upload-input="upload-default-og-image">
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-default-og-image">Choose from Media Library</button>
+                    <div class="mt-2"><img src="{{ !empty($settings['default_og_image']) ? Storage::disk('public')->url($settings['default_og_image']) : '' }}"
+                        alt="Default social image preview" style="max-width:160px" data-media-preview
+                        @if (empty($settings['default_og_image'])) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                 </div>
             </div>
         </div>

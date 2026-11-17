@@ -9,8 +9,57 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaPickerController extends Controller
 {
+    private function authorizePicker(Request $request): void
+    {
+        $user = $request->user();
+        $permissions = [
+            'media.manage', 'pages.manage', 'settings.manage', 'properties.manage',
+            'posts.manage', 'services.manage', 'team.manage', 'testimonials.manage',
+            'categories.manage', 'banners.manage', 'widgets.manage',
+        ];
+
+        abort_unless($user && ($user->isAdministrator() || collect($permissions)->contains(
+            fn (string $permission) => $user->hasPermission($permission)
+        )), 403);
+    }
+
+    public function upload(Request $request)
+    {
+        $this->authorizePicker($request);
+        $data = $request->validate([
+            'files' => ['required', 'array', 'min:1', 'max:20'],
+            'files.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240'],
+        ]);
+
+        $uploaded = collect($data['files'])->map(function ($file) use ($request) {
+            $path = $file->store('media', 'public');
+
+            $media = Media::create([
+                'uploaded_by' => $request->user()->id,
+                'disk' => 'public',
+                'path' => $path,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'size' => $file->getSize(),
+            ]);
+
+            return [
+                'id' => $media->id,
+                'name' => $media->original_name,
+                'url' => $media->url,
+                'alt' => $media->alt_text,
+                'mime_type' => $media->mime_type,
+                'size' => $media->size,
+                'disk' => $media->disk,
+            ];
+        });
+
+        return response()->json(['uploaded' => true, 'data' => $uploaded], 201);
+    }
+
     public function __invoke(Request $request)
     {
+        $this->authorizePicker($request);
         $search = trim((string) $request->query('search', ''));
 
         $media = Media::query()

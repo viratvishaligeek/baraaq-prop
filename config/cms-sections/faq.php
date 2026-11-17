@@ -34,7 +34,7 @@ return [
         'fields' => array_merge([
             'eyebrow' => ['label' => 'Eyebrow', 'type' => 'text', 'max' => 120],
             'heading' => ['label' => 'Heading', 'type' => 'text', 'max' => 180],
-            'description' => ['label' => 'Description', 'type' => 'textarea', 'max' => 1000],
+            'description' => ['label' => 'Description', 'type' => 'richtext', 'max' => 1000],
             'button_label' => ['label' => 'Consultation button label', 'type' => 'text', 'max' => 80],
             'button_url' => ['label' => 'Consultation button URL', 'type' => 'url', 'max' => 2048],
             'shape_image' => ['label' => 'Bottom decorative image', 'type' => 'image', 'max' => 2048],
@@ -48,7 +48,7 @@ return [
             $fields = [];
             for ($i = 1; $i <= 5; $i++) {
                 $fields['item_'.$i.'_question'] = ['label' => 'Question '.$i, 'type' => 'text', 'max' => 255];
-                $fields['item_'.$i.'_answer'] = ['label' => 'Answer '.$i, 'type' => 'textarea', 'max' => 1500];
+                $fields['item_'.$i.'_answer'] = ['label' => 'Answer '.$i, 'type' => 'richtext', 'max' => 1500];
             }
             return $fields;
         })()),

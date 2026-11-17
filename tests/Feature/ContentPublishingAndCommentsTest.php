@@ -76,8 +76,7 @@ class ContentPublishingAndCommentsTest extends TestCase
         $this->assertNotNull($visitorCookie);
         $this->assertNotNull($visitCookie);
 
-        $this->withCookie('site_visitor', $visitorCookie->getValue())
-            ->withCookie('site_visit', $visitCookie->getValue())
+        $this->withHeader('Cookie', 'site_visitor='.$visitorCookie->getValue().'; site_visit='.$visitCookie->getValue())
             ->get(route('services.show', $service))
             ->assertOk();
 

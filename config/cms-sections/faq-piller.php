@@ -2,7 +2,7 @@
 $fields = [
     'eyebrow' => ['label' => 'Eyebrow', 'type' => 'text', 'max' => 100],
     'heading' => ['label' => 'Heading', 'type' => 'text', 'max' => 200],
-    'description' => ['label' => 'Description', 'type' => 'textarea', 'max' => 1200],
+    'description' => ['label' => 'Description', 'type' => 'richtext', 'max' => 1200],
     'items_limit' => ['label' => 'Number of questions', 'type' => 'number', 'min' => 1, 'max' => 10],
     'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
     'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
@@ -10,7 +10,7 @@ $fields = [
 ];
 for ($i = 1; $i <= 10; $i++) {
     $fields['item_'.$i.'_question'] = ['label' => 'Question '.$i, 'type' => 'text', 'max' => 240];
-    $fields['item_'.$i.'_answer'] = ['label' => 'Answer '.$i, 'type' => 'textarea', 'max' => 1200];
+    $fields['item_'.$i.'_answer'] = ['label' => 'Answer '.$i, 'type' => 'richtext', 'max' => 1200];
 }
 return [
     'faq.home-10' => [

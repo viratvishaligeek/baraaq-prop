@@ -42,6 +42,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/homepages/{homepage}/duplicate', [HomepageController::class, 'duplicate'])->middleware('permission:settings.manage')->name('homepages.duplicate');
         Route::get('/homepages/{homepage}/builder', [HomepageController::class, 'builder'])->middleware('permission:settings.manage')->name('homepages.builder');
         Route::get('/homepages/{homepage}/preview', [HomepageController::class, 'preview'])->middleware('permission:settings.manage')->name('homepages.preview');
+        Route::patch('/homepages/{homepage}/verify', [HomepageController::class, 'verifyComposition'])->middleware('permission:settings.manage')->name('homepages.verify');
         Route::patch('/homepages/{homepage}/publish', [HomepageController::class, 'publish'])->middleware('permission:settings.manage')->name('homepages.publish');
         Route::patch('/homepages/{homepage}/default', [HomepageController::class, 'setDefault'])->middleware('permission:settings.manage')->name('homepages.default');
 
@@ -90,7 +91,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/content/{type}/{id}', [ContentController::class, 'update'])->name('content.update');
         Route::delete('/content/{type}/{id}', [ContentController::class, 'destroy'])->name('content.destroy');
 
-        Route::get('/media/picker', MediaPickerController::class)->middleware('permission:media.manage')->name('media.picker');
+        Route::get('/media/picker', MediaPickerController::class)->name('media.picker');
+        Route::post('/media/picker', [MediaPickerController::class, 'upload'])->name('media.picker.upload');
         Route::get('/media', [MediaController::class, 'index'])->middleware('permission:media.manage')->name('media.index');
         Route::post('/media', [MediaController::class, 'store'])->middleware('permission:media.manage')->name('media.store');
         Route::patch('/media/{media}', [MediaController::class, 'update'])->middleware('permission:media.manage')->name('media.update');

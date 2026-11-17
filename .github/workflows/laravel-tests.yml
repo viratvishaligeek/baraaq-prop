@@ -1,0 +1,67 @@
+name: Laravel tests
+
+on:
+  push:
+    branches:
+      - feat/piller-elementor-cms-v3
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out V3
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: bcmath, ctype, curl, dom, fileinfo, mbstring, openssl, pdo_sqlite, sqlite3, tokenizer, xml, zip
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare application
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan config:clear
+
+      - name: Run Laravel feature and unit tests
+        run: php artisan test
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+
+      - name: Prepare browser-test database
+        run: |
+          touch database/database.sqlite
+          DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan migrate --seed --force
+
+      - name: Start Laravel for browser tests
+        run: |
+          APP_URL=http://127.0.0.1:8000 DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan serve --host=127.0.0.1 --port=8000 > /tmp/laravel-browser.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --silent --fail http://127.0.0.1:8000/ > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/laravel-browser.log
+          exit 1
+
+      - name: Test all ten Piller homepages at desktop, tablet and mobile sizes
+        run: APP_URL=http://127.0.0.1:8000 DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite npm run test:e2e

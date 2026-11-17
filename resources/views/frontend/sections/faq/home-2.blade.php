@@ -34,7 +34,7 @@
                         </span>{{ $sectionConfig['eyebrow'] ?? '' }}
                     </p>
                     <h2 class="sec-title text-anime-style-2">{{ $sectionConfig['heading'] ?? '' }}</h2>
-                    <p class="sec-text text-anime-style-3">{{ $sectionConfig['description'] ?? '' }}</p>
+                    <p class="sec-text text-anime-style-3">{!! \App\Support\HtmlSanitizer::sanitize($sectionConfig['description'] ?? '') !!}</p>
                     @if (!empty($sectionConfig['button_label']))
                         <a href="{{ $sectionConfig['button_url'] ?? '#' }}"
                             class="th-btn bg-black pill text-anime-style-2">{{ $sectionConfig['button_label'] }}</a>
@@ -63,7 +63,7 @@
                                 aria-labelledby="{{ $itemId }}-header"
                                 data-bs-parent="#faqAccordion-{{ $section->id }}">
                                 <div class="accordion-body">
-                                    <p class="faq-text">{{ $item['answer'] }}</p>
+                                    <p class="faq-text">{!! \App\Support\HtmlSanitizer::sanitize($item['answer']) !!}</p>
                                 </div>
                             </div>
                         </div>

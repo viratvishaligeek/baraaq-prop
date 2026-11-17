@@ -10,6 +10,7 @@ use App\Models\Post;
 use App\Models\Property;
 use App\Models\ReusableSection;
 use App\Models\TeamMember;
+use App\Services\Widgets\CmsWidgetRegistry;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -33,6 +34,7 @@ class HomepageController extends Controller
             'homepage' => $homepage->load('sections.mediaAttachments.media', 'sections.reusableSection.mediaAttachments.media'),
             'reusableSections' => ReusableSection::query()->where('status', 'published')->orderBy('name')->get(),
             'availableSections' => config('cms-sections.sections', []),
+            'queryableTypes' => app(CmsWidgetRegistry::class)->queryableTypes(),
         ]);
     }
 
@@ -46,94 +48,55 @@ class HomepageController extends Controller
             $copy->slug = Str::slug($homepage->slug . '-draft-' . now()->format('YmdHis') . '-' . Str::lower(Str::random(5)));
             $copy->status = 'draft';
             $copy->is_default = false;
+            $copy->is_composition_complete = false;
             $copy->published_at = null;
-            $copy->created_by = request()->user()->id;
-            $copy->updated_by = request()->user()->id;
+            $copy->created_by = auth()->id();
+            $copy->updated_by = auth()->id();
             $copy->save();
 
-            if ($homepage->sections->isEmpty()) {
-                $sectionKeys = ['hero.' . $homepage->design_key];
+            $presentKeys = [];
 
-                if ($homepage->design_key === 'home-2') {
-                    $sectionKeys[] = 'search.home-2';
-                    $sectionKeys[] = 'categories.home-2';
-                    $sectionKeys = array_merge($sectionKeys, [
-                        'about.home-2',
-                        'why.home-2',
-                        'properties.home-2',
-                        'neighborhoods.home-2',
-                        'property-values.home-2',
-                        'team.home-2',
-                        'download.home-2',
-                        'marquee.home-2',
-                        'featured-properties.home-2',
-                        'testimonials.home-2',
-                        'faq.home-2',
-                        'blog.home-2',
+            foreach ($homepage->sections as $section) {
+                $sectionCopy = $section->replicate();
+                $sectionCopy->homepage_id = $copy->id;
+                $sectionCopy->instance_key = (string) Str::uuid();
+                $sectionCopy->save();
+                $presentKeys[] = $section->section_key;
+
+                foreach ($section->mediaAttachments as $attachment) {
+                    $sectionCopy->mediaAttachments()->create([
+                        'field_key' => $attachment->field_key,
+                        'media_id' => $attachment->media_id,
                     ]);
                 }
+            }
 
-                if ($homepage->design_key === 'home-3') {
-                    $sectionKeys = array_merge($sectionKeys, [
-                        'categories.home-3',
-                        'properties.home-3',
-                        'why.home-3',
-                        'team.home-3',
-                        'gallery.home-3',
-                        'download.home-3',
-                        'featured-gallery.home-3',
-                        'testimonials.home-3',
-                        'faq.home-3',
-                        'enquiry.home-3',
-                        'marquee.home-3',
-                        'blog.home-3',
-                        'brands.home-3',
-                    ]);
+            // Complete an existing partial composition without replacing or duplicating
+            // any section that an administrator has already configured.
+            $requiredKeys = array_merge(
+                ['hero.' . $homepage->design_key],
+                config('cms-homepage-presets.' . $homepage->design_key, [])
+            );
+
+            foreach (array_values(array_unique($requiredKeys)) as $sectionKey) {
+                if (in_array($sectionKey, $presentKeys, true)) {
+                    continue;
                 }
 
-                if ($homepage->design_key === 'home-7') {
-                    $sectionKeys[] = 'categories.home-7';
+                $definition = $sectionDefinitions[$sectionKey] ?? null;
+                if (! $definition) {
+                    continue;
                 }
 
-                if ($homepage->design_key === 'index') {
-                    $sectionKeys = array_merge($sectionKeys, [
-                        'properties.index',
-                        'team.index',
-                        'blog.index',
-                    ]);
-                }
-
-                foreach ($sectionKeys as $sectionKey) {
-                    $definition = $sectionDefinitions[$sectionKey] ?? null;
-
-                    if (!$definition) {
-                        continue;
-                    }
-
-                    $copy->sections()->create([
-                        'instance_key' => (string) Str::uuid(),
-                        'section_key' => $definition['key'],
-                        'section_type' => $definition['type'],
-                        'source_design' => $definition['source_design'],
-                        'sort_order' => $copy->sections()->count() + 1,
-                        'is_enabled' => true,
-                        'config' => $definition['defaults'] ?? [],
-                    ]);
-                }
-            } else {
-                foreach ($homepage->sections as $section) {
-                    $sectionCopy = $section->replicate();
-                    $sectionCopy->homepage_id = $copy->id;
-                    $sectionCopy->instance_key = (string) Str::uuid();
-                    $sectionCopy->save();
-
-                    foreach ($section->mediaAttachments as $attachment) {
-                        $sectionCopy->mediaAttachments()->create([
-                            'field_key' => $attachment->field_key,
-                            'media_id' => $attachment->media_id,
-                        ]);
-                    }
-                }
+                $copy->sections()->create([
+                    'instance_key' => (string) Str::uuid(),
+                    'section_key' => $definition['key'],
+                    'section_type' => $definition['type'],
+                    'source_design' => $definition['source_design'],
+                    'sort_order' => ((int) $copy->sections()->max('sort_order')) + 1,
+                    'is_enabled' => true,
+                    'config' => $definition['defaults'] ?? [],
+                ]);
             }
 
             return $copy;
@@ -170,12 +133,53 @@ class HomepageController extends Controller
                 ->latest('published_at')
                 ->limit(3)
                 ->get(),
-            'teamMembers' => TeamMember::where('is_active', true)
+            'teamMembers' => TeamMember::where('status', 'published')
+                ->where('is_active', true)
                 ->orderBy('sort_order')
                 ->limit(4)
                 ->get(),
             'isHomepagePreview' => true,
         ]);
+    }
+
+    public function verifyComposition(Homepage $homepage)
+    {
+        abort_unless($homepage->status === 'draft', 409, 'Only a draft homepage can be verified.');
+
+        $required = array_merge(
+            ['hero.' . $homepage->design_key],
+            config('cms-homepage-presets.' . $homepage->design_key, [])
+        );
+        $sections = $homepage->sections()->get();
+        $present = $sections->pluck('section_key')->all();
+        $missing = array_values(array_diff($required, $present));
+
+        if ($missing !== []) {
+            return back()->withErrors([
+                'composition' => 'The original homepage composition is missing: ' . implode(', ', $missing),
+            ]);
+        }
+
+        $sectionDefinitions = config('cms-sections.sections', []);
+        $invalid = $sections->filter(function ($section) use ($sectionDefinitions) {
+            $definition = $sectionDefinitions[$section->section_key] ?? null;
+
+            return ! $definition || empty($definition['view']) || ! view()->exists($definition['view']);
+        })->pluck('section_key')->all();
+
+        if ($invalid !== []) {
+            return back()->withErrors([
+                'composition' => 'These sections do not resolve to registered frontend views: ' . implode(', ', $invalid),
+            ]);
+        }
+
+        $homepage->update([
+            'is_composition_complete' => true,
+            'updated_by' => auth()->id(),
+        ]);
+
+        return redirect()->route('admin.homepages.builder', $homepage)
+            ->with('success', 'Section coverage and registered frontend views are valid. Your manual desktop, tablet and mobile visual review is still required before publishing.');
     }
 
     public function publish(Homepage $homepage)

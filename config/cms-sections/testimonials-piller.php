@@ -8,6 +8,9 @@ $fields = [
     'button_label' => ['label' => 'Button label', 'type' => 'text', 'max' => 80],
     'button_url' => ['label' => 'Button URL', 'type' => 'url', 'max' => 2048],
     'quote_icon' => ['label' => 'Quote icon image', 'type' => 'image', 'max' => 2048],
+    'background_image' => ['label' => 'Background pattern image', 'type' => 'image', 'max' => 2048],
+    'vertical_spacing' => ['label' => 'Vertical spacing', 'type' => 'select', 'options' => ['space' => 'Theme spacing', 'space-top' => 'Top only', 'space-bottom' => 'Bottom only']],
+    'loop' => ['label' => 'Loop testimonial slider', 'type' => 'checkbox'],
     'rating_shape_image' => ['label' => 'Rating decorative shape', 'type' => 'image', 'max' => 2048],
     'show_rating' => ['label' => 'Show ratings', 'type' => 'checkbox'],
     'show_company' => ['label' => 'Show company', 'type' => 'checkbox'],
@@ -21,8 +24,11 @@ $defaults = [
     'description' => 'Real experiences from clients who found the right property with our team.',
     'items_limit' => 8,
     'button_label' => 'Explore All Reviews',
-    'button_url' => '/contact',
-    'quote_icon' => '/theme-assets/img/icon/quote.svg',
+    'button_url' => '/testimonials',
+    'background_image' => '/theme-assets/img/bg/bg-pattern2.png',
+    'vertical_spacing' => 'space',
+    'loop' => true,
+    'quote_icon' => '/theme-assets/img/icon/testi-quote-icon.png',
     'rating_shape_image' => '/theme-assets/img/shape/download-circle.png',
     'show_rating' => true,
     'show_company' => true,
@@ -32,6 +38,7 @@ $defaults = [
 $designs = [
     'testimonials.index' => ['label' => 'Testimonials — Classic centered slider (Home 1)', 'design' => 'index', 'view' => 'frontend.sections.testimonials.index'],
     'testimonials.home-4' => ['label' => 'Testimonials — Editorial split cards (Home 4)', 'design' => 'home-4', 'view' => 'frontend.sections.testimonials.home-4'],
+    'testimonials.home-5' => ['label' => 'Testimonials — Dark three-card slider (Home 5)', 'design' => 'home-5', 'view' => 'frontend.sections.testimonials.home-5'],
     'testimonials.home-10' => ['label' => 'Testimonials — Modern card grid (Home 10)', 'design' => 'home-10', 'view' => 'frontend.sections.testimonials.home-10'],
 ];
 

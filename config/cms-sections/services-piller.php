@@ -3,7 +3,7 @@
 $fields = [
     'eyebrow' => ['label' => 'Eyebrow', 'type' => 'text', 'max' => 120],
     'heading' => ['label' => 'Heading', 'type' => 'textarea', 'max' => 240],
-    'description' => ['label' => 'Description', 'type' => 'textarea', 'max' => 1200],
+    'description' => ['label' => 'Description', 'type' => 'richtext', 'max' => 1200],
     'items_limit' => ['label' => 'Maximum services', 'type' => 'number', 'min' => 1, 'max' => 12],
     'columns' => ['label' => 'Columns', 'type' => 'select', 'options' => ['2' => '2 columns', '3' => '3 columns', '4' => '4 columns']],
     'button_label' => ['label' => 'Section button label', 'type' => 'text', 'max' => 80],

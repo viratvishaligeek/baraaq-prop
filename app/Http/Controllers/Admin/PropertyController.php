@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePropertyRequest;
 use App\Models\Category;
+use App\Models\Media;
 use App\Models\Property;
 use App\Models\PropertyImage;
 use Illuminate\Http\Request;
@@ -48,10 +49,17 @@ class PropertyController extends Controller
     {
         $this->authorizeAction('create');
         $data = $request->validated();
+        foreach (['featured_image_media_id' => 'featured_image', 'og_image_media_id' => 'og_image'] as $mediaField => $field) {
+            if (! empty($data[$mediaField]) && ! $request->hasFile($field)) {
+                $data[$field] = Media::query()->whereKey((int) $data[$mediaField])->value('path');
+            }
+            unset($data[$mediaField]);
+        }
         if (($data['status'] ?? null) === 'published') {
             $this->authorizeAction('publish');
         }
-        unset($data['gallery']);
+        $galleryMediaIds = $data['gallery_media_ids'] ?? [];
+        unset($data['gallery'], $data['gallery_media_ids']);
         $data['slug'] = $this->slug($data['slug'] ?? $data['title']);
         $data['created_by'] = $request->user()->id;
         $data['is_featured'] = $request->boolean('is_featured');
@@ -59,9 +67,15 @@ class PropertyController extends Controller
         if ($request->hasFile('og_image')) $data['og_image'] = $request->file('og_image')->store('properties/seo', 'public');
         if ($data['status'] === 'published') $data['published_at'] = now();
 
-        $property = DB::transaction(function () use ($data, $request) {
+        $property = DB::transaction(function () use ($data, $request, $galleryMediaIds) {
             $created = Property::create($data);
             foreach ($request->file('gallery', []) as $file) $created->images()->create(['path' => $file->store('properties/gallery', 'public')]);
+            foreach ($galleryMediaIds as $mediaId) {
+                $media = Media::findOrFail((int) $mediaId);
+                if (! $created->images()->where('path', $media->path)->exists()) {
+                    $created->images()->create(['path' => $media->path]);
+                }
+            }
             return $created;
         });
 
@@ -78,10 +92,17 @@ class PropertyController extends Controller
     {
         $this->authorizeAction('edit');
         $data = $request->validated();
+        foreach (['featured_image_media_id' => 'featured_image', 'og_image_media_id' => 'og_image'] as $mediaField => $field) {
+            if (! empty($data[$mediaField]) && ! $request->hasFile($field)) {
+                $data[$field] = Media::query()->whereKey((int) $data[$mediaField])->value('path');
+            }
+            unset($data[$mediaField]);
+        }
         if (($data['status'] ?? null) === 'published' && $property->status !== 'published') {
             $this->authorizeAction('publish');
         }
-        unset($data['gallery']);
+        $galleryMediaIds = $data['gallery_media_ids'] ?? [];
+        unset($data['gallery'], $data['gallery_media_ids']);
         $data['slug'] = $this->slug($data['slug'] ?? $data['title'], $property->id);
         $data['is_featured'] = $request->boolean('is_featured');
         $oldFeaturedImage = $property->featured_image;
@@ -90,13 +111,19 @@ class PropertyController extends Controller
         if ($request->hasFile('og_image')) $data['og_image'] = $request->file('og_image')->store('properties/seo', 'public');
         if ($data['status'] === 'published' && !$property->published_at) $data['published_at'] = now();
 
-        DB::transaction(function () use ($property, $data, $request) {
+        DB::transaction(function () use ($property, $data, $request, $galleryMediaIds) {
             $property->update($data);
             foreach ($request->file('gallery', []) as $file) $property->images()->create(['path' => $file->store('properties/gallery', 'public')]);
+            foreach ($galleryMediaIds as $mediaId) {
+                $media = Media::findOrFail((int) $mediaId);
+                if (! $property->images()->where('path', $media->path)->exists()) {
+                    $property->images()->create(['path' => $media->path]);
+                }
+            }
         });
 
-        if ($oldFeaturedImage && $oldFeaturedImage !== ($data['featured_image'] ?? $oldFeaturedImage) && $property->images()->where('path', $oldFeaturedImage)->doesntExist()) Storage::disk('public')->delete($oldFeaturedImage);
-        if ($oldOgImage && $oldOgImage !== ($data['og_image'] ?? $oldOgImage)) Storage::disk('public')->delete($oldOgImage);
+        if ($oldFeaturedImage && $oldFeaturedImage !== ($data['featured_image'] ?? $oldFeaturedImage) && $property->images()->where('path', $oldFeaturedImage)->doesntExist() && ! Media::where('path', $oldFeaturedImage)->exists()) Storage::disk('public')->delete($oldFeaturedImage);
+        if ($oldOgImage && $oldOgImage !== ($data['og_image'] ?? $oldOgImage) && ! Media::where('path', $oldOgImage)->exists()) Storage::disk('public')->delete($oldOgImage);
 
         return redirect()->route('admin.properties.index')->with('success', 'Property updated.');
     }
@@ -116,7 +143,9 @@ class PropertyController extends Controller
             if ($property->featured_image === $image->path) $property->update(['featured_image' => null]);
             $path = $image->path;
             $image->delete();
-            Storage::disk('public')->delete($path);
+            if (! Media::where('path', $path)->exists()) {
+                Storage::disk('public')->delete($path);
+            }
         });
         return back()->with('success', 'Gallery image deleted.');
     }
@@ -137,7 +166,7 @@ class PropertyController extends Controller
         abort_unless($image->property_id === $property->id, 404);
         $old = $property->featured_image;
         $property->update(['featured_image' => $image->path]);
-        if ($old && $old !== $image->path && $property->images()->where('path', $old)->doesntExist()) Storage::disk('public')->delete($old);
+        if ($old && $old !== $image->path && $property->images()->where('path', $old)->doesntExist() && ! Media::where('path', $old)->exists()) Storage::disk('public')->delete($old);
         return back()->with('success', 'Featured image updated.');
     }
 }

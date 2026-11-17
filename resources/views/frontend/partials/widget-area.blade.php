@@ -3,7 +3,7 @@
 @endphp
 @if ($renderedWidgets->isNotEmpty())
     @foreach ($renderedWidgets as $widget)
-        <section class="widget cms-widget cms-widget-{{ $widget['type'] }}" data-widget-id="{{ $widget['id'] }}">
+        <section class="widget {{ str_starts_with($location, 'footer-') ? 'footer-widget' : '' }} cms-widget cms-widget-{{ $widget['type'] }}" data-widget-id="{{ $widget['id'] }}">
             @if (!empty($widget['config']['title']))
                 <h3 class="widget_title">{{ $widget['config']['title'] }}</h3>
             @endif
@@ -11,18 +11,18 @@
                 @case('text')
                 @case('custom')
                     @if (!empty($widget['config']['body']))
-                        <div class="widget-content">{!! nl2br(e($widget['config']['body'])) !!}</div>
+                        <div class="widget-content">{!! \App\Support\HtmlSanitizer::sanitize($widget['config']['body']) !!}</div>
                     @endif
                 @break
 
                 @case('html')
-                    {!! $widget['config']['html'] ?? '' !!}
+                    {!! \App\Support\HtmlSanitizer::sanitize($widget['config']['html'] ?? '') !!}
                 @break
 
                 @case('image')
                     @if (!empty($widget['config']['image_url']))
                         <a href="{{ $widget['config']['url'] ?? '#' }}"><img class="img-fluid"
-                                src="{{ $widget['config']['image_url'] }}" alt="{{ $widget['config']['title'] ?? '' }}"></a>
+                                src="{{ $widget['config']['image_url'] }}" alt="{{ $widget['config']['image_alt'] ?? ($widget['config']['title'] ?? '') }}"></a>
                     @endif
                 @break
 
@@ -80,7 +80,7 @@
 
                 @case('cta')
                     @if (!empty($widget['config']['body']))
-                        <p>{{ $widget['config']['body'] }}</p>
+                        <div class="widget-content">{!! \App\Support\HtmlSanitizer::sanitize($widget['config']['body']) !!}</div>
                     @endif
                     @if (!empty($widget['config']['url']))
                         <a class="th-btn"

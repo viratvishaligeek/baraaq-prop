@@ -82,13 +82,19 @@ class PageBuilderService
     public function save(Page $page, HomepageSection $section, array $input): void
     {
         abort_unless($section->page_id === $page->id, 404);
-        $definition = $this->registry->find($section->section_key);
-        abort_unless($definition, 422, 'The widget design is no longer registered.');
+        $targetKey = $input['section_key'] ?? $section->section_key;
+        $definition = $this->registry->find($targetKey);
+        abort_unless($definition && $definition['type'] === $section->section_type, 422, 'Choose a registered design from the same widget family.');
         $config = array_intersect_key($input['config'] ?? [], array_flip(array_keys($definition['fields'] ?? [])));
+        $imageFields = collect($definition['fields'] ?? [])
+            ->filter(fn (array $schema) => ($schema['type'] ?? null) === 'image')
+            ->keys()
+            ->all();
 
-        DB::transaction(function () use ($section, $definition, $config, $input) {
-            foreach ($config as $field => $value) {
-                if (($definition['fields'][$field]['type'] ?? null) !== 'image') continue;
+        DB::transaction(function () use ($section, $definition, $targetKey, $config, $imageFields, $input) {
+            foreach ($imageFields as $field) {
+                if (! array_key_exists($field, $config)) continue;
+                $value = $config[$field];
                 if ($value === null || $value === '') {
                     $section->mediaAttachments()->where('field_key', $field)->delete();
                 } elseif (ctype_digit((string) $value)) {
@@ -99,8 +105,14 @@ class PageBuilderService
                 }
             }
 
+            if ($targetKey !== $section->section_key) {
+                $section->mediaAttachments()->whereNotIn('field_key', $imageFields)->delete();
+            }
+
             $section->update([
-                'config' => array_merge($section->config ?? [], $config),
+                'section_key' => $targetKey,
+                'source_design' => $definition['source_design'] ?? $section->source_design,
+                'config' => array_merge($definition['defaults'] ?? [], $config),
                 'data_source' => $input['data_source'] ?? ($section->data_source ?? []),
             ]);
         });

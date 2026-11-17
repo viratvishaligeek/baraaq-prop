@@ -10,6 +10,10 @@
     </div>
     @php
         $config = old('config', $widget->config ?? []);
+        $widgetMedia = isset($config['image_url']) && ctype_digit((string) $config['image_url'])
+            ? \App\Models\Media::find((int) $config['image_url'])
+            : null;
+        $widgetImagePreview = $widgetMedia?->url ?: ($config['image_url'] ?? '');
     @endphp
     <form method="POST"
         action="{{ $widget->exists ? route('admin.widgets.update', $widget) : route('admin.widgets.store') }}">
@@ -49,7 +53,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Text / body</label>
-                        <textarea class="form-control" name="body" rows="5">{{ old('body', $config['body'] ?? '') }}</textarea>
+                        <textarea class="form-control" name="body" rows="5" data-rich-editor>{{ old('body', $config['body'] ?? '') }}</textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">HTML content (HTML widgets only)</label>
@@ -57,9 +61,15 @@
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label">Image URL</label>
-                            <input class="form-control" name="image_url"
-                                value="{{ old('image_url', $config['image_url'] ?? '') }}">
+                            <label class="form-label">Image / Media Library</label>
+                            <input class="form-control" name="image_url" id="widget-image-url"
+                                value="{{ old('image_url', $config['image_url'] ?? '') }}"
+                                placeholder="Choose an image or paste a URL">
+                            <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                                data-open-media-picker data-target="widget-image-url">Choose from Media Library</button>
+                            <div class="mt-2"><img src="{{ $widgetImagePreview }}" alt="Widget image preview"
+                                class="rounded border" style="max-width:180px;max-height:100px;object-fit:cover"
+                                data-media-preview @if (!$widgetImagePreview) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Link URL</label>
@@ -108,3 +118,24 @@
         </div>
     </form>
 @endsection
+
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!window.tinymce) return;
+            tinymce.init({
+                selector: 'textarea[data-rich-editor]',
+                license_key: 'gpl',
+                menubar: false,
+                plugins: 'lists link',
+                toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link | removeformat',
+                height: 240,
+                branding: false,
+                promotion: false,
+                setup: editor => editor.on('change keyup undo redo', () => editor.save())
+            });
+            document.querySelector('form')?.addEventListener('submit', () => tinymce.triggerSave());
+        });
+    </script>
+@endpush
