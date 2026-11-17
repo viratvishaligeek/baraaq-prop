@@ -23,7 +23,6 @@ foreach ($categoryVariants as $key => $variant) {
             'items_limit' => 7,
             'content_source' => 'categories',
             'show_property_count' => true,
-            'background_color' => $variant['design'] === 'home-3' ? '#ffffff' : '#f5f5f5',
             'vertical_spacing' => 'space',
             'show_mobile' => true,
             'show_tablet' => true,
