@@ -1,7 +1,7 @@
 @php
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
-<section class="about-5 space {{ $visibility }}" id="about-{{ $section->id }}">
+<section class="about-5 {{ $sectionConfig['vertical_spacing'] ?? 'space' }} {{ $visibility }}" id="about-{{ $section->id }}">
     <div class="container">
         <div class="row gy-2">
             <div class="col-lg-4"><div class="title-area text-left mb-1"><p class="sub-title text-anime-style-1"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? 'About Us' }}</p></div></div>

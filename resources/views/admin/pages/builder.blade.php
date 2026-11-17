@@ -61,7 +61,7 @@
                 <div id="page-builder-list" data-sort-url="{{ route('admin.pages.widgets.reorder', $page) }}">
                     @forelse ($page->sections as $section)
                         @php
-                            $definition = config('cms-sections.sections', [])[$section->section_key] ?? null;
+                            $definition = $widgetDefinitions[$section->section_key] ?? null;
                             $config = array_merge($definition['defaults'] ?? [], $section->config ?? []);
                             $querySchema = $queryableTypes[$section->section_type] ?? null;
                             $dataSource = $section->data_source ?? [];
@@ -104,6 +104,15 @@
                                                             <option value="{{ $option }}" @selected((string)$value === (string)$option)>{{ $label }}</option>
                                                         @endforeach
                                                     </select>
+                                                @elseif ($schema['type'] === 'image')
+                                                    <input class="form-control form-control-sm mb-2" name="config[{{ $field }}]" type="text" value="{{ $value }}" placeholder="Media ID or image URL">
+                                                    <select class="form-select form-select-sm" aria-label="Choose image from Media Library" onchange="this.parentElement.querySelector('input[name=&quot;config[{{ $field }}]&quot;]').value=this.value">
+                                                        <option value="">Choose from Media Library…</option>
+                                                        @foreach ($mediaLibrary as $mediaItem)
+                                                            <option value="{{ $mediaItem->id }}" @selected((string) $value === (string) $mediaItem->id)>{{ $mediaItem->original_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <small class="text-muted">Paste a public image URL or select an uploaded image.</small>
                                                 @elseif ($schema['type'] === 'checkbox')
                                                     <input type="hidden" name="config[{{ $field }}]" value="0">
                                                     <div class="form-check"><input class="form-check-input" type="checkbox" name="config[{{ $field }}]" value="1" @checked((bool)$value)><span class="form-check-label">Enabled</span></div>

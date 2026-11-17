@@ -29,9 +29,27 @@ class CmsWidgetRegistry
         'cta' => 'Call to action',
     ];
 
+    private const INSTANCE_STYLE_FIELDS = [
+        'widget_background_color' => ['label' => 'Widget background color', 'type' => 'color'],
+        'widget_background_image' => ['label' => 'Widget background image', 'type' => 'image', 'max' => 2048],
+        'widget_heading_color' => ['label' => 'Widget heading color', 'type' => 'color'],
+        'widget_text_color' => ['label' => 'Widget text color', 'type' => 'color'],
+        'widget_heading_font_size' => ['label' => 'Heading font size (px)', 'type' => 'number', 'min' => 16, 'max' => 80],
+        'widget_body_font_size' => ['label' => 'Body font size (px)', 'type' => 'number', 'min' => 12, 'max' => 32],
+        'widget_padding_top' => ['label' => 'Padding top (px)', 'type' => 'number', 'min' => 0, 'max' => 240],
+        'widget_padding_bottom' => ['label' => 'Padding bottom (px)', 'type' => 'number', 'min' => 0, 'max' => 240],
+    ];
+
     public function all(): array
     {
-        return config('cms-sections.sections', []);
+        $definitions = config('cms-sections.sections', []);
+
+        foreach ($definitions as $key => $definition) {
+            $definition['fields'] = array_merge($definition['fields'] ?? [], self::INSTANCE_STYLE_FIELDS);
+            $definitions[$key] = $definition;
+        }
+
+        return $definitions;
     }
 
     public function find(string $key): ?array

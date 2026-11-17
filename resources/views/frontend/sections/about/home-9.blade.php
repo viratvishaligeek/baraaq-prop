@@ -1,7 +1,7 @@
 @php
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
-<section class="about-7 space-bottom overflow-hidden pt-2 {{ $visibility }}" id="about-{{ $section->id }}">
+<section class="about-7 {{ $sectionConfig['vertical_spacing'] ?? 'space-bottom' }} overflow-hidden pt-2 {{ $visibility }}" id="about-{{ $section->id }}">
     <div class="container">
         <div class="row justify-content-center mb-35"><div class="col-xl-6"><div class="title-area text-center mb-1"><p class="sub-title style4 text-anime-style-1">{{ $sectionConfig['eyebrow'] ?? 'About Us' }}</p><h2 class="sec-title style-2 text-anime-style-2">{{ $sectionConfig['heading'] ?? '' }}</h2>@if(!empty($sectionConfig['button_label']))<a href="{{ $sectionConfig['button_url'] ?? '/about' }}" class="th-btn big-btn bg-theme">{{ $sectionConfig['button_label'] }}</a>@endif</div></div></div>
         <div class="row gy-40 justify-content-center">

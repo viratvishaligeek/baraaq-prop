@@ -47,9 +47,38 @@ class PillerWidgetLibraryTest extends TestCase
         $serviceViews = collect($serviceKeys)->map(fn ($key) => $registry->find($key)['view'])->unique();
 
         $this->assertCount(5, $aboutViews);
+        $this->assertArrayHasKey('widget_background_image', $registry->find('about.home-4')['fields']);
+        $this->assertArrayHasKey('widget_heading_color', $registry->find('services.home-9')['fields']);
+        $this->assertArrayHasKey('widget_padding_top', $registry->find('testimonials.home-4')['fields']);
         $this->assertCount(4, $serviceViews);
         $testimonialViews = collect($testimonialKeys)->map(fn ($key) => $registry->find($key)['view'])->unique();
         $this->assertCount(3, $testimonialViews);
+
+        $designGroups = [
+            'About' => ['about.home-2', 'about.home-4', 'about.home-7', 'about.home-8', 'about.home-9', 'about.home-10'],
+            'Services' => ['services.home-4', 'services.home-6', 'services.home-9', 'services.home-10'],
+            'Testimonials' => ['testimonials.home-2', 'testimonials.home-3', 'testimonials.index', 'testimonials.home-4', 'testimonials.home-10'],
+            'Property listings' => ['properties.index', 'properties.home-2', 'properties.home-3', 'featured-properties.home-2'],
+            'Property categories' => ['categories.home-2', 'categories.home-3', 'categories.home-7', 'categories.home-10'],
+            'Team members' => ['team.index', 'team.home-2', 'team.home-3'],
+            'Blog posts' => ['blog.index', 'blog.home-2', 'blog.home-3'],
+            'Image galleries' => ['gallery.home-3', 'featured-gallery.home-3', 'neighborhoods.home-2', 'property-values.home-2', 'gallery.home-5-rooms', 'gallery.home-10-projects'],
+            'FAQ' => ['faq.home-2', 'faq.home-3', 'faq.home-10'],
+            'Call to action' => ['cta.download-home-2', 'cta.download-home-3', 'cta.enquiry-home-3', 'cta.home-10'],
+            'Statistics' => ['statistics.home-4', 'statistics.home-6', 'statistics.home-10'],
+            'Contact' => ['contact.home-1', 'contact.home-2', 'contact.home-3'],
+            'Client logos' => ['brands.home-3', 'brands.grid', 'brands.marquee'],
+        ];
+
+        foreach ($designGroups as $family => $keys) {
+            foreach ($keys as $key) {
+                $definition = $registry->find($key);
+                $this->assertNotNull($definition, $family.' design '.$key.' should be registered');
+                $this->assertTrue(view()->exists($definition['view']), $family.' design '.$key.' should have a real Blade view');
+            }
+        }
+
+        $this->assertSame(51, array_sum(array_map('count', $designGroups)));
     }
 
     public function test_service_widget_query_honours_selected_ids_limit_sorting_and_published_scope(): void

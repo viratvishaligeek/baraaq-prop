@@ -2,7 +2,7 @@
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
     $stats = collect(range(1, 4))->map(fn ($i) => ['value' => $sectionConfig['stat_'.$i.'_value'] ?? '', 'label' => $sectionConfig['stat_'.$i.'_label'] ?? ''])->filter(fn ($item) => $item['value'] !== '' || $item['label'] !== '');
 @endphp
-<section class="about-2 space overflow-hidden {{ $visibility }}" id="about-{{ $section->id }}">
+<section class="about-2 {{ $sectionConfig['vertical_spacing'] ?? 'space' }} overflow-hidden {{ $visibility }}" id="about-{{ $section->id }}">
     <div class="container">
         <div class="row justify-content-between">
             <div class="col-lg-4"><div class="title-area text-left mb-50"><p class="sub-title text-anime-style-1"><span class="double-line"></span>{{ $sectionConfig['eyebrow'] ?? 'Who We Are' }}</p><h2 class="sec-title text-anime-style-2">{{ $sectionConfig['heading'] ?? '' }}</h2></div></div>

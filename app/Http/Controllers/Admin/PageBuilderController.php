@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\HomepageSection;
+use App\Models\Media;
 use App\Models\Page;
 use App\Services\Pages\PageBuilderService;
 use App\Services\Widgets\CmsWidgetRegistry;
@@ -38,6 +39,8 @@ class PageBuilderController extends Controller
         return view('admin.pages.builder', [
             'page' => $page->load('sections.mediaAttachments.media'),
             'widgetGroups' => $this->registry->grouped(),
+            'widgetDefinitions' => $this->registry->all(),
+            'mediaLibrary' => Media::query()->where('mime_type', 'like', 'image/%')->latest('id')->limit(200)->get(['id', 'original_name', 'mime_type']),
             'queryableTypes' => $this->registry->queryableTypes(),
         ]);
     }

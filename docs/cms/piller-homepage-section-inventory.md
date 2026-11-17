@@ -24,6 +24,29 @@ This inventory records the source HTML review for the ten original homepage desi
 
 Added Testimonials designs: Home 1 classic centered slider, Home 4 editorial split cards, and Home 10 modern card grid. The About, Services and Testimonials designs use the existing Piller theme class system and theme asset paths. Their text, images, buttons, counters, visibility and spacing are controlled through the existing section `config` JSON. Services read published `services` records through the existing Eloquent model and shared section data resolver.
 
+
+## Widget library inventory at this checkpoint
+
+The registry now contains 51 design registrations across the requested widget families. The Home 2 and Home 7 property-category registrations share the same Piller slider template, so the inventory represents 50 distinct layout branches.
+
+| Widget family | Registered designs | Layout coverage |
+|---|---:|---|
+| About Us | 6 | Home 2, 4, 7, 8, 9, 10 |
+| Services | 4 | Home 4, 6, 9, 10 |
+| Testimonials | 5 | Home 1, 2, 3, 4, 10 |
+| Property Listings | 4 | Home 1, 2, 3 and featured-property carousel |
+| Property Categories | 4 registrations / 3 layouts | Home 2/7 slider, Home 3 style-2 slider, Home 10 tabbed showcase |
+| Team Members | 3 | Home 1, 2, 3 |
+| Blog Posts | 3 | Home 1, 2, 3 |
+| Image Galleries | 6 | Neighborhood, featured property, property values, room showcase, project showcase |
+| FAQ | 3 | Home 2, 3 and original FAQ page |
+| Call to Action | 4 | Home 2 download, Home 3 download, Home 3 enquiry, modern split banner |
+| Statistics | 3 | Home 4, 6, 10 counter layouts |
+| Contact | 3 | Contact cards, split map/details, conversion strip |
+| Client Logos | 3 | Home 3 carousel, grid, marquee |
+
+The Universal Page Builder now adds shared per-widget design controls for background color/image, heading and body colors, heading/body font sizes, and top/bottom padding. Image fields can be populated with a Media Library selection or a public image URL. Existing widget-specific content fields, responsive visibility controls and data-query settings remain available.
+
 ## Remaining conversion work
 
-This is an inventory and progress record, not a claim that every section is migrated. This checkpoint adds a third FAQ layout based on the original FAQ page, four CTA options (the two original download designs, the original property enquiry design, and a modern split banner), three Statistics layouts, three Contact information layouts, and two additional Client Logo layouts alongside the existing Home 3 carousel. It also converts the Home 5 room showcase and Home 10 project gallery into editable gallery widgets, and registers the Home 8 four-step property journey as a reusable Process Steps widget. Property Categories now has three distinct layouts: the Home 2/7 category slider, Home 3 style-2 slider, and Home 10 tabbed property showcase. Testimonials now has five registered designs in total when the existing Home 2 and Home 3 templates are included. Remaining work includes the Home 1 city-exploration composition, additional homepage-specific feature/benefit and project layouts, and visual verification. Existing original HTML files and assets must remain until those layouts have been implemented and visually verified.
+This is an inventory and progress record, not a claim that every section is migrated. Remaining work includes the Home 1 city-exploration composition, further original homepage-specific feature/benefit and project layouts, complete visual comparison of every widget against the source HTML at desktop/tablet/mobile breakpoints, and runtime testing. The original HTML files and theme assets remain untouched. Existing original HTML files and assets must remain until those layouts have been implemented and visually verified.

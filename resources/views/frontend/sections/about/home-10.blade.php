@@ -1,7 +1,7 @@
 @php
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
-<section class="about-8 space overflow-hidden {{ $visibility }}" id="about-{{ $section->id }}">
+<section class="about-8 {{ $sectionConfig['vertical_spacing'] ?? 'space' }} overflow-hidden {{ $visibility }}" id="about-{{ $section->id }}">
     <div class="container">
         <div class="row gy-2"><div class="col-xl-5"><div class="title-area text-left mb-1"><p class="sub-title style4 style2 text-anime-style-1">{{ $sectionConfig['eyebrow'] ?? 'About Us' }}</p></div></div><div class="col-xl-6"><div class="pe-xxl-5 me-xxl-5"><h3 class="sec-title style-2">{{ $sectionConfig['heading'] ?? '' }}</h3><p>{{ $sectionConfig['description'] ?? '' }}</p>@if(!empty($sectionConfig['button_label']))<a href="{{ $sectionConfig['button_url'] ?? '/about' }}" class="th-btn big-btn bg-theme pill">{{ $sectionConfig['button_label'] }}</a>@endif</div></div></div>
         <div class="row gy-40 align-items-center"><div class="col-xl-5 col-lg-5"><div class="about8-img-left"><div class="img1" data-mask-src="{{ asset('theme-assets/img/bg/about-8-left-mask.png') }}"><img src="{{ $sectionConfig['image_primary'] ?? asset('theme-assets/img/about/about-8-left.jpg') }}" alt=""></div></div></div><div class="col-xl-7 col-lg-7"><div class="about8-img-right"><img src="{{ $sectionConfig['image_secondary'] ?? asset('theme-assets/img/about/about-8-right.jpg') }}" alt=""></div></div></div>

@@ -17,7 +17,8 @@ class SectionMediaResolver
         $definition = $sectionDefinitions[$section->section_key] ?? [];
         $imageFields = collect($definition['fields'] ?? [])
             ->filter(fn(array $schema) => ($schema['type'] ?? null) === 'image')
-            ->keys();
+            ->keys()
+            ->merge(['widget_background_image']);
 
         $mediaIds = $imageFields
             ->map(fn(string $field) => $config[$field] ?? null)
