@@ -172,15 +172,23 @@
                     <input class="form-control mb-3" type="url" name="canonical_url"
                         value="{{ old('canonical_url', $property->canonical_url) }}">
                     <label class="form-label">Social sharing image</label>
-                    <input class="form-control" type="file" name="og_image" accept="image/*">
+                    <input class="form-control" type="file" name="og_image" id="upload-property-og-image" accept="image/*">
+                    <input type="hidden" name="og_image_media_id" id="media-property-og-image" data-media-upload-input="upload-property-og-image">
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-property-og-image">Choose from Media Library</button>
+                    <div class="mt-2"><img src="{{ $property->og_image ? Storage::disk('public')->url($property->og_image) : '' }}"
+                        alt="Property social image preview" style="max-width:180px;max-height:100px;object-fit:cover"
+                        data-media-preview @if (!$property->og_image) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                 </div>
                 <div class="content-card mt-4">
                     <h2 class="section-title">Featured image</h2>
-                    @if ($property->featured_image)
-                        <img class="img-fluid rounded mb-3"
-                            src="{{ Storage::disk('public')->url($property->featured_image) }}" alt="">
-                    @endif
-                    <input type="file" class="form-control" name="featured_image" accept="image/*">
+                    <input type="file" class="form-control" name="featured_image" id="upload-property-featured-image" accept="image/*">
+                    <input type="hidden" name="featured_image_media_id" id="media-property-featured-image"
+                        data-media-upload-input="upload-property-featured-image">
+                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker
+                        data-target="media-property-featured-image">Choose from Media Library</button>
+                    <div class="mt-2"><img class="img-fluid rounded" src="{{ $property->featured_image ? Storage::disk('public')->url($property->featured_image) : '' }}"
+                        alt="Property featured image preview" style="max-width:100%;max-height:160px;object-fit:cover"
+                        data-media-preview @if (!$property->featured_image) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                     <small class="text-muted">Image up to 5 MB.</small>
                     <label class="form-label mt-3">Gallery images</label>
                     <input type="file" class="form-control" name="gallery[]" accept="image/*" multiple>
