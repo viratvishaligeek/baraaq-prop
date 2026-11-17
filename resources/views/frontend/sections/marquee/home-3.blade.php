@@ -20,14 +20,16 @@
         <div class="marquee">
             @for($group = 0; $group < 2; $group++)
                 <div class="marquee-group">
-                    @foreach($items as $item)
-                        <div class="text">
-                            <a href="{{ $item['url'] }}">
-                                @if($item['icon'])<img src="{{ $item['icon'] }}" alt="icon">@endif
-                                {{ $item['text'] }}
-                            </a>
-                        </div>
-                    @endforeach
+                    @for($repeat = 0; $repeat < 4; $repeat++)
+                        @foreach($items as $item)
+                            <div class="text">
+                                <a href="{{ $item['url'] }}">
+                                    @if($item['icon'])<img src="{{ $item['icon'] }}" alt="icon">@endif
+                                    {{ $item['text'] }}
+                                </a>
+                            </div>
+                        @endforeach
+                    @endfor
                 </div>
             @endfor
         </div>
