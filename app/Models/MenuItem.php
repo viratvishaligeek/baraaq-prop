@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Service;
 
 class MenuItem extends Model
 {
@@ -42,7 +43,8 @@ class MenuItem extends Model
         }
 
         if (($this->link_type ?? 'custom') === 'service') {
-            return url('/service.html');
+            $service = $this->link_id ? Service::published()->find($this->link_id) : null;
+            return $service ? route('services.show', $service->slug) : route('services.index');
         }
 
         return $this->url ?: '#';
