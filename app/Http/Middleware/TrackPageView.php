@@ -34,7 +34,7 @@ class TrackPageView
         $visit = $request->cookie('site_visit');
         $newVisit = !is_string($visit) || !preg_match('/^[a-f0-9]{64}$/', $visit);
         if ($newVisit) {
-            $visit = Str::random(64);
+            $visit = bin2hex(random_bytes(32));
         }
 
         $route = $request->route();
