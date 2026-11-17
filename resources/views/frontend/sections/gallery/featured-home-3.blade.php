@@ -19,7 +19,7 @@
                         <div class="container">
                             <div class="row gy-4 align-items-center">
                                 <div class="col-md-9 col-lg-7 col-xl-6 col-xxl-5">
-                                    <div class="gallery-4-wrap pe-xl-5 me-xl-2" data-ani="slideinup" data-ani-delay="0.2s">
+                                    <div class="gallery-4-wrap pe-xl-5 me-xl-2" @if($sectionConfig['animate_slides'] ?? true) data-ani="slideinup" data-ani-delay="0.2s" @endif>
                                         <div class="popular-list-1 style-3">
                                             <div class="property-content">
                                                 <div class="title-area text-left mb-50">
