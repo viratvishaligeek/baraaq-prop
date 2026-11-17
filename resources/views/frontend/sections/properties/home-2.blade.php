@@ -2,6 +2,7 @@
     $columns = (int) ($sectionConfig['columns'] ?? 4) === 3 ? 4 : 3;
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
     $listingFilter = $sectionConfig['listing_filter'] ?? 'all';
+    $backgroundImage = $sectionConfig['background_image'] ?? null;
     if ($listingFilter === 'sale') $sectionProperties = $properties->where('listing_type', 'sale');
     elseif ($listingFilter === 'rent') $sectionProperties = $properties->where('listing_type', 'rent');
     elseif ($listingFilter === 'featured') $sectionProperties = $properties->where('is_featured', true);
@@ -9,7 +10,7 @@
     $sectionProperties = $sectionProperties->take((int) ($sectionConfig['items_limit'] ?? 8));
 @endphp
 
-<section class="popular-sec-1 overflow-hidden {{ $sectionConfig['vertical_spacing'] ?? 'space' }} {{ $visibility }}">
+<section class="popular-sec-1 overflow-hidden {{ $sectionConfig['vertical_spacing'] ?? 'space' }} {{ $visibility }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif @if($backgroundImage) data-bg-src="{{ $backgroundImage }}" @endif>
     <div class="container">
         <div class="row justify-content-lg-between justify-content-center align-items-center mb-35">
             <div class="{{ !empty($sectionConfig['show_filters']) ? 'col-lg-6' : 'col-12' }}">
@@ -36,6 +37,8 @@
                     $images = $property->images->pluck('path')->filter()->values();
                     if ($images->isEmpty() && $property->featured_image) $images = collect([$property->featured_image]);
                     $images = $images->take(5);
+                    $firstImagePath = $images->first();
+                    $firstImageUrl = $firstImagePath ? Storage::disk('public')->url($firstImagePath) : asset('theme-assets/img/popular/popular-1-1.jpg');
                     $categoryClass = $property->category?->slug ?: \Illuminate\Support\Str::slug($property->property_type ?: 'other');
                 @endphp
                 <div class="col-xxl-{{ $columns }} col-xl-4 col-lg-6 col-md-6 filter-item cat-{{ $categoryClass }}{{ ($sectionConfig['animate_cards'] ?? true) ? ' fadeinup wow' : '' }}">
@@ -62,7 +65,7 @@
                                 <div class="actions"><a href="{{ route('properties.show', $property) }}" class="icon-btn" aria-label="View property"><i class="fas fa-heart"></i></a></div>
                             @endif
                             @if($sectionConfig['show_gallery_action'] ?? true)
-                                <div class="actions-style-2-wrapper"><div class="actions style-2"><a href="{{ route('properties.show', $property) }}" class="icon-btn"><span class="action-text">View property</span><i class="fa-solid fa-bookmark"></i></a></div></div>
+                                <div class="actions-style-2-wrapper"><div class="actions style-2"><a href="{{ $firstImageUrl }}" class="icon-btn popular-popup-image"><span class="action-text">View all img</span><i class="fa-solid fa-camera"></i></a></div></div>
                             @endif
                             @if($sectionConfig['show_property_badge'] ?? true)
                                 <div class="popular-badge"><img src="{{ asset('theme-assets/img/icon/sell_rent_icon.svg') }}" alt="icon"><p>{{ $property->listing_type === 'rent' ? 'For Rent' : 'For Sale' }}</p></div>
