@@ -87,7 +87,7 @@ class ContentController extends Controller
     public function create(string $type)
     {
         $model=$this->model($type);
-        return view('admin.content.form',['type'=>$type,'item'=>new $model,'categories'=>$type==='posts'?Category::where('type','post')->orderBy('name')->get():collect(),'parentCategories'=>$type==='categories'?Category::orderBy('name')->get():collect(),'mediaItems'=>Media::latest()->limit(100)->get(['id','path','original_name'])]);
+        return view('admin.content.form',['type'=>$type,'item'=>new $model,'categories'=>$type==='posts'?Category::where('type','post')->orderBy('name')->get():collect(),'parentCategories'=>$type==='categories'?Category::orderBy('name')->get():collect(),'mediaItems'=>Media::where('mime_type', 'like', 'image/%')->latest()->limit(100)->get(['id','path','original_name'])]);
     }
 
     public function store(Request $request,string $type)
