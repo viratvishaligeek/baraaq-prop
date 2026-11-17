@@ -49,7 +49,7 @@ return [
             'item_8_title' => 'New Jersey, New York',
             'item_8_url' => '/properties',
         ],
-        'fields' => [
+        'fields' => array_merge([
             'eyebrow' => ['label' => 'Eyebrow', 'type' => 'text', 'max' => 120],
             'heading' => ['label' => 'Heading', 'type' => 'text', 'max' => 180],
             'description' => ['label' => 'Description', 'type' => 'textarea', 'max' => 500],
@@ -68,6 +68,6 @@ return [
                 $fields['item_'.$i.'_url'] = ['label' => 'Card '.$i.' URL', 'type' => 'url', 'max' => 2048];
             }
             return $fields;
-        })(),
+        })()),
     ],
 ];
