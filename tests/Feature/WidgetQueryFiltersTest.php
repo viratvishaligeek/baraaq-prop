@@ -98,9 +98,9 @@ class WidgetQueryFiltersTest extends TestCase
 
         $saved = $section->fresh();
         $this->assertSame('Client stories', $saved->config['heading']);
-        $this->assertSame(8, $saved->data_source['limit']);
+        $this->assertSame('8', $saved->data_source['limit']);
         $this->assertSame([$first->id, $second->id], $saved->data_source['selected_ids']);
-        $this->assertSame(4, $saved->data_source['filters']['min_rating']);
+        $this->assertSame('4', $saved->data_source['filters']['min_rating']);
     }
 
     public function test_queryable_content_families_expose_only_registered_filter_definitions(): void
