@@ -4,6 +4,7 @@ namespace App\Services\Homepage;
 
 use App\Models\Category;
 use App\Models\HomepageSection;
+use App\Models\TeamMember;
 use Illuminate\Support\Collection;
 
 class SectionDataResolver
