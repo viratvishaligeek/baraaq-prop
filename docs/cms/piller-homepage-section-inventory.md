@@ -27,7 +27,7 @@ Added Testimonials designs: Home 1 classic centered slider, Home 4 editorial spl
 
 ## Widget library inventory at this checkpoint
 
-The registry now contains 53 design registrations across the requested widget families. The Home 2 and Home 7 property-category registrations share the same Piller slider template, so the inventory represents 50 distinct layout branches.
+The registry now contains 53 design registrations across the requested widget families. The Home 2 and Home 7 property-category registrations share the same Piller slider template, so the inventory represents 52 distinct layout branches.
 
 | Widget family | Registered designs | Layout coverage |
 |---|---:|---|
