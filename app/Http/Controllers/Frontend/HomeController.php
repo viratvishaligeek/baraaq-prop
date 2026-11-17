@@ -20,6 +20,7 @@ class HomeController extends Controller
         );
 
         $hasCustomSections = $homepage
+            && $homepage->is_composition_complete
             && $homepage->sections->contains(fn ($section) => $section->is_enabled);
 
         $view = $hasCustomSections
