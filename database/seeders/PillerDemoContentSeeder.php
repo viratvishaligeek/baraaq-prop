@@ -621,7 +621,7 @@ class PillerDemoContentSeeder extends Seeder
                 'items_limit' => 8,
                 'columns' => '4',
             ],
-            'properties.index' => [
+            'properties.home-9' => [
                 'eyebrow' => 'Popular Properties',
                 'heading' => 'Best Properties Sale',
                 'items_limit' => 8,
