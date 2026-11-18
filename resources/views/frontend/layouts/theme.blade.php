@@ -194,6 +194,43 @@
             </div>
         </div>
     </div>
+    @if (isset($homepage) && $homepage?->design_key === 'home-9')
+        <header class="th-header header-default header-layout9">
+            <div class="sticky-wrapper" data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
+                <div class="menu-area">
+                    <div class="container">
+                        <div class="row align-items-center justify-content-between">
+                            <div class="col-auto">
+                                <div class="header-logo">
+                                    <a href="{{ route('home') }}">
+                                        @if (!empty($siteSettings['logo']))
+                                            <img src="{{ asset('storage/'.$siteSettings['logo']) }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                        @else
+                                            <img src="{{ asset('theme-assets/img/logo.svg') }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                        @endif
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                <nav class="main-menu d-none d-lg-inline-block">
+                                    <ul>@include('frontend.partials.navigation')</ul>
+                                </nav>
+                                <button type="button" class="th-menu-toggle d-block d-lg-none"><i class="far fa-bars"></i></button>
+                            </div>
+                            <div class="col-auto d-none d-xl-block">
+                                <div class="header-button">
+                                    <a href="{{ $siteSettings['header_cta_url'] ?? route('properties.index') }}" class="th-btn bg-black">
+                                        <i class="fa-regular fa-house-chimney me-2"></i> {{ $siteSettings['header_cta_label'] ?? 'Add Listing' }}
+                                    </a>
+                                    <button type="button" class="icon-btn searchBoxToggler"><i class="far fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+    @else
     <header class="th-header header-default header-layout1">
         <div class="header-top">
             <div class="container">
@@ -317,7 +354,8 @@
             </div>
         </div>
     </header>
-    <div class="cms-widget-area cms-widget-area-header">
+ 
+    @endif   <div class="cms-widget-area cms-widget-area-header">
         @include('frontend.partials.widget-area', ['location' => 'header'])
     </div>
     <main>
