@@ -65,6 +65,10 @@
                 {{ $siteSettings['secondary_color'] ?? '#044DBC' }};
         }
 
+        html, body {
+            overflow-x: clip;
+        }
+
         .sticky-wrapper[data-sticky-enabled="false"] {
             position: relative !important;
             top: auto !important
