@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\ActivityLog;
 use App\Models\Banner;
 use App\Models\Category;
 use App\Models\Comment;
@@ -706,6 +705,10 @@ class PillerDemoContentSeeder extends Seeder
         }
 
         $homepage->sections()->whereNotIn('section_key', $requiredKeys)->update(['is_enabled' => false]);
+        Homepage::query()
+            ->whereKeyNot($homepage->id)
+            ->update(['is_default' => false]);
+
         $homepage->update([
             'name' => 'Home 9 — Pillar Single Property',
             'design_key' => 'home-9',
