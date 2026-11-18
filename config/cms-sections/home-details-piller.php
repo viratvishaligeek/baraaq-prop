@@ -10,7 +10,7 @@ return [
         'defaults' => [
             'eyebrow' => 'Home Details',
             'heading' => 'Luxury Real Estate Home Details at a Glance',
-            'location' => 'Mavoin Hills, California',
+            'location' => 'Ganga Nagar, Meerut, Uttar Pradesh',
             'total_area' => '5,600 sq ft',
             'living_space' => '4,200 sq ft',
             'bedrooms' => '4',
