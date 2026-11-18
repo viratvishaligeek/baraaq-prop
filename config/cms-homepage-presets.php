@@ -9,7 +9,7 @@
  */
 return [
     'index' => [
-        'properties.index',
+        'properties.home-9',
         'why.home-1',
         'properties.featured-index',
         'property-values.home-1',
