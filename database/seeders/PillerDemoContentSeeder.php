@@ -94,7 +94,10 @@ class PillerDemoContentSeeder extends Seeder
         ];
 
         foreach ($settings as $key => $value) {
-            [$stored, $group, $type] = count($value) === 3 && is_array($value) ? $value : [$value, 'general', 'string'];
+            [$stored, $group, $type] = is_array($value) && array_is_list($value) && count($value) === 3
+                ? $value
+                : [$value, 'general', 'string'];
+
             if (! Setting::query()->where('key', $key)->exists()) {
                 Setting::write($key, $stored, $group, $type);
             }
