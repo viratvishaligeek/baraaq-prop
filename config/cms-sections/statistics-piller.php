@@ -24,6 +24,7 @@ $defaults = [
     'stat_4_value' => '150', 'stat_4_suffix' => '+', 'stat_4_label' => 'Happy customers',
 ];
 $designs = [
+    'statistics.home-9' => ['label' => 'Statistics — Home 9 counter strip', 'design' => 'home-9', 'view' => 'frontend.sections.statistics.home-9'],
     'statistics.home-4' => ['label' => 'Statistics — Luxury counter strip (Home 4)', 'design' => 'home-4', 'view' => 'frontend.sections.statistics.home-4'],
     'statistics.home-6' => ['label' => 'Statistics — Corporate counter cards (Home 6)', 'design' => 'home-6', 'view' => 'frontend.sections.statistics.home-6'],
     'statistics.home-10' => ['label' => 'Statistics — Modern divider counters (Home 10)', 'design' => 'home-10', 'view' => 'frontend.sections.statistics.home-10'],
