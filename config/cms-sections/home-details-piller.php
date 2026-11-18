@@ -1,0 +1,43 @@
+<?php
+
+return [
+    'home-details.home-9' => [
+        'key' => 'home-details.home-9',
+        'label' => 'Home details — Original Home 9 property facts',
+        'type' => 'contact-panel',
+        'source_design' => 'home-9',
+        'view' => 'frontend.sections.contact.home-9-details',
+        'defaults' => [
+            'eyebrow' => 'Home Details',
+            'heading' => 'Luxury Real Estate Home Details at a Glance',
+            'location' => 'Mavoin Hills, California',
+            'total_area' => '5,600 sq ft',
+            'living_space' => '4,200 sq ft',
+            'bedrooms' => '4',
+            'bathrooms' => '3',
+            'floors' => '2 floors',
+            'button_label' => 'Discover More',
+            'button_url' => '/about',
+            'image' => '/theme-assets/img/about/contact-img3.png',
+            'show_mobile' => true,
+            'show_tablet' => true,
+            'show_desktop' => true,
+        ],
+        'fields' => [
+            'eyebrow' => ['label' => 'Eyebrow', 'type' => 'text', 'max' => 100],
+            'heading' => ['label' => 'Heading', 'type' => 'text', 'max' => 220],
+            'location' => ['label' => 'Location', 'type' => 'text', 'max' => 180],
+            'total_area' => ['label' => 'Total area', 'type' => 'text', 'max' => 60],
+            'living_space' => ['label' => 'Living space', 'type' => 'text', 'max' => 60],
+            'bedrooms' => ['label' => 'Bedrooms', 'type' => 'text', 'max' => 30],
+            'bathrooms' => ['label' => 'Bathrooms', 'type' => 'text', 'max' => 30],
+            'floors' => ['label' => 'Floors', 'type' => 'text', 'max' => 30],
+            'button_label' => ['label' => 'Button label', 'type' => 'text', 'max' => 80],
+            'button_url' => ['label' => 'Button URL', 'type' => 'url', 'max' => 2048],
+            'image' => ['label' => 'Property details image', 'type' => 'image', 'max' => 2048],
+            'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
+            'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
+            'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
+        ],
+    ],
+];
