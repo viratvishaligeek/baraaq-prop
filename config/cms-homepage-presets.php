@@ -89,10 +89,13 @@ return [
     ],
     'home-9' => [
         'about.home-9',
+        'statistics.home-9',
         'services.home-9',
-        'properties.home-2',
-        'testimonials.home-3',
+        'properties.index',
+        'featured-gallery.home-9',
+        'home-details.home-9',
         'team.home-2',
+        'testimonials.home-3',
         'blog.home-2',
     ],
     'home-10' => [
