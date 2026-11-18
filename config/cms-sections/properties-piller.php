@@ -25,7 +25,6 @@ return [
             'button_url' => ['label' => 'View-all button URL', 'type' => 'url', 'max' => 2048],
         ],
     ],
-,
     'properties.home-9' => [
         'key' => 'properties.home-9',
         'label' => 'Popular property grid with category filters — Home 9',
