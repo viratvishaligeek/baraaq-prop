@@ -707,7 +707,6 @@ class PillerDemoContentSeeder extends Seeder
             }
         }
 
-        $homepage->sections()->whereNotIn('section_key', $requiredKeys)->update(['is_enabled' => false]);
         Homepage::query()
             ->where('id', '<>', $homepage->id)
             ->update(['is_default' => false]);
