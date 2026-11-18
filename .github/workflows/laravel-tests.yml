@@ -49,6 +49,7 @@ jobs:
       - name: Prepare browser-test database
         run: |
           touch database/database.sqlite
+          php artisan storage:link --force
           DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan migrate --seed --force
 
       - name: Start Laravel for browser tests

@@ -37,5 +37,8 @@ class DatabaseSeeder extends Seeder
                 $user->roles()->syncWithoutDetaching([$administratorId]);
             }
         }
+
+        // Seed content after the optional administrator so author/created_by relations are populated.
+        $this->call([PillerDemoContentSeeder::class]);
     }
 }
