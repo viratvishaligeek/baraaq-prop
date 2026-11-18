@@ -788,7 +788,7 @@ class PillerDemoContentSeeder extends Seeder
             $visitor = hash('sha256', 'piller-demo-visitor-'.($i % 19));
             $visit = hash('sha256', 'piller-demo-session-'.($i % 27));
             DB::table('page_views')->updateOrInsert(
-                ['visitor_hash' => $visitor, 'visit_hash' => $visit, 'path' => $path, 'created_at' => now()->subHours($i * 3)->toDateTimeString()],
+                ['visitor_hash' => $visitor, 'visit_hash' => $visit, 'path' => $path, 'created_at' => now()->startOfDay()->subHours($i * 3)->toDateTimeString()],
                 ['route_name' => $path === '/' ? 'home' : null, 'content_type' => 'page', 'content_id' => null]
             );
         }
