@@ -71,6 +71,21 @@ class PillerDemoContentSeeder extends Seeder
     private function seedSettings(): void
     {
         $site = trim((string) env('SITE_NAME', 'Pillar Realty')) ?: 'Pillar Realty';
+        $footerGalleryPaths = [
+            'theme-assets/img/gallery/footer-gallery-1-1.jpg',
+            'theme-assets/img/gallery/footer-gallery-1-2.jpg',
+            'theme-assets/img/gallery/footer-gallery-1-3.jpg',
+            'theme-assets/img/gallery/footer-gallery-1-5.jpg',
+            'theme-assets/img/gallery/footer-gallery-1-6.jpg',
+            'theme-assets/img/gallery/footer-gallery-1-7.jpg',
+            'theme-assets/img/gallery/footer-gallery-1-4.jpg',
+        ];
+        $footerGalleryImages = [];
+        foreach ($footerGalleryPaths as $galleryPath) {
+            $galleryMedia = $this->themeMedia($galleryPath, 'Pillar Instagram gallery');
+            $footerGalleryImages[] = $galleryMedia?->id ?? $galleryPath;
+        }
+
         $settings = [
             'site_title' => [$site, 'general', 'string'],
             'site_tagline' => ['Thoughtful real estate. Better living.', 'general', 'string'],
@@ -86,7 +101,7 @@ class PillerDemoContentSeeder extends Seeder
             'footer_map_embed_url' => ['https://www.google.com/maps?q=Civil+Lines,+Meerut,+Uttar+Pradesh&output=embed', 'footer', 'string'],
             'footer_gallery_handle' => ['@pillarrealty on Instagram', 'footer', 'string'],
             'footer_gallery_title' => ['Pillar moments', 'footer', 'string'],
-            'footer_gallery_images' => [['theme-assets/img/gallery/footer-gallery-1-1.jpg', 'theme-assets/img/gallery/footer-gallery-1-2.jpg', 'theme-assets/img/gallery/footer-gallery-1-3.jpg', 'theme-assets/img/gallery/footer-gallery-1-5.jpg', 'theme-assets/img/gallery/footer-gallery-1-6.jpg', 'theme-assets/img/gallery/footer-gallery-1-7.jpg', 'theme-assets/img/gallery/footer-gallery-1-4.jpg'], 'footer', 'json'],
+            'footer_gallery_images' => [$footerGalleryImages, 'footer', 'json'],
             'social_facebook' => ['https://www.facebook.com/', 'social', 'string'],
             'social_instagram' => ['https://www.instagram.com/', 'social', 'string'],
             'social_linkedin' => ['https://www.linkedin.com/', 'social', 'string'],
