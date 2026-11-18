@@ -586,6 +586,20 @@ class PillerDemoContentSeeder extends Seeder
         $requiredKeys = array_merge(['hero.home-9'], config('cms-homepage-presets.home-9', []));
         $definitions = config('cms-sections.sections', []);
         $overrides = [
+            'hero.home-9' => [
+                'eyebrow' => 'Don’t Missed Out',
+                'heading' => 'Discover Most Suitable Property',
+                'heading_prefix' => 'Discover',
+                'heading_highlight' => 'Most Suitable',
+                'heading_suffix' => 'Property',
+                'description' => 'Explore top listings and let our expert agents guide you every step of the way to your new home.',
+                'primary_button_label' => 'Explore Properties',
+                'primary_button_url' => '/properties',
+                'secondary_button_label' => 'Request A Visit',
+                'secondary_button_url' => '/contact',
+                'background_image' => '/theme-assets/img/hero/hero-9-bg.png',
+                'foreground_image' => '/theme-assets/img/hero/hero-9-right.png',
+            ],
             'about.home-9' => [
                 'eyebrow' => 'About Us',
                 'heading' => 'Create Your Story in a place where dreams and reality merge',
