@@ -50,6 +50,43 @@ class PillerDemoContentSeederTest extends TestCase
         $this->assertGreaterThan(0, Media::query()->count());
         $this->assertGreaterThan(0, $homepage->sections()->whereHas('mediaAttachments')->count());
 
+        // Verify that every content-facing CMS table receives usable demo records.
+        $this->assertGreaterThan(0, Category::query()->count());
+        $this->assertGreaterThan(0, Page::query()->count());
+        $this->assertGreaterThan(0, Banner::query()->count());
+        $this->assertGreaterThan(0, PropertyImage::query()->count());
+        $this->assertGreaterThan(0, Menu::query()->count());
+        $this->assertGreaterThan(0, MenuItem::query()->count());
+        $this->assertGreaterThan(0, Role::query()->count());
+        $this->assertGreaterThan(0, Permission::query()->count());
+        $this->assertGreaterThan(0, DB::table('permission_role')->count());
+        $this->assertGreaterThan(0, Setting::query()->count());
+        $this->assertGreaterThan(0, ReusableSection::query()->count());
+        $this->assertGreaterThan(0, Widget::query()->count());
+        $this->assertGreaterThan(0, WidgetArea::query()->count());
+        $this->assertGreaterThan(0, WidgetAreaItem::query()->count());
+        $this->assertGreaterThan(0, DB::table('categorizables')->count());
+        $this->assertGreaterThan(0, DB::table('page_views')->count());
+        $this->assertGreaterThan(0, DB::table('activity_logs')->count());
+
+        $countsBeforeRerun = [
+            'properties' => Property::query()->count(),
+            'posts' => Post::query()->count(),
+            'services' => Service::query()->count(),
+            'homepage_sections' => DB::table('homepage_sections')->count(),
+            'media' => Media::query()->count(),
+            'page_views' => DB::table('page_views')->count(),
+        ];
+        $this->seed();
+        $this->assertSame($countsBeforeRerun, [
+            'properties' => Property::query()->count(),
+            'posts' => Post::query()->count(),
+            'services' => Service::query()->count(),
+            'homepage_sections' => DB::table('homepage_sections')->count(),
+            'media' => Media::query()->count(),
+            'page_views' => DB::table('page_views')->count(),
+        ]);
+
         $this->get('/')
             ->assertOk()
             ->assertViewIs('frontend.home-builder')
