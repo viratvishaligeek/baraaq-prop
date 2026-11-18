@@ -533,7 +533,7 @@
                                         <h3 class="widget_title">Pillar Location</h3>
                                         <div class="widget-map">
                                             <iframe
-                                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3644.7310056272386!2d89.2286059153658!3d24.00527418490799!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39fe9b97badc6151%3A0x30b048c9fb2129bc!2sAngfuztheme!5e0!3m2!1sen!2sbd!4v1658812932163!5m2!1sen!2sbd">
+                                                src="{{ $siteSettings['footer_map_embed_url'] ?? 'https://www.google.com/maps?q=Meerut,+Uttar+Pradesh&output=embed' }}">
                                             </iframe>
                                         </div>
                                     </div>
@@ -541,88 +541,24 @@
                             </div>
                             <div class="footer-bottom-community">
                                 <div class="content">
-                                    <p>@pillar on Instagram</p>
-                                    <h4 class="box-title">Nice Gallery</h4>
+                                    <p>{{ $siteSettings['footer_gallery_handle'] ?? '@pillar on Instagram' }}</p>
+                                    <h4 class="box-title">{{ $siteSettings['footer_gallery_title'] ?? 'Nice Gallery' }}</h4>
                                 </div>
                                 <div class="footer-gallery-wrapper">
-                                    <div class="simple-gallery-card">
-                                        <div class="gallery-img">
-                                            <img src="{{ asset('theme-assets/img/gallery/footer-gallery-1-1.jpg') }}"
-                                                alt="Gallery-Image"> <a
-                                                href="{{ asset('theme-assets/img/gallery/footer-gallery-1-1.jpg') }}"
-                                                class="icon-btn popup-image">
-                                                <i class="fa-brands fa-instagram">
-                                                </i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="simple-gallery-card">
-                                        <div class="gallery-img">
-                                            <img src="{{ asset('theme-assets/img/gallery/footer-gallery-1-2.jpg') }}"
-                                                alt="Gallery-Image"> <a
-                                                href="{{ asset('theme-assets/img/gallery/footer-gallery-1-2.jpg') }}"
-                                                class="icon-btn popup-image">
-                                                <i class="fa-brands fa-instagram">
-                                                </i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="simple-gallery-card">
-                                        <div class="gallery-img">
-                                            <img src="{{ asset('theme-assets/img/gallery/footer-gallery-1-3.jpg') }}"
-                                                alt="Gallery-Image"> <a
-                                                href="{{ asset('theme-assets/img/gallery/footer-gallery-1-3.jpg') }}"
-                                                class="icon-btn popup-image">
-                                                <i class="fa-brands fa-instagram">
-                                                </i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="simple-gallery-card">
-                                        <div class="gallery-img">
-                                            <img src="{{ asset('theme-assets/img/gallery/footer-gallery-1-5.jpg') }}"
-                                                alt="Gallery-Image"> <a
-                                                href="{{ asset('theme-assets/img/gallery/footer-gallery-1-5.jpg') }}"
-                                                class="icon-btn popup-image">
-                                                <i class="fa-brands fa-instagram">
-                                                </i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="simple-gallery-card">
-                                        <div class="gallery-img">
-                                            <img src="{{ asset('theme-assets/img/gallery/footer-gallery-1-6.jpg') }}"
-                                                alt="Gallery-Image"> <a
-                                                href="{{ asset('theme-assets/img/gallery/footer-gallery-1-6.jpg') }}"
-                                                class="icon-btn popup-image">
-                                                <i class="fa-brands fa-instagram">
-                                                </i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="simple-gallery-card">
-                                        <div class="gallery-img">
-                                            <img src="{{ asset('theme-assets/img/gallery/footer-gallery-1-7.jpg') }}"
-                                                alt="Gallery-Image"> <a
-                                                href="{{ asset('theme-assets/img/gallery/footer-gallery-1-7.jpg') }}"
-                                                class="icon-btn popup-image">
-                                                <i class="fa-brands fa-instagram">
-                                                </i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="simple-gallery-card">
-                                        <div class="gallery-img">
-                                            <img src="{{ asset('theme-assets/img/gallery/footer-gallery-1-4.jpg') }}"
-                                                alt="Gallery-Image"> <a
-                                                href="{{ asset('theme-assets/img/gallery/footer-gallery-1-4.jpg') }}"
-                                                class="icon-btn popup-image">
-                                                <i class="fa-brands fa-instagram">
-                                                </i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
+                    @foreach(($siteSettings['footer_gallery_images'] ?? ['theme-assets/img/gallery/footer-gallery-1-1.jpg','theme-assets/img/gallery/footer-gallery-1-2.jpg','theme-assets/img/gallery/footer-gallery-1-3.jpg','theme-assets/img/gallery/footer-gallery-1-5.jpg','theme-assets/img/gallery/footer-gallery-1-6.jpg','theme-assets/img/gallery/footer-gallery-1-7.jpg','theme-assets/img/gallery/footer-gallery-1-4.jpg']) as $galleryImage)
+                        @php
+                            $galleryImageUrl = \Illuminate\Support\Str::startsWith($galleryImage, ['http://', 'https://'])
+                                ? $galleryImage
+                                : asset(ltrim($galleryImage, '/'));
+                        @endphp
+                        <div class="simple-gallery-card">
+                            <div class="gallery-img">
+                                <img src="{{ $galleryImageUrl }}" alt="Pillar property gallery">
+                                <a href="{{ $galleryImageUrl }}" class="icon-btn popup-image"><i class="fa-brands fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
                             </div>
                         </div>
                     </div>
