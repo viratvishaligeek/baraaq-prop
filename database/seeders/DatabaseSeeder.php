@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             HomepageTemplateSeeder::class,
             WidgetAreaSeeder::class,
             DefaultThemeSeeder::class,
+            PillerDemoContentSeeder::class,
         ]);
 
         $email = env('CMS_ADMIN_EMAIL');
