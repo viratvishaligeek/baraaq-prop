@@ -2,7 +2,20 @@
 
 namespace Tests\Feature;
 
+use App\Models\Banner;
+use App\Models\Category;
 use App\Models\Comment;
+use App\Models\Menu;
+use App\Models\MenuItem;
+use App\Models\Page;
+use App\Models\Permission;
+use App\Models\PropertyImage;
+use App\Models\ReusableSection;
+use App\Models\Role;
+use App\Models\Setting;
+use App\Models\Widget;
+use App\Models\WidgetArea;
+use App\Models\WidgetAreaItem;
 use App\Models\Enquiry;
 use App\Models\Homepage;
 use App\Models\Media;
@@ -13,6 +26,7 @@ use App\Models\Service;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
