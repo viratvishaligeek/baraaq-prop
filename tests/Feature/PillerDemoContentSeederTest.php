@@ -111,6 +111,11 @@ class PillerDemoContentSeederTest extends TestCase
             ->assertSee('Best Properties Sale')
             ->assertSee('Meet Our Pillar Agents')
             ->assertSee('What Clients Say About Pillar')
-            ->assertSee('Helpful Real Estate Articles');
+            ->assertSee('Helpful Real Estate Articles')
+            ->assertSee('header-layout9')
+            ->assertSee('Featured Houses')
+            ->assertSee('Support')
+            ->assertSee('Pillar Location')
+            ->assertSee('Pillar moments');
     }
 }
