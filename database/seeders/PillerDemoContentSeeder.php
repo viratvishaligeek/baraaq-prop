@@ -96,7 +96,10 @@ class PillerDemoContentSeeder extends Seeder
                 ? $value
                 : [$value, 'general', 'string'];
 
-            if (! Setting::query()->where('key', $key)->exists()) {
+            $existing = Setting::query()->where('key', $key)->first();
+
+            // Fill empty starter defaults, but never replace a value already configured by the site owner.
+            if (! $existing || trim((string) $existing->value) === '') {
                 Setting::write($key, $stored, $group, $type);
             }
         }
