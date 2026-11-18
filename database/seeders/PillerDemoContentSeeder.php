@@ -13,7 +13,6 @@ use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\NewsletterSubscriber;
 use App\Models\Page;
-use App\Models\PageView;
 use App\Models\Post;
 use App\Models\Property;
 use App\Models\PropertyImage;
