@@ -1,0 +1,35 @@
+<?php
+
+return [
+    'featured-gallery.home-9' => [
+        'key' => 'featured-gallery.home-9',
+        'label' => 'Featured property showcase — Home 9 gallery slider',
+        'type' => 'featured-gallery-slider',
+        'source_design' => 'home-9',
+        'view' => 'frontend.sections.gallery.featured-home-9',
+        'defaults' => [
+            'eyebrow' => 'Popular Properties',
+            'heading' => 'Featured Properties',
+            'items_limit' => 3,
+            'video_url' => 'https://www.youtube.com/watch?v=_sI_Ps7JSEk',
+            'background_image_1' => '/theme-assets/img/hero/hero_bg_1_1.jpg',
+            'background_image_2' => '/theme-assets/img/hero/hero_bg_1_2.jpg',
+            'background_image_3' => '/theme-assets/img/hero/hero_bg_1_3.jpg',
+            'show_mobile' => true,
+            'show_tablet' => true,
+            'show_desktop' => true,
+        ],
+        'fields' => [
+            'eyebrow' => ['label' => 'Eyebrow', 'type' => 'text', 'max' => 100],
+            'heading' => ['label' => 'Heading', 'type' => 'text', 'max' => 180],
+            'items_limit' => ['label' => 'Featured properties', 'type' => 'number', 'min' => 1, 'max' => 8],
+            'video_url' => ['label' => 'Gallery video URL', 'type' => 'url', 'max' => 2048],
+            'background_image_1' => ['label' => 'Slide 1 background', 'type' => 'image', 'max' => 2048],
+            'background_image_2' => ['label' => 'Slide 2 background', 'type' => 'image', 'max' => 2048],
+            'background_image_3' => ['label' => 'Slide 3 background', 'type' => 'image', 'max' => 2048],
+            'show_mobile' => ['label' => 'Visible on mobile', 'type' => 'checkbox'],
+            'show_tablet' => ['label' => 'Visible on tablet', 'type' => 'checkbox'],
+            'show_desktop' => ['label' => 'Visible on desktop', 'type' => 'checkbox'],
+        ],
+    ],
+];
