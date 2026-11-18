@@ -83,6 +83,13 @@ class PillerDemoContentSeeder extends Seeder
             'header_cta_url' => ['/contact', 'navigation', 'string'],
             'footer_description' => ['Pillar Realty brings local insight, considered advice and a carefully selected collection of homes together. From your first viewing to the final signature, our team makes every move feel simpler.', 'footer', 'string'],
             'footer_copyright' => $site.' — All Rights Reserved.',
+            'footer_map_embed_url' => ['https://www.google.com/maps?q=Civil+Lines,+Meerut,+Uttar+Pradesh&output=embed', 'footer', 'string'],
+            'footer_gallery_handle' => ['@pillarrealty on Instagram', 'footer', 'string'],
+            'footer_gallery_title' => ['Pillar moments', 'footer', 'string'],
+            'footer_gallery_images' => [['theme-assets/img/gallery/footer-gallery-1-1.jpg', 'theme-assets/img/gallery/footer-gallery-1-2.jpg', 'theme-assets/img/gallery/footer-gallery-1-3.jpg', 'theme-assets/img/gallery/footer-gallery-1-5.jpg', 'theme-assets/img/gallery/footer-gallery-1-6.jpg', 'theme-assets/img/gallery/footer-gallery-1-7.jpg', 'theme-assets/img/gallery/footer-gallery-1-4.jpg'], 'footer', 'json'],
+            'social_facebook' => ['https://www.facebook.com/', 'social', 'string'],
+            'social_instagram' => ['https://www.instagram.com/', 'social', 'string'],
+            'social_linkedin' => ['https://www.linkedin.com/', 'social', 'string'],
             'primary_color' => '#068FFF',
             'secondary_color' => '#044DBC',
             'meta_title' => $site.' | Discover a better place to call home',
@@ -533,7 +540,7 @@ class PillerDemoContentSeeder extends Seeder
             'footer-1' => ['About Pillar', 'text', ['title' => 'About Pillar', 'body' => '<p>Pillar Realty combines local knowledge, considered advice and a carefully selected collection of homes. We make every property move feel simpler.</p>']],
             'footer-2' => ['Featured Houses', 'featured_properties', ['title' => 'Featured Houses', 'limit' => 3]],
             'footer-3' => ['Quick Links', 'text', ['title' => 'Quick Links', 'body' => '<ul><li><a href="/properties">Browse properties</a></li><li><a href="/services">Our services</a></li><li><a href="/about">About Pillar</a></li><li><a href="/blog">Property journal</a></li></ul>']],
-            'footer-4' => ['Pillar Location', 'contact', ['title' => 'Pillar Location', 'phone' => '+91 121 456 7800', 'email' => 'hello@pillarrealty.example', 'address' => 'Pillar House, Civil Lines, Meerut, Uttar Pradesh 250001']],
+            'footer-4' => ['Support', 'text', ['title' => 'Support', 'body' => '<ul><li><a href="/frequently-asked-questions">FAQs</a></li><li><a href="/contact">Contact Us</a></li><li><a href="/contact">Viewing Assistance</a></li><li><a href="/privacy-policy">Privacy Policy</a></li><li><a href="/contact">Talk to an advisor</a></li></ul>']],
         ];
 
         foreach ($areas as $location => [$name, $type, $config]) {
