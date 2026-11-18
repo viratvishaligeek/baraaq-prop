@@ -551,9 +551,11 @@
                                 <div class="footer-gallery-wrapper">
                     @foreach(($siteSettings['footer_gallery_images'] ?? ['theme-assets/img/gallery/footer-gallery-1-1.jpg','theme-assets/img/gallery/footer-gallery-1-2.jpg','theme-assets/img/gallery/footer-gallery-1-3.jpg','theme-assets/img/gallery/footer-gallery-1-5.jpg','theme-assets/img/gallery/footer-gallery-1-6.jpg','theme-assets/img/gallery/footer-gallery-1-7.jpg','theme-assets/img/gallery/footer-gallery-1-4.jpg']) as $galleryImage)
                         @php
-                            $galleryImageUrl = \Illuminate\Support\Str::startsWith($galleryImage, ['http://', 'https://'])
-                                ? $galleryImage
-                                : asset(ltrim($galleryImage, '/'));
+                            $galleryMedia = is_numeric($galleryImage) ? \App\Models\Media::query()->find((int) $galleryImage) : null;
+                            $galleryImageUrl = $galleryMedia?->url
+                                ?? (\Illuminate\Support\Str::startsWith((string) $galleryImage, ['http://', 'https://'])
+                                    ? $galleryImage
+                                    : asset(ltrim((string) $galleryImage, '/')));
                         @endphp
                         <div class="simple-gallery-card">
                             <div class="gallery-img">
