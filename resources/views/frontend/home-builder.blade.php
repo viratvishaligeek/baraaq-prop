@@ -4,11 +4,12 @@
 @section('meta_description', $homepage->meta_description ?: \App\Models\Setting::read('meta_description', ''))
 
 @section('content')
+    @php $sectionDefinitions = config('cms-sections.sections', []); @endphp
     @foreach($homepage->sections as $section)
         @continue(! $section->is_enabled)
 
         @php
-            $definition = config('cms-sections.sections.'.$section->section_key);
+            $definition = $sectionDefinitions[$section->section_key] ?? null;
             $renderConfig = array_merge($section->reusableSection?->config ?? [], $section->data_source ?? [], $section->config ?? []);
             $renderConfig = app(\App\Services\Homepage\SectionMediaResolver::class)->forRendering($section, $renderConfig);
             $sectionData = app(\App\Services\Homepage\SectionDataResolver::class)->resolve($section, $renderConfig);
