@@ -128,7 +128,7 @@ class MediaImageEditingTest extends TestCase
         $this->actingAs($user)
             ->delete(route('admin.media.destroy', $media))
             ->assertRedirect()
-            ->assertSessionHas('error');
+            ->assertSessionHasErrors('media');
 
         $this->assertDatabaseHas('media', ['id' => $media->id]);
         Storage::disk('public')->assertExists($media->path);
