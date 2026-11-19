@@ -417,6 +417,7 @@
 
         const propertyForm = document.getElementById('property-form');
         let preparingAccommodationVariants = false;
+        propertyForm?.addEventListener('invalid', () => { preparingAccommodationVariants = false; }, true);
         propertyForm?.addEventListener('submit', async event => {
             if (preparingAccommodationVariants) return;
             const imageInputs = [...propertyForm.querySelectorAll('input[type="file"][name^="accommodations["][name$="[image]"]')].filter(input => input.files?.[0]);

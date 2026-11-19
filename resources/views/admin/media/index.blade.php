@@ -215,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.reload();
         }catch(error){cropStatus.textContent=error.message;}
     });
-    window.addEventListener('pagehide',()=>{document.querySelectorAll('.media-preview-image').forEach(image=>image.removeAttribute('src'));});
 });
 </script>
 @endpush
