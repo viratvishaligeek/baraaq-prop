@@ -5,7 +5,7 @@
         <a href="{{ route('admin.properties.index') }}" class="text-decoration-none small">← Properties</a>
         <h1 class="page-title mt-2">{{ $property->exists ? 'Edit property' : 'Add property' }}</h1>
     </div>
-    <form method="POST" enctype="multipart/form-data"
+    <form id="property-form" method="POST" enctype="multipart/form-data"
         action="{{ $property->exists ? route('admin.properties.update', $property) : route('admin.properties.store') }}">
         @csrf
         @if ($property->exists)
