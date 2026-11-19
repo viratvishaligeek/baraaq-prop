@@ -96,16 +96,22 @@ Node.js, npm, Vite, Webpack, Tailwind, frontend compilation and browser automati
 - Login: /admin/login
 - Dashboard: /admin
 - Property types: /admin/properties/types
+- Property categories: /admin/content/categories?category_type=property
 - Property amenities: /admin/properties/amenities
 - Blog tags: /admin/tags
 - Media library: /admin/media
+- Image management: /admin/media?type=images
 - SEO overview: /admin/seo
+- Sitemap / indexing: /admin/seo/indexing
 - Website settings: /admin/settings
 - Homepage management: /admin/homepages
+- Universal page builder: /admin/page-builder
+- Section library: /admin/section-library
+- Widget library: /admin/widgets
 - Page builder: open an existing page and choose **Open universal page builder**
 - Service builder: open an existing service and choose **Open service widget builder**
 
-Dashboard KPI configuration is available from **Manage dashboard widgets**. It stores each KPI's enabled state, destination and display order. Section and widget variation previews open as individual rendered previews.
+Dashboard KPI configuration is available from **Manage dashboard widgets**. Existing posts, pages and services can be previewed as drafts from their content editor; page and service builders also provide draft previews. It stores each KPI's enabled state, destination and display order. Section and widget variation previews open as individual rendered previews.
 
 ## Theme pages and routes
 

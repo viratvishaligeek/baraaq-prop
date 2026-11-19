@@ -28,7 +28,7 @@ The property editor supports:
 
 Accommodation images are represented by Media records. The original image and available responsive variants are stored separately. Media referenced by an accommodation cannot be deleted until the reference is cleared. The public property page renders the space image, details, attributes and FAQs.
 
-Property types and amenities are derived from the values currently used by property records. Create or edit values in the property editor; the taxonomy screens provide counts and links to matching properties.
+Property categories are filtered from the shared category manager. Property types and amenities are derived from the values currently used by property records. Create or edit values in the property editor; the taxonomy screens provide counts and links to matching properties.
 
 ## Blog tags and comments
 
@@ -37,6 +37,8 @@ Tags have a dedicated CRUD screen at **Content management → Tags**. A post can
 Comments remain moderated through the existing comments module. Public comment submissions continue to use the existing throttled endpoint and moderation status.
 
 ## Pages, services and widgets
+
+The universal page builder hub is available at /admin/page-builder. The standalone Section Library at /admin/section-library lists every registered variation with an isolated rendered preview. The Widget Library also includes registered variation previews alongside custom widget management. Existing posts, pages and services can be previewed in their current draft state from the content editor; previewing does not publish them.
 
 Pages use the universal page builder. Services have a service-specific builder backed by the same registered widget definitions and shared section persistence service.
 
@@ -67,13 +69,13 @@ The Media Library supports:
 - Reference-aware deletion protection for content, property galleries, accommodation images, homepage sections and reusable widget attachments.
 - A crop/resize editor that saves a new image copy and preserves the original.
 
-The shared Media Library picker is available in property, content and widget rich-text editor image insertion. Editors use TinyMCE's image file picker callback to select an existing library image. The picker upload workflow generates responsive variants in the browser.
+The shared Media Library picker is available in property, content and widget rich-text editor image insertion. The editor, automatic slug generator and live SERP preview are shared admin assets so their behavior stays consistent across content forms. Editors use TinyMCE's image file picker callback to select an existing library image. The picker upload workflow generates responsive variants in the browser.
 
 ## SEO and indexing
 
 Canonical URLs are generated from the public route for properties, posts, pages and services. Editors do not need to maintain a manual canonical URL field.
 
-The SEO overview highlights missing metadata and social images. Global SEO settings include meta robots policy and editable robots.txt directives. The robots endpoint only emits supported directives (User-agent, Allow, Disallow and Crawl-delay) and appends the current XML sitemap URL automatically.
+The SEO overview highlights missing metadata and social images. The dedicated Sitemap / indexing screen at /admin/seo/indexing shows the current robots policy, robots.txt directives and XML sitemap endpoint. Global SEO settings include meta robots policy and editable robots.txt directives. The robots endpoint only emits supported directives (User-agent, Allow, Disallow and Crawl-delay) and appends the current XML sitemap URL automatically.
 
 The XML sitemap includes the public homepage, public listings and published property, post, page and service routes.
 
