@@ -46,7 +46,7 @@ class SettingsController extends Controller
             'meta_description' => ['nullable', 'string', 'max:1000'],
             'meta_keywords' => ['nullable', 'string', 'max:1000'],
             'meta_robots' => ['required', 'in:index,follow,index,nofollow,noindex,follow,noindex,nofollow'],
-            'robots_rules' => ['nullable', 'string', 'max:10000', 'regex:/^(?:(?:User-agent|Allow|Disallow|Crawl-delay):[^\r\n]*\r?\n?)*$/im'],
+            'robots_rules' => ['nullable', 'string', 'max:10000'],
             'default_og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'favicon' => ['nullable', 'file', 'mimes:png,ico', 'max:2048'],
