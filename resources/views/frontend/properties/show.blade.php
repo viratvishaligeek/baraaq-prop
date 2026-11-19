@@ -13,15 +13,20 @@
     'address' => ['@type' => 'PostalAddress', 'streetAddress' => $property->address, 'addressLocality' => $property->city, 'addressRegion' => $property->state, 'postalCode' => $property->postal_code, 'addressCountry' => $property->country ?: 'IN'],
 ])</script>
 @if($property->faqs->isNotEmpty())
-<script type="application/ld+json">@json([
-    '@context' => 'https://schema.org',
-    '@type' => 'FAQPage',
-    'mainEntity' => $property->faqs->map(fn ($faq) => [
-        '@type' => 'Question',
-        'name' => $faq->question,
-        'acceptedAnswer' => ['@type' => 'Answer', 'text' => strip_tags($faq->answer)],
-    ])->all(),
-])</script>
+    @php
+        $faqStructuredData = [
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'mainEntity' => $property->faqs->map(function ($faq) {
+                return [
+                    '@type' => 'Question',
+                    'name' => $faq->question,
+                    'acceptedAnswer' => ['@type' => 'Answer', 'text' => strip_tags($faq->answer)],
+                ];
+            })->all(),
+        ];
+    @endphp
+    <script type="application/ld+json">@json($faqStructuredData)</script>
 @endif
 @endsection
 @section('content')
