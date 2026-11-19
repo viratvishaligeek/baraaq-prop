@@ -13,7 +13,11 @@ class MediaController extends Controller
 {
     public function index()
     {
-        return view('admin.media.index', ['media' => Media::latest()->paginate(30)]);
+        $media = Media::query()
+            ->when(request('type') === 'images', fn ($query) => $query->where('mime_type', 'like', 'image/%'))
+            ->latest()->paginate(30)->withQueryString();
+
+        return view('admin.media.index', compact('media'));
     }
     public function store(Request $r)
     {
