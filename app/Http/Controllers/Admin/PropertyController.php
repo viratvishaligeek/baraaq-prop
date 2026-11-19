@@ -57,7 +57,7 @@ class PropertyController extends Controller
             if ($request->hasFile('accommodations.' . $index . '.image')) {
                 $file = $request->file('accommodations.' . $index . '.image');
                 $path = $file->store('properties/accommodations', 'public');
-                $media = Media::create([
+                $attributes = [
                     'uploaded_by' => $request->user()->id,
                     'disk' => 'public',
                     'path' => $path,
