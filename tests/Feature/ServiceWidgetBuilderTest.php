@@ -31,6 +31,10 @@ class ServiceWidgetBuilderTest extends TestCase
             ->assertOk()
             ->assertSee('Service builder');
 
+        $this->actingAs($user)->get(route('admin.page-builder.index'))->assertOk()->assertSee('Universal page builder');
+        $this->actingAs($user)->get(route('admin.sections.index'))->assertOk()->assertSee('Section library');
+        $this->actingAs($user)->get(route('admin.widgets.index'))->assertOk()->assertSee('Registered design variations');
+
         $this->actingAs($user)
             ->get(route('admin.sections.preview', 'about.home-4'))
             ->assertOk()

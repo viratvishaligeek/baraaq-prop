@@ -34,7 +34,7 @@
                         @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('properties.manage') || auth()->user()->hasPermission('properties.create'))
                             <a class="sidebar-link {{ request()->routeIs('admin.properties.create') ? 'active' : '' }}" href="{{ route('admin.properties.create') }}">Add new property</a>
                         @endif
-                        <a class="sidebar-link" href="{{ route('admin.content.index', 'categories') }}?category_type=property">Property categories</a>
+                        <a class="sidebar-link {{ request()->route('type') === 'categories' && request('category_type') === 'property' ? 'active' : '' }}" href="{{ route('admin.content.index', 'categories') }}?category_type=property">Property categories</a>
                         <a class="sidebar-link {{ request()->routeIs('admin.properties.types') ? 'active' : '' }}" href="{{ route('admin.properties.types') }}">Property types</a>
                         <a class="sidebar-link {{ request()->routeIs('admin.properties.amenities') ? 'active' : '' }}" href="{{ route('admin.properties.amenities') }}">Property amenities</a>
                     @endif
@@ -71,7 +71,7 @@
                 @endif
             </details>
             @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage') || auth()->user()->hasPermission('widgets.manage') || auth()->user()->hasPermission('menus.manage'))
-                <details class="sidebar-group" @if (request()->routeIs('admin.appearance.*') || request()->routeIs('admin.homepages.*') || request()->routeIs('admin.widgets.*') || request()->routeIs('admin.menus.*')) open @endif>
+                <details class="sidebar-group" @if (request()->routeIs('admin.appearance.*') || request()->routeIs('admin.homepages.*') || request()->routeIs('admin.page-builder.*') || request()->routeIs('admin.sections.*') || request()->routeIs('admin.widgets.*') || request()->routeIs('admin.menus.*')) open @endif>
                     <summary><i class="fa-solid fa-palette"></i> Appearance & design</summary>
                     @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage'))
                         <a class="sidebar-link {{ request()->routeIs('admin.appearance.*') ? 'active' : '' }}" href="{{ route('admin.appearance.index') }}">Theme & appearance</a>
