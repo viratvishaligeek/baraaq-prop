@@ -251,7 +251,7 @@
                     </div>
                 @else<div class="col-md-8">
                         <label class="form-label">Title *</label>
-                        <input class="form-control" name="title" value="{{ old('title', $item->title) }}" required>
+                        <input class="form-control" id="content-title" name="title" value="{{ old('title', $item->title) }}" required>
                     </div>
                     @if (in_array($type, ['posts', 'services']))
                         <div class="col-12">
@@ -416,7 +416,6 @@
                     tinymce.init({
                         selector: 'textarea[data-rich-editor]',
                         license_key: 'gpl',
-                        menubar: false,
                         plugins: 'lists link image media table code searchreplace visualblocks wordcount anchor',
                         menubar: 'edit insert format table',
                         toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | blockquote | code',

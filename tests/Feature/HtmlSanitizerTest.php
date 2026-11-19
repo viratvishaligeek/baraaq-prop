@@ -21,4 +21,17 @@ class HtmlSanitizerTest extends TestCase
         $this->assertStringNotContainsString('<script', $safe);
         $this->assertStringNotContainsString('javascript:', $safe);
     }
+    public function test_editor_tables_and_images_are_allowed_but_executable_image_sources_are_removed(): void
+    {
+        $html = '<table><tbody><tr><td>Details</td></tr></tbody></table><img src="/storage/media/home.jpg" alt="Home" onerror="alert(1)"><img src="javascript:alert(2)" alt="Bad">';
+
+        $safe = HtmlSanitizer::sanitize($html);
+
+        $this->assertStringContainsString('<table>', $safe);
+        $this->assertStringContainsString('<td>Details</td>', $safe);
+        $this->assertStringContainsString('src="/storage/media/home.jpg"', $safe);
+        $this->assertStringNotContainsString('onerror', $safe);
+        $this->assertStringNotContainsString('javascript:', $safe);
+    }
+
 }
