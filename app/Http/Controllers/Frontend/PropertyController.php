@@ -111,7 +111,7 @@ class PropertyController extends Controller
             404
         );
 
-        $property->load(['category', 'images']);
+        $property->load(['category', 'images', 'accommodations.imageMedia', 'faqs']);
         $related = Property::published()
             ->where('id', '!=', $property->id)
             ->where('city', $property->city)

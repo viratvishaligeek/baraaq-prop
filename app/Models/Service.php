@@ -21,11 +21,17 @@ class Service extends Model
         'meta_description',
         'canonical_url',
         'og_image',
+        'focus_keyword',
     ];
 
     protected function casts(): array
     {
         return ['published_at' => 'datetime'];
+    }
+
+    public function sections()
+    {
+        return $this->hasMany(HomepageSection::class, 'service_id')->orderBy('sort_order');
     }
 
     public function scopePublished($query)

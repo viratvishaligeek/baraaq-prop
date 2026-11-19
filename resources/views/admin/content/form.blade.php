@@ -4,8 +4,13 @@
     <div class="mb-4">
         <a href="{{ route('admin.content.index', $type) }}" class="text-decoration-none small">← {{ ucfirst($type) }}</a>
         <h1 class="page-title mt-2">{{ $item->exists ? 'Edit' : 'Add' }} {{ rtrim($type, 's') }}</h1>
+            @if ($item->exists && in_array($type, ['posts', 'pages', 'services'], true))
+                <a class="btn btn-outline-primary btn-sm" href="{{ route('admin.content.preview', [$type, $item->id]) }}" target="_blank" rel="noopener">Preview content</a>
+            @endif
         @if ($type === 'pages' && $item->exists)
             <a class="btn btn-outline-primary btn-sm mt-2" href="{{ route('admin.pages.builder', $item) }}">Open universal page builder</a>
+        @elseif ($type === 'services' && $item->exists && (auth()->user()->isAdministrator() || auth()->user()->hasPermission('services.manage')))
+            <a class="btn btn-outline-primary btn-sm mt-2" href="{{ route('admin.services.builder', $item) }}">Open service widget builder</a>
         @endif
     </div>
     <form method="POST" enctype="multipart/form-data"
@@ -189,7 +194,7 @@
                 @elseif($type === 'banners')
                     <div class="col-md-6">
                         <label class="form-label">Title *</label>
-                        <input class="form-control" name="title" value="{{ old('title', $item->title) }}" required>
+                        <input class="form-control" id="content-title" name="title" value="{{ old('title', $item->title) }}" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Subtitle</label>
@@ -251,7 +256,7 @@
                     </div>
                 @else<div class="col-md-8">
                         <label class="form-label">Title *</label>
-                        <input class="form-control" name="title" value="{{ old('title', $item->title) }}" required>
+                        <input class="form-control" id="content-title" name="title" value="{{ old('title', $item->title) }}" required>
                     </div>
                     @if (in_array($type, ['posts', 'services']))
                         <div class="col-12">
@@ -281,6 +286,18 @@
                         </div>
                         @if ($type === 'posts')
                             <div class="col-12">
+                                <label class="form-label">Tags</label>
+                                <div class="border rounded p-3 d-flex flex-wrap gap-3">
+                                    @forelse ($tags as $tag)
+                                        <label class="form-check mb-0"><input class="form-check-input" type="checkbox" name="tag_ids[]" value="{{ $tag->id }}" @checked(in_array($tag->id, old('tag_ids', $selectedTagIds ?? [])))> <span class="form-check-label">{{ $tag->name }}</span></label>
+                                    @empty
+                                        <span class="small text-muted">No tags created. <a href="{{ route('admin.tags.index') }}">Manage tags</a>.</span>
+                                    @endforelse
+                                </div>
+                            </div>
+                        @endif
+                        @if ($type === 'posts')
+                            <div class="col-12">
                                 <label class="form-label">Categories</label>
                                 <div class="row">
                                     @foreach ($categories as $category)
@@ -298,22 +315,29 @@
                     @endif
                     <div class="col-md-6">
                         <label class="form-label">Slug</label>
-                        <input class="form-control" name="slug" value="{{ old('slug', $item->slug) }}"
+                        <input class="form-control" id="content-slug" name="slug" data-slug-source="[name=title]" value="{{ old('slug', $item->slug) }}"
                             placeholder="Generated from title when empty">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">SEO title</label>
-                        <input class="form-control" name="meta_title"
+                        <input class="form-control" id="content-meta-title" name="meta_title"
                             value="{{ old('meta_title', $item->meta_title) }}">
                     </div>
                     <div class="col-12">
                         <label class="form-label">SEO description</label>
-                        <textarea class="form-control" name="meta_description">{{ old('meta_description', $item->meta_description) }}</textarea>
+                        <textarea class="form-control" id="content-meta-description" name="meta_description">{{ old('meta_description', $item->meta_description) }}</textarea>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Canonical URL</label>
-                        <input class="form-control" type="url" name="canonical_url"
-                            value="{{ old('canonical_url', $item->canonical_url) }}">
+                        <label class="form-label">Focus keyword</label>
+                        <input class="form-control" name="focus_keyword" value="{{ old('focus_keyword', $item->focus_keyword) }}">
+                    </div>
+                    <div class="col-12">
+                        <div class="border rounded p-3 bg-light" id="content-serp-preview" data-seo-preview data-title-input="#content-title" data-slug-input="#content-slug" data-meta-title-input="#content-meta-title" data-meta-description-input="#content-meta-description" data-url-prefix="{{ $type === 'posts' ? '/blog/' : '/'.$type.'/' }}" data-url-output="#content-serp-url" data-title-output="#content-serp-title" data-description-output="#content-serp-description" data-title-count="#content-title-count" data-description-count="#content-description-count">
+                            <div class="small text-success" id="content-serp-url"></div>
+                            <div class="fw-semibold text-primary" id="content-serp-title"></div>
+                            <div class="small text-muted" id="content-serp-description"></div>
+                            <div class="small text-muted mt-2"><span id="content-title-count">0</span> / 60 title characters · <span id="content-description-count">0</span> / 160 description characters</div>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Social sharing image</label>
@@ -367,28 +391,6 @@
                     }
                     $('[name="type"]').on('change', filterParentCategories);
                     filterParentCategories();
-                });
-            </script>
-        @endpush
-    @endif
-    @if (in_array($type, ['posts', 'pages', 'services']))
-        @push('scripts')
-            <script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js"></script>
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    if (!window.tinymce) return;
-                    tinymce.init({
-                        selector: 'textarea[data-rich-editor]',
-                        license_key: 'gpl',
-                        menubar: false,
-                        plugins: 'lists link',
-                        toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link | removeformat',
-                        height: 420,
-                        branding: false,
-                        promotion: false,
-                        setup: editor => editor.on('change keyup undo redo', () => editor.save())
-                    });
-                    document.querySelector('form')?.addEventListener('submit', () => tinymce.triggerSave());
                 });
             </script>
         @endpush

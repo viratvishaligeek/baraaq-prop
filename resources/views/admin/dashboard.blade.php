@@ -16,25 +16,23 @@
         </div>
     </div>
 
+    <div class="d-flex justify-content-end mb-2">
+        @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage'))
+            <a class="btn btn-sm btn-outline-secondary" href="{{ route('admin.dashboard.widgets.edit') }}"><i class="fa fa-sliders me-1"></i> Manage dashboard widgets</a>
+        @endif
+    </div>
     <div class="row g-3 mb-4">
-        @foreach ([
-            ['Properties', $propertyCount, 'fa-house'],
-            ['Published properties', $publishedPropertyCount, 'fa-check-circle'],
-            ['Blog posts', $postCount, 'fa-newspaper'],
-            ['Pages', $pageCount, 'fa-file-lines'],
-            ['Users', $userCount, 'fa-users'],
-            ['New enquiries', $newEnquiryCount, 'fa-inbox'],
-            ['Visits · 30 days', $totalVisits, 'fa-chart-line'],
-            ['Page views · 30 days', $totalPageViews, 'fa-eye'],
-        ] as [$label, $value, $icon])
+        @forelse($dashboardWidgets as $widget)
             <div class="col-6 col-xl-3">
-                <div class="stat-card h-100">
-                    <div class="stat-icon"><i class="fa {{ $icon }}"></i></div>
-                    <div class="text-muted small">{{ $label }}</div>
-                    <div class="stat-value">{{ number_format($value) }}</div>
-                </div>
+                <a class="stat-card h-100 d-block text-decoration-none text-reset" href="{{ $widget['url'] }}" aria-label="View {{ $widget['label'] }}">
+                    <div class="stat-icon"><i class="fa {{ $widget['icon'] }}"></i></div>
+                    <div class="text-muted small">{{ $widget['label'] }}</div>
+                    <div class="stat-value">{{ number_format($widget['value']) }}</div>
+                </a>
             </div>
-        @endforeach
+        @empty
+            <div class="col-12"><div class="content-card text-muted">No dashboard widgets are enabled. <a href="{{ route('admin.dashboard.widgets.edit') }}">Add widgets</a>.</div></div>
+        @endforelse
     </div>
 
     <div class="row g-4">

@@ -31,7 +31,7 @@
                             <th>Content</th>
                             <th>Meta title</th>
                             <th>Description</th>
-                            <th>Canonical</th>
+                            <th>Canonical URL</th>
                             <th>Social image</th>
                             <th>
                             </th>
@@ -45,7 +45,7 @@
                                 <td>{!! $item->meta_description
                                     ? '<span class="text-success">Set</span>'
                                     : '<span class="text-danger">Missing</span>' !!}</td>
-                                <td>{!! $item->canonical_url ? '<span class="text-success">Set</span>' : '<span class="text-danger">Missing</span>' !!}</td>
+                                <td><span class="text-success">Generated automatically</span></td>
                                 <td>{!! $item->og_image ? '<span class="text-success">Set</span>' : '<span class="text-danger">Missing</span>' !!}</td>
                                 <td class="text-end">
                                     @if ($type === 'properties')

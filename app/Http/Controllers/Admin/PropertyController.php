@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePropertyRequest;
+use App\Support\HtmlSanitizer;
 use App\Models\Category;
 use App\Models\Media;
 use App\Models\Property;
@@ -36,19 +37,63 @@ class PropertyController extends Controller
     public function index()
     {
         $this->authorizeAction('view');
-        return view('admin.properties.index', ['properties' => Property::with('category:id,name')->latest()->paginate(15)]);
+        return view('admin.properties.index', ['properties' => Property::with('category:id,name')
+            ->when(in_array(request('status'), ['draft', 'published', 'archived'], true), fn ($query) => $query->where('status', request('status')))
+            ->when(request()->filled('property_type'), fn ($query) => $query->where('property_type', request('property_type')))
+            ->when(request()->filled('feature'), fn ($query) => $query->whereJsonContains('features', request('feature')))
+            ->latest()->paginate(15)->withQueryString()]);
     }
 
     public function create()
     {
         $this->authorizeAction('create');
-        return view('admin.properties.form', ['property' => new Property(), 'categories' => Category::where('type', 'property')->where('is_active', true)->orderBy('name')->get()]);
+        return view('admin.properties.form', ['property' => new Property(), 'categories' => Category::where('type', 'property')->where('is_active', true)->orderBy('name')->get(), 'mediaItems' => Media::query()->where('mime_type', 'like', 'image/%')->latest('id')->limit(200)->get(['id', 'path', 'original_name', 'alt_text'])]);
+    }
+
+
+    private function resolveAccommodationImages(array $accommodations, StorePropertyRequest $request): array
+    {
+        foreach ($accommodations as $index => &$space) {
+            if ($request->hasFile('accommodations.' . $index . '.image')) {
+                $file = $request->file('accommodations.' . $index . '.image');
+                $path = $file->store('properties/accommodations', 'public');
+                $attributes = [
+                    'uploaded_by' => $request->user()->id,
+                    'disk' => 'public',
+                    'path' => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getMimeType(),
+                    'size' => $file->getSize(),
+                    'alt_text' => $space['name'] ?? $file->getClientOriginalName(),
+                ];
+                foreach (['small', 'medium', 'large'] as $size) {
+                    $variant = $request->file('accommodation_variants.' . $index . '.' . $size);
+                    if ($variant) {
+                        $attributes[$size . '_path'] = $variant->store('media/variants/' . $size, 'public');
+                    }
+                }
+                $media = Media::create($attributes);
+                $space['image_media_id'] = $media->id;
+            }
+
+            unset($space['image']);
+        }
+        unset($space);
+
+        $accommodations = array_values($accommodations);
+        foreach ($accommodations as $sortOrder => &$space) {
+            $space['sort_order'] = $sortOrder;
+        }
+        unset($space);
+
+        return $accommodations;
     }
 
     public function store(StorePropertyRequest $request)
     {
         $this->authorizeAction('create');
         $data = $request->validated();
+        $data['description'] = HtmlSanitizer::sanitize($data['description'] ?? '');
         foreach (['featured_image_media_id' => 'featured_image', 'og_image_media_id' => 'og_image'] as $mediaField => $field) {
             if (! empty($data[$mediaField]) && ! $request->hasFile($field)) {
                 $data[$field] = Media::query()->whereKey((int) $data[$mediaField])->value('path');
@@ -59,7 +104,12 @@ class PropertyController extends Controller
             $this->authorizeAction('publish');
         }
         $galleryMediaIds = $data['gallery_media_ids'] ?? [];
-        unset($data['gallery'], $data['gallery_media_ids']);
+        $accommodations = array_map(fn ($space) => array_merge($space, ['is_included' => (bool) ($space['is_included'] ?? false)]), $data['accommodations'] ?? []);
+        $accommodations = $this->resolveAccommodationImages($accommodations, $request);
+        $faqs = array_values($data['faqs'] ?? []);
+        foreach ($faqs as $sortOrder => &$faq) $faq['sort_order'] = $sortOrder;
+        unset($faq);
+        unset($data['gallery'], $data['gallery_media_ids'], $data['accommodations'], $data['accommodation_variants'], $data['faqs']);
         $data['slug'] = $this->slug($data['slug'] ?? $data['title']);
         $data['created_by'] = $request->user()->id;
         $data['is_featured'] = $request->boolean('is_featured');
@@ -67,7 +117,7 @@ class PropertyController extends Controller
         if ($request->hasFile('og_image')) $data['og_image'] = $request->file('og_image')->store('properties/seo', 'public');
         if ($data['status'] === 'published') $data['published_at'] = now();
 
-        $property = DB::transaction(function () use ($data, $request, $galleryMediaIds) {
+        $property = DB::transaction(function () use ($data, $request, $galleryMediaIds, $accommodations, $faqs) {
             $created = Property::create($data);
             foreach ($request->file('gallery', []) as $file) $created->images()->create(['path' => $file->store('properties/gallery', 'public')]);
             foreach ($galleryMediaIds as $mediaId) {
@@ -76,6 +126,8 @@ class PropertyController extends Controller
                     $created->images()->create(['path' => $media->path]);
                 }
             }
+            $created->accommodations()->createMany($accommodations);
+            $created->faqs()->createMany($faqs);
             return $created;
         });
 
@@ -85,13 +137,14 @@ class PropertyController extends Controller
     public function edit(Property $property)
     {
         $this->authorizeAction('edit');
-        return view('admin.properties.form', ['property' => $property, 'categories' => Category::where('type', 'property')->where('is_active', true)->orderBy('name')->get()]);
+        return view('admin.properties.form', ['property' => $property->load(['images', 'accommodations', 'faqs']), 'categories' => Category::where('type', 'property')->where('is_active', true)->orderBy('name')->get(), 'mediaItems' => Media::query()->where('mime_type', 'like', 'image/%')->latest('id')->limit(200)->get(['id', 'path', 'original_name', 'alt_text'])]);
     }
 
     public function update(StorePropertyRequest $request, Property $property)
     {
         $this->authorizeAction('edit');
         $data = $request->validated();
+        $data['description'] = HtmlSanitizer::sanitize($data['description'] ?? '');
         foreach (['featured_image_media_id' => 'featured_image', 'og_image_media_id' => 'og_image'] as $mediaField => $field) {
             if (! empty($data[$mediaField]) && ! $request->hasFile($field)) {
                 $data[$field] = Media::query()->whereKey((int) $data[$mediaField])->value('path');
@@ -102,7 +155,11 @@ class PropertyController extends Controller
             $this->authorizeAction('publish');
         }
         $galleryMediaIds = $data['gallery_media_ids'] ?? [];
-        unset($data['gallery'], $data['gallery_media_ids']);
+        $accommodations = $this->resolveAccommodationImages($data['accommodations'] ?? [], $request);
+        $faqs = array_values($data['faqs'] ?? []);
+        foreach ($faqs as $sortOrder => &$faq) $faq['sort_order'] = $sortOrder;
+        unset($faq);
+        unset($data['gallery'], $data['gallery_media_ids'], $data['accommodations'], $data['accommodation_variants'], $data['faqs']);
         $data['slug'] = $this->slug($data['slug'] ?? $data['title'], $property->id);
         $data['is_featured'] = $request->boolean('is_featured');
         $oldFeaturedImage = $property->featured_image;
@@ -111,7 +168,7 @@ class PropertyController extends Controller
         if ($request->hasFile('og_image')) $data['og_image'] = $request->file('og_image')->store('properties/seo', 'public');
         if ($data['status'] === 'published' && !$property->published_at) $data['published_at'] = now();
 
-        DB::transaction(function () use ($property, $data, $request, $galleryMediaIds) {
+        DB::transaction(function () use ($property, $data, $request, $galleryMediaIds, $accommodations, $faqs) {
             $property->update($data);
             foreach ($request->file('gallery', []) as $file) $property->images()->create(['path' => $file->store('properties/gallery', 'public')]);
             foreach ($galleryMediaIds as $mediaId) {
@@ -120,6 +177,10 @@ class PropertyController extends Controller
                     $property->images()->create(['path' => $media->path]);
                 }
             }
+            $property->accommodations()->delete();
+            $property->faqs()->delete();
+            $property->accommodations()->createMany($accommodations);
+            $property->faqs()->createMany($faqs);
         });
 
         if ($oldFeaturedImage && $oldFeaturedImage !== ($data['featured_image'] ?? $oldFeaturedImage) && $property->images()->where('path', $oldFeaturedImage)->doesntExist() && ! Media::where('path', $oldFeaturedImage)->exists()) Storage::disk('public')->delete($oldFeaturedImage);

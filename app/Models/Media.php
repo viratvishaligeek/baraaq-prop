@@ -13,6 +13,9 @@ class Media extends Model
         'uploaded_by',
         'disk',
         'path',
+        'small_path',
+        'medium_path',
+        'large_path',
         'original_name',
         'mime_type',
         'size',
@@ -32,5 +35,20 @@ class Media extends Model
     public function getUrlAttribute(): string
     {
         return Storage::disk($this->disk)->url($this->path);
+    }
+
+    public function getThumbnailUrlAttribute(): string
+    {
+        return Storage::disk($this->disk)->url($this->small_path ?: $this->path);
+    }
+
+    public function getMediumUrlAttribute(): string
+    {
+        return Storage::disk($this->disk)->url($this->medium_path ?: $this->path);
+    }
+
+    public function getLargeUrlAttribute(): string
+    {
+        return Storage::disk($this->disk)->url($this->large_path ?: $this->path);
     }
 }

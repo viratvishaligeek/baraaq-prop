@@ -2,11 +2,11 @@
 @section('title', 'Website settings')
 @section('content')
     <div class="mb-4">
-        <h1 class="page-title">Website settings</h1>
+        <h1 class="page-title" id="general-settings">Website settings</h1>
         <p class="text-muted">One place for identity, navigation, contact details, appearance and default SEO.</p>
     </div>
     <form method="POST" enctype="multipart/form-data" action="{{ route('admin.settings.update') }}">@csrf @method('PUT')
-        <div class="content-card mb-4">
+        <div class="content-card mb-4" id="website-settings">
             <h4 class="mb-3">Website identity</h4>
             <div class="row g-3">
                 <div class="col-md-6">
@@ -125,7 +125,7 @@
             </div>
         </div>
         <div class="content-card mb-4">
-            <h4 class="mb-3">Global SEO defaults</h4>
+            <h4 class="mb-3" id="seo-settings">Global SEO defaults</h4>
             <div class="row g-3">
                 <div class="col-12">
                     <label class="form-label">Default meta title</label>
@@ -148,6 +148,12 @@
                             <option value="{{ $policy }}" @selected(old('meta_robots', $settings['meta_robots'] ?? 'index,follow') === $policy)>{{ $policy }}</option>
                         @endforeach
                     </select>
+                    <div class="mt-3">
+                        <label class="form-label" for="robots-rules">robots.txt directives</label>
+                        <textarea class="form-control font-monospace" id="robots-rules" name="robots_rules" rows="6" placeholder="User-agent: *&#10;Allow: /&#10;Disallow: /admin">{{ old('robots_rules', $settings['robots_rules'] ?? "User-agent: *\nAllow: /\nDisallow: /admin") }}</textarea>
+                        <div class="form-text">One directive per line. Supported directives: User-agent, Allow, Disallow and Crawl-delay. The sitemap URL is appended automatically.</div>
+                    </div>
+
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Default social sharing image</label>

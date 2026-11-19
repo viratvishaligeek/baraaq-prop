@@ -46,6 +46,7 @@ class SettingsController extends Controller
             'meta_description' => ['nullable', 'string', 'max:1000'],
             'meta_keywords' => ['nullable', 'string', 'max:1000'],
             'meta_robots' => ['required', 'in:index,follow,index,nofollow,noindex,follow,noindex,nofollow'],
+            'robots_rules' => ['nullable', 'string', 'max:10000'],
             'default_og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'favicon' => ['nullable', 'file', 'mimes:png,ico', 'max:2048'],
@@ -91,7 +92,7 @@ class SettingsController extends Controller
 
         DB::transaction(function () use ($data) {
             foreach ($data as $key => $value) {
-                Setting::write($key, $value, in_array($key, ['meta_title', 'meta_description', 'meta_keywords', 'meta_robots', 'default_og_image']) ? 'seo' : 'general');
+                Setting::write($key, $value, in_array($key, ['meta_title', 'meta_description', 'meta_keywords', 'meta_robots', 'robots_rules', 'default_og_image']) ? 'seo' : 'general');
             }
         });
 

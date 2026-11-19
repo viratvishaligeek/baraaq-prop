@@ -42,6 +42,9 @@ class Property extends Model
         'whatsapp_message',
         'published_at',
         'features',
+        'country',
+        'availability_status',
+        'focus_keyword',
     ];
 
     protected function casts(): array
@@ -68,6 +71,16 @@ class Property extends Model
     public function images()
     {
         return $this->hasMany(PropertyImage::class)->orderBy('sort_order');
+    }
+
+    public function accommodations()
+    {
+        return $this->hasMany(PropertyAccommodation::class)->orderBy('sort_order')->orderBy('id');
+    }
+
+    public function faqs()
+    {
+        return $this->hasMany(PropertyFaq::class)->orderBy('sort_order')->orderBy('id');
     }
 
     public function enquiries()

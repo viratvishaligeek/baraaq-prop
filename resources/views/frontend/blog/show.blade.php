@@ -2,7 +2,7 @@
 
 @section('title', $post->meta_title ?: $post->title)
 @section('meta_description', $post->meta_description ?: ($post->excerpt ?: \App\Models\Setting::read('meta_description', '')))
-@section('canonical_url', $post->canonical_url ?: route('blog.show', $post))
+@section('canonical_url', route('blog.show', $post))
 @section('og_image', $post->og_image ? asset('storage/'.$post->og_image) : ($post->featured_image ? Storage::disk('public')->url($post->featured_image) : (!empty($siteSettings['default_og_image']) ? asset('storage/'.$siteSettings['default_og_image']) : asset('theme-assets/img/hero/hero-10-1.jpg'))))
 
 @section('structured_data')
@@ -22,6 +22,7 @@
 @endsection
 
 @section('content')
+    @if (($isBuilderPreview ?? false) && $post->status === 'draft')<div class="container py-3"><span class="badge bg-warning text-dark">Draft preview — not publicly published</span></div>@endif
     <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcumb-bg.jpg') }}">
         <div class="container">
             <div class="breadcumb-content">
@@ -44,6 +45,7 @@
                     @endif
                     <h2>{{ $post->title }}</h2>
                     <div class="text-muted mb-4">{{ $post->published_at?->format('d M Y') }}</div>
+                    @if ($post->tags->isNotEmpty())<div class="d-flex flex-wrap gap-2 mb-4">@foreach ($post->tags as $tag)<a class="badge bg-light text-dark text-decoration-none" href="{{ route('blog.index', ['tag' => $tag->slug]) }}">{{ $tag->name }}</a>@endforeach</div>@endif
                     <div>{!! \App\Support\HtmlSanitizer::sanitize($post->content) !!}</div>
                 </div>
             </article>

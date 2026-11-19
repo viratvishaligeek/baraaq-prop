@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\ContentController;
+use App\Http\Controllers\Admin\ContentPreviewController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EnquiryController;
 use App\Http\Controllers\Admin\HomepageController;
@@ -16,10 +17,16 @@ use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\PageHomepageController;
 use App\Http\Controllers\Admin\PageBuilderController;
 use App\Http\Controllers\Admin\PropertyController;
+use App\Http\Controllers\Admin\PropertyTaxonomyController;
 use App\Http\Controllers\Admin\ReusableSectionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\ServiceBuilderController;
+use App\Http\Controllers\Admin\SectionPreviewController;
+use App\Http\Controllers\Admin\SectionLibraryController;
+use App\Http\Controllers\Admin\PageBuilderHubController;
+use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WidgetController;
 use Illuminate\Support\Facades\Route;
@@ -32,7 +39,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware(['auth', 'admin.access'])->group(function () {
         Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
+        Route::get('/page-builder', [PageBuilderHubController::class, 'index'])->name('page-builder.index');
+        Route::get('/section-library', [SectionLibraryController::class, 'index'])->name('sections.index');
+        Route::get('/section-library/preview/{sectionKey}', [SectionPreviewController::class, 'show'])->name('sections.preview');
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
+        Route::get('/dashboard/widgets', [DashboardController::class, 'manageWidgets'])->middleware('permission:settings.manage')->name('dashboard.widgets.edit');
+        Route::put('/dashboard/widgets', [DashboardController::class, 'updateWidgets'])->middleware('permission:settings.manage')->name('dashboard.widgets.update');
         Route::get('/analytics', [AnalyticsController::class, 'index'])->middleware('permission:analytics.view')->name('analytics.index');
 
         Route::get('/newsletters', [NewsletterController::class, 'index'])->middleware('permission:newsletters.manage')->name('newsletters.index');
@@ -56,8 +68,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/homepages/{homepage}/sections/{section}', [HomepageSectionController::class, 'destroy'])->middleware('permission:settings.manage')->name('homepages.sections.destroy');
 
         Route::get('/seo', [SeoController::class, 'index'])->middleware('permission:settings.manage')->name('seo.index');
+        Route::get('/seo/indexing', [SeoController::class, 'indexing'])->middleware('permission:settings.manage')->name('seo.indexing');
         Route::get('/appearance', [AppearanceController::class, 'index'])->middleware('permission:settings.manage')->name('appearance.index');
 
+        Route::get('/properties/types', [PropertyTaxonomyController::class, 'types'])->middleware('permission:properties.view')->name('properties.types');
+        Route::get('/properties/amenities', [PropertyTaxonomyController::class, 'amenities'])->middleware('permission:properties.view')->name('properties.amenities');
         Route::resource('properties', PropertyController::class)->except(['show']);
         Route::delete('/properties/{property}/images/{image}', [PropertyController::class, 'destroyImage'])->scopeBindings()->name('properties.images.destroy');
         Route::patch('/properties/{property}/images/reorder', [PropertyController::class, 'reorderImages'])->name('properties.images.reorder');
@@ -84,6 +99,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/pages/{page}/widgets/{section}', [PageBuilderController::class, 'destroy'])->middleware('permission:pages.manage')->name('pages.widgets.delete');
         Route::patch('/pages/{page}/publish', [PageBuilderController::class, 'publish'])->middleware('permission:pages.manage')->name('pages.publish');
 
+        Route::post('/services/{service}/builder/duplicate', [ServiceBuilderController::class, 'duplicateDraft'])->middleware('permission:services.manage')->name('services.duplicate');
+        Route::get('/services/{service}/builder', [ServiceBuilderController::class, 'edit'])->middleware('permission:services.manage')->name('services.builder');
+        Route::get('/services/{service}/builder/preview', [ServiceBuilderController::class, 'preview'])->middleware('permission:services.manage')->name('services.preview');
+        Route::post('/services/{service}/widgets', [ServiceBuilderController::class, 'add'])->middleware('permission:services.manage')->name('services.widgets.add');
+        Route::patch('/services/{service}/widgets/reorder', [ServiceBuilderController::class, 'reorder'])->middleware('permission:services.manage')->name('services.widgets.reorder');
+        Route::patch('/services/{service}/widgets/{section}', [ServiceBuilderController::class, 'update'])->middleware('permission:services.manage')->name('services.widgets.update');
+        Route::post('/services/{service}/widgets/{section}/duplicate', [ServiceBuilderController::class, 'duplicate'])->middleware('permission:services.manage')->name('services.widgets.duplicate');
+        Route::patch('/services/{service}/widgets/{section}/toggle', [ServiceBuilderController::class, 'toggle'])->middleware('permission:services.manage')->name('services.widgets.toggle');
+        Route::delete('/services/{service}/widgets/{section}', [ServiceBuilderController::class, 'destroy'])->middleware('permission:services.manage')->name('services.widgets.delete');
+        Route::patch('/services/{service}/publish', [ServiceBuilderController::class, 'publish'])->middleware('permission:services.manage')->name('services.publish');
+
+        Route::resource('tags', TagController::class)->except(['show'])->middleware('permission:tags.manage');
+        Route::get('/content/{type}/{id}/preview', [ContentPreviewController::class, 'show'])->name('content.preview');
         Route::get('/content/{type}', [ContentController::class, 'index'])->name('content.index');
         Route::get('/content/{type}/create', [ContentController::class, 'create'])->name('content.create');
         Route::post('/content/{type}', [ContentController::class, 'store'])->name('content.store');
@@ -95,7 +123,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/media/picker', [MediaPickerController::class, 'upload'])->name('media.picker.upload');
         Route::get('/media', [MediaController::class, 'index'])->middleware('permission:media.manage')->name('media.index');
         Route::post('/media', [MediaController::class, 'store'])->middleware('permission:media.manage')->name('media.store');
+        Route::post('/media/{media}/edited-copy', [MediaController::class, 'editedCopy'])->middleware('permission:media.manage')->name('media.edited-copy');
         Route::patch('/media/{media}', [MediaController::class, 'update'])->middleware('permission:media.manage')->name('media.update');
+        Route::delete('/media/bulk', [MediaController::class, 'bulkDestroy'])->middleware('permission:media.manage')->name('media.bulk-destroy');
         Route::delete('/media/{media}', [MediaController::class, 'destroy'])->middleware('permission:media.manage')->name('media.destroy');
 
         Route::get('/settings', [SettingsController::class, 'edit'])->middleware('permission:settings.manage')->name('settings.edit');

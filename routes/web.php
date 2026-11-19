@@ -7,11 +7,23 @@ use App\Http\Controllers\Frontend\NewsletterController;
 use App\Http\Controllers\Frontend\SitemapController;
 use App\Http\Controllers\Frontend\PropertyController as FrontendPropertyController;
 use App\Http\Controllers\Frontend\ThemePageController;
+use App\Models\Setting;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
-Route::get('/robots.txt', fn() => response(implode(PHP_EOL, ['User-agent: *', 'Allow: /', 'Disallow: /admin', '', 'Sitemap: ' . route('sitemap'), '']), 200, ['Content-Type' => 'text/plain']))->name('robots');
+Route::get('/robots.txt', function () {
+    $configured = Setting::read('robots_rules', "User-agent: *\nAllow: /\nDisallow: /admin");
+    $directives = collect(preg_split('/\r?\n/', (string) $configured))
+        ->map(fn ($line) => trim($line))
+        ->filter(fn ($line) => preg_match('/^(User-agent|Allow|Disallow|Crawl-delay)\s*:\s*[^\r\n]*$/i', $line))
+        ->values()
+        ->all();
+    $directives[] = '';
+    $directives[] = 'Sitemap: ' . route('sitemap');
+
+    return response(implode(PHP_EOL, $directives) . PHP_EOL, 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
+})->name('robots');
 
 Route::get('/properties', [FrontendPropertyController::class, 'index'])->name('properties.index');
 Route::get('/properties/{property:slug}', [FrontendPropertyController::class, 'show'])->name('properties.show');

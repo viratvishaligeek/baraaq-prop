@@ -23,7 +23,7 @@
             </div>
         </form>
     </div>
-    <div class="row g-3 mb-4">
+    <div class="row g-3 mb-4" id="property-statistics">
         @foreach ([['Visits', $totalVisits], ['Unique visitors', $uniqueVisitors], ['Page views', $totalPageViews], ['Property views', $propertyViews], ['Blog views', $blogViews], ['Service views', $serviceViews], ['Property inquiries', $propertyInquiries], ['Contact queries', $contactQueries]] as [$label, $value])
             <div class="col-sm-6 col-xl-3">
                 <div class="content-card h-100">
@@ -33,7 +33,7 @@
             </div>
         @endforeach
     </div>
-    <div class="row g-4">
+    <div class="row g-4" id="enquiries-overview">
         <div class="col-lg-7">
             <div class="content-card">
                 <h4 class="mb-3">Popular pages</h4>

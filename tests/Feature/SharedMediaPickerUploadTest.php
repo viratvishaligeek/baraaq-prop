@@ -25,6 +25,11 @@ class SharedMediaPickerUploadTest extends TestCase
 
         $request = Request::create('/admin/media/picker', 'POST');
         $request->files->set('files', [$file]);
+        $request->files->set('variants', [0 => [
+            'small' => UploadedFile::fake()->image('piller-small.webp', 320, 240),
+            'medium' => UploadedFile::fake()->image('piller-medium.webp', 900, 675),
+            'large' => UploadedFile::fake()->image('piller-large.webp', 1600, 1200),
+        ]]);
         $request->setUserResolver(fn () => $user);
 
         $response = app(MediaPickerController::class)->upload($request);
@@ -39,6 +44,10 @@ class SharedMediaPickerUploadTest extends TestCase
 
         $media = Media::query()->where('original_name', 'piller-widget-image.png')->firstOrFail();
         Storage::disk('public')->assertExists($media->path);
+        $this->assertNotNull($media->small_path);
+        $this->assertNotNull($media->medium_path);
+        $this->assertNotNull($media->large_path);
+        Storage::disk('public')->assertExists($media->small_path);
         $this->assertSame($media->url, $response->getData(true)['data'][0]['url']);
     }
 

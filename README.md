@@ -81,14 +81,37 @@ Node.js, npm, Vite, Webpack, Tailwind, frontend compilation and browser automati
 
 ## CMS features
 
-- Property listings, categories, cover images, ordered galleries and property enquiries
-- Blog posts, categories, pages and per-item SEO metadata
-- Media library with alt-text editing
-- Navigation menus with parent/child nesting and drag-and-drop ordering
-- Homepage banners with active state and schedule windows
-- Team members and website contact/SEO settings
-- Users, roles and permission checks
-- Appearance overview for the fixed Piller theme and an SEO completeness overview
+- **Properties:** property CRUD, categories, derived property types and amenities, search/filtering, featured images, galleries, per-property CTAs, accommodation spaces, custom space attributes, optional space images, FAQs and structured data.
+- **Blog:** posts, categories, tags, public tag filtering, comments and moderation, publishing workflow and SEO/social metadata.
+- **Pages and services:** dynamic pages, reusable registered widget instances, service-specific widget builder, draft copies, preview, publish, reorder, duplicate, enable/disable and per-instance configuration.
+- **Homepage builder:** all ten Piller homepage designs remain available as source designs; section library is grouped by section family, individual sections can be previewed, and homepage section instances can be reordered, collapsed, enabled, disabled and configured.
+- **Dashboard:** configurable KPI collection, persistent enable/disable state, display order and safe internal destinations for property, content, enquiry, comment and analytics metrics.
+- **Media library:** bulk selection/deletion, reference-aware deletion protection, alt-text management, responsive image variants, browser-side crop/resize editor and a shared Media Library picker for content and rich-text image insertion.
+- **Navigation and appearance:** grouped admin navigation, menu locations, nested menu items and the fixed Piller theme design system.
+- **SEO:** metadata defaults, focus keywords, social images, route-generated canonical URLs, configurable robots.txt, XML sitemap and SEO completeness overview.
+- **Administration:** users, roles, permission checks, enquiries, activity records, site settings and analytics.
+
+## Admin workflows
+
+- Login: /admin/login
+- Dashboard: /admin
+- Property types: /admin/properties/types
+- Property categories: /admin/content/categories?category_type=property
+- Property amenities: /admin/properties/amenities
+- Blog tags: /admin/tags
+- Media library: /admin/media
+- Image management: /admin/media?type=images
+- SEO overview: /admin/seo
+- Sitemap / indexing: /admin/seo/indexing
+- Website settings: /admin/settings
+- Homepage management: /admin/homepages
+- Universal page builder: /admin/page-builder
+- Section library: /admin/section-library
+- Widget library: /admin/widgets
+- Page builder: open an existing page and choose **Open universal page builder**
+- Service builder: open an existing service and choose **Open service widget builder**
+
+Dashboard KPI configuration is available from **Manage dashboard widgets**. Existing posts, pages and services can be previewed as drafts from their content editor; page and service builders also provide draft previews. It stores each KPI's enabled state, destination and display order. Section and widget variation previews open as individual rendered previews.
 
 ## Theme pages and routes
 
@@ -110,4 +133,7 @@ Legacy \`index.html\`, \`property.html\`, \`property-details.html\`, \`blog.html
 - Configure a valid HTTPS URL and production database credentials before going live.
 - Configure outbound mail separately if enquiry notifications are later required; enquiry submissions are currently stored in the database.
 - The Appearance screen reports the active Piller theme. Theme switching is intentionally disabled to preserve the supplied design.
-- Automated tests, PHPUnit/Pest, browser automation, npm commands, asset builds and deployment are not part of the implementation workflow requested for this repository.
+- Run the automated PHP test suite with `php artisan test` (or the repository's configured PHPUnit command).
+- GitHub Actions also runs the Laravel feature/unit suite and responsive browser checks for all ten Piller homepage designs at desktop, tablet and mobile viewport sizes.
+- Responsive media variants are generated in the browser with the Canvas API; the PHP runtime does not need GD or Imagick for this workflow.
+- Review the CMS admin operations guide at `docs/cms/admin-operations-guide.md` for module workflows and implementation notes.

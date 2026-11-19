@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Widget;
 use App\Models\WidgetArea;
+use App\Support\HtmlSanitizer;
+use App\Services\Widgets\CmsWidgetRegistry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -18,6 +20,7 @@ class WidgetController extends Controller
         return view('admin.widgets.index', [
             'widgets' => Widget::with('areas')->latest()->paginate(20),
             'areas' => WidgetArea::orderBy('name')->get(),
+            'registeredWidgetGroups' => app(CmsWidgetRegistry::class)->grouped(),
         ]);
     }
 
@@ -32,6 +35,11 @@ class WidgetController extends Controller
     public function store(Request $request)
     {
         $data = $this->validated($request);
+        foreach (['body', 'html'] as $field) {
+            if (isset($data[$field])) {
+                $data[$field] = HtmlSanitizer::sanitize($data[$field]);
+            }
+        }
         $areaIds = $data['area_ids'] ?? [];
         unset($data['area_ids']);
         $data['config'] = $this->config($data);
