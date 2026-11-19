@@ -64,6 +64,11 @@ class MediaImageEditingTest extends TestCase
 
         $response = $this->actingAs($user)->postJson(route('admin.media.edited-copy', $original), [
             'image' => UploadedFile::fake()->image('edited.webp', 800, 600),
+            'variants' => [
+                'small' => UploadedFile::fake()->image('edited-small.webp', 320, 240),
+                'medium' => UploadedFile::fake()->image('edited-medium.webp', 800, 600),
+                'large' => UploadedFile::fake()->image('edited-large.webp', 1200, 900),
+            ],
             'alt_text' => 'Edited property image',
         ]);
 
@@ -72,6 +77,10 @@ class MediaImageEditingTest extends TestCase
 
         $this->assertNotSame($original->path, $copy->path);
         $this->assertSame('Edited property image', $copy->alt_text);
+        $this->assertNotNull($copy->small_path);
+        $this->assertNotNull($copy->medium_path);
+        $this->assertNotNull($copy->large_path);
+        Storage::disk('public')->assertExists($copy->small_path);
         Storage::disk('public')->assertExists($original->path);
         Storage::disk('public')->assertExists($copy->path);
     }
@@ -90,6 +99,39 @@ class MediaImageEditingTest extends TestCase
         $this->actingAs($user)->postJson(route('admin.media.edited-copy', $media), [
             'image' => UploadedFile::fake()->image('edited.webp'),
         ])->assertForbidden();
+    }
+
+
+    public function test_media_referenced_by_a_property_accommodation_cannot_be_deleted(): void
+    {
+        $user = $this->administrator();
+        $property = \App\Models\Property::create([
+            'title' => 'Media protected property',
+            'slug' => 'media-protected-property',
+            'status' => 'draft',
+        ]);
+        $media = Media::create([
+            'uploaded_by' => $user->id,
+            'disk' => 'public',
+            'path' => 'media/accommodation-protected.webp',
+            'original_name' => 'accommodation-protected.webp',
+            'mime_type' => 'image/webp',
+            'size' => 100,
+        ]);
+        Storage::disk('public')->put($media->path, 'image');
+        $property->accommodations()->create([
+            'image_media_id' => $media->id,
+            'name' => 'Kitchen',
+            'is_included' => true,
+        ]);
+
+        $this->actingAs($user)
+            ->delete(route('admin.media.destroy', $media))
+            ->assertRedirect()
+            ->assertSessionHas('error');
+
+        $this->assertDatabaseHas('media', ['id' => $media->id]);
+        Storage::disk('public')->assertExists($media->path);
     }
 
     private function administrator(): User
