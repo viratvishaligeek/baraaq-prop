@@ -96,7 +96,8 @@ class MediaImageEditingTest extends TestCase
         $user = User::factory()->create();
         $role = Role::create(['name' => 'Administrator', 'slug' => 'administrator']);
         $permission = Permission::create(['name' => 'Manage media', 'slug' => 'media.manage', 'group' => 'media']);
-        $role->permissions()->attach($permission);
+        $dashboardPermission = Permission::create(['name' => 'View dashboard', 'slug' => 'dashboard.view', 'group' => 'dashboard']);
+        $role->permissions()->attach([$permission->id, $dashboardPermission->id]);
         $user->roles()->attach($role);
 
         return $user;
