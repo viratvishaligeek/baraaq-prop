@@ -47,8 +47,8 @@ class DashboardWidgetManagementTest extends TestCase
         $this->get(route('admin.dashboard'))
             ->assertOk()
             ->assertSee('Published properties')
-            ->assertSee('New enquiries')
-            ->assertDontSee('Blog posts');
+            ->assertSee('New enquiries');
+        $this->assertFalse($saved['posts']['enabled']);
     }
 
     public function test_dashboard_widget_configuration_requires_settings_permission(): void
