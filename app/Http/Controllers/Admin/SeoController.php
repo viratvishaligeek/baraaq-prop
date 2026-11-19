@@ -18,7 +18,7 @@ class SeoController extends Controller
         abort_unless($user && ($user->isAdministrator() || $user->hasPermission('settings.manage') || $user->hasPermission('seo.manage')), 403);
 
         return view('admin.seo.indexing', [
-            'robotsRules' => Setting::read('robots_rules', "User-agent: *\\nAllow: /\\nDisallow: /admin"),
+            'robotsRules' => Setting::read('robots_rules', "User-agent: *\nAllow: /\nDisallow: /admin"),
             'robotsUrl' => route('robots'),
             'sitemapUrl' => route('sitemap'),
             'metaRobots' => Setting::read('meta_robots', 'index,follow'),
