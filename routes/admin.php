@@ -95,6 +95,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/media/picker', [MediaPickerController::class, 'upload'])->name('media.picker.upload');
         Route::get('/media', [MediaController::class, 'index'])->middleware('permission:media.manage')->name('media.index');
         Route::post('/media', [MediaController::class, 'store'])->middleware('permission:media.manage')->name('media.store');
+        Route::post('/media/{media}/edited-copy', [MediaController::class, 'editedCopy'])->middleware('permission:media.manage')->name('media.edited-copy');
         Route::patch('/media/{media}', [MediaController::class, 'update'])->middleware('permission:media.manage')->name('media.update');
         Route::delete('/media/bulk', [MediaController::class, 'bulkDestroy'])->middleware('permission:media.manage')->name('media.bulk-destroy');
         Route::delete('/media/{media}', [MediaController::class, 'destroy'])->middleware('permission:media.manage')->name('media.destroy');

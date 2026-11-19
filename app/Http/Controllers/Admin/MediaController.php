@@ -17,12 +17,38 @@ class MediaController extends Controller
     }
     public function store(Request $r)
     {
-        $r->validate(['files' => ['required', 'array', 'max:20'], 'files.*' => ['required', 'file', 'mimes:jpg,jpeg,png,webp,gif,pdf,mp4', 'max:10240']]);
-        foreach ($r->file('files') as $file) {
+        $data = $r->validate([
+            'files' => ['required', 'array', 'min:1', 'max:20'],
+            'files.*' => ['required', 'file', 'mimes:jpg,jpeg,png,webp,gif,pdf,mp4', 'max:10240'],
+            'variants' => ['sometimes', 'array'],
+            'variants.*' => ['sometimes', 'array'],
+            'variants.*.small' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'variants.*.medium' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'variants.*.large' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
+        ]);
+
+        foreach ($data['files'] as $index => $file) {
             $path = $file->store('media', 'public');
-            Media::create(['uploaded_by' => $r->user()->id, 'disk' => 'public', 'path' => $path, 'original_name' => $file->getClientOriginalName(), 'mime_type' => $file->getMimeType(), 'size' => $file->getSize()]);
+            $attributes = [
+                'uploaded_by' => $r->user()->id,
+                'disk' => 'public',
+                'path' => $path,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getMimeType(),
+                'size' => $file->getSize(),
+            ];
+
+            foreach (['small', 'medium', 'large'] as $size) {
+                $variant = $data['variants'][$index][$size] ?? null;
+                if ($variant) {
+                    $attributes[$size . '_path'] = $variant->store('media/variants/' . $size, 'public');
+                }
+            }
+
+            Media::create($attributes);
         }
-        return back()->with('success', 'Files uploaded.');
+
+        return back()->with('success', 'Files uploaded with available responsive image variants.');
     }
     public function bulkDestroy(Request $request)
     {
@@ -51,6 +77,32 @@ class MediaController extends Controller
         }
 
         return $response;
+    }
+
+    public function editedCopy(Request $request, Media $media)
+    {
+        $data = $request->validate([
+            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            'alt_text' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $file = $data['image'];
+        $path = $file->store('media/edited', 'public');
+
+        $copy = Media::create([
+            'uploaded_by' => $request->user()->id,
+            'disk' => 'public',
+            'path' => $path,
+            'original_name' => pathinfo($media->original_name, PATHINFO_FILENAME) . '-edited.' . $file->getClientOriginalExtension(),
+            'mime_type' => $file->getMimeType(),
+            'size' => $file->getSize(),
+            'alt_text' => $data['alt_text'] ?? $media->alt_text,
+        ]);
+
+        return response()->json([
+            'saved' => true,
+            'media' => ['id' => $copy->id, 'name' => $copy->original_name, 'url' => $copy->url],
+        ], 201);
     }
 
     public function update(Request $r, Media $media)
