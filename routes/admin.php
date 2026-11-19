@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\PageHomepageController;
 use App\Http\Controllers\Admin\PageBuilderController;
 use App\Http\Controllers\Admin\PropertyController;
+use App\Http\Controllers\Admin\PropertyTaxonomyController;
 use App\Http\Controllers\Admin\ReusableSectionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SeoController;
@@ -64,6 +65,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/seo', [SeoController::class, 'index'])->middleware('permission:settings.manage')->name('seo.index');
         Route::get('/appearance', [AppearanceController::class, 'index'])->middleware('permission:settings.manage')->name('appearance.index');
 
+        Route::get('/properties/types', [PropertyTaxonomyController::class, 'types'])->middleware('permission:properties.view')->name('properties.types');
+        Route::get('/properties/amenities', [PropertyTaxonomyController::class, 'amenities'])->middleware('permission:properties.view')->name('properties.amenities');
         Route::resource('properties', PropertyController::class)->except(['show']);
         Route::delete('/properties/{property}/images/{image}', [PropertyController::class, 'destroyImage'])->scopeBindings()->name('properties.images.destroy');
         Route::patch('/properties/{property}/images/reorder', [PropertyController::class, 'reorderImages'])->name('properties.images.reorder');

@@ -88,6 +88,14 @@
                     </div>
                 </div>
                 <div class="content-card mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3"><div><h2 class="section-title mb-1">Property amenities & features</h2><p class="text-muted small mb-0">Add reusable property features such as pool, garden, lift, gym or security.</p></div><button type="button" class="btn btn-sm btn-outline-primary" id="add-property-feature">Add feature</button></div>
+                    <div id="property-feature-list">
+                        @foreach (old('features', $property->features ?? []) as $featureIndex => $feature)
+                            <div class="input-group mb-2 property-feature-item"><input class="form-control" name="features[]" value="{{ $feature }}" maxlength="120" placeholder="Feature or amenity" required><button type="button" class="btn btn-outline-danger remove-property-feature">Remove</button></div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="content-card mt-4">
                     <div class="d-flex justify-content-between align-items-center mb-3"><div><h2 class="section-title mb-1">Property FAQs</h2><p class="text-muted small mb-0">Questions and answers displayed with this property.</p></div><button type="button" class="btn btn-sm btn-outline-primary" id="add-faq">Add FAQ</button></div>
                     <div id="faq-list">
                         @php($faqs = old('faqs', $property->exists ? $property->faqs->map(fn($faq) => $faq->toArray())->all() : []))
@@ -405,6 +413,18 @@
             wrapper.className = 'border rounded p-3 mb-3 faq-item';
             wrapper.innerHTML = '<div class="d-flex justify-content-between mb-2"><strong>FAQ <span class="faq-number"></span></strong><div class="d-flex gap-1"><button type="button" class="btn btn-sm btn-light move-repeater-up">↑</button><button type="button" class="btn btn-sm btn-light move-repeater-down">↓</button><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div></div><label class="form-label">Question *</label><input class="form-control mb-2" name="faqs['+i+'][question]" required><label class="form-label">Answer *</label><textarea class="form-control" rows="3" name="faqs['+i+'][answer]" required></textarea>';
             faqList.append(wrapper); updateNumbers();
+        });
+        document.getElementById('add-property-feature')?.addEventListener('click', () => {
+            const list = document.getElementById('property-feature-list');
+            const row = document.createElement('div');
+            row.className = 'input-group mb-2 property-feature-item';
+            row.innerHTML = '<input class="form-control" name="features[]" maxlength="120" placeholder="Feature or amenity" required><button type="button" class="btn btn-outline-danger remove-property-feature">Remove</button>';
+            list.append(row);
+            row.querySelector('input')?.focus();
+        });
+        document.addEventListener('click', event => {
+            const removeFeature = event.target.closest('.remove-property-feature');
+            if (removeFeature) removeFeature.closest('.property-feature-item')?.remove();
         });
         document.addEventListener('click', event => {
             const addAttribute = event.target.closest('.add-space-attribute');

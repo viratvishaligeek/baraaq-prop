@@ -39,6 +39,8 @@ class PropertyController extends Controller
         $this->authorizeAction('view');
         return view('admin.properties.index', ['properties' => Property::with('category:id,name')
             ->when(in_array(request('status'), ['draft', 'published', 'archived'], true), fn ($query) => $query->where('status', request('status')))
+            ->when(request()->filled('property_type'), fn ($query) => $query->where('property_type', request('property_type')))
+            ->when(request()->filled('feature'), fn ($query) => $query->whereJsonContains('features', request('feature')))
             ->latest()->paginate(15)->withQueryString()]);
     }
 

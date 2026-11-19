@@ -83,6 +83,9 @@
 <li>Type: {{ $property->property_type??'—' }}</li>
 </ul>
 <div class="property-description">{!! \App\Support\HtmlSanitizer::sanitize($property->description) !!}</div>
+@if(!empty($property->features))
+    <div class="d-flex flex-wrap gap-2 my-4" aria-label="Property amenities">@foreach($property->features as $feature)<span class="badge text-bg-light">{{ $feature }}</span>@endforeach</div>
+@endif
 @if($property->accommodations->isNotEmpty())
     <section class="mt-5">
         <h3 class="sec-title">Accommodation & spaces</h3>
