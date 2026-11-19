@@ -19,15 +19,13 @@ class SeoController extends Controller
                     ->orWhere('meta_title', '')
                     ->orWhereNull('meta_description')
                     ->orWhere('meta_description', '')
-                    ->orWhereNull('canonical_url')
-                    ->orWhere('canonical_url', '')
                     ->orWhereNull('og_image')
                     ->orWhere('og_image', '');
             });
         };
 
         return view('admin.seo.index', [
-            'properties' => Property::query()->select('id', 'title', 'slug', 'meta_title', 'meta_description', 'canonical_url', 'og_image')->where($needsSeo)->latest()->limit(25)->get(),
+            'properties' => Property::query()->select('id', 'title', 'slug', 'meta_title', 'meta_description', 'og_image')->where($needsSeo)->latest()->limit(25)->get(),
             'posts' => Post::query()->select('id', 'title', 'slug', 'meta_title', 'meta_description', 'canonical_url', 'og_image')->where($needsSeo)->latest()->limit(25)->get(),
             'services' => Service::query()->select('id', 'title', 'slug', 'meta_title', 'meta_description', 'canonical_url', 'og_image')->where($needsSeo)->latest()->limit(25)->get(),
             'pages' => Page::query()->select('id', 'title', 'slug', 'meta_title', 'meta_description', 'canonical_url', 'og_image')->where($needsSeo)->latest()->limit(25)->get(),

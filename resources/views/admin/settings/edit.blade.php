@@ -148,6 +148,12 @@
                             <option value="{{ $policy }}" @selected(old('meta_robots', $settings['meta_robots'] ?? 'index,follow') === $policy)>{{ $policy }}</option>
                         @endforeach
                     </select>
+                    <div class="mt-3">
+                        <label class="form-label" for="robots-rules">robots.txt directives</label>
+                        <textarea class="form-control font-monospace" id="robots-rules" name="robots_rules" rows="6" placeholder="User-agent: *&#10;Allow: /&#10;Disallow: /admin">{{ old('robots_rules', $settings['robots_rules'] ?? "User-agent: *\nAllow: /\nDisallow: /admin") }}</textarea>
+                        <div class="form-text">One directive per line. Supported directives: User-agent, Allow, Disallow and Crawl-delay. The sitemap URL is appended automatically.</div>
+                    </div>
+
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Default social sharing image</label>
