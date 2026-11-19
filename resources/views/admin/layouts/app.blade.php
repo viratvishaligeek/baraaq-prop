@@ -101,8 +101,7 @@
                     <summary><i class="fa-solid fa-magnifying-glass"></i> SEO management</summary>
                     <a class="sidebar-link {{ request()->routeIs('admin.seo.*') ? 'active' : '' }}" href="{{ route('admin.seo.index') }}">Website SEO settings</a>
                     <a class="sidebar-link" href="{{ route('admin.settings.edit') }}#seo-settings">SEO configuration</a>
-                    <a class="sidebar-link" href="{{ route('admin.settings.edit') }}#seo-settings">Sitemap / indexing settings</a>
-                    <a class="sidebar-link" href="{{ route('sitemap') }}" target="_blank" rel="noopener">Open XML sitemap</a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.seo.indexing') ? 'active' : '' }}" href="{{ route('admin.seo.indexing') }}">Sitemap / indexing settings</a>
                 </details>
             @endif
             @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage') || auth()->user()->hasPermission('users.manage') || auth()->user()->hasPermission('newsletters.manage'))
