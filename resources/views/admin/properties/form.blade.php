@@ -42,6 +42,43 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="content-card mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div><h2 class="section-title mb-1">Accommodation & spaces</h2><p class="text-muted small mb-0">Add any number of rooms, parking spaces and custom areas.</p></div>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="add-accommodation">Add space</button>
+                    </div>
+                    <div id="accommodation-list">
+                        @php($spaces = old('accommodations', $property->exists ? $property->accommodations->map(fn($space) => $space->toArray())->all() : []))
+                        @foreach ($spaces as $i => $space)
+                            <div class="border rounded p-3 mb-3 accommodation-item">
+                                <div class="d-flex justify-content-between mb-2"><strong>Space <span class="space-number">{{ $i + 1 }}</span></strong><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div>
+                                <div class="row g-2">
+                                    <div class="col-md-5"><label class="form-label">Name *</label><input class="form-control" name="accommodations[{{ $i }}][name]" value="{{ $space['name'] ?? '' }}" required></div>
+                                    <div class="col-md-4"><label class="form-label">Category</label><input class="form-control" name="accommodations[{{ $i }}][category]" value="{{ $space['category'] ?? '' }}" placeholder="Bedroom, Bathroom, Parking"></div>
+                                    <div class="col-md-3"><label class="form-label">Area</label><input type="number" min="0" step=".01" class="form-control" name="accommodations[{{ $i }}][area]" value="{{ $space['area'] ?? '' }}"></div>
+                                    <div class="col-md-3"><label class="form-label">Unit</label><input class="form-control" name="accommodations[{{ $i }}][area_unit]" value="{{ $space['area_unit'] ?? 'sqft' }}"></div>
+                                    <div class="col-md-9"><label class="form-label">Description</label><input class="form-control" name="accommodations[{{ $i }}][description]" value="{{ $space['description'] ?? '' }}"></div>
+                                    <div class="col-12"><label class="form-check"><input class="form-check-input" type="checkbox" value="1" name="accommodations[{{ $i }}][is_included]" @checked($space['is_included'] ?? true)> <span class="form-check-label">Included with property</span></label></div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="content-card mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3"><div><h2 class="section-title mb-1">Property FAQs</h2><p class="text-muted small mb-0">Questions and answers displayed with this property.</p></div><button type="button" class="btn btn-sm btn-outline-primary" id="add-faq">Add FAQ</button></div>
+                    <div id="faq-list">
+                        @php($faqs = old('faqs', $property->exists ? $property->faqs->map(fn($faq) => $faq->toArray())->all() : []))
+                        @foreach ($faqs as $i => $faq)
+                            <div class="border rounded p-3 mb-3 faq-item">
+                                <div class="d-flex justify-content-between mb-2"><strong>FAQ <span class="faq-number">{{ $i + 1 }}</span></strong><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div>
+                                <label class="form-label">Question *</label><input class="form-control mb-2" name="faqs[{{ $i }}][question]" value="{{ $faq['question'] ?? '' }}" required>
+                                <label class="form-label">Answer *</label><textarea class="form-control" rows="3" name="faqs[{{ $i }}][answer]" required>{{ $faq['answer'] ?? '' }}</textarea>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
                 <div class="content-card mt-4">
                     <h2 class="section-title">Location</h2>
                     <label class="form-label">Address</label>
@@ -62,6 +99,18 @@
                         </div>
                     </div>
                     <div class="row g-3 mt-1">
+                        <div class="col-md-6">
+                            <label class="form-label">Country</label>
+                            <input class="form-control" name="country" value="{{ old('country', $property->country ?? 'India') }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Availability status</label>
+                            <select class="form-select" name="availability_status">
+                                @foreach (['available' => 'Available', 'under_offer' => 'Under offer', 'sold' => 'Sold', 'rented' => 'Rented', 'unavailable' => 'Unavailable'] as $value => $label)
+                                    <option value="{{ $value }}" @selected(old('availability_status', $property->availability_status ?? 'available') === $value)>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col-md-6">
                             <label class="form-label" for="latitude">Latitude</label>
                             <input class="form-control" type="number" step="any" min="-90" max="90"
@@ -163,14 +212,21 @@
                 </div>
                 <div class="content-card mt-4">
                     <h2 class="section-title">SEO</h2>
+                    <label class="form-label">URL slug</label>
+                    <input class="form-control mb-3" name="slug" value="{{ old('slug', $property->slug) }}" placeholder="Generated from title">
                     <label class="form-label">SEO title</label>
                     <input class="form-control mb-3" name="meta_title"
                         value="{{ old('meta_title', $property->meta_title) }}">
                     <label class="form-label">SEO description</label>
                     <textarea class="form-control mb-3" name="meta_description">{{ old('meta_description', $property->meta_description) }}</textarea>
-                    <label class="form-label">Canonical URL</label>
-                    <input class="form-control mb-3" type="url" name="canonical_url"
-                        value="{{ old('canonical_url', $property->canonical_url) }}">
+                    <label class="form-label">Focus keyword</label>
+                    <input class="form-control mb-3" name="focus_keyword" value="{{ old('focus_keyword', $property->focus_keyword) }}">
+                    <div class="border rounded p-3 bg-light mt-3" id="property-serp-preview">
+                        <div class="small text-success" id="serp-url">{{ url('/properties/') }}/{{ $property->slug ?: 'property-slug' }}</div>
+                        <div class="fw-semibold text-primary" id="serp-title">{{ $property->meta_title ?: $property->title ?: 'Property title' }}</div>
+                        <div class="small text-muted" id="serp-description">{{ $property->meta_description ?: 'Add a meta description to preview your search result.' }}</div>
+                        <div class="small text-muted mt-2"><span id="serp-title-count">0</span> / 60 title characters · <span id="serp-description-count">0</span> / 160 description characters</div>
+                    </div>
                     <label class="form-label">Social sharing image</label>
                     <input class="form-control" type="file" name="og_image" id="upload-property-og-image" accept="image/*">
                     <input type="hidden" name="og_image_media_id" id="media-property-og-image" data-media-upload-input="upload-property-og-image">
@@ -276,4 +332,63 @@
             });
         </script>
     @endpush
+
+    @push('scripts')
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const titleInput = document.querySelector('[name="title"]');
+        const slugInput = document.querySelector('[name="slug"]');
+        const seoTitle = document.querySelector('[name="meta_title"]');
+        const seoDescription = document.querySelector('[name="meta_description"]');
+        const serpTitle = document.getElementById('serp-title');
+        const serpDescription = document.getElementById('serp-description');
+        const serpUrl = document.getElementById('serp-url');
+        const titleCount = document.getElementById('serp-title-count');
+        const descriptionCount = document.getElementById('serp-description-count');
+        let slugTouched = Boolean(slugInput?.value);
+        const slugify = value => value.toString().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        slugInput?.addEventListener('input', () => { slugTouched = true; });
+        titleInput?.addEventListener('input', () => { if (!slugTouched && slugInput) slugInput.value = slugify(titleInput.value); refreshPreview(); });
+        [slugInput, seoTitle, seoDescription].forEach(input => input?.addEventListener('input', refreshPreview));
+        function refreshPreview() {
+            const title = seoTitle?.value || titleInput?.value || 'Property title';
+            const description = seoDescription?.value || 'Add a meta description to preview your search result.';
+            if (serpTitle) serpTitle.textContent = title;
+            if (serpDescription) serpDescription.textContent = description;
+            if (serpUrl) serpUrl.textContent = window.location.origin + '/properties/' + (slugInput?.value || 'property-slug');
+            if (titleCount) titleCount.textContent = title.length;
+            if (descriptionCount) descriptionCount.textContent = description.length;
+        }
+        refreshPreview();
+        let accommodationIndex = document.querySelectorAll('.accommodation-item').length;
+        let faqIndex = document.querySelectorAll('.faq-item').length;
+        const accommodationList = document.getElementById('accommodation-list');
+        const faqList = document.getElementById('faq-list');
+        document.getElementById('add-accommodation')?.addEventListener('click', () => {
+            const i = accommodationIndex++;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'border rounded p-3 mb-3 accommodation-item';
+            wrapper.innerHTML = '<div class="d-flex justify-content-between mb-2"><strong>Space <span class="space-number"></span></strong><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div><div class="row g-2"><div class="col-md-5"><label class="form-label">Name *</label><input class="form-control" name="accommodations['+i+'][name]" required></div><div class="col-md-4"><label class="form-label">Category</label><input class="form-control" name="accommodations['+i+'][category]" placeholder="Bedroom, Bathroom, Parking"></div><div class="col-md-3"><label class="form-label">Area</label><input type="number" min="0" step=".01" class="form-control" name="accommodations['+i+'][area]"></div><div class="col-md-3"><label class="form-label">Unit</label><input class="form-control" name="accommodations['+i+'][area_unit]" value="sqft"></div><div class="col-md-9"><label class="form-label">Description</label><input class="form-control" name="accommodations['+i+'][description]"></div><div class="col-12"><label class="form-check"><input class="form-check-input" type="checkbox" value="1" checked name="accommodations['+i+'][is_included]"> <span class="form-check-label">Included with property</span></label></div></div>';
+            accommodationList.append(wrapper); updateNumbers();
+        });
+        document.getElementById('add-faq')?.addEventListener('click', () => {
+            const i = faqIndex++;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'border rounded p-3 mb-3 faq-item';
+            wrapper.innerHTML = '<div class="d-flex justify-content-between mb-2"><strong>FAQ <span class="faq-number"></span></strong><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div><label class="form-label">Question *</label><input class="form-control mb-2" name="faqs['+i+'][question]" required><label class="form-label">Answer *</label><textarea class="form-control" rows="3" name="faqs['+i+'][answer]" required></textarea>';
+            faqList.append(wrapper); updateNumbers();
+        });
+        document.addEventListener('click', event => {
+            const button = event.target.closest('.remove-repeater');
+            if (!button) return;
+            button.closest('.accommodation-item, .faq-item')?.remove(); updateNumbers();
+        });
+        function updateNumbers() {
+            document.querySelectorAll('.accommodation-item').forEach((item, index) => item.querySelector('.space-number').textContent = index + 1);
+            document.querySelectorAll('.faq-item').forEach((item, index) => item.querySelector('.faq-number').textContent = index + 1);
+        }
+    });
+    </script>
+    @endpush
+
 @endsection
