@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\ServiceBuilderController;
+use App\Http\Controllers\Admin\SectionPreviewController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WidgetController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware(['auth', 'admin.access'])->group(function () {
         Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
+        Route::get('/section-library/preview/{sectionKey}', [SectionPreviewController::class, 'show'])->name('sections.preview');
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
         Route::get('/dashboard/widgets', [DashboardController::class, 'manageWidgets'])->middleware('permission:settings.manage')->name('dashboard.widgets.edit');
         Route::put('/dashboard/widgets', [DashboardController::class, 'updateWidgets'])->middleware('permission:settings.manage')->name('dashboard.widgets.update');

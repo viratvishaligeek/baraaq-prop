@@ -59,7 +59,7 @@
                                         <div class="text-muted small">Design: {{ $section['source_design'] }}</div>
                                     </div>
                                     <div class="d-flex gap-1">
-                                        <a class="btn btn-sm btn-outline-secondary" href="{{ $section['source_design'] === 'index' ? route('home') : route('theme.page', ['template' => $section['source_design']]) }}" target="_blank" rel="noopener">Preview source</a>
+                                        <a class="btn btn-sm btn-outline-secondary" href="{{ route('admin.sections.preview', $section['key']) }}" target="_blank" rel="noopener">Preview section</a>
                                         <button class="btn btn-sm btn-outline-primary" type="submit">Add</button>
                                     </div>
                                 </form>

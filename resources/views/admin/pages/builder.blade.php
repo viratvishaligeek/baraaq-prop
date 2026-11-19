@@ -44,7 +44,7 @@
                             <input type="hidden" name="section_key" value="{{ $widget['key'] }}">
                             <div>
                                 <div class="fw-semibold small">{{ $widget['label'] }}</div>
-                                <div class="text-muted" style="font-size:.75rem">{{ $widget['design'] }} · {{ $widget['type'] }}</div>
+                                <div class="text-muted" style="font-size:.75rem">{{ $widget['design'] }} · {{ $widget['type'] }}</div><a class="small" href="{{ route('admin.sections.preview', $widget['key']) }}" target="_blank" rel="noopener">Preview variation</a>
                             </div>
                             <button class="btn btn-sm btn-outline-primary" {{ $page->status !== 'draft' ? 'disabled' : '' }}>Add</button>
                         </form>
