@@ -51,8 +51,8 @@
                     <div id="accommodation-list">
                         @php($spaces = old('accommodations', $property->exists ? $property->accommodations->map(fn($space) => $space->toArray())->all() : []))
                         @foreach ($spaces as $i => $space)
-                            <div class="border rounded p-3 mb-3 accommodation-item">
-                                <div class="d-flex justify-content-between mb-2"><strong>Space <span class="space-number">{{ $i + 1 }}</span></strong><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div>
+                            <div class="border rounded p-3 mb-3 accommodation-item" data-space-index="{{ $i }}">
+                                <div class="d-flex justify-content-between mb-2"><strong>Space <span class="space-number">{{ $i + 1 }}</span></strong><div class="d-flex gap-1"><button type="button" class="btn btn-sm btn-light move-repeater-up" aria-label="Move space up">↑</button><button type="button" class="btn btn-sm btn-light move-repeater-down" aria-label="Move space down">↓</button><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div></div>
                                 <div class="row g-2">
                                     <div class="col-md-5"><label class="form-label">Name *</label><input class="form-control" name="accommodations[{{ $i }}][name]" value="{{ $space['name'] ?? '' }}" required></div>
                                     <div class="col-md-4"><label class="form-label">Category</label><input class="form-control" name="accommodations[{{ $i }}][category]" value="{{ $space['category'] ?? '' }}" placeholder="Bedroom, Bathroom, Parking"></div>
@@ -60,6 +60,20 @@
                                     <div class="col-md-3"><label class="form-label">Unit</label><input class="form-control" name="accommodations[{{ $i }}][area_unit]" value="{{ $space['area_unit'] ?? 'sqft' }}"></div>
                                     <div class="col-md-9"><label class="form-label">Description</label><input class="form-control" name="accommodations[{{ $i }}][description]" value="{{ $space['description'] ?? '' }}"></div>
                                     <div class="col-12"><label class="form-check"><input class="form-check-input" type="checkbox" value="1" name="accommodations[{{ $i }}][is_included]" @checked($space['is_included'] ?? true)> <span class="form-check-label">Included with property</span></label></div>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2"><label class="form-label mb-0">Custom attributes</label><button type="button" class="btn btn-sm btn-outline-secondary add-space-attribute">Add attribute</button></div>
+                                    <div class="space-attributes">
+                                        @foreach (($space['attributes'] ?? []) as $attributeIndex => $attribute)
+                                            @php($attributeKey = is_array($attribute) ? ($attribute['key'] ?? '') : $attributeIndex)
+                                            @php($attributeValue = is_array($attribute) ? ($attribute['value'] ?? '') : $attribute)
+                                            <div class="row g-2 mb-2 space-attribute">
+                                                <div class="col-5"><input class="form-control form-control-sm" name="accommodations[{{ $i }}][attributes][{{ $attributeIndex }}][key]" value="{{ $attributeKey }}" placeholder="Attribute name" required></div>
+                                                <div class="col-5"><input class="form-control form-control-sm" name="accommodations[{{ $i }}][attributes][{{ $attributeIndex }}][value]" value="{{ $attributeValue }}" placeholder="Value"></div>
+                                                <div class="col-2"><button type="button" class="btn btn-sm btn-outline-danger remove-space-attribute">×</button></div>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
@@ -71,7 +85,7 @@
                         @php($faqs = old('faqs', $property->exists ? $property->faqs->map(fn($faq) => $faq->toArray())->all() : []))
                         @foreach ($faqs as $i => $faq)
                             <div class="border rounded p-3 mb-3 faq-item">
-                                <div class="d-flex justify-content-between mb-2"><strong>FAQ <span class="faq-number">{{ $i + 1 }}</span></strong><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div>
+                                <div class="d-flex justify-content-between mb-2"><strong>FAQ <span class="faq-number">{{ $i + 1 }}</span></strong><div class="d-flex gap-1"><button type="button" class="btn btn-sm btn-light move-repeater-up" aria-label="Move FAQ up">↑</button><button type="button" class="btn btn-sm btn-light move-repeater-down" aria-label="Move FAQ down">↓</button><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div></div>
                                 <label class="form-label">Question *</label><input class="form-control mb-2" name="faqs[{{ $i }}][question]" value="{{ $faq['question'] ?? '' }}" required>
                                 <label class="form-label">Answer *</label><textarea class="form-control" rows="3" name="faqs[{{ $i }}][answer]" required>{{ $faq['answer'] ?? '' }}</textarea>
                             </div>
@@ -373,17 +387,40 @@
             const i = accommodationIndex++;
             const wrapper = document.createElement('div');
             wrapper.className = 'border rounded p-3 mb-3 accommodation-item';
-            wrapper.innerHTML = '<div class="d-flex justify-content-between mb-2"><strong>Space <span class="space-number"></span></strong><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div><div class="row g-2"><div class="col-md-5"><label class="form-label">Name *</label><input class="form-control" name="accommodations['+i+'][name]" required></div><div class="col-md-4"><label class="form-label">Category</label><input class="form-control" name="accommodations['+i+'][category]" placeholder="Bedroom, Bathroom, Parking"></div><div class="col-md-3"><label class="form-label">Area</label><input type="number" min="0" step=".01" class="form-control" name="accommodations['+i+'][area]"></div><div class="col-md-3"><label class="form-label">Unit</label><input class="form-control" name="accommodations['+i+'][area_unit]" value="sqft"></div><div class="col-md-9"><label class="form-label">Description</label><input class="form-control" name="accommodations['+i+'][description]"></div><div class="col-12"><label class="form-check"><input class="form-check-input" type="checkbox" value="1" checked name="accommodations['+i+'][is_included]"> <span class="form-check-label">Included with property</span></label></div></div>';
+            wrapper.dataset.spaceIndex = i;
+            wrapper.innerHTML = '<div class="d-flex justify-content-between mb-2"><strong>Space <span class="space-number"></span></strong><div class="d-flex gap-1"><button type="button" class="btn btn-sm btn-light move-repeater-up">↑</button><button type="button" class="btn btn-sm btn-light move-repeater-down">↓</button><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div></div><div class="row g-2"><div class="col-md-5"><label class="form-label">Name *</label><input class="form-control" name="accommodations['+i+'][name]" required></div><div class="col-md-4"><label class="form-label">Category</label><input class="form-control" name="accommodations['+i+'][category]" placeholder="Bedroom, Bathroom, Parking"></div><div class="col-md-3"><label class="form-label">Area</label><input type="number" min="0" step=".01" class="form-control" name="accommodations['+i+'][area]"></div><div class="col-md-3"><label class="form-label">Unit</label><input class="form-control" name="accommodations['+i+'][area_unit]" value="sqft"></div><div class="col-md-9"><label class="form-label">Description</label><input class="form-control" name="accommodations['+i+'][description]"></div><div class="col-12"><label class="form-check"><input class="form-check-input" type="checkbox" value="1" checked name="accommodations['+i+'][is_included]"> <span class="form-check-label">Included with property</span></label></div></div><div class="mt-3"><div class="d-flex justify-content-between align-items-center mb-2"><label class="form-label mb-0">Custom attributes</label><button type="button" class="btn btn-sm btn-outline-secondary add-space-attribute">Add attribute</button></div><div class="space-attributes"></div></div>';
             accommodationList.append(wrapper); updateNumbers();
         });
         document.getElementById('add-faq')?.addEventListener('click', () => {
             const i = faqIndex++;
             const wrapper = document.createElement('div');
             wrapper.className = 'border rounded p-3 mb-3 faq-item';
-            wrapper.innerHTML = '<div class="d-flex justify-content-between mb-2"><strong>FAQ <span class="faq-number"></span></strong><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div><label class="form-label">Question *</label><input class="form-control mb-2" name="faqs['+i+'][question]" required><label class="form-label">Answer *</label><textarea class="form-control" rows="3" name="faqs['+i+'][answer]" required></textarea>';
+            wrapper.innerHTML = '<div class="d-flex justify-content-between mb-2"><strong>FAQ <span class="faq-number"></span></strong><div class="d-flex gap-1"><button type="button" class="btn btn-sm btn-light move-repeater-up">↑</button><button type="button" class="btn btn-sm btn-light move-repeater-down">↓</button><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div></div><label class="form-label">Question *</label><input class="form-control mb-2" name="faqs['+i+'][question]" required><label class="form-label">Answer *</label><textarea class="form-control" rows="3" name="faqs['+i+'][answer]" required></textarea>';
             faqList.append(wrapper); updateNumbers();
         });
         document.addEventListener('click', event => {
+            const addAttribute = event.target.closest('.add-space-attribute');
+            if (addAttribute) {
+                const item = addAttribute.closest('.accommodation-item');
+                const index = item.dataset.spaceIndex;
+                const attributes = item.querySelector('.space-attributes');
+                const attributeIndex = attributes.querySelectorAll('.space-attribute').length;
+                const row = document.createElement('div');
+                row.className = 'row g-2 mb-2 space-attribute';
+                row.innerHTML = '<div class="col-5"><input class="form-control form-control-sm" name="accommodations['+index+'][attributes]['+attributeIndex+'][key]" placeholder="Attribute name" required></div><div class="col-5"><input class="form-control form-control-sm" name="accommodations['+index+'][attributes]['+attributeIndex+'][value]" placeholder="Value"></div><div class="col-2"><button type="button" class="btn btn-sm btn-outline-danger remove-space-attribute">×</button></div>';
+                attributes.append(row);
+                return;
+            }
+            const removeAttribute = event.target.closest('.remove-space-attribute');
+            if (removeAttribute) { removeAttribute.closest('.space-attribute')?.remove(); return; }
+            const moveUp = event.target.closest('.move-repeater-up');
+            const moveDown = event.target.closest('.move-repeater-down');
+            if (moveUp || moveDown) {
+                const item = event.target.closest('.accommodation-item, .faq-item');
+                if (moveUp && item.previousElementSibling) item.parentElement.insertBefore(item, item.previousElementSibling);
+                if (moveDown && item.nextElementSibling) item.parentElement.insertBefore(item.nextElementSibling, item);
+                updateNumbers(); return;
+            }
             const button = event.target.closest('.remove-repeater');
             if (!button) return;
             button.closest('.accommodation-item, .faq-item')?.remove(); updateNumbers();
