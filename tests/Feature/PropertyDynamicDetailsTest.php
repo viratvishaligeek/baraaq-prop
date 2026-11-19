@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Media;
 use App\Models\Property;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -66,7 +67,9 @@ class PropertyDynamicDetailsTest extends TestCase
             'published_at' => now(),
             'description' => '<p>A welcoming family property.</p>',
         ]);
+        $media = Media::create(['disk' => 'public', 'path' => 'properties/accommodations/master-bedroom.webp', 'original_name' => 'master-bedroom.webp', 'mime_type' => 'image/webp', 'size' => 2048]);
         $property->accommodations()->create([
+            'image_media_id' => $media->id,
             'name' => 'Master bedroom',
             'category' => 'Bedroom',
             'area' => 240,
@@ -81,6 +84,7 @@ class PropertyDynamicDetailsTest extends TestCase
         $this->get(route('properties.show', $property))
             ->assertOk()
             ->assertSee('Master bedroom')
+            ->assertSee($media->url, false)
             ->assertSee('Is parking included?')
             ->assertSee('FAQPage')
             ->assertSee('RealEstateListing');
