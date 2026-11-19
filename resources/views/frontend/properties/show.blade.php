@@ -1,7 +1,7 @@
 @extends('frontend.layouts.theme')
 @section('title', ($property->meta_title ?: $property->title).' · '.($siteSettings['site_title'] ?? config('app.name')))
 @section('meta_description',$property->meta_description?:($property->description?\Illuminate\Support\Str::limit(strip_tags($property->description),155):\App\Models\Setting::read('meta_description','')))
-@section('canonical_url',$property->canonical_url ?: route('properties.show',$property)) @section('og_image',$property->og_image ? asset('storage/'.$property->og_image) : ($property->featured_image ? Storage::disk('public')->url($property->featured_image) : (!empty($siteSettings['default_og_image']) ? asset('storage/'.$siteSettings['default_og_image']) : asset('theme-assets/img/hero/hero-10-1.jpg')))) @section('structured_data')
+@section('canonical_url', route('properties.show', $property)) @section('og_image',$property->og_image ? asset('storage/'.$property->og_image) : ($property->featured_image ? Storage::disk('public')->url($property->featured_image) : (!empty($siteSettings['default_og_image']) ? asset('storage/'.$siteSettings['default_og_image']) : asset('theme-assets/img/hero/hero-10-1.jpg')))) @section('structured_data')
 <script type="application/ld+json">@json([
     '@context' => 'https://schema.org',
     '@type' => 'RealEstateListing',
@@ -10,8 +10,23 @@
     'url' => route('properties.show', $property),
     'image' => $property->featured_image ? Storage::disk('public')->url($property->featured_image) : null,
     'offers' => $property->price ? ['@type' => 'Offer', 'price' => (float) $property->price, 'priceCurrency' => 'INR'] : null,
-    'address' => ['@type' => 'PostalAddress', 'streetAddress' => $property->address, 'addressLocality' => $property->city, 'addressRegion' => $property->state, 'postalCode' => $property->postal_code],
+    'address' => ['@type' => 'PostalAddress', 'streetAddress' => $property->address, 'addressLocality' => $property->city, 'addressRegion' => $property->state, 'postalCode' => $property->postal_code, 'addressCountry' => $property->country ?: 'IN'],
 ])</script>
+@endsection
+@section('structured_data')
+@parent
+
+@if($property->faqs->isNotEmpty())
+<script type="application/ld+json">@json([
+    '@context' => 'https://schema.org',
+    '@type' => 'FAQPage',
+    'mainEntity' => $property->faqs->map(fn ($faq) => [
+        '@type' => 'Question',
+        'name' => $faq->question,
+        'acceptedAnswer' => ['@type' => 'Answer', 'text' => strip_tags($faq->answer)],
+    ])->all(),
+])</script>
+@endif
 @endsection
 @section('content')
 <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcumb-bg.jpg') }}">
@@ -46,7 +61,40 @@
 <li>Area: {{ $property->area?number_format((float)$property->area).' '.$property->area_unit:'—' }}</li>
 <li>Type: {{ $property->property_type??'—' }}</li>
 </ul>
-<div class="property-description">{!! nl2br(e($property->description)) !!}</div>@if($property->images->isNotEmpty())<div class="row g-3 mt-4">@foreach($property->images as $image)<div class="col-md-4">
+<div class="property-description">{!! \\App\\Support\\HtmlSanitizer::sanitize($property->description) !!}</div>
+@if($property->accommodations->isNotEmpty())
+    <section class="mt-5">
+        <h3 class="sec-title">Accommodation & spaces</h3>
+        <div class="row g-3">
+            @foreach($property->accommodations as $space)
+                <div class="col-md-6">
+                    <div class="border rounded p-3 h-100">
+                        <div class="d-flex justify-content-between gap-2">
+                            <strong>{{ $space->name }}</strong>
+                            @if($space->area)<span class="text-muted small">{{ number_format((float) $space->area, 2) }} {{ $space->area_unit }}</span>@endif
+                        </div>
+                        @if($space->category)<div class="small text-muted">{{ $space->category }}</div>@endif
+                        @if($space->description)<p class="mb-2 mt-2">{{ $space->description }}</p>@endif
+                        <span class="badge {{ $space->is_included ? 'text-bg-success' : 'text-bg-light' }}">{{ $space->is_included ? 'Included' : 'Not included' }}</span>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </section>
+@endif
+@if($property->faqs->isNotEmpty())
+    <section class="mt-5">
+        <h3 class="sec-title">Frequently asked questions</h3>
+        <div class="d-grid gap-2">
+            @foreach($property->faqs as $faq)
+                <details class="border rounded p-3">
+                    <summary class="fw-semibold">{{ $faq->question }}</summary>
+                    <div class="mt-2">{{ $faq->answer }}</div>
+                </details>
+            @endforeach
+        </div>
+    </section>
+@endif@if($property->images->isNotEmpty())<div class="row g-3 mt-4">@foreach($property->images as $image)<div class="col-md-4">
 <img class="img-fluid rounded" src="{{ Storage::disk('public')->url($image->path) }}" alt="{{ $image->alt_text }}">
 </div>@endforeach</div>@endif</div>
 <div class="col-lg-4">
