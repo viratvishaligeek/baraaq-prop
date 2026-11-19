@@ -43,7 +43,7 @@
                     completion checks.</p>
                 @php($sectionGroups = collect($availableSections)->groupBy('type'))
                 @foreach ($sectionGroups as $groupName => $groupSections)
-                    <details class="border rounded mb-2" open>
+                    <details class="border rounded mb-2" @if ($loop->first) open @endif>
                         <summary class="p-2 fw-semibold d-flex justify-content-between align-items-center">
                             <span>{{ \Illuminate\Support\Str::headline($groupName) }}</span>
                             <span class="badge bg-light text-dark">{{ $groupSections->count() }} designs</span>
