@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Category;
 use App\Models\Property;
 use App\Models\Role;
 use App\Models\User;
@@ -18,6 +19,8 @@ class PropertyTaxonomyManagementTest extends TestCase
         $this->seed(RolePermissionSeeder::class);
         $user = User::factory()->create(['is_active' => true]);
         $user->roles()->attach(Role::query()->where('slug', 'administrator')->firstOrFail());
+        Category::create(['name' => 'Residential', 'slug' => 'residential', 'type' => 'property']);
+        Category::create(['name' => 'Blog news', 'slug' => 'blog-news', 'type' => 'post']);
         Property::create([
             'title' => 'Garden villa',
             'slug' => 'garden-villa-taxonomy',
@@ -29,6 +32,11 @@ class PropertyTaxonomyManagementTest extends TestCase
         $this->actingAs($user)->get(route('admin.properties.types'))
             ->assertOk()
             ->assertSee('Villa');
+
+        $this->actingAs($user)->get(route('admin.content.index', 'categories') . '?category_type=property')
+            ->assertOk()
+            ->assertSee('Residential')
+            ->assertDontSee('Blog news');
 
         $this->actingAs($user)->get(route('admin.properties.amenities'))
             ->assertOk()
