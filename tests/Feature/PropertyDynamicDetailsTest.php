@@ -57,4 +57,33 @@ class PropertyDynamicDetailsTest extends TestCase
         $this->assertDatabaseCount('property_accommodations', 0);
         $this->assertDatabaseCount('property_faqs', 0);
     }
+    public function test_public_property_page_renders_accommodation_and_faq_structured_data(): void
+    {
+        $property = Property::create([
+            'title' => 'Family home',
+            'slug' => 'family-home',
+            'status' => 'published',
+            'published_at' => now(),
+            'description' => '<p>A welcoming family property.</p>',
+        ]);
+        $property->accommodations()->create([
+            'name' => 'Master bedroom',
+            'category' => 'Bedroom',
+            'area' => 240,
+            'area_unit' => 'sqft',
+            'is_included' => true,
+        ]);
+        $property->faqs()->create([
+            'question' => 'Is parking included?',
+            'answer' => 'Yes, one parking space is included.',
+        ]);
+
+        $this->get(route('properties.show', $property))
+            ->assertOk()
+            ->assertSee('Master bedroom')
+            ->assertSee('Is parking included?')
+            ->assertSee('FAQPage')
+            ->assertSee('RealEstateListing');
+    }
+
 }
