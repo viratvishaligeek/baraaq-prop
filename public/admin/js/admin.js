@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let nextPage = null;
     let multipleMode = false;
     const selectedItems = new Map();
+    let richTextCallback = null;
 
     function updateTarget(item) {
         if (!targetInput) return;
@@ -109,6 +110,17 @@ document.addEventListener('DOMContentLoaded', function () {
             status.textContent = error.message;
         }
     }
+
+    window.addEventListener('open-richtext-media-picker', event => {
+        if (typeof event.detail?.callback !== 'function') return;
+        richTextCallback = event.detail.callback;
+        multipleMode = false;
+        selectedItems.clear();
+        applyMultiple.hidden = true;
+        query.value = '';
+        modal.show();
+        loadMedia(endpoint, false);
+    });
 
     document.addEventListener('click', event => {
         const openButton = event.target.closest('[data-open-media-picker]');
