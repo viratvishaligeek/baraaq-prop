@@ -68,7 +68,6 @@
                     @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage'))
                         <a class="sidebar-link {{ request()->routeIs('admin.appearance.*') ? 'active' : '' }}" href="{{ route('admin.appearance.index') }}">Theme & appearance</a>
                         <a class="sidebar-link {{ request()->routeIs('admin.homepages.*') ? 'active' : '' }}" href="{{ route('admin.homepages.index') }}">Homepage management</a>
-                        <a class="sidebar-link {{ request()->routeIs('admin.content.*') && request()->route('type') === 'pages' ? 'active' : '' }}" href="{{ route('admin.content.index', 'pages') }}">Universal page builder</a>
                     @endif
                     @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('widgets.manage'))
                         <a class="sidebar-link {{ request()->routeIs('admin.widgets.*') ? 'active' : '' }}" href="{{ route('admin.widgets.index') }}">Widget library</a>
@@ -89,6 +88,8 @@
                     <summary><i class="fa-solid fa-magnifying-glass"></i> SEO management</summary>
                     <a class="sidebar-link {{ request()->routeIs('admin.seo.*') ? 'active' : '' }}" href="{{ route('admin.seo.index') }}">Website SEO settings</a>
                 </details>
+            @endif
+            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage') || auth()->user()->hasPermission('users.manage') || auth()->user()->hasPermission('newsletters.manage'))
                 <details class="sidebar-group" @if (request()->routeIs('admin.settings.*') || request()->routeIs('admin.newsletters.*') || request()->routeIs('admin.roles.*') || request()->routeIs('admin.users.*')) open @endif>
                     <summary><i class="fa-solid fa-gear"></i> Settings</summary>
                     <a class="sidebar-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}" href="{{ route('admin.settings.edit') }}">General settings</a>
