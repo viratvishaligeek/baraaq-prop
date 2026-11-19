@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feat/piller-elementor-cms-v3
+      - feature/complete-cms-admin-overhaul
   workflow_dispatch:
 
 permissions:

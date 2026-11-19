@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePropertyRequest;
+use App\Support\HtmlSanitizer;
 use App\Models\Category;
 use App\Models\Media;
 use App\Models\Property;
@@ -49,6 +50,7 @@ class PropertyController extends Controller
     {
         $this->authorizeAction('create');
         $data = $request->validated();
+        $data['description'] = HtmlSanitizer::sanitize($data['description'] ?? '');
         foreach (['featured_image_media_id' => 'featured_image', 'og_image_media_id' => 'og_image'] as $mediaField => $field) {
             if (! empty($data[$mediaField]) && ! $request->hasFile($field)) {
                 $data[$field] = Media::query()->whereKey((int) $data[$mediaField])->value('path');
@@ -59,7 +61,7 @@ class PropertyController extends Controller
             $this->authorizeAction('publish');
         }
         $galleryMediaIds = $data['gallery_media_ids'] ?? [];
-        $accommodations = $data['accommodations'] ?? [];
+        $accommodations = array_map(fn ($space) => array_merge($space, ['is_included' => (bool) ($space['is_included'] ?? false)]), $data['accommodations'] ?? []);
         $faqs = $data['faqs'] ?? [];
         unset($data['gallery'], $data['gallery_media_ids'], $data['accommodations'], $data['faqs']);
         $data['slug'] = $this->slug($data['slug'] ?? $data['title']);
@@ -96,6 +98,7 @@ class PropertyController extends Controller
     {
         $this->authorizeAction('edit');
         $data = $request->validated();
+        $data['description'] = HtmlSanitizer::sanitize($data['description'] ?? '');
         foreach (['featured_image_media_id' => 'featured_image', 'og_image_media_id' => 'og_image'] as $mediaField => $field) {
             if (! empty($data[$mediaField]) && ! $request->hasFile($field)) {
                 $data[$field] = Media::query()->whereKey((int) $data[$mediaField])->value('path');

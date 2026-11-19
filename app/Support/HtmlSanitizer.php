@@ -12,7 +12,7 @@ class HtmlSanitizer
     private const ALLOWED_TAGS = [
         'p', 'br', 'hr', 'strong', 'b', 'em', 'i', 'u', 's', 'del',
         'ul', 'ol', 'li', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'blockquote', 'pre', 'code', 'sub', 'sup', 'mark', 'span',
+        'blockquote', 'pre', 'code', 'sub', 'sup', 'mark', 'span', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td', 'caption', 'img',
     ];
 
     private const DROP_TAGS = ['script', 'style', 'iframe', 'object', 'embed', 'svg', 'math'];
@@ -73,14 +73,21 @@ class HtmlSanitizer
                 $name = strtolower($attribute->name);
                 $allowed = $tag === 'a'
                     ? in_array($name, ['href', 'title', 'target', 'rel'], true)
-                    : ($tag === 'span' && $name === 'class');
+                    : ($tag === 'img'
+                        ? in_array($name, ['src', 'alt', 'title', 'width', 'height'], true)
+                        : ($tag === 'span' && $name === 'class'));
+
+                if ($tag === 'img' && in_array($name, ['width', 'height'], true) && ! ctype_digit($attribute->value)) {
+                    $child->removeAttribute($attribute->name);
+                    continue;
+                }
 
                 if (! $allowed) {
                     $child->removeAttribute($attribute->name);
                     continue;
                 }
 
-                if ($name === 'href' && ! preg_match('~^(https?://|mailto:|tel:|/|#)~i', trim($attribute->value))) {
+                if (in_array($name, ['href', 'src'], true) && ! preg_match('~^(https?://|mailto:|tel:|/|#)~i', trim($attribute->value))) {
                     $child->removeAttribute('href');
                 }
 
