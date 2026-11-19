@@ -115,7 +115,8 @@
             @endforeach
         </div>
     </section>
-@endif@if($property->images->isNotEmpty())<div class="row g-3 mt-4">@foreach($property->images as $image)<div class="col-md-4">
+@endif
+@if($property->images->isNotEmpty())<div class="row g-3 mt-4">@foreach($property->images as $image)<div class="col-md-4">
 <img class="img-fluid rounded" src="{{ Storage::disk('public')->url($image->path) }}" alt="{{ $image->alt_text }}">
 </div>@endforeach</div>@endif</div>
 <div class="col-lg-4">
