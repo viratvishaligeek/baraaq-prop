@@ -35,6 +35,11 @@ class PropertyAccommodationImageUploadTest extends TestCase
                     'image' => UploadedFile::fake()->image('master-bedroom.jpg', 1600, 1200),
                     'is_included' => '1',
                 ],
+                1 => ['name' => 'Kitchen', 'is_included' => '1'],
+            ],
+            'faqs' => [
+                0 => ['question' => 'Is parking included?', 'answer' => 'Yes.'],
+                1 => ['question' => 'Are pets allowed?', 'answer' => 'Ask our team.'],
             ],
             'accommodation_variants' => [
                 0 => [
@@ -49,6 +54,11 @@ class PropertyAccommodationImageUploadTest extends TestCase
         $property = Property::where('slug', 'accommodation-images-property')->firstOrFail();
         $space = $property->accommodations()->firstOrFail();
         $media = Media::findOrFail($space->image_media_id);
+        $spaces = $property->accommodations()->orderBy('sort_order')->get();
+        $faqs = $property->faqs()->orderBy('sort_order')->get();
+        $this->assertSame(['Master bedroom', 'Kitchen'], $spaces->pluck('name')->all());
+        $this->assertSame([0, 1], $spaces->pluck('sort_order')->all());
+        $this->assertSame([0, 1], $faqs->pluck('sort_order')->all());
 
         $this->assertSame('master-bedroom.jpg', $media->original_name);
         $this->assertNotNull($media->small_path);

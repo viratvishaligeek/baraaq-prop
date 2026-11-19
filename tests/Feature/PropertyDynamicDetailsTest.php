@@ -73,6 +73,7 @@ class PropertyDynamicDetailsTest extends TestCase
             'image_media_id' => $media->id,
             'name' => 'Master bedroom',
             'category' => 'Bedroom',
+            'attributes' => [['key' => 'View', 'value' => 'Garden-facing']],
             'area' => 240,
             'area_unit' => 'sqft',
             'is_included' => true,
@@ -85,6 +86,7 @@ class PropertyDynamicDetailsTest extends TestCase
         $this->get(route('properties.show', $property))
             ->assertOk()
             ->assertSee('Master bedroom')
+            ->assertSee('Garden-facing')
             ->assertSee('Swimming pool')
             ->assertSee('Private garden')
             ->assertSee($media->url, false)
