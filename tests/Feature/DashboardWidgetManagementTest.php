@@ -52,7 +52,7 @@ class DashboardWidgetManagementTest extends TestCase
 
     public function test_dashboard_widget_configuration_requires_settings_permission(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['is_active' => true]);
         $role = Role::create(['name' => 'Content editor', 'slug' => 'content-editor']);
         $user->roles()->attach($role);
 
