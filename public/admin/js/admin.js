@@ -80,6 +80,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     button.setAttribute('aria-pressed', 'true');
                 }
                 button.addEventListener('click', () => {
+                    if (richTextCallback) {
+                        const callback = richTextCallback;
+                        richTextCallback = null;
+                        callback(item.url, { title: item.name, alt: item.alt || item.name });
+                        modal.hide();
+                        return;
+                    }
                     if (!multipleMode) {
                         updateTarget(item);
                         return;
