@@ -414,6 +414,45 @@
             wrapper.innerHTML = '<div class="d-flex justify-content-between mb-2"><strong>FAQ <span class="faq-number"></span></strong><div class="d-flex gap-1"><button type="button" class="btn btn-sm btn-light move-repeater-up">↑</button><button type="button" class="btn btn-sm btn-light move-repeater-down">↓</button><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div></div><label class="form-label">Question *</label><input class="form-control mb-2" name="faqs['+i+'][question]" required><label class="form-label">Answer *</label><textarea class="form-control" rows="3" name="faqs['+i+'][answer]" required></textarea>';
             faqList.append(wrapper); updateNumbers();
         });
+
+        const propertyForm = document.getElementById('property-form');
+        let preparingAccommodationVariants = false;
+        propertyForm?.addEventListener('submit', async event => {
+            if (preparingAccommodationVariants) return;
+            const imageInputs = [...propertyForm.querySelectorAll('input[type="file"][name^="accommodations["][name$="[image]"]')].filter(input => input.files?.[0]);
+            if (!imageInputs.length) return;
+            event.preventDefault();
+            preparingAccommodationVariants = true;
+            try {
+                for (const input of imageInputs) {
+                    const match = input.name.match(/^accommodations\[(\d+)\]\[image\]$/);
+                    if (!match) continue;
+                    const file = input.files[0];
+                    const bitmap = await createImageBitmap(file);
+                    for (const [size, dimensions] of Object.entries({small:[320,240],medium:[900,700],large:[1600,1200]})) {
+                        const ratio = Math.min(1, dimensions[0] / bitmap.width, dimensions[1] / bitmap.height);
+                        const canvas = document.createElement('canvas');
+                        canvas.width = Math.max(1, Math.round(bitmap.width * ratio));
+                        canvas.height = Math.max(1, Math.round(bitmap.height * ratio));
+                        canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+                        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', .84));
+                        if (!blob) throw new Error('Could not generate image variants.');
+                        const variantInput = document.createElement('input');
+                        variantInput.type = 'file';
+                        variantInput.name = 'accommodation_variants[' + match[1] + '][' + size + ']';
+                        const transfer = new DataTransfer();
+                        transfer.items.add(new File([blob], size + '.webp', {type:'image/webp'}));
+                        variantInput.files = transfer.files;
+                        propertyForm.append(variantInput);
+                    }
+                    bitmap.close?.();
+                }
+                propertyForm.requestSubmit(event.submitter || undefined);
+            } catch (error) {
+                preparingAccommodationVariants = false;
+                window.alert(error.message || 'Could not prepare accommodation images.');
+            }
+        });
         document.getElementById('add-property-feature')?.addEventListener('click', () => {
             const list = document.getElementById('property-feature-list');
             const row = document.createElement('div');

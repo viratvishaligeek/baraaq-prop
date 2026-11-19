@@ -65,7 +65,14 @@ class PropertyController extends Controller
                     'mime_type' => $file->getMimeType(),
                     'size' => $file->getSize(),
                     'alt_text' => $space['name'] ?? $file->getClientOriginalName(),
-                ]);
+                ];
+                foreach (['small', 'medium', 'large'] as $size) {
+                    $variant = $request->file('accommodation_variants.' . $index . '.' . $size);
+                    if ($variant) {
+                        $attributes[$size . '_path'] = $variant->store('media/variants/' . $size, 'public');
+                    }
+                }
+                $media = Media::create($attributes);
                 $space['image_media_id'] = $media->id;
             }
 
