@@ -1,4 +1,4 @@
-@extends('frontend.layouts.app')
+@extends('frontend.layouts.theme')
 @section('title', $definition['label'] . ' preview')
 @section('content')
     <div class="container py-4">
