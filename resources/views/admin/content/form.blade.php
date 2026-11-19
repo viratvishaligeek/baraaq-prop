@@ -332,7 +332,7 @@
                         <input class="form-control" name="focus_keyword" value="{{ old('focus_keyword', $item->focus_keyword) }}">
                     </div>
                     <div class="col-12">
-                        <div class="border rounded p-3 bg-light" id="content-serp-preview">
+                        <div class="border rounded p-3 bg-light" id="content-serp-preview" data-seo-preview data-title-input="#content-title" data-slug-input="#content-slug" data-meta-title-input="#content-meta-title" data-meta-description-input="#content-meta-description" data-url-prefix="{{ $type === 'posts' ? '/blog/' : '/'.$type.'/' }}" data-url-output="#content-serp-url" data-title-output="#content-serp-title" data-description-output="#content-serp-description" data-title-count="#content-title-count" data-description-count="#content-description-count">
                             <div class="small text-success" id="content-serp-url"></div>
                             <div class="fw-semibold text-primary" id="content-serp-title"></div>
                             <div class="small text-muted" id="content-serp-description"></div>
@@ -392,41 +392,6 @@
                     $('[name="type"]').on('change', filterParentCategories);
                     filterParentCategories();
                 });
-            </script>
-        @endpush
-    @endif
-    @if (in_array($type, ['posts', 'pages', 'services']))
-        @push('scripts')
-            
-            <script>
-
-            document.addEventListener('DOMContentLoaded', function () {
-                const title = document.getElementById('content-title');
-                const slug = document.getElementById('content-slug');
-                const seoTitle = document.getElementById('content-meta-title');
-                const seoDescription = document.getElementById('content-meta-description');
-                const previewUrl = document.getElementById('content-serp-url');
-                const previewTitle = document.getElementById('content-serp-title');
-                const previewDescription = document.getElementById('content-serp-description');
-                const titleCount = document.getElementById('content-title-count');
-                const descriptionCount = document.getElementById('content-description-count');
-                if (!title || !slug) return;
-                slug.addEventListener('input', updatePreview);
-                title.addEventListener('input', updatePreview);
-                [seoTitle, seoDescription].forEach(input => input?.addEventListener('input', updatePreview));
-                function updatePreview() {
-                    const displayTitle = seoTitle?.value || title.value || 'Page title';
-                    const displayDescription = seoDescription?.value || 'Add a meta description to preview your search result.';
-                    if (previewTitle) previewTitle.textContent = displayTitle;
-                    if (previewDescription) previewDescription.textContent = displayDescription;
-                    if (previewUrl) previewUrl.textContent = window.location.origin + '/{{ $type === 'posts' ? 'blog' : $type }}/' + (slug.value || 'page-slug');
-                    if (titleCount) titleCount.textContent = displayTitle.length;
-                    if (descriptionCount) descriptionCount.textContent = displayDescription.length;
-                }
-                updatePreview();
-            });
-
-
             </script>
         @endpush
     @endif

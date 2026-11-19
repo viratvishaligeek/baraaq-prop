@@ -157,6 +157,7 @@
     <script src="{{ asset('admin/js/admin.js') }}"></script>
     @include('admin.partials.rich-text-editor')
     <script src="{{ asset('admin/js/slug-generator.js') }}"></script>
+    <script src="{{ asset('admin/js/seo-preview.js') }}"></script>
     @stack('scripts')
     @if (session('success'))
         <script>

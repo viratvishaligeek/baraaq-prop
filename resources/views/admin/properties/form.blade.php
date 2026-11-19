@@ -251,7 +251,7 @@
                     <textarea class="form-control mb-3" name="meta_description">{{ old('meta_description', $property->meta_description) }}</textarea>
                     <label class="form-label">Focus keyword</label>
                     <input class="form-control mb-3" name="focus_keyword" value="{{ old('focus_keyword', $property->focus_keyword) }}">
-                    <div class="border rounded p-3 bg-light mt-3" id="property-serp-preview">
+                    <div class="border rounded p-3 bg-light mt-3" id="property-serp-preview" data-seo-preview data-title-input="[name=title]" data-slug-input="[name=slug]" data-meta-title-input="[name=meta_title]" data-meta-description-input="[name=meta_description]" data-url-prefix="/properties/" data-url-output="#serp-url" data-title-output="#serp-title" data-description-output="#serp-description" data-title-count="#serp-title-count" data-description-count="#serp-description-count">
                         <div class="small text-success" id="serp-url">{{ url('/properties/') }}/{{ $property->slug ?: 'property-slug' }}</div>
                         <div class="fw-semibold text-primary" id="serp-title">{{ $property->meta_title ?: $property->title ?: 'Property title' }}</div>
                         <div class="small text-muted" id="serp-description">{{ $property->meta_description ?: 'Add a meta description to preview your search result.' }}</div>
@@ -367,30 +367,6 @@
     
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const titleInput = document.querySelector('[name="title"]');
-        const slugInput = document.querySelector('[name="slug"]');
-        const seoTitle = document.querySelector('[name="meta_title"]');
-        const seoDescription = document.querySelector('[name="meta_description"]');
-        const serpTitle = document.getElementById('serp-title');
-        const serpDescription = document.getElementById('serp-description');
-        const serpUrl = document.getElementById('serp-url');
-        const titleCount = document.getElementById('serp-title-count');
-        const descriptionCount = document.getElementById('serp-description-count');
-        let slugTouched = Boolean(slugInput?.value);
-        const slugify = value => value.toString().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-        slugInput?.addEventListener('input', () => { slugTouched = true; });
-        titleInput?.addEventListener('input', () => { if (!slugTouched && slugInput) slugInput.value = slugify(titleInput.value); refreshPreview(); });
-        [slugInput, seoTitle, seoDescription].forEach(input => input?.addEventListener('input', refreshPreview));
-        function refreshPreview() {
-            const title = seoTitle?.value || titleInput?.value || 'Property title';
-            const description = seoDescription?.value || 'Add a meta description to preview your search result.';
-            if (serpTitle) serpTitle.textContent = title;
-            if (serpDescription) serpDescription.textContent = description;
-            if (serpUrl) serpUrl.textContent = window.location.origin + '/properties/' + (slugInput?.value || 'property-slug');
-            if (titleCount) titleCount.textContent = title.length;
-            if (descriptionCount) descriptionCount.textContent = description.length;
-        }
-        refreshPreview();
         let accommodationIndex = document.querySelectorAll('.accommodation-item').length;
         let faqIndex = document.querySelectorAll('.faq-item').length;
         const accommodationList = document.getElementById('accommodation-list');
