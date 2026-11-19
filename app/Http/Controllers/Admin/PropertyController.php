@@ -37,7 +37,9 @@ class PropertyController extends Controller
     public function index()
     {
         $this->authorizeAction('view');
-        return view('admin.properties.index', ['properties' => Property::with('category:id,name')->latest()->paginate(15)]);
+        return view('admin.properties.index', ['properties' => Property::with('category:id,name')
+            ->when(in_array(request('status'), ['draft', 'published', 'archived'], true), fn ($query) => $query->where('status', request('status')))
+            ->latest()->paginate(15)->withQueryString()]);
     }
 
     public function create()

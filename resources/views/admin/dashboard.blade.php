@@ -18,21 +18,21 @@
 
     <div class="row g-3 mb-4">
         @foreach ([
-            ['Properties', $propertyCount, 'fa-house'],
-            ['Published properties', $publishedPropertyCount, 'fa-check-circle'],
-            ['Blog posts', $postCount, 'fa-newspaper'],
-            ['Pages', $pageCount, 'fa-file-lines'],
-            ['Users', $userCount, 'fa-users'],
-            ['New enquiries', $newEnquiryCount, 'fa-inbox'],
-            ['Visits · 30 days', $totalVisits, 'fa-chart-line'],
-            ['Page views · 30 days', $totalPageViews, 'fa-eye'],
-        ] as [$label, $value, $icon])
+            ['Properties', $propertyCount, 'fa-house', route('admin.properties.index')],
+            ['Published properties', $publishedPropertyCount, 'fa-check-circle', route('admin.properties.index', ['status' => 'published'])],
+            ['Blog posts', $postCount, 'fa-newspaper', route('admin.content.index', 'posts')],
+            ['Pages', $pageCount, 'fa-file-lines', route('admin.content.index', 'pages')],
+            ['Users', $userCount, 'fa-users', route('admin.users.index')],
+            ['New enquiries', $newEnquiryCount, 'fa-inbox', route('admin.enquiries.index', ['status' => 'new'])],
+            ['Visits · 30 days', $totalVisits, 'fa-chart-line', route('admin.analytics.index')],
+            ['Page views · 30 days', $totalPageViews, 'fa-eye', route('admin.analytics.index')],
+        ] as [$label, $value, $icon, $destination])
             <div class="col-6 col-xl-3">
-                <div class="stat-card h-100">
+                <a class="stat-card h-100 d-block text-decoration-none text-reset" href="{{ $destination }}" aria-label="View {{ $label }}">
                     <div class="stat-icon"><i class="fa {{ $icon }}"></i></div>
                     <div class="text-muted small">{{ $label }}</div>
                     <div class="stat-value">{{ number_format($value) }}</div>
-                </div>
+                </a>
             </div>
         @endforeach
     </div>
