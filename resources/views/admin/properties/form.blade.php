@@ -360,7 +360,7 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         if (window.tinymce) {
-            tinymce.init({ selector: 'textarea[data-rich-editor]', license_key: 'gpl', menubar: 'edit insert format table', plugins: 'lists link image media table code searchreplace visualblocks wordcount anchor', toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | blockquote | code', height: 420, branding: false, promotion: false, setup: editor => editor.on('change keyup undo redo', () => editor.save()) });
+            tinymce.init({ selector: 'textarea[data-rich-editor]', license_key: 'gpl', menubar: 'edit insert format table', plugins: 'lists link image media table code searchreplace visualblocks wordcount anchor', toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | blockquote | code', height: 420, branding: false, promotion: false, file_picker_types: 'image', file_picker_callback: (callback, value, meta) => { if (meta.filetype !== 'image') return; window.dispatchEvent(new CustomEvent('open-richtext-media-picker', { detail: { callback } })); }, setup: editor => editor.on('change keyup undo redo', () => editor.save()) });
             document.querySelector('form')?.addEventListener('submit', () => tinymce.triggerSave());
         }
         const titleInput = document.querySelector('[name="title"]');
