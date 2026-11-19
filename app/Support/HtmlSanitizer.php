@@ -87,8 +87,13 @@ class HtmlSanitizer
                     continue;
                 }
 
-                if (in_array($name, ['href', 'src'], true) && ! preg_match('~^(https?://|mailto:|tel:|/|#)~i', trim($attribute->value))) {
-                    $child->removeAttribute('href');
+                if (in_array($name, ['href', 'src'], true)) {
+                    $pattern = $name === 'src'
+                        ? '~^(https?://|/)~i'
+                        : '~^(https?://|mailto:|tel:|/|#)~i';
+                    if (! preg_match($pattern, trim($attribute->value))) {
+                        $child->removeAttribute($attribute->name);
+                    }
                 }
 
                 if ($name === 'class' && ! preg_match('/^[a-zA-Z0-9 _-]{1,120}$/', $attribute->value)) {
