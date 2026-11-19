@@ -7,6 +7,7 @@ use App\Models\Page;
 use App\Models\Post;
 use App\Models\Property;
 use App\Models\Service;
+use App\Models\Setting;
 use Illuminate\Database\Eloquent\Builder;
 
 class SeoController extends Controller
