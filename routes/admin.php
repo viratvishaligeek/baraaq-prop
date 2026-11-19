@@ -96,6 +96,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/media', [MediaController::class, 'index'])->middleware('permission:media.manage')->name('media.index');
         Route::post('/media', [MediaController::class, 'store'])->middleware('permission:media.manage')->name('media.store');
         Route::patch('/media/{media}', [MediaController::class, 'update'])->middleware('permission:media.manage')->name('media.update');
+        Route::delete('/media/bulk', [MediaController::class, 'bulkDestroy'])->middleware('permission:media.manage')->name('media.bulk-destroy');
         Route::delete('/media/{media}', [MediaController::class, 'destroy'])->middleware('permission:media.manage')->name('media.destroy');
 
         Route::get('/settings', [SettingsController::class, 'edit'])->middleware('permission:settings.manage')->name('settings.edit');

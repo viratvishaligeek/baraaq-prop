@@ -13,10 +13,19 @@
             <button class="btn btn-primary">Upload files</button>
         </form>
     </div>
+    <form id="bulk-media-form" method="POST" action="{{ route('admin.media.bulk-destroy') }}" class="content-card mb-3 d-flex flex-wrap align-items-center justify-content-between gap-2" onsubmit="return confirm('Delete all selected media files? Files used by website content will be retained.')">
+        @csrf
+        @method('DELETE')
+        <div class="d-flex align-items-center gap-3">
+            <label class="form-check mb-0"><input class="form-check-input" type="checkbox" id="select-all-media"> <span class="form-check-label">Select all</span></label>
+            <span class="small text-muted" id="media-selection-count">0 selected</span>
+        </div>
+        <button class="btn btn-outline-danger btn-sm" type="submit" id="bulk-delete-media" disabled>Delete selected</button>
+    </form>
     <div class="row g-3">
         @forelse($media as $file)
             <div class="col-6 col-md-3 col-xl-2">
-                <div class="content-card p-2 h-100">
+                <div class="content-card p-2 h-100 position-relative">\n                    <label class="form-check mb-2"><input class="form-check-input media-select" type="checkbox" name="media_ids[]" value="{{ $file->id }}" form="bulk-media-form"> <span class="small text-muted">Select file</span></label>
                     @if (str_starts_with($file->mime_type ?? '', 'image/'))
                         <img class="w-100 rounded" style="height:120px;object-fit:cover"
                         src="{{ Storage::disk($file->disk)->url($file->path) }}" alt="{{ $file->alt_text }}">@else<div
@@ -51,6 +60,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const preview = document.getElementById('media-upload-previews');
     if (!input || !preview) return;
     let objectUrls = [];
+    const selectAll = document.getElementById('select-all-media');
+    const selectionCount = document.getElementById('media-selection-count');
+    const deleteButton = document.getElementById('bulk-delete-media');
+    const updateSelection = () => {
+        const boxes = [...document.querySelectorAll('.media-select')];
+        const selected = boxes.filter(box => box.checked).length;
+        if (selectionCount) selectionCount.textContent = selected + ' selected';
+        if (deleteButton) deleteButton.disabled = selected === 0;
+        if (selectAll) selectAll.checked = boxes.length > 0 && selected === boxes.length;
+        if (selectAll) selectAll.indeterminate = selected > 0 && selected < boxes.length;
+    };
+    selectAll?.addEventListener('change', () => {
+        document.querySelectorAll('.media-select').forEach(box => box.checked = selectAll.checked);
+        updateSelection();
+    });
+    document.querySelectorAll('.media-select').forEach(box => box.addEventListener('change', updateSelection));
+    updateSelection();
     input.addEventListener('change', () => {
         objectUrls.forEach(url => URL.revokeObjectURL(url));
         objectUrls = [];

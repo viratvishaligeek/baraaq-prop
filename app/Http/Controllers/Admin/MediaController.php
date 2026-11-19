@@ -24,6 +24,35 @@ class MediaController extends Controller
         }
         return back()->with('success', 'Files uploaded.');
     }
+    public function bulkDestroy(Request $request)
+    {
+        $data = $request->validate([
+            'media_ids' => ['required', 'array', 'min:1'],
+            'media_ids.*' => ['required', 'integer', 'distinct', 'exists:media,id'],
+        ]);
+
+        $deleted = 0;
+        $skipped = 0;
+
+        foreach (Media::query()->whereIn('id', $data['media_ids'])->get() as $media) {
+            if ($media->attachments()->exists() || $this->isReferencedByContent($media)) {
+                $skipped++;
+                continue;
+            }
+
+            Storage::disk($media->disk)->delete($media->path);
+            $media->delete();
+            $deleted++;
+        }
+
+        $response = back()->with('success', $deleted . ' media file(s) deleted.');
+        if ($skipped > 0) {
+            $response->withErrors(['media' => $skipped . ' selected file(s) were retained because website content still references them.']);
+        }
+
+        return $response;
+    }
+
     public function update(Request $r, Media $media)
     {
         $data = $r->validate(['alt_text' => ['nullable', 'string', 'max:255']]);
