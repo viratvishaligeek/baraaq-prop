@@ -37,7 +37,9 @@
                 <p class="small text-muted">Choose an existing Piller section design. No replacement layouts are generated.</p>
                 <input type="search" class="form-control form-control-sm mb-3" id="widget-library-search" placeholder="Search sections and designs…" aria-label="Search widget library">
                 @foreach ($widgetGroups as $group => $widgets)
-                    <h3 class="h6 mt-3">{{ $group }}</h3>
+                    <details class="border rounded mb-3" @if ($loop->first) open @endif>
+                        <summary class="p-2 fw-semibold">{{ $group }} <span class="small text-muted">({{ count($widgets) }})</span></summary>
+                        <div class="p-2">
                     @foreach ($widgets as $widget)
                         <form method="POST" action="{{ route('admin.services.widgets.add', $service) }}" class="border rounded p-2 mb-2 d-flex align-items-center justify-content-between gap-2 widget-library-item" data-search="{{ strtolower($widget['label'].' '.$widget['design'].' '.$widget['type'].' '.$widget['key']) }}">
                             @csrf
@@ -49,6 +51,8 @@
                             <button class="btn btn-sm btn-outline-primary" {{ $service->status !== 'draft' ? 'disabled' : '' }}>Add</button>
                         </form>
                     @endforeach
+                        </div>
+                    </details>
                 @endforeach
             </div>
         </div>
