@@ -189,7 +189,7 @@
                 @elseif($type === 'banners')
                     <div class="col-md-6">
                         <label class="form-label">Title *</label>
-                        <input class="form-control" name="title" value="{{ old('title', $item->title) }}" required>
+                        <input class="form-control" id="content-title" name="title" value="{{ old('title', $item->title) }}" required>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Subtitle</label>
@@ -298,22 +298,29 @@
                     @endif
                     <div class="col-md-6">
                         <label class="form-label">Slug</label>
-                        <input class="form-control" name="slug" value="{{ old('slug', $item->slug) }}"
+                        <input class="form-control" id="content-slug" name="slug" value="{{ old('slug', $item->slug) }}"
                             placeholder="Generated from title when empty">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">SEO title</label>
-                        <input class="form-control" name="meta_title"
+                        <input class="form-control" id="content-meta-title" name="meta_title"
                             value="{{ old('meta_title', $item->meta_title) }}">
                     </div>
                     <div class="col-12">
                         <label class="form-label">SEO description</label>
-                        <textarea class="form-control" name="meta_description">{{ old('meta_description', $item->meta_description) }}</textarea>
+                        <textarea class="form-control" id="content-meta-description" name="meta_description">{{ old('meta_description', $item->meta_description) }}</textarea>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Canonical URL</label>
-                        <input class="form-control" type="url" name="canonical_url"
-                            value="{{ old('canonical_url', $item->canonical_url) }}">
+                        <label class="form-label">Focus keyword</label>
+                        <input class="form-control" name="focus_keyword" value="{{ old('focus_keyword', $item->focus_keyword) }}">
+                    </div>
+                    <div class="col-12">
+                        <div class="border rounded p-3 bg-light" id="content-serp-preview">
+                            <div class="small text-success" id="content-serp-url"></div>
+                            <div class="fw-semibold text-primary" id="content-serp-title"></div>
+                            <div class="small text-muted" id="content-serp-description"></div>
+                            <div class="small text-muted mt-2"><span id="content-title-count">0</span> / 60 title characters · <span id="content-description-count">0</span> / 160 description characters</div>
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Social sharing image</label>
@@ -375,14 +382,44 @@
         @push('scripts')
             <script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js"></script>
             <script>
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const title = document.getElementById('content-title');
+                const slug = document.getElementById('content-slug');
+                const seoTitle = document.getElementById('content-meta-title');
+                const seoDescription = document.getElementById('content-meta-description');
+                const previewUrl = document.getElementById('content-serp-url');
+                const previewTitle = document.getElementById('content-serp-title');
+                const previewDescription = document.getElementById('content-serp-description');
+                const titleCount = document.getElementById('content-title-count');
+                const descriptionCount = document.getElementById('content-description-count');
+                if (!title || !slug) return;
+                let slugManuallyEdited = Boolean(slug.value);
+                const slugify = value => value.normalize('NFKD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                slug.addEventListener('input', () => { slugManuallyEdited = true; updatePreview(); });
+                title.addEventListener('input', () => { if (!slugManuallyEdited) slug.value = slugify(title.value); updatePreview(); });
+                [seoTitle, seoDescription].forEach(input => input?.addEventListener('input', updatePreview));
+                function updatePreview() {
+                    const displayTitle = seoTitle?.value || title.value || 'Page title';
+                    const displayDescription = seoDescription?.value || 'Add a meta description to preview your search result.';
+                    if (previewTitle) previewTitle.textContent = displayTitle;
+                    if (previewDescription) previewDescription.textContent = displayDescription;
+                    if (previewUrl) previewUrl.textContent = window.location.origin + '/{{ $type === 'posts' ? 'blog' : $type }}/' + (slug.value || 'page-slug');
+                    if (titleCount) titleCount.textContent = displayTitle.length;
+                    if (descriptionCount) descriptionCount.textContent = displayDescription.length;
+                }
+                updatePreview();
+            });
+
                 document.addEventListener('DOMContentLoaded', function () {
                     if (!window.tinymce) return;
                     tinymce.init({
                         selector: 'textarea[data-rich-editor]',
                         license_key: 'gpl',
                         menubar: false,
-                        plugins: 'lists link',
-                        toolbar: 'undo redo | blocks | bold italic underline | bullist numlist | link | removeformat',
+                        plugins: 'lists link image media table code searchreplace visualblocks wordcount anchor',
+                        menubar: 'edit insert format table',
+                        toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | blockquote | code',
                         height: 420,
                         branding: false,
                         promotion: false,

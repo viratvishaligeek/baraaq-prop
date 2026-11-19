@@ -21,6 +21,7 @@ class Service extends Model
         'meta_description',
         'canonical_url',
         'og_image',
+        'focus_keyword',
     ];
 
     protected function casts(): array

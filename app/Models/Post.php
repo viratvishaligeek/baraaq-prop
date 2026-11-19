@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Post extends Model
 {
     use SoftDeletes;
-    protected $fillable = ['author_id', 'title', 'slug', 'excerpt', 'content', 'featured_image', 'status', 'published_at', 'meta_title', 'meta_description', 'canonical_url', 'og_image'];
+    protected $fillable = ['author_id', 'title', 'slug', 'excerpt', 'content', 'featured_image', 'status', 'published_at', 'meta_title', 'meta_description', 'canonical_url', 'og_image', 'focus_keyword'];
     protected function casts(): array
     {
         return ['published_at' => 'datetime'];

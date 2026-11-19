@@ -11,7 +11,7 @@ class Page extends Model
 
     protected $fillable = [
         'author_id', 'title', 'slug', 'content', 'template', 'status',
-        'homepage_key', 'meta_title', 'meta_description', 'canonical_url', 'og_image',
+        'homepage_key', 'meta_title', 'meta_description', 'canonical_url', 'og_image', 'focus_keyword',
     ];
 
     public function sections()
