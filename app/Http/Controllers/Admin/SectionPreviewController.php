@@ -18,6 +18,9 @@ class SectionPreviewController extends Controller
         $user = request()->user();
         abort_unless($user && (
             $user->isAdministrator()
+            || $user->hasPermission('settings.manage')
+            || $user->hasPermission('properties.manage')
+            || $user->hasPermission('posts.manage')
             || $user->hasPermission('pages.manage')
             || $user->hasPermission('widgets.manage')
             || $user->hasPermission('services.manage')
