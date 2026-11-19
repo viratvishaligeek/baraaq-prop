@@ -2,7 +2,7 @@
 
 @section('title', $post->meta_title ?: $post->title)
 @section('meta_description', $post->meta_description ?: ($post->excerpt ?: \App\Models\Setting::read('meta_description', '')))
-@section('canonical_url', $post->canonical_url ?: route('blog.show', $post))
+@section('canonical_url', route('blog.show', $post))
 @section('og_image', $post->og_image ? asset('storage/'.$post->og_image) : ($post->featured_image ? Storage::disk('public')->url($post->featured_image) : (!empty($siteSettings['default_og_image']) ? asset('storage/'.$siteSettings['default_og_image']) : asset('theme-assets/img/hero/hero-10-1.jpg'))))
 
 @section('structured_data')
