@@ -23,6 +23,8 @@ use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\ServiceBuilderController;
 use App\Http\Controllers\Admin\SectionPreviewController;
+use App\Http\Controllers\Admin\SectionLibraryController;
+use App\Http\Controllers\Admin\PageBuilderHubController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WidgetController;
@@ -36,6 +38,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware(['auth', 'admin.access'])->group(function () {
         Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
+        Route::get('/page-builder', [PageBuilderHubController::class, 'index'])->name('page-builder.index');
+        Route::get('/section-library', [SectionLibraryController::class, 'index'])->name('sections.index');
         Route::get('/section-library/preview/{sectionKey}', [SectionPreviewController::class, 'show'])->name('sections.preview');
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
         Route::get('/dashboard/widgets', [DashboardController::class, 'manageWidgets'])->middleware('permission:settings.manage')->name('dashboard.widgets.edit');
