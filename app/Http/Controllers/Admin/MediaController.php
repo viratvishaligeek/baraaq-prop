@@ -123,7 +123,7 @@ class MediaController extends Controller
     public function destroy(Media $media)
     {
         if ($media->attachments()->exists() || $this->isReferencedByContent($media)) {
-            return back()->withErrors(['media' => 'This image is currently used by website content, a property gallery, a homepage or a reusable section. Replace or clear those references before deleting it.']);
+            return back()->withErrors(['media' => 'This image is currently used by website content, a property gallery, an accommodation space, a homepage or a reusable section. Replace or clear those references before deleting it.']);
         }
         $this->deleteFiles($media);
         $media->delete();
@@ -141,9 +141,14 @@ class MediaController extends Controller
 
     private function isReferencedByContent(Media $media): bool
     {
+        if (Schema::hasTable('property_accommodations')
+            && Schema::hasColumn('property_accommodations', 'image_media_id')
+            && DB::table('property_accommodations')->where('image_media_id', $media->id)->exists()) {
+            return true;
+        }
+
         $references = [
             'properties' => ['featured_image', 'og_image'],
-            'property_accommodations' => ['image_media_id'],
             'property_images' => ['path'],
             'posts' => ['featured_image', 'og_image'],
             'services' => ['featured_image', 'og_image'],
