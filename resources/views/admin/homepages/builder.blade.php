@@ -41,20 +41,31 @@
                 <p class="text-muted small">The catalog includes the sections extracted so far from the original designs. A
                     section being available here does not mean it has passed the strict visual, interaction and responsive
                     completion checks.</p>
-                @foreach ($availableSections as $section)
-                    <form method="POST" action="{{ route('admin.homepages.sections.store', $homepage) }}"
-                        class="d-flex justify-content-between align-items-center gap-2 border rounded p-2 mb-2">
-                        @csrf
-                        <input type="hidden" name="section_key" value="{{ $section['key'] }}">
-                        <div>
-                            <div class="fw-semibold">{{ $section['label'] }}</div>
-                            <div class="text-muted small">From {{ $section['source_design'] }}
-                            </div>
+                @php($sectionGroups = collect($availableSections)->groupBy('type'))
+                @foreach ($sectionGroups as $groupName => $groupSections)
+                    <details class="border rounded mb-2" open>
+                        <summary class="p-2 fw-semibold d-flex justify-content-between align-items-center">
+                            <span>{{ \Illuminate\Support\Str::headline($groupName) }}</span>
+                            <span class="badge bg-light text-dark">{{ $groupSections->count() }} designs</span>
+                        </summary>
+                        <div class="p-2">
+                            @foreach ($groupSections as $section)
+                                <form method="POST" action="{{ route('admin.homepages.sections.store', $homepage) }}"
+                                    class="d-flex flex-wrap justify-content-between align-items-center gap-2 border rounded p-2 mb-2">
+                                    @csrf
+                                    <input type="hidden" name="section_key" value="{{ $section['key'] }}">
+                                    <div>
+                                        <div class="fw-semibold">{{ $section['label'] }}</div>
+                                        <div class="text-muted small">Design: {{ $section['source_design'] }}</div>
+                                    </div>
+                                    <div class="d-flex gap-1">
+                                        <a class="btn btn-sm btn-outline-secondary" href="{{ $section['source_design'] === 'index' ? route('home') : route('theme.page', ['template' => $section['source_design']]) }}" target="_blank" rel="noopener">Preview source</a>
+                                        <button class="btn btn-sm btn-outline-primary" type="submit">Add</button>
+                                    </div>
+                                </form>
+                            @endforeach
                         </div>
-                        <button class="btn btn-sm btn-outline-primary" type="submit">Add
-
-                        </button>
-                    </form>
+                    </details>
                 @endforeach
                 <hr class="my-4">
                 <h3 class="h6 fw-semibold">Saved reusable sections</h3>
@@ -376,4 +387,38 @@
 
         });
     </script>
+@endpush
+
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.homepage-section-item').forEach((item, index) => {
+        const header = item.firstElementChild;
+        if (!header) return;
+        const sectionId = item.dataset.sectionId || String(index);
+        const content = Array.from(item.children).filter(child => child !== header);
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'btn btn-sm btn-outline-secondary ms-auto';
+        button.textContent = 'Collapse';
+        button.setAttribute('aria-expanded', 'true');
+        button.addEventListener('click', () => {
+            const collapsed = button.getAttribute('aria-expanded') === 'true';
+            content.forEach(child => child.hidden = collapsed);
+            button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+            button.textContent = collapsed ? 'Expand section' : 'Collapse';
+            try { localStorage.setItem('homepage-section-collapsed:' + sectionId, collapsed ? '1' : '0'); } catch (_) {}
+        });
+        header.append(button);
+        let collapsed = false;
+        try { collapsed = localStorage.getItem('homepage-section-collapsed:' + sectionId) === '1'; } catch (_) {}
+        if (collapsed) {
+            content.forEach(child => child.hidden = true);
+            button.setAttribute('aria-expanded', 'false');
+            button.textContent = 'Expand section';
+        }
+    });
+});
+</script>
 @endpush
