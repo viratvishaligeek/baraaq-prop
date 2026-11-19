@@ -92,7 +92,9 @@
             @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage') || auth()->user()->hasPermission('users.manage') || auth()->user()->hasPermission('newsletters.manage'))
                 <details class="sidebar-group" @if (request()->routeIs('admin.settings.*') || request()->routeIs('admin.newsletters.*') || request()->routeIs('admin.roles.*') || request()->routeIs('admin.users.*')) open @endif>
                     <summary><i class="fa-solid fa-gear"></i> Settings</summary>
-                    <a class="sidebar-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}" href="{{ route('admin.settings.edit') }}">General settings</a>
+                    @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage'))
+                        <a class="sidebar-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}" href="{{ route('admin.settings.edit') }}">General settings</a>
+                    @endif
                     @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('newsletters.manage'))
                         <a class="sidebar-link {{ request()->routeIs('admin.newsletters.*') ? 'active' : '' }}" href="{{ route('admin.newsletters.index') }}">Newsletter subscribers</a>
                     @endif
