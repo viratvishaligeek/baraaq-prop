@@ -61,7 +61,7 @@ class DashboardWidgetManagementTest extends TestCase
 
     private function administratorWithSettingsPermission(): User
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['is_active' => true]);
         $role = Role::create(['name' => 'Administrator', 'slug' => 'administrator']);
         $permission = Permission::create(['name' => 'Manage settings', 'slug' => 'settings.manage', 'group' => 'settings']);
         $dashboardPermission = Permission::create(['name' => 'View dashboard', 'slug' => 'dashboard.view', 'group' => 'dashboard']);
