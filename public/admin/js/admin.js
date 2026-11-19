@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 button.type = 'button';
                 button.className = 'btn btn-light border w-100 h-100 p-2 text-start';
                 const image = document.createElement('img');
-                image.src = item.url;
+                image.src = item.thumbnail_url || item.url;
                 image.alt = item.alt || item.name;
                 image.className = 'w-100 rounded mb-2';
                 image.style.cssText = 'height:110px;object-fit:cover';
@@ -146,6 +146,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    async function makeMediaVariant(file, maxWidth, maxHeight) {
+        const bitmap = await createImageBitmap(file);
+        const ratio = Math.min(1, maxWidth / bitmap.width, maxHeight / bitmap.height);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(bitmap.width * ratio));
+        canvas.height = Math.max(1, Math.round(bitmap.height * ratio));
+        canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+        bitmap.close?.();
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/webp', .84));
+        if (!blob) throw new Error('Could not generate a responsive image variant.');
+        return new File([blob], file.name.replace(/\.[^.]+$/, '') + '.webp', { type: 'image/webp' });
+    }
+
     uploadForm?.addEventListener('submit', async event => {
         event.preventDefault();
         const files = uploadForm.querySelector('input[type="file"]');
@@ -157,9 +170,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         status.textContent = 'Uploading images to the Media Library…';
         try {
+            const formData = new FormData(uploadForm);
+            for (const [index, file] of Array.from(files.files).entries()) {
+                if (!file.type.startsWith('image/') || file.type === 'image/gif') continue;
+                for (const [size, dimensions] of Object.entries({ small: [320, 240], medium: [900, 700], large: [1600, 1200] })) {
+                    formData.append('variants[' + index + '][' + size + ']', await makeMediaVariant(file, ...dimensions));
+                }
+            }
             const response = await fetch(uploadForm.action, {
                 method: 'POST',
-                body: new FormData(uploadForm),
+                body: formData,
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',

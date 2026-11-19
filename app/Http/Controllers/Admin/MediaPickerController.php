@@ -29,24 +29,38 @@ class MediaPickerController extends Controller
         $data = $request->validate([
             'files' => ['required', 'array', 'min:1', 'max:20'],
             'files.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240'],
+            'variants' => ['sometimes', 'array'],
+            'variants.*' => ['sometimes', 'array'],
+            'variants.*.small' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'variants.*.medium' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'variants.*.large' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
         ]);
 
-        $uploaded = collect($data['files'])->map(function ($file) use ($request) {
+        $uploaded = collect($data['files'])->map(function ($file, $index) use ($request, $data) {
             $path = $file->store('media', 'public');
-
-            $media = Media::create([
+            $attributes = [
                 'uploaded_by' => $request->user()->id,
                 'disk' => 'public',
                 'path' => $path,
                 'original_name' => $file->getClientOriginalName(),
                 'mime_type' => $file->getMimeType(),
                 'size' => $file->getSize(),
-            ]);
+            ];
+            foreach (['small', 'medium', 'large'] as $size) {
+                $variant = $data['variants'][$index][$size] ?? null;
+                if ($variant) {
+                    $attributes[$size . '_path'] = $variant->store('media/variants/' . $size, 'public');
+                }
+            }
+            $media = Media::create($attributes);
 
             return [
                 'id' => $media->id,
                 'name' => $media->original_name,
                 'url' => $media->url,
+                'thumbnail_url' => $media->thumbnail_url,
+                'medium_url' => $media->medium_url,
+                'large_url' => $media->large_url,
                 'alt' => $media->alt_text,
                 'mime_type' => $media->mime_type,
                 'size' => $media->size,
@@ -73,6 +87,9 @@ class MediaPickerController extends Controller
                 'id' => $item->id,
                 'name' => $item->original_name,
                 'url' => Storage::disk($item->disk)->url($item->path),
+                'thumbnail_url' => $item->thumbnail_url,
+                'medium_url' => $item->medium_url,
+                'large_url' => $item->large_url,
                 'alt' => $item->alt_text,
                 'mime_type' => $item->mime_type,
                 'size' => $item->size,
