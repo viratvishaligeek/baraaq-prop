@@ -32,6 +32,8 @@
                         @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('properties.manage') || auth()->user()->hasPermission('properties.create'))
                             <a class="sidebar-link {{ request()->routeIs('admin.properties.create') ? 'active' : '' }}" href="{{ route('admin.properties.create') }}">Add new property</a>
                         @endif
+                        <a class="sidebar-link {{ request()->routeIs('admin.properties.types') ? 'active' : '' }}" href="{{ route('admin.properties.types') }}">Property types</a>
+                        <a class="sidebar-link {{ request()->routeIs('admin.properties.amenities') ? 'active' : '' }}" href="{{ route('admin.properties.amenities') }}">Property amenities</a>
                     @endif
                     @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('enquiries.manage'))
                         <a class="sidebar-link {{ request()->routeIs('admin.enquiries.*') ? 'active' : '' }}" href="{{ route('admin.enquiries.index') }}">Property enquiries</a>
