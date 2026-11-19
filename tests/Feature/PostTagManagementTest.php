@@ -59,6 +59,24 @@ class PostTagManagementTest extends TestCase
             ->assertSee('Investment');
     }
 
+
+    public function test_public_blog_can_filter_posts_by_tag(): void
+    {
+        $tag = Tag::create(['name' => 'Home buying', 'slug' => 'home-buying']);
+        $post = Post::create([
+            'title' => 'A home buying checklist',
+            'slug' => 'home-buying-checklist',
+            'content' => '<p>Checklist</p>',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        $post->tags()->attach($tag);
+
+        $this->get(route('blog.index', ['tag' => $tag->slug]))
+            ->assertOk()
+            ->assertSee('A home buying checklist');
+    }
+
     private function administrator(): User
     {
         $this->seed(RolePermissionSeeder::class);
