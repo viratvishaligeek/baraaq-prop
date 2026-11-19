@@ -32,7 +32,7 @@ class TagController extends Controller
     {
         $this->authorizeTags();
         $data = $request->validate(['name' => ['required', 'string', 'max:120'], 'slug' => ['nullable', 'string', 'max:140', 'unique:tags,slug']]);
-        $data['slug'] = $this->uniqueSlug($data['slug'] ?: $data['name']);
+        $data['slug'] = $this->uniqueSlug(($data['slug'] ?? null) ?: $data['name']);
         Tag::create($data);
         return redirect()->route('admin.tags.index')->with('success', 'Tag created.');
     }
@@ -47,7 +47,7 @@ class TagController extends Controller
     {
         $this->authorizeTags();
         $data = $request->validate(['name' => ['required', 'string', 'max:120'], 'slug' => ['nullable', 'string', 'max:140', Rule::unique('tags', 'slug')->ignore($tag->id)]]);
-        $data['slug'] = $this->uniqueSlug($data['slug'] ?: $data['name'], $tag->id);
+        $data['slug'] = $this->uniqueSlug(($data['slug'] ?? null) ?: $data['name'], $tag->id);
         $tag->update($data);
         return redirect()->route('admin.tags.index')->with('success', 'Tag updated.');
     }

@@ -45,7 +45,7 @@ class DashboardWidgetManagementTest extends TestCase
         $this->assertFalse($saved['properties']['enabled']);
         $this->assertSame('properties', $saved['published_properties']['destination']);
         $this->assertSame('enquiries', $saved['new_enquiries']['destination']);
-        $this->assertSame(6, $saved['new_enquiries']['order']);
+        $this->assertSame(7, $saved['new_enquiries']['order']);
 
         $this->get(route('admin.dashboard'))
             ->assertOk()
