@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\ReusableSectionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\ServiceBuilderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WidgetController;
 use Illuminate\Support\Facades\Route;
@@ -85,6 +86,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::patch('/pages/{page}/widgets/{section}/toggle', [PageBuilderController::class, 'toggle'])->middleware('permission:pages.manage')->name('pages.widgets.toggle');
         Route::delete('/pages/{page}/widgets/{section}', [PageBuilderController::class, 'destroy'])->middleware('permission:pages.manage')->name('pages.widgets.delete');
         Route::patch('/pages/{page}/publish', [PageBuilderController::class, 'publish'])->middleware('permission:pages.manage')->name('pages.publish');
+
+        Route::get('/services/{service}/builder', [ServiceBuilderController::class, 'edit'])->middleware('permission:services.manage')->name('services.builder');
+        Route::get('/services/{service}/builder/preview', [ServiceBuilderController::class, 'preview'])->middleware('permission:services.manage')->name('services.preview');
+        Route::post('/services/{service}/widgets', [ServiceBuilderController::class, 'add'])->middleware('permission:services.manage')->name('services.widgets.add');
+        Route::patch('/services/{service}/widgets/reorder', [ServiceBuilderController::class, 'reorder'])->middleware('permission:services.manage')->name('services.widgets.reorder');
+        Route::patch('/services/{service}/widgets/{section}', [ServiceBuilderController::class, 'update'])->middleware('permission:services.manage')->name('services.widgets.update');
+        Route::post('/services/{service}/widgets/{section}/duplicate', [ServiceBuilderController::class, 'duplicate'])->middleware('permission:services.manage')->name('services.widgets.duplicate');
+        Route::patch('/services/{service}/widgets/{section}/toggle', [ServiceBuilderController::class, 'toggle'])->middleware('permission:services.manage')->name('services.widgets.toggle');
+        Route::delete('/services/{service}/widgets/{section}', [ServiceBuilderController::class, 'destroy'])->middleware('permission:services.manage')->name('services.widgets.delete');
+        Route::patch('/services/{service}/publish', [ServiceBuilderController::class, 'publish'])->middleware('permission:services.manage')->name('services.publish');
 
         Route::get('/content/{type}', [ContentController::class, 'index'])->name('content.index');
         Route::get('/content/{type}/create', [ContentController::class, 'create'])->name('content.create');

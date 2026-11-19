@@ -7,6 +7,7 @@ use App\Models\HomepageSection;
 use App\Models\Media;
 use App\Models\Page;
 use App\Models\Post;
+use App\Models\Service;
 use App\Models\Property;
 use App\Models\TeamMember;
 use App\Services\Widgets\CmsWidgetRegistry;
@@ -81,7 +82,7 @@ class PageBuilderService
 
     public function save(Page|Service $page, HomepageSection $section, array $input): void
     {
-        abort_unless($section->page_id === $page->id, 404);
+        abort_unless(($page instanceof Page ? $section->page_id : $section->service_id) === $page->id, 404);
         $targetKey = $input['section_key'] ?? $section->section_key;
         $definition = $this->registry->find($targetKey);
         abort_unless($definition && $definition['type'] === $section->section_type, 422, 'Choose a registered design from the same widget family.');

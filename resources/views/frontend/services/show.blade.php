@@ -37,21 +37,24 @@
         </div>
     </div>
 
-    <section class="space">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-9">
-                    @if ($service->featured_image)
-                        <img class="w-100 rounded mb-4" src="{{ Storage::disk('public')->url($service->featured_image) }}" alt="{{ $service->title }}">
-                    @endif
-
-                    @if ($service->excerpt)
-                        <p class="lead">{{ $service->excerpt }}</p>
-                    @endif
-
-                    <div>{!! \App\Support\HtmlSanitizer::sanitize($service->content) !!}</div>
+    @if ($service->sections->isNotEmpty())
+        @include('frontend.partials.page-sections', ['page' => $service])
+    @else
+        <section class="space">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9">
+                        @if ($service->featured_image)
+                            <img class="w-100 rounded mb-4" src="{{ Storage::disk('public')->url($service->featured_image) }}" alt="{{ $service->title }}">
+                        @endif
+                        @if ($service->excerpt)<p class="lead">{{ $service->excerpt }}</p>@endif
+                        <div>{!! \App\Support\HtmlSanitizer::sanitize($service->content) !!}</div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
+    @if (($isBuilderPreview ?? false) && $service->status === 'draft')
+        <div class="container py-3"><span class="badge bg-warning text-dark">Draft preview — not publicly published</span></div>
+    @endif
 @endsection

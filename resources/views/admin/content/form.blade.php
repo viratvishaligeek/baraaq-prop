@@ -6,6 +6,8 @@
         <h1 class="page-title mt-2">{{ $item->exists ? 'Edit' : 'Add' }} {{ rtrim($type, 's') }}</h1>
         @if ($type === 'pages' && $item->exists)
             <a class="btn btn-outline-primary btn-sm mt-2" href="{{ route('admin.pages.builder', $item) }}">Open universal page builder</a>
+        @elseif ($type === 'services' && $item->exists)
+            <a class="btn btn-outline-primary btn-sm mt-2" href="{{ route('admin.services.builder', $item) }}">Open service widget builder</a>
         @endif
     </div>
     <form method="POST" enctype="multipart/form-data"
