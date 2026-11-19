@@ -202,6 +202,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!blob){cropStatus.textContent='Could not encode the edited image.';return;}
         const formData=new FormData();formData.append('image',new File([blob],'edited.webp',{type:'image/webp'}));formData.append('alt_text',document.getElementById('media-edited-alt').value);formData.append('_token',document.querySelector('meta[name="csrf-token"]').content);
         try{
+            for (const [size, dimensions] of Object.entries({small:[320,240],medium:[900,700],large:[1600,1200]})) {
+                const ratio=Math.min(1,dimensions[0]/outWidth,dimensions[1]/outHeight);
+                const variantCanvas=document.createElement('canvas');variantCanvas.width=Math.max(1,Math.round(outWidth*ratio));variantCanvas.height=Math.max(1,Math.round(outHeight*ratio));
+                variantCanvas.getContext('2d').drawImage(output,0,0,variantCanvas.width,variantCanvas.height);
+                const variantBlob=await new Promise(resolve=>variantCanvas.toBlob(resolve,'image/webp',.84));
+                if(!variantBlob)throw new Error('Could not generate responsive image variants.');
+                formData.append('variants['+size+']',new File([variantBlob],size+'.webp',{type:'image/webp'}));
+            }
             const response=await fetch(saveUrl,{method:'POST',body:formData,headers:{'Accept':'application/json','X-Requested-With':'XMLHttpRequest'}});
             if(!response.ok){const payload=await response.json().catch(()=>({}));throw new Error(payload.message||'Could not save the edited image.');}
             window.location.reload();

@@ -66,7 +66,7 @@ class MediaController extends Controller
                 continue;
             }
 
-            Storage::disk($media->disk)->delete($media->path);
+            $this->deleteFiles($media);
             $media->delete();
             $deleted++;
         }
@@ -84,12 +84,15 @@ class MediaController extends Controller
         $data = $request->validate([
             'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
             'alt_text' => ['nullable', 'string', 'max:255'],
+            'variants' => ['sometimes', 'array'],
+            'variants.small' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'variants.medium' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'variants.large' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
         ]);
 
         $file = $data['image'];
         $path = $file->store('media/edited', 'public');
-
-        $copy = Media::create([
+        $attributes = [
             'uploaded_by' => $request->user()->id,
             'disk' => 'public',
             'path' => $path,
@@ -97,7 +100,13 @@ class MediaController extends Controller
             'mime_type' => $file->getMimeType(),
             'size' => $file->getSize(),
             'alt_text' => $data['alt_text'] ?? $media->alt_text,
-        ]);
+        ];
+        foreach (['small', 'medium', 'large'] as $size) {
+            if (! empty($data['variants'][$size])) {
+                $attributes[$size . '_path'] = $data['variants'][$size]->store('media/variants/' . $size, 'public');
+            }
+        }
+        $copy = Media::create($attributes);
 
         return response()->json([
             'saved' => true,
@@ -116,15 +125,25 @@ class MediaController extends Controller
         if ($media->attachments()->exists() || $this->isReferencedByContent($media)) {
             return back()->withErrors(['media' => 'This image is currently used by website content, a property gallery, a homepage or a reusable section. Replace or clear those references before deleting it.']);
         }
-        Storage::disk($media->disk)->delete($media->path);
+        $this->deleteFiles($media);
         $media->delete();
         return back()->with('success', 'Media deleted.');
+    }
+
+    private function deleteFiles(Media $media): void
+    {
+        foreach ([$media->path, $media->small_path, $media->medium_path, $media->large_path] as $path) {
+            if ($path) {
+                Storage::disk($media->disk)->delete($path);
+            }
+        }
     }
 
     private function isReferencedByContent(Media $media): bool
     {
         $references = [
             'properties' => ['featured_image', 'og_image'],
+            'property_accommodations' => ['image_media_id'],
             'property_images' => ['path'],
             'posts' => ['featured_image', 'og_image'],
             'services' => ['featured_image', 'og_image'],
