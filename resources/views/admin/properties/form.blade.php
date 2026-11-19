@@ -472,7 +472,8 @@
                 const item = addAttribute.closest('.accommodation-item');
                 const index = item.dataset.spaceIndex;
                 const attributes = item.querySelector('.space-attributes');
-                const attributeIndex = attributes.querySelectorAll('.space-attribute').length;
+                const existingAttributeIndexes = [...attributes.querySelectorAll('input[name*="[attributes]["]')].map(input => Number(input.name.match(/\[attributes\]\[(\d+)\]/)?.[1] ?? -1));
+                const attributeIndex = Math.max(-1, ...existingAttributeIndexes) + 1;
                 const row = document.createElement('div');
                 row.className = 'row g-2 mb-2 space-attribute';
                 row.innerHTML = '<div class="col-5"><input class="form-control form-control-sm" name="accommodations['+index+'][attributes]['+attributeIndex+'][key]" placeholder="Attribute name" required></div><div class="col-5"><input class="form-control form-control-sm" name="accommodations['+index+'][attributes]['+attributeIndex+'][value]" placeholder="Value"></div><div class="col-2"><button type="button" class="btn btn-sm btn-outline-danger remove-space-attribute">×</button></div>';
