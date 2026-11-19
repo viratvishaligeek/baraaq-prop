@@ -7,12 +7,30 @@ use App\Models\Post;
 use App\Models\Property;
 use App\Models\Service;
 use App\Models\Setting;
+use App\Models\Role;
+use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class SeoIndexingTest extends TestCase
 {
     use RefreshDatabase;
+
+
+    public function test_admin_can_open_sitemap_and_indexing_settings_overview(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+        $user = User::factory()->create(['is_active' => true]);
+        $user->roles()->attach(Role::query()->where('slug', 'administrator')->firstOrFail());
+
+        $this->actingAs($user)
+            ->get(route('admin.seo.indexing'))
+            ->assertOk()
+            ->assertSee('Sitemap and indexing')
+            ->assertSee(route('sitemap'), false)
+            ->assertSee('robots.txt');
+    }
 
     public function test_robots_txt_uses_configured_safe_directives_and_appends_sitemap(): void
     {
