@@ -116,7 +116,6 @@
                         <a class="sidebar-link {{ request()->routeIs('admin.newsletters.*') ? 'active' : '' }}" href="{{ route('admin.newsletters.index') }}">Newsletter subscribers</a>
                     @endif
                     @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('users.manage'))
-                        <a class="sidebar-link {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" href="{{ route('admin.roles.index') }}">Roles & permissions</a>
                         <a class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">User management</a>
                         <a class="sidebar-link {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" href="{{ route('admin.roles.index') }}">Admin settings</a>
                     @endif
