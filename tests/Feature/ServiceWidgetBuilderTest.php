@@ -45,6 +45,13 @@ class ServiceWidgetBuilderTest extends TestCase
         $this->assertSame($service->id, $section->service_id);
         $this->assertNull($section->page_id);
 
+        $this->actingAs($user)
+            ->patch(route('admin.services.widgets.update', [$service, $section]), [
+                'config' => ['heading' => 'Updated service heading'],
+            ])
+            ->assertRedirect();
+        $this->assertSame('Updated service heading', $section->fresh()->config['heading']);
+
         $second = app(PageBuilderService::class)->duplicate($service, $section);
         $response = $this->actingAs($user)->patchJson(route('admin.services.widgets.reorder', $service), [
             'sections' => [$second->id, $section->id],
