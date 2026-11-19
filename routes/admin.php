@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\ServiceBuilderController;
 use App\Http\Controllers\Admin\SectionPreviewController;
+use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WidgetController;
 use Illuminate\Support\Facades\Route;
@@ -100,6 +101,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/services/{service}/widgets/{section}', [ServiceBuilderController::class, 'destroy'])->middleware('permission:services.manage')->name('services.widgets.delete');
         Route::patch('/services/{service}/publish', [ServiceBuilderController::class, 'publish'])->middleware('permission:services.manage')->name('services.publish');
 
+        Route::resource('tags', TagController::class)->except(['show'])->middleware('permission:tags.manage');
         Route::get('/content/{type}', [ContentController::class, 'index'])->name('content.index');
         Route::get('/content/{type}/create', [ContentController::class, 'create'])->name('content.create');
         Route::post('/content/{type}', [ContentController::class, 'store'])->name('content.store');

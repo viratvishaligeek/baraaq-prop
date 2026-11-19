@@ -11,6 +11,7 @@ use App\Models\Post;
 use App\Models\Service;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
+use App\Models\Tag;
 use App\Support\HtmlSanitizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -95,7 +96,7 @@ class ContentController extends Controller
     public function create(string $type)
     {
         $model = $this->model($type);
-        return view('admin.content.form', ['type' => $type, 'item' => new $model, 'categories' => $type === 'posts' ? Category::where('type', 'post')->orderBy('name')->get() : collect(), 'parentCategories' => $type === 'categories' ? Category::orderBy('name')->get() : collect(), 'mediaItems' => Media::where('mime_type', 'like', 'image/%')->latest()->limit(100)->get(['id', 'path', 'original_name'])]);
+        return view('admin.content.form', ['type' => $type, 'item' => new $model, 'categories' => $type === 'posts' ? Category::where('type', 'post')->orderBy('name')->get() : collect(), 'tags' => $type === 'posts' ? Tag::orderBy('name')->get() : collect(), 'selectedTagIds' => [], 'parentCategories' => $type === 'categories' ? Category::orderBy('name')->get() : collect(), 'mediaItems' => Media::where('mime_type', 'like', 'image/%')->latest()->limit(100)->get(['id', 'path', 'original_name'])]);
     }
 
     public function store(Request $request, string $type)
@@ -108,7 +109,8 @@ class ContentController extends Controller
         $this->authorizePublish($type, $data['status'] ?? 'draft');
         $this->applyMediaSelections($data);
         $categoryIds = $data['category_ids'] ?? [];
-        unset($data['category_ids']);
+        $tagIds = $data['tag_ids'] ?? [];
+        unset($data['category_ids'], $data['tag_ids']);
         if (isset($data['title']) && in_array($type, ['posts', 'pages', 'services']))
             $data['slug'] = $this->uniqueSlug($model, $data['slug'] ?? $data['title']);
         if (isset($data['name']) && $type === 'categories')
@@ -126,10 +128,12 @@ class ContentController extends Controller
             $links = json_decode($data['social_links'], true);
             $data['social_links'] = is_array($links) ? $links : [];
         }
-        $item = DB::transaction(function () use ($model, $data, $type, $categoryIds) {
+        $item = DB::transaction(function () use ($model, $data, $type, $categoryIds, $tagIds) {
             $created = $model::create($data);
-            if ($type === 'posts')
+            if ($type === 'posts') {
                 $created->categories()->sync($categoryIds);
+                $created->tags()->sync($tagIds);
+            }
             return $created;
         });
         return redirect()->route('admin.content.index', $type)->with('success', ucfirst($type) . ' item created.');
@@ -139,7 +143,7 @@ class ContentController extends Controller
     {
         $model = $this->model($type);
         $item = $model::findOrFail($id);
-        return view('admin.content.form', ['type' => $type, 'item' => $item, 'categories' => $type === 'posts' ? Category::where('type', 'post')->orderBy('name')->get() : collect(), 'parentCategories' => $type === 'categories' ? Category::where('type', $item->type)->where('id', '!=', $item->id)->orderBy('name')->get() : collect(), 'mediaItems' => Media::where('mime_type', 'like', 'image/%')->latest()->limit(100)->get(['id', 'path', 'original_name'])]);
+        return view('admin.content.form', ['type' => $type, 'item' => $item, 'categories' => $type === 'posts' ? Category::where('type', 'post')->orderBy('name')->get() : collect(), 'tags' => $type === 'posts' ? Tag::orderBy('name')->get() : collect(), 'selectedTagIds' => $type === 'posts' ? $item->tags()->pluck('tags.id')->all() : [], 'parentCategories' => $type === 'categories' ? Category::where('type', $item->type)->where('id', '!=', $item->id)->orderBy('name')->get() : collect(), 'mediaItems' => Media::where('mime_type', 'like', 'image/%')->latest()->limit(100)->get(['id', 'path', 'original_name'])]);
     }
 
     public function update(Request $request, string $type, int $id)
@@ -153,7 +157,8 @@ class ContentController extends Controller
         $this->authorizePublish($type, $data['status'] ?? $item->status, $item->status);
         $this->applyMediaSelections($data);
         $categoryIds = $data['category_ids'] ?? [];
-        unset($data['category_ids']);
+        $tagIds = $data['tag_ids'] ?? [];
+        unset($data['category_ids'], $data['tag_ids']);
         if (isset($data['title']) && in_array($type, ['posts', 'pages', 'services']))
             $data['slug'] = $this->uniqueSlug($model, $data['slug'] ?? $data['title'], $item->id);
         if (isset($data['name']) && $type === 'categories')
@@ -178,10 +183,12 @@ class ContentController extends Controller
             $links = json_decode($data['social_links'], true);
             $data['social_links'] = is_array($links) ? $links : [];
         }
-        DB::transaction(function () use ($item, $data, $type, $categoryIds) {
+        DB::transaction(function () use ($item, $data, $type, $categoryIds, $tagIds) {
             $item->update($data);
-            if ($type === 'posts')
+            if ($type === 'posts') {
                 $item->categories()->sync($categoryIds);
+                $item->tags()->sync($tagIds);
+            }
         });
         foreach ($oldFiles as $path)
             Storage::disk('public')->delete($path);
@@ -198,7 +205,7 @@ class ContentController extends Controller
     private function validated(Request $request, string $type, ?int $id = null): array
     {
         $rules = match ($type) {
-            'posts' => ['title' => ['required', 'string', 'max:255'], 'slug' => ['nullable', 'string', 'max:255', Rule::unique('posts')->ignore($id)], 'excerpt' => ['nullable', 'string'], 'content' => ['nullable', 'string'], 'category_ids' => ['nullable', 'array'], 'category_ids.*' => ['integer', Rule::exists('categories', 'id')->where('type', 'post')], 'featured_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'], 'status' => ['required', 'in:draft,published,archived'], 'meta_title' => ['nullable', 'string', 'max:255'], 'meta_description' => ['nullable', 'string', 'max:1000'], 'focus_keyword' => ['nullable', 'string', 'max:160'], 'og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120']],
+            'posts' => ['title' => ['required', 'string', 'max:255'], 'slug' => ['nullable', 'string', 'max:255', Rule::unique('posts')->ignore($id)], 'excerpt' => ['nullable', 'string'], 'content' => ['nullable', 'string'], 'category_ids' => ['nullable', 'array'], 'category_ids.*' => ['integer', Rule::exists('categories', 'id')->where('type', 'post')], 'tag_ids' => ['nullable', 'array'], 'tag_ids.*' => ['integer', 'distinct', Rule::exists('tags', 'id')], 'featured_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'], 'status' => ['required', 'in:draft,published,archived'], 'meta_title' => ['nullable', 'string', 'max:255'], 'meta_description' => ['nullable', 'string', 'max:1000'], 'focus_keyword' => ['nullable', 'string', 'max:160'], 'og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120']],
             'pages' => ['title' => ['required', 'string', 'max:255'], 'slug' => ['nullable', 'string', 'max:255', Rule::unique('pages')->ignore($id)], 'content' => ['nullable', 'string'], 'status' => ['required', 'in:draft,published,archived'], 'meta_title' => ['nullable', 'string', 'max:255'], 'meta_description' => ['nullable', 'string', 'max:1000'], 'focus_keyword' => ['nullable', 'string', 'max:160'], 'og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120']],
             'categories' => ['name' => ['required', 'string', 'max:150'], 'slug' => ['nullable', 'string', 'max:180', Rule::unique('categories')->ignore($id)], 'description' => ['nullable', 'string'], 'icon_path' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp', 'max:2048'], 'sort_order' => ['nullable', 'integer', 'min:0'], 'is_active' => ['sometimes', 'boolean'], 'parent_id' => ['nullable', Rule::exists('categories', 'id')->where(fn($q) => $q->where('type', $request->input('type'))->when($id, fn($q) => $q->where('id', '!=', $id)))], 'type' => ['required', 'in:property,post']],
             'banners' => ['title' => ['required', 'string', 'max:255'], 'subtitle' => ['nullable', 'string', 'max:255'], 'description' => ['nullable', 'string'], 'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'], 'button_text' => ['nullable', 'string', 'max:100'], 'button_url' => ['nullable', 'string', 'max:2048', 'regex:/^(https?:\/\/|\/|#)/i'], 'placement' => ['required', 'string', 'max:60'], 'sort_order' => ['nullable', 'integer', 'min:0'], 'starts_at' => ['nullable', 'date'], 'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'], 'is_active' => ['sometimes', 'boolean']],

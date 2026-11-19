@@ -283,6 +283,18 @@
                         </div>
                         @if ($type === 'posts')
                             <div class="col-12">
+                                <label class="form-label">Tags</label>
+                                <div class="border rounded p-3 d-flex flex-wrap gap-3">
+                                    @forelse ($tags as $tag)
+                                        <label class="form-check mb-0"><input class="form-check-input" type="checkbox" name="tag_ids[]" value="{{ $tag->id }}" @checked(in_array($tag->id, old('tag_ids', $selectedTagIds ?? [])))> <span class="form-check-label">{{ $tag->name }}</span></label>
+                                    @empty
+                                        <span class="small text-muted">No tags created. <a href="{{ route('admin.tags.index') }}">Manage tags</a>.</span>
+                                    @endforelse
+                                </div>
+                            </div>
+                        @endif
+                        @if ($type === 'posts')
+                            <div class="col-12">
                                 <label class="form-label">Categories</label>
                                 <div class="row">
                                     @foreach ($categories as $category)

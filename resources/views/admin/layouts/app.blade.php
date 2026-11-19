@@ -49,6 +49,9 @@
                 @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('categories.manage') || auth()->user()->hasPermission('categories.view') || auth()->user()->hasPermission('categories.create') || auth()->user()->hasPermission('categories.edit'))
                     <a class="sidebar-link {{ request()->route('type') === 'categories' ? 'active' : '' }}" href="{{ route('admin.content.index', 'categories') }}">Categories</a>
                 @endif
+                @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('tags.manage'))
+                    <a class="sidebar-link {{ request()->routeIs('admin.tags.*') ? 'active' : '' }}" href="{{ route('admin.tags.index') }}">Tags</a>
+                @endif
                 @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('services.manage') || auth()->user()->hasPermission('services.view') || auth()->user()->hasPermission('services.create') || auth()->user()->hasPermission('services.edit'))
                     <a class="sidebar-link {{ request()->route('type') === 'services' ? 'active' : '' }}" href="{{ route('admin.content.index', 'services') }}">Services</a>
                 @endif
