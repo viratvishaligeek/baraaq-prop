@@ -8,6 +8,24 @@
         </div>
         <a class="btn btn-primary" href="{{ route('admin.widgets.create') }}">Create widget</a>
     </div>
+
+    <div class="content-card mb-4">
+        <h2 class="h5 mb-3">Registered design variations</h2>
+        @foreach($registeredWidgetGroups as $group => $variations)
+            <details class="border rounded p-3 mb-2" @if($loop->first) open @endif>
+                <summary class="fw-semibold">{{ $group }} <span class="small text-muted">({{ count($variations) }})</span></summary>
+                <div class="row g-2 mt-2">
+                    @foreach($variations as $variation)
+                        <div class="col-md-6 col-xl-4"><div class="border rounded p-2 h-100">
+                            <div class="fw-semibold">{{ $variation['label'] }}</div>
+                            <div class="small text-muted mb-2">{{ $variation['design'] }} · {{ $variation['type'] }}</div>
+                            <a class="small" href="{{ route('admin.sections.preview', $variation['key']) }}" target="_blank" rel="noopener">Preview variation</a>
+                        </div></div>
+                    @endforeach
+                </div>
+            </details>
+        @endforeach
+    </div>
     <div class="row g-3 mb-4">
         @foreach ($areas as $area)
             <div class="col-lg-6">

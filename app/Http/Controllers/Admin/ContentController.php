@@ -86,6 +86,7 @@ class ContentController extends Controller
                 });
             })
             ->when(request()->filled('status') && in_array($type, ['posts', 'pages', 'services', 'team', 'testimonials']), fn($query) => $query->where('status', request('status')))
+            ->when($type === 'categories' && request()->filled('category_type'), fn ($query) => $query->where('type', request('category_type')))
             ->latest()
             ->paginate(20)
             ->withQueryString();

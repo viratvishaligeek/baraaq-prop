@@ -19,6 +19,7 @@ class WidgetController extends Controller
         return view('admin.widgets.index', [
             'widgets' => Widget::with('areas')->latest()->paginate(20),
             'areas' => WidgetArea::orderBy('name')->get(),
+            'registeredWidgetGroups' => app(CmsWidgetRegistry::class)->grouped(),
         ]);
     }
 
