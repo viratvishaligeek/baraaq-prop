@@ -87,6 +87,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/pages/{page}/widgets/{section}', [PageBuilderController::class, 'destroy'])->middleware('permission:pages.manage')->name('pages.widgets.delete');
         Route::patch('/pages/{page}/publish', [PageBuilderController::class, 'publish'])->middleware('permission:pages.manage')->name('pages.publish');
 
+        Route::post('/services/{service}/builder/duplicate', [ServiceBuilderController::class, 'duplicateDraft'])->middleware('permission:services.manage')->name('services.duplicate');
         Route::get('/services/{service}/builder', [ServiceBuilderController::class, 'edit'])->middleware('permission:services.manage')->name('services.builder');
         Route::get('/services/{service}/builder/preview', [ServiceBuilderController::class, 'preview'])->middleware('permission:services.manage')->name('services.preview');
         Route::post('/services/{service}/widgets', [ServiceBuilderController::class, 'add'])->middleware('permission:services.manage')->name('services.widgets.add');

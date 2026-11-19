@@ -55,6 +55,47 @@ class ServiceBuilderController extends Controller
         ]);
     }
 
+
+    public function duplicateDraft(Service $service)
+    {
+        $this->authorizeServices();
+
+        $copy = DB::transaction(function () use ($service) {
+            $draft = $service->replicate();
+            $draft->title = $service->title . ' (Draft)';
+            $base = Str::slug($service->slug . '-draft');
+            $slug = $base;
+            $suffix = 2;
+            while (Service::withTrashed()->where('slug', $slug)->exists()) {
+                $slug = $base . '-' . $suffix++;
+            }
+            $draft->slug = $slug;
+            $draft->status = 'draft';
+            $draft->published_at = null;
+            $draft->save();
+
+            foreach ($service->sections as $section) {
+                $sectionCopy = $section->replicate();
+                $sectionCopy->service_id = $draft->id;
+                $sectionCopy->page_id = null;
+                $sectionCopy->instance_key = (string) Str::uuid();
+                $sectionCopy->save();
+
+                foreach ($section->mediaAttachments as $attachment) {
+                    $sectionCopy->mediaAttachments()->create([
+                        'field_key' => $attachment->field_key,
+                        'media_id' => $attachment->media_id,
+                    ]);
+                }
+            }
+
+            return $draft;
+        });
+
+        return redirect()->route('admin.services.builder', $copy)
+            ->with('success', 'A separate service draft was created. The published service remains unchanged.');
+    }
+
     public function add(Request $request, Service $service)
     {
         $this->authorizeServices();
