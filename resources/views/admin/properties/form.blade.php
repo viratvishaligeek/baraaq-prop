@@ -243,7 +243,7 @@
                 <div class="content-card mt-4">
                     <h2 class="section-title">SEO</h2>
                     <label class="form-label">URL slug</label>
-                    <input class="form-control mb-3" name="slug" value="{{ old('slug', $property->slug) }}" placeholder="Generated from title">
+                    <input class="form-control mb-3" name="slug" data-slug-source="[name=title]" value="{{ old('slug', $property->slug) }}" placeholder="Generated from title">
                     <label class="form-label">SEO title</label>
                     <input class="form-control mb-3" name="meta_title"
                         value="{{ old('meta_title', $property->meta_title) }}">

@@ -156,6 +156,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('admin/js/admin.js') }}"></script>
     @include('admin.partials.rich-text-editor')
+    <script src="{{ asset('admin/js/slug-generator.js') }}"></script>
     @stack('scripts')
     @if (session('success'))
         <script>

@@ -315,7 +315,7 @@
                     @endif
                     <div class="col-md-6">
                         <label class="form-label">Slug</label>
-                        <input class="form-control" id="content-slug" name="slug" value="{{ old('slug', $item->slug) }}"
+                        <input class="form-control" id="content-slug" name="slug" data-slug-source="[name=title]" value="{{ old('slug', $item->slug) }}"
                             placeholder="Generated from title when empty">
                     </div>
                     <div class="col-md-6">
@@ -411,10 +411,8 @@
                 const titleCount = document.getElementById('content-title-count');
                 const descriptionCount = document.getElementById('content-description-count');
                 if (!title || !slug) return;
-                let slugManuallyEdited = Boolean(slug.value);
-                const slugify = value => value.normalize('NFKD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-                slug.addEventListener('input', () => { slugManuallyEdited = true; updatePreview(); });
-                title.addEventListener('input', () => { if (!slugManuallyEdited) slug.value = slugify(title.value); updatePreview(); });
+                slug.addEventListener('input', updatePreview);
+                title.addEventListener('input', updatePreview);
                 [seoTitle, seoDescription].forEach(input => input?.addEventListener('input', updatePreview));
                 function updatePreview() {
                     const displayTitle = seoTitle?.value || title.value || 'Page title';
