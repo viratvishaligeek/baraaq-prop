@@ -44,6 +44,7 @@
                     @endif
                     <h2>{{ $post->title }}</h2>
                     <div class="text-muted mb-4">{{ $post->published_at?->format('d M Y') }}</div>
+                    @if ($post->tags->isNotEmpty())<div class="d-flex flex-wrap gap-2 mb-4">@foreach ($post->tags as $tag)<a class="badge bg-light text-dark text-decoration-none" href="{{ route('blog.index', ['tag' => $tag->slug]) }}">{{ $tag->name }}</a>@endforeach</div>@endif
                     <div>{!! \App\Support\HtmlSanitizer::sanitize($post->content) !!}</div>
                 </div>
             </article>
