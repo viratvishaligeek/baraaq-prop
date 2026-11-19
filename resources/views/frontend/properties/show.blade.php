@@ -13,16 +13,26 @@
 @section('canonical_url', route('properties.show', $property))
 @section('og_image', $propertyOgImage)
 @section('structured_data')
-<script type="application/ld+json">@json([
-    '@context' => 'https://schema.org',
-    '@type' => 'RealEstateListing',
-    'name' => $property->title,
-    'description' => $property->meta_description ?: strip_tags($property->description ?? ''),
-    'url' => route('properties.show', $property),
-    'image' => $property->featured_image ? Storage::disk('public')->url($property->featured_image) : null,
-    'offers' => $property->price ? ['@type' => 'Offer', 'price' => (float) $property->price, 'priceCurrency' => 'INR'] : null,
-    'address' => ['@type' => 'PostalAddress', 'streetAddress' => $property->address, 'addressLocality' => $property->city, 'addressRegion' => $property->state, 'postalCode' => $property->postal_code, 'addressCountry' => $property->country ?: 'IN'],
-])</script>
+@php
+    $propertyStructuredData = [
+        '@context' => 'https://schema.org',
+        '@type' => 'RealEstateListing',
+        'name' => $property->title,
+        'description' => $property->meta_description ?: strip_tags($property->description ?? ''),
+        'url' => route('properties.show', $property),
+        'image' => $property->featured_image ? Storage::disk('public')->url($property->featured_image) : null,
+        'offers' => $property->price ? ['@type' => 'Offer', 'price' => (float) $property->price, 'priceCurrency' => 'INR'] : null,
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => $property->address,
+            'addressLocality' => $property->city,
+            'addressRegion' => $property->state,
+            'postalCode' => $property->postal_code,
+            'addressCountry' => $property->country ?: 'IN',
+        ],
+    ];
+@endphp
+<script type="application/ld+json">@json($propertyStructuredData)</script>
 @if($property->faqs->isNotEmpty())
     @php
         $faqStructuredData = [
