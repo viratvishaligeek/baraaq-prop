@@ -102,6 +102,20 @@ class MediaImageEditingTest extends TestCase
     }
 
 
+
+    public function test_image_management_filters_out_non_image_media(): void
+    {
+        $user = $this->administrator();
+        Media::create(['uploaded_by' => $user->id, 'disk' => 'public', 'path' => 'media/cover.webp', 'original_name' => 'cover.webp', 'mime_type' => 'image/webp', 'size' => 1200]);
+        Media::create(['uploaded_by' => $user->id, 'disk' => 'public', 'path' => 'media/guide.pdf', 'original_name' => 'guide.pdf', 'mime_type' => 'application/pdf', 'size' => 2400]);
+
+        $this->actingAs($user)
+            ->get(route('admin.media.index', ['type' => 'images']))
+            ->assertOk()
+            ->assertSee('cover.webp')
+            ->assertDontSee('guide.pdf');
+    }
+
     public function test_media_referenced_by_a_property_accommodation_cannot_be_deleted(): void
     {
         $user = $this->administrator();
