@@ -14,29 +14,28 @@
 @section('og_image', $propertyOgImage)
 @section('structured_data')
 @php
-    $propertyStructuredData = [
+    $structuredData = [
         '@context' => 'https://schema.org',
-        '@type' => 'RealEstateListing',
-        'name' => $property->title,
-        'description' => $property->meta_description ?: strip_tags($property->description ?? ''),
-        'url' => route('properties.show', $property),
-        'image' => $property->featured_image ? Storage::disk('public')->url($property->featured_image) : null,
-        'offers' => $property->price ? ['@type' => 'Offer', 'price' => (float) $property->price, 'priceCurrency' => 'INR'] : null,
-        'address' => [
-            '@type' => 'PostalAddress',
-            'streetAddress' => $property->address,
-            'addressLocality' => $property->city,
-            'addressRegion' => $property->state,
-            'postalCode' => $property->postal_code,
-            'addressCountry' => $property->country ?: 'IN',
-        ],
+        '@graph' => [[
+            '@type' => 'RealEstateListing',
+            'name' => $property->title,
+            'description' => $property->meta_description ?: strip_tags($property->description ?? ''),
+            'url' => route('properties.show', $property),
+            'image' => $property->featured_image ? Storage::disk('public')->url($property->featured_image) : null,
+            'offers' => $property->price ? ['@type' => 'Offer', 'price' => (float) $property->price, 'priceCurrency' => 'INR'] : null,
+            'address' => [
+                '@type' => 'PostalAddress',
+                'streetAddress' => $property->address,
+                'addressLocality' => $property->city,
+                'addressRegion' => $property->state,
+                'postalCode' => $property->postal_code,
+                'addressCountry' => $property->country ?: 'IN',
+            ],
+        ]],
     ];
-@endphp
-<script type="application/ld+json">@json($propertyStructuredData)</script>
-@if($property->faqs->isNotEmpty())
-    @php
-        $faqStructuredData = [
-            '@context' => 'https://schema.org',
+
+    if ($property->faqs->isNotEmpty()) {
+        $structuredData['@graph'][] = [
             '@type' => 'FAQPage',
             'mainEntity' => $property->faqs->map(function ($faq) {
                 return [
@@ -46,9 +45,9 @@
                 ];
             })->all(),
         ];
-    @endphp
-    <script type="application/ld+json">@json($faqStructuredData)</script>
-@endif
+    }
+@endphp
+<script type="application/ld+json">@json($structuredData)</script>
 @endsection
 @section('content')
 <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcumb-bg.jpg') }}">
