@@ -50,7 +50,7 @@ class DashboardWidgetManagementTest extends TestCase
         $this->get(route('admin.dashboard'))
             ->assertOk()
             ->assertSee('Published properties')
-            ->assertSee('New enquiries');
+            ->assertSee('Pending enquiries');
         $this->assertFalse($saved['posts']['enabled']);
     }
 
