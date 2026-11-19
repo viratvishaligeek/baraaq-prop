@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\ContentController;
+use App\Http\Controllers\Admin\ContentPreviewController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EnquiryController;
 use App\Http\Controllers\Admin\HomepageController;
@@ -109,6 +110,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::patch('/services/{service}/publish', [ServiceBuilderController::class, 'publish'])->middleware('permission:services.manage')->name('services.publish');
 
         Route::resource('tags', TagController::class)->except(['show'])->middleware('permission:tags.manage');
+        Route::get('/content/{type}/{id}/preview', [ContentPreviewController::class, 'show'])->name('content.preview');
         Route::get('/content/{type}', [ContentController::class, 'index'])->name('content.index');
         Route::get('/content/{type}/create', [ContentController::class, 'create'])->name('content.create');
         Route::post('/content/{type}', [ContentController::class, 'store'])->name('content.store');

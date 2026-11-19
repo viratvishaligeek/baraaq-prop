@@ -4,6 +4,9 @@
     <div class="mb-4">
         <a href="{{ route('admin.content.index', $type) }}" class="text-decoration-none small">← {{ ucfirst($type) }}</a>
         <h1 class="page-title mt-2">{{ $item->exists ? 'Edit' : 'Add' }} {{ rtrim($type, 's') }}</h1>
+            @if ($item->exists && in_array($type, ['posts', 'pages', 'services'], true))
+                <a class="btn btn-outline-primary btn-sm" href="{{ route('admin.content.preview', [$type, $item->id]) }}" target="_blank" rel="noopener">Preview content</a>
+            @endif
         @if ($type === 'pages' && $item->exists)
             <a class="btn btn-outline-primary btn-sm mt-2" href="{{ route('admin.pages.builder', $item) }}">Open universal page builder</a>
         @elseif ($type === 'services' && $item->exists && (auth()->user()->isAdministrator() || auth()->user()->hasPermission('services.manage')))

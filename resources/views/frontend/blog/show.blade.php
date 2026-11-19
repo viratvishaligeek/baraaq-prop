@@ -22,6 +22,7 @@
 @endsection
 
 @section('content')
+    @if (($isBuilderPreview ?? false) && $post->status === 'draft')<div class="container py-3"><span class="badge bg-warning text-dark">Draft preview — not publicly published</span></div>@endif
     <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcumb-bg.jpg') }}">
         <div class="container">
             <div class="breadcumb-content">
