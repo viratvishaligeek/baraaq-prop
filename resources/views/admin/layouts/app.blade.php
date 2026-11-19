@@ -154,7 +154,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ asset('admin/js/admin.js') }}"></script>@stack('scripts')
+    <script src="{{ asset('admin/js/admin.js') }}"></script>
+    @include('admin.partials.rich-text-editor')
+    @stack('scripts')
     @if (session('success'))
         <script>
             if (window.toastr) toastr.success(@json(session('success')));

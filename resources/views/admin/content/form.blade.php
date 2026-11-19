@@ -394,7 +394,7 @@
     @endif
     @if (in_array($type, ['posts', 'pages', 'services']))
         @push('scripts')
-            <script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js"></script>
+            
             <script>
 
             document.addEventListener('DOMContentLoaded', function () {
@@ -425,26 +425,7 @@
                 updatePreview();
             });
 
-                document.addEventListener('DOMContentLoaded', function () {
-                    if (!window.tinymce) return;
-                    tinymce.init({
-                        selector: 'textarea[data-rich-editor]',
-                        license_key: 'gpl',
-                        plugins: 'lists link image media table code searchreplace visualblocks wordcount anchor',
-                        menubar: 'edit insert format table',
-                        toolbar: 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | blockquote | code',
-                        height: 420,
-                        branding: false,
-                        promotion: false,
-                        file_picker_types: 'image',
-                        file_picker_callback: (callback, value, meta) => {
-                            if (meta.filetype !== 'image') return;
-                            window.dispatchEvent(new CustomEvent('open-richtext-media-picker', { detail: { callback } }));
-                        },
-                        setup: editor => editor.on('change keyup undo redo', () => editor.save())
-                    });
-                    document.querySelector('form')?.addEventListener('submit', () => tinymce.triggerSave());
-                });
+
             </script>
         @endpush
     @endif
