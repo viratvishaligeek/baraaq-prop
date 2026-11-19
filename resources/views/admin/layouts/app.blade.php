@@ -16,155 +16,90 @@
     <div class="admin-shell">
         <aside class="sidebar">
             <a class="brand" href="{{ route('admin.dashboard') }}">{{ config('app.name') }}</a>
-            <div class="nav-label">WORKSPACE</div>
-            <a href="{{ route('admin.dashboard') }}"
-                class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                <i class="fa-solid fa-gauge">
-                </i> Dashboard</a>
-            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('analytics.view'))
-                <a href="{{ route('admin.analytics.index') }}"
-                    class="{{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-chart-line">
-                    </i> Analytics</a>
+            <div class="nav-label">CMS WORKSPACE</div>
+            <details class="sidebar-group" @if (request()->routeIs('admin.dashboard') || request()->routeIs('admin.analytics.*')) open @endif>
+                <summary><i class="fa-solid fa-gauge"></i> Dashboard</summary>
+                <a class="sidebar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Overview</a>
+                @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('analytics.view'))
+                    <a class="sidebar-link {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}" href="{{ route('admin.analytics.index') }}">Analytics & statistics</a>
+                @endif
+            </details>
+            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('properties.manage') || auth()->user()->hasPermission('properties.view') || auth()->user()->hasPermission('properties.create') || auth()->user()->hasPermission('properties.edit') || auth()->user()->hasPermission('enquiries.manage'))
+                <details class="sidebar-group" @if (request()->routeIs('admin.properties.*') || request()->routeIs('admin.enquiries.*')) open @endif>
+                    <summary><i class="fa-solid fa-house"></i> Properties</summary>
+                    @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('properties.manage') || auth()->user()->hasPermission('properties.view') || auth()->user()->hasPermission('properties.create') || auth()->user()->hasPermission('properties.edit'))
+                        <a class="sidebar-link {{ request()->routeIs('admin.properties.index') || request()->routeIs('admin.properties.edit') ? 'active' : '' }}" href="{{ route('admin.properties.index') }}">All properties</a>
+                        @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('properties.manage') || auth()->user()->hasPermission('properties.create'))
+                            <a class="sidebar-link {{ request()->routeIs('admin.properties.create') ? 'active' : '' }}" href="{{ route('admin.properties.create') }}">Add new property</a>
+                        @endif
+                    @endif
+                    @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('enquiries.manage'))
+                        <a class="sidebar-link {{ request()->routeIs('admin.enquiries.*') ? 'active' : '' }}" href="{{ route('admin.enquiries.index') }}">Property enquiries</a>
+                    @endif
+                </details>
             @endif
-            @if (auth()->user()->isAdministrator() ||
-                    auth()->user()->hasPermission('properties.manage') ||
-                    auth()->user()->hasPermission('properties.view') ||
-                    auth()->user()->hasPermission('properties.create') ||
-                    auth()->user()->hasPermission('properties.edit'))
-                <a href="{{ route('admin.properties.index') }}"
-                    class="{{ request()->routeIs('admin.properties.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-house">
-                    </i> Properties</a>
-            @endif
-            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('enquiries.manage'))
-                <a href="{{ route('admin.enquiries.index') }}"
-                    class="{{ request()->routeIs('admin.enquiries.*') ? 'active' : '' }}">
-                    <i class="fa-regular fa-message">
-                    </i> Enquiries</a>
-            @endif
-            @if (auth()->user()->isAdministrator() ||
-                    auth()->user()->hasPermission('posts.manage') ||
-                    auth()->user()->hasPermission('posts.view') ||
-                    auth()->user()->hasPermission('posts.create') ||
-                    auth()->user()->hasPermission('posts.edit'))
-                <a href="{{ route('admin.content.index', 'posts') }}">
-                    <i class="fa-regular fa-newspaper">
-                    </i> Blog posts</a>
-            @endif
-            @if (auth()->user()->isAdministrator() ||
-                    auth()->user()->hasPermission('pages.manage') ||
-                    auth()->user()->hasPermission('pages.view') ||
-                    auth()->user()->hasPermission('pages.create') ||
-                    auth()->user()->hasPermission('pages.edit'))
-                <a href="{{ route('admin.content.index', 'pages') }}">
-                    <i class="fa-regular fa-file-lines">
-                    </i> Pages</a>
-            @endif
-            @if (auth()->user()->isAdministrator() ||
-                    auth()->user()->hasPermission('categories.manage') ||
-                    auth()->user()->hasPermission('categories.view') ||
-                    auth()->user()->hasPermission('categories.create') ||
-                    auth()->user()->hasPermission('categories.edit'))
-                <a href="{{ route('admin.content.index', 'categories') }}">
-                    <i class="fa-solid fa-tags">
-                    </i> Categories</a>
-            @endif
-            @if (auth()->user()->isAdministrator() ||
-                    auth()->user()->hasPermission('banners.manage') ||
-                    auth()->user()->hasPermission('banners.view') ||
-                    auth()->user()->hasPermission('banners.create') ||
-                    auth()->user()->hasPermission('banners.edit'))
-                <a href="{{ route('admin.content.index', 'banners') }}">
-                    <i class="fa-regular fa-images">
-                    </i> Banners</a>
-            @endif
-            @if (auth()->user()->isAdministrator() ||
-                    auth()->user()->hasPermission('team.manage') ||
-                    auth()->user()->hasPermission('team.view') ||
-                    auth()->user()->hasPermission('team.create') ||
-                    auth()->user()->hasPermission('team.edit'))
-                <a href="{{ route('admin.content.index', 'team') }}">
-                    <i class="fa-solid fa-users">
-                    </i> Team members</a>
-            @endif
-            @if (auth()->user()->isAdministrator() ||
-                    auth()->user()->hasPermission('services.manage') ||
-                    auth()->user()->hasPermission('services.view') ||
-                    auth()->user()->hasPermission('services.create') ||
-                    auth()->user()->hasPermission('services.edit'))
-                <a href="{{ route('admin.content.index', 'services') }}">
-                    <i class="fa-solid fa-briefcase">
-                    </i> Services</a>
-            @endif
-            @if (auth()->user()->isAdministrator() ||
-                    auth()->user()->hasPermission('testimonials.manage') ||
-                    auth()->user()->hasPermission('testimonials.view') ||
-                    auth()->user()->hasPermission('testimonials.create') ||
-                    auth()->user()->hasPermission('testimonials.edit'))
-                <a href="{{ route('admin.content.index', 'testimonials') }}">
-                    <i class="fa-solid fa-star">
-                    </i> Testimonials</a>
-            @endif
-            @if (auth()->user()->isAdministrator() ||
-                    auth()->user()->hasPermission('comments.manage') ||
-                    auth()->user()->hasPermission('comments.view') ||
-                    auth()->user()->hasPermission('comments.view'))
-                <a href="{{ route('admin.comments.index') }}"
-                    class="{{ request()->routeIs('admin.comments.*') ? 'active' : '' }}">
-                    <i class="fa-regular fa-comments">
-                    </i> Comments</a>
-            @endif
-            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('widgets.manage'))
-                <a href="{{ route('admin.widgets.index') }}"
-                    class="{{ request()->routeIs('admin.widgets.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-puzzle-piece">
-                    </i> Widgets</a>
+            <details class="sidebar-group" @if (request()->routeIs('admin.content.*') || request()->routeIs('admin.comments.*')) open @endif>
+                <summary><i class="fa-regular fa-file-lines"></i> Content management</summary>
+                @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('posts.manage') || auth()->user()->hasPermission('posts.view') || auth()->user()->hasPermission('posts.create') || auth()->user()->hasPermission('posts.edit'))
+                    <a class="sidebar-link {{ request()->route('type') === 'posts' ? 'active' : '' }}" href="{{ route('admin.content.index', 'posts') }}">Blog posts</a>
+                @endif
+                @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('pages.manage') || auth()->user()->hasPermission('pages.view') || auth()->user()->hasPermission('pages.create') || auth()->user()->hasPermission('pages.edit'))
+                    <a class="sidebar-link {{ request()->route('type') === 'pages' ? 'active' : '' }}" href="{{ route('admin.content.index', 'pages') }}">Pages</a>
+                @endif
+                @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('categories.manage') || auth()->user()->hasPermission('categories.view') || auth()->user()->hasPermission('categories.create') || auth()->user()->hasPermission('categories.edit'))
+                    <a class="sidebar-link {{ request()->route('type') === 'categories' ? 'active' : '' }}" href="{{ route('admin.content.index', 'categories') }}">Categories</a>
+                @endif
+                @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('services.manage') || auth()->user()->hasPermission('services.view') || auth()->user()->hasPermission('services.create') || auth()->user()->hasPermission('services.edit'))
+                    <a class="sidebar-link {{ request()->route('type') === 'services' ? 'active' : '' }}" href="{{ route('admin.content.index', 'services') }}">Services</a>
+                @endif
+                @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('team.manage') || auth()->user()->hasPermission('team.view') || auth()->user()->hasPermission('team.create') || auth()->user()->hasPermission('team.edit'))
+                    <a class="sidebar-link {{ request()->route('type') === 'team' ? 'active' : '' }}" href="{{ route('admin.content.index', 'team') }}">Team members</a>
+                @endif
+                @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('testimonials.manage') || auth()->user()->hasPermission('testimonials.view') || auth()->user()->hasPermission('testimonials.create') || auth()->user()->hasPermission('testimonials.edit'))
+                    <a class="sidebar-link {{ request()->route('type') === 'testimonials' ? 'active' : '' }}" href="{{ route('admin.content.index', 'testimonials') }}">Testimonials</a>
+                @endif
+                @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('comments.manage') || auth()->user()->hasPermission('comments.view'))
+                    <a class="sidebar-link {{ request()->routeIs('admin.comments.*') ? 'active' : '' }}" href="{{ route('admin.comments.index') }}">Comments</a>
+                @endif
+            </details>
+            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage') || auth()->user()->hasPermission('widgets.manage') || auth()->user()->hasPermission('menus.manage'))
+                <details class="sidebar-group" @if (request()->routeIs('admin.appearance.*') || request()->routeIs('admin.homepages.*') || request()->routeIs('admin.widgets.*') || request()->routeIs('admin.menus.*')) open @endif>
+                    <summary><i class="fa-solid fa-palette"></i> Appearance & design</summary>
+                    @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage'))
+                        <a class="sidebar-link {{ request()->routeIs('admin.appearance.*') ? 'active' : '' }}" href="{{ route('admin.appearance.index') }}">Theme & appearance</a>
+                        <a class="sidebar-link {{ request()->routeIs('admin.homepages.*') ? 'active' : '' }}" href="{{ route('admin.homepages.index') }}">Homepage management</a>
+                        <a class="sidebar-link {{ request()->routeIs('admin.content.*') && request()->route('type') === 'pages' ? 'active' : '' }}" href="{{ route('admin.content.index', 'pages') }}">Universal page builder</a>
+                    @endif
+                    @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('widgets.manage'))
+                        <a class="sidebar-link {{ request()->routeIs('admin.widgets.*') ? 'active' : '' }}" href="{{ route('admin.widgets.index') }}">Widget library</a>
+                    @endif
+                    @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('menus.manage'))
+                        <a class="sidebar-link {{ request()->routeIs('admin.menus.*') ? 'active' : '' }}" href="{{ route('admin.menus.index') }}">Navigation menus</a>
+                    @endif
+                </details>
             @endif
             @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('media.manage'))
-                <a href="{{ route('admin.media.index') }}">
-                    <i class="fa-regular fa-folder-open">
-                    </i> Media library</a>
-            @endif
-            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('newsletters.manage'))
-                <a href="{{ route('admin.newsletters.index') }}"
-                    class="{{ request()->routeIs('admin.newsletters.*') ? 'active' : '' }}">
-                    <i class="fa-regular fa-envelope">
-                    </i> Newsletter subscribers</a>
+                <details class="sidebar-group" @if (request()->routeIs('admin.media.*')) open @endif>
+                    <summary><i class="fa-regular fa-images"></i> Media</summary>
+                    <a class="sidebar-link {{ request()->routeIs('admin.media.*') ? 'active' : '' }}" href="{{ route('admin.media.index') }}">Media library</a>
+                </details>
             @endif
             @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage'))
-                <div class="nav-label">WEBSITE</div>
-                <a href="{{ route('admin.appearance.index') }}"
-                    class="{{ request()->routeIs('admin.appearance.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-palette">
-                    </i> Appearance & themes</a>
-                <a href="{{ route('admin.homepages.index') }}"
-                    class="{{ request()->routeIs('admin.homepages.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-layer-group">
-                    </i> Homepage designs</a>
-                <a href="{{ route('admin.menus.index') }}"
-                    class="{{ request()->routeIs('admin.menus.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-list">
-                    </i> Navigation menus</a>
-                <a href="{{ route('admin.seo.index') }}"
-                    class="{{ request()->routeIs('admin.seo.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-magnifying-glass">
-                    </i> SEO</a>
-                <a href="{{ route('admin.settings.edit') }}"
-                    class="{{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-gear">
-                    </i> Website settings</a>
-            @endif
-            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('users.manage'))
-                <div class="nav-label">ACCESS CONTROL</div>
-                <a href="{{ route('admin.roles.index') }}"
-                    class="{{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-shield-halved">
-                    </i> Roles & permissions</a>
-                <a href="{{ route('admin.users.index') }}"
-                    class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-user-gear">
-                    </i> Users</a>
+                <details class="sidebar-group" @if (request()->routeIs('admin.seo.*')) open @endif>
+                    <summary><i class="fa-solid fa-magnifying-glass"></i> SEO management</summary>
+                    <a class="sidebar-link {{ request()->routeIs('admin.seo.*') ? 'active' : '' }}" href="{{ route('admin.seo.index') }}">Website SEO settings</a>
+                </details>
+                <details class="sidebar-group" @if (request()->routeIs('admin.settings.*') || request()->routeIs('admin.newsletters.*') || request()->routeIs('admin.roles.*') || request()->routeIs('admin.users.*')) open @endif>
+                    <summary><i class="fa-solid fa-gear"></i> Settings</summary>
+                    <a class="sidebar-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}" href="{{ route('admin.settings.edit') }}">General settings</a>
+                    @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('newsletters.manage'))
+                        <a class="sidebar-link {{ request()->routeIs('admin.newsletters.*') ? 'active' : '' }}" href="{{ route('admin.newsletters.index') }}">Newsletter subscribers</a>
+                    @endif
+                    @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('users.manage'))
+                        <a class="sidebar-link {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" href="{{ route('admin.roles.index') }}">Roles & permissions</a>
+                        <a class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" href="{{ route('admin.users.index') }}">User management</a>
+                    @endif
+                </details>
             @endif
             <div class="nav-label">ACCOUNT</div>
             <form method="POST" action="{{ route('admin.logout') }}">@csrf<button class="nav-logout">
