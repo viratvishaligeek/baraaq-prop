@@ -68,6 +68,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/homepages/{homepage}/sections/{section}', [HomepageSectionController::class, 'destroy'])->middleware('permission:settings.manage')->name('homepages.sections.destroy');
 
         Route::get('/seo', [SeoController::class, 'index'])->middleware('permission:settings.manage')->name('seo.index');
+        Route::get('/seo/indexing', [SeoController::class, 'indexing'])->middleware('permission:settings.manage')->name('seo.indexing');
         Route::get('/appearance', [AppearanceController::class, 'index'])->middleware('permission:settings.manage')->name('appearance.index');
 
         Route::get('/properties/types', [PropertyTaxonomyController::class, 'types'])->middleware('permission:properties.view')->name('properties.types');
