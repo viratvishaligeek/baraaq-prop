@@ -77,7 +77,7 @@ class MediaImageEditingTest extends TestCase
 
     public function test_non_administrators_without_media_permission_cannot_edit_media(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['is_active' => true]);
         $media = Media::create([
             'disk' => 'public',
             'path' => 'media/private.webp',
