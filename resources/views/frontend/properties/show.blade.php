@@ -12,10 +12,6 @@
     'offers' => $property->price ? ['@type' => 'Offer', 'price' => (float) $property->price, 'priceCurrency' => 'INR'] : null,
     'address' => ['@type' => 'PostalAddress', 'streetAddress' => $property->address, 'addressLocality' => $property->city, 'addressRegion' => $property->state, 'postalCode' => $property->postal_code, 'addressCountry' => $property->country ?: 'IN'],
 ])</script>
-@endsection
-@section('structured_data')
-@parent
-
 @if($property->faqs->isNotEmpty())
 <script type="application/ld+json">@json([
     '@context' => 'https://schema.org',
@@ -61,7 +57,7 @@
 <li>Area: {{ $property->area?number_format((float)$property->area).' '.$property->area_unit:'—' }}</li>
 <li>Type: {{ $property->property_type??'—' }}</li>
 </ul>
-<div class="property-description">{!! \\App\\Support\\HtmlSanitizer::sanitize($property->description) !!}</div>
+<div class="property-description">{!! \App\Support\HtmlSanitizer::sanitize($property->description) !!}</div>
 @if($property->accommodations->isNotEmpty())
     <section class="mt-5">
         <h3 class="sec-title">Accommodation & spaces</h3>
