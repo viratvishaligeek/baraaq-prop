@@ -101,7 +101,7 @@ class PropertyController extends Controller
         $accommodations = array_map(fn ($space) => array_merge($space, ['is_included' => (bool) ($space['is_included'] ?? false)]), $data['accommodations'] ?? []);
         $accommodations = $this->resolveAccommodationImages($accommodations, $request);
         $faqs = $data['faqs'] ?? [];
-        unset($data['gallery'], $data['gallery_media_ids'], $data['accommodations'], $data['faqs']);
+        unset($data['gallery'], $data['gallery_media_ids'], $data['accommodations'], $data['accommodation_variants'], $data['faqs']);
         $data['slug'] = $this->slug($data['slug'] ?? $data['title']);
         $data['created_by'] = $request->user()->id;
         $data['is_featured'] = $request->boolean('is_featured');
@@ -149,7 +149,7 @@ class PropertyController extends Controller
         $galleryMediaIds = $data['gallery_media_ids'] ?? [];
         $accommodations = $this->resolveAccommodationImages($data['accommodations'] ?? [], $request);
         $faqs = $data['faqs'] ?? [];
-        unset($data['gallery'], $data['gallery_media_ids'], $data['accommodations'], $data['faqs']);
+        unset($data['gallery'], $data['gallery_media_ids'], $data['accommodations'], $data['accommodation_variants'], $data['faqs']);
         $data['slug'] = $this->slug($data['slug'] ?? $data['title'], $property->id);
         $data['is_featured'] = $request->boolean('is_featured');
         $oldFeaturedImage = $property->featured_image;
