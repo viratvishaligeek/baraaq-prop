@@ -80,7 +80,13 @@ class PropertyController extends Controller
         }
         unset($space);
 
-        return array_values($accommodations);
+        $accommodations = array_values($accommodations);
+        foreach ($accommodations as $sortOrder => &$space) {
+            $space['sort_order'] = $sortOrder;
+        }
+        unset($space);
+
+        return $accommodations;
     }
 
     public function store(StorePropertyRequest $request)
@@ -100,7 +106,9 @@ class PropertyController extends Controller
         $galleryMediaIds = $data['gallery_media_ids'] ?? [];
         $accommodations = array_map(fn ($space) => array_merge($space, ['is_included' => (bool) ($space['is_included'] ?? false)]), $data['accommodations'] ?? []);
         $accommodations = $this->resolveAccommodationImages($accommodations, $request);
-        $faqs = $data['faqs'] ?? [];
+        $faqs = array_values($data['faqs'] ?? []);
+        foreach ($faqs as $sortOrder => &$faq) $faq['sort_order'] = $sortOrder;
+        unset($faq);
         unset($data['gallery'], $data['gallery_media_ids'], $data['accommodations'], $data['accommodation_variants'], $data['faqs']);
         $data['slug'] = $this->slug($data['slug'] ?? $data['title']);
         $data['created_by'] = $request->user()->id;
@@ -148,7 +156,9 @@ class PropertyController extends Controller
         }
         $galleryMediaIds = $data['gallery_media_ids'] ?? [];
         $accommodations = $this->resolveAccommodationImages($data['accommodations'] ?? [], $request);
-        $faqs = $data['faqs'] ?? [];
+        $faqs = array_values($data['faqs'] ?? []);
+        foreach ($faqs as $sortOrder => &$faq) $faq['sort_order'] = $sortOrder;
+        unset($faq);
         unset($data['gallery'], $data['gallery_media_ids'], $data['accommodations'], $data['accommodation_variants'], $data['faqs']);
         $data['slug'] = $this->slug($data['slug'] ?? $data['title'], $property->id);
         $data['is_featured'] = $request->boolean('is_featured');

@@ -100,6 +100,7 @@
                         @if($space->imageMedia)<img class="img-fluid rounded mt-2 mb-2" style="max-height:180px;object-fit:cover" src="{{ $space->imageMedia->url }}" alt="{{ $space->imageMedia->alt_text ?: $space->name }}">@endif
                         @if($space->category)<div class="small text-muted">{{ $space->category }}</div>@endif
                         @if($space->description)<p class="mb-2 mt-2">{{ $space->description }}</p>@endif
+                        @if(!empty($space->attributes))<dl class="row small mt-2 mb-2">@foreach($space->attributes as $attribute)@if(!empty($attribute['key']))<dt class="col-5">{{ $attribute['key'] }}</dt><dd class="col-7">{{ $attribute['value'] ?? '' }}</dd>@endif @endforeach</dl>@endif
                         <span class="badge {{ $space->is_included ? 'text-bg-success' : 'text-bg-light' }}">{{ $space->is_included ? 'Included' : 'Not included' }}</span>
                     </div>
                 </div>
