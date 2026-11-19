@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
+use App\Models\Comment;
 use App\Models\Enquiry;
 use App\Models\Page;
 use App\Models\Post;
@@ -24,7 +25,10 @@ class DashboardController extends Controller
             'posts' => ['label' => 'Blog posts', 'icon' => 'fa-newspaper', 'value' => Post::count(), 'default' => 'posts', 'destinations' => ['posts' => ['label' => 'Blog posts', 'url' => route('admin.content.index', 'posts')]]],
             'pages' => ['label' => 'Pages', 'icon' => 'fa-file-lines', 'value' => Page::count(), 'default' => 'pages', 'destinations' => ['pages' => ['label' => 'Pages', 'url' => route('admin.content.index', 'pages')]]],
             'users' => ['label' => 'Users', 'icon' => 'fa-users', 'value' => User::count(), 'default' => 'users', 'destinations' => ['users' => ['label' => 'Users', 'url' => route('admin.users.index')]]],
-            'new_enquiries' => ['label' => 'New enquiries', 'icon' => 'fa-inbox', 'value' => Enquiry::where('status', 'new')->count(), 'default' => 'new_enquiries', 'destinations' => ['new_enquiries' => ['label' => 'New enquiries', 'url' => route('admin.enquiries.index', ['status' => 'new'])], 'enquiries' => ['label' => 'All enquiries', 'url' => route('admin.enquiries.index')]]],
+            'total_enquiries' => ['label' => 'Total enquiries', 'icon' => 'fa-envelope', 'value' => Enquiry::count(), 'default' => 'enquiries', 'destinations' => ['enquiries' => ['label' => 'All enquiries', 'url' => route('admin.enquiries.index')]]],
+            'new_enquiries' => ['label' => 'Pending enquiries', 'icon' => 'fa-inbox', 'value' => Enquiry::where('status', 'new')->count(), 'default' => 'new_enquiries', 'destinations' => ['new_enquiries' => ['label' => 'Pending enquiries', 'url' => route('admin.enquiries.index', ['status' => 'new'])], 'enquiries' => ['label' => 'All enquiries', 'url' => route('admin.enquiries.index')]]],
+            'comments' => ['label' => 'Comments', 'icon' => 'fa-comments', 'value' => Comment::count(), 'default' => 'comments', 'destinations' => ['comments' => ['label' => 'All comments', 'url' => route('admin.comments.index')]]],
+            'pending_comments' => ['label' => 'Pending comments', 'icon' => 'fa-comment-dots', 'value' => Comment::where('status', 'pending')->count(), 'default' => 'pending_comments', 'destinations' => ['pending_comments' => ['label' => 'Pending comments', 'url' => route('admin.comments.index', ['status' => 'pending'])], 'comments' => ['label' => 'All comments', 'url' => route('admin.comments.index')]]],
             'visits' => ['label' => 'Visits · 30 days', 'icon' => 'fa-chart-line', 'value' => 0, 'default' => 'analytics', 'destinations' => ['analytics' => ['label' => 'Analytics', 'url' => route('admin.analytics.index')]]],
             'page_views' => ['label' => 'Page views · 30 days', 'icon' => 'fa-eye', 'value' => 0, 'default' => 'analytics', 'destinations' => ['analytics' => ['label' => 'Analytics', 'url' => route('admin.analytics.index')]]],
         ];

@@ -30,9 +30,12 @@ class DashboardWidgetManagementTest extends TestCase
             'posts' => ['enabled' => '0', 'destination' => 'posts', 'order' => 3],
             'pages' => ['enabled' => '0', 'destination' => 'pages', 'order' => 4],
             'users' => ['enabled' => '0', 'destination' => 'users', 'order' => 5],
-            'new_enquiries' => ['enabled' => '1', 'destination' => 'enquiries', 'order' => 6],
-            'visits' => ['enabled' => '0', 'destination' => 'analytics', 'order' => 7],
-            'page_views' => ['enabled' => '0', 'destination' => 'analytics', 'order' => 8],
+            'total_enquiries' => ['enabled' => '0', 'destination' => 'enquiries', 'order' => 6],
+            'new_enquiries' => ['enabled' => '1', 'destination' => 'enquiries', 'order' => 7],
+            'comments' => ['enabled' => '0', 'destination' => 'comments', 'order' => 8],
+            'pending_comments' => ['enabled' => '0', 'destination' => 'comments', 'order' => 9],
+            'visits' => ['enabled' => '0', 'destination' => 'analytics', 'order' => 10],
+            'page_views' => ['enabled' => '0', 'destination' => 'analytics', 'order' => 11],
         ];
 
         $this->put(route('admin.dashboard.widgets.update'), ['widgets' => $widgets])
