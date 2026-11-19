@@ -15,9 +15,12 @@ class ContentController extends Controller
 {
     public function blog(Request $request)
     {
-        $posts = Post::published()->with(['author:id,name', 'categories'])
+        $posts = Post::published()->with(['author:id,name', 'categories', 'tags'])
             ->when($request->filled('category'), function ($query) use ($request) {
                 $query->whereHas('categories', fn ($categories) => $categories->where('slug', $request->string('category')));
+            })
+            ->when($request->filled('tag'), function ($query) use ($request) {
+                $query->whereHas('tags', fn ($tags) => $tags->where('slug', $request->string('tag')));
             })
             ->latest('published_at')
             ->paginate(9)
@@ -26,6 +29,7 @@ class ContentController extends Controller
         return view('frontend.blog.index', [
             'posts' => $posts,
             'activeCategory' => $request->query('category'),
+            'activeTag' => $request->query('tag'),
             'categories' => Category::where('type', 'post')->where('is_active', true)->orderBy('name')->get(['id', 'name', 'slug']),
         ]);
     }
@@ -34,7 +38,7 @@ class ContentController extends Controller
     {
         abort_unless($post->status === 'published' && $post->published_at && $post->published_at->lte(now()), 404);
 
-        return view('frontend.blog.show', ['post' => $post->load(['categories', 'comments' => fn ($query) => $query->where('status', 'approved')->latest()])]);
+        return view('frontend.blog.show', ['post' => $post->load(['categories', 'tags', 'comments' => fn ($query) => $query->where('status', 'approved')->latest()])]);
     }
 
     public function storeComment(Request $request, Post $post)
