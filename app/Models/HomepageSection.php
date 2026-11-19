@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class HomepageSection extends Model
 {
     protected $fillable = [
-        'homepage_id', 'page_id', 'reusable_section_id', 'instance_key', 'section_key',
+        'homepage_id', 'page_id', 'service_id', 'reusable_section_id', 'instance_key', 'section_key',
         'section_type', 'source_design', 'sort_order', 'is_enabled', 'config', 'data_source',
     ];
 
@@ -31,6 +31,11 @@ class HomepageSection extends Model
     public function page()
     {
         return $this->belongsTo(Page::class);
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class);
     }
 
     public function mediaAttachments()

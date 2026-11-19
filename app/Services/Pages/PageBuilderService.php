@@ -31,7 +31,7 @@ class PageBuilderService
         ];
     }
 
-    public function add(Page $page, string $key): HomepageSection
+    public function add(Page|Service $page, string $key): HomepageSection
     {
         $definition = $this->registry->find($key);
         if (! $definition) {
@@ -50,9 +50,9 @@ class PageBuilderService
         ]);
     }
 
-    public function duplicate(Page $page, HomepageSection $section): HomepageSection
+    public function duplicate(Page|Service $page, HomepageSection $section): HomepageSection
     {
-        abort_unless($section->page_id === $page->id, 404);
+        abort_unless(($page instanceof Page ? $section->page_id : $section->service_id) === $page->id, 404);
 
         return DB::transaction(function () use ($page, $section) {
             $page->sections()->where('sort_order', '>', $section->sort_order)->lockForUpdate()->increment('sort_order');
@@ -69,7 +69,7 @@ class PageBuilderService
         });
     }
 
-    public function reorder(Page $page, array $ids): void
+    public function reorder(Page|Service $page, array $ids): void
     {
         $sections = $page->sections()->whereIn('id', $ids)->get()->keyBy('id');
         abort_unless($sections->count() === count($ids), 422, 'The submitted order contains a section that does not belong to this page.');
@@ -79,7 +79,7 @@ class PageBuilderService
         });
     }
 
-    public function save(Page $page, HomepageSection $section, array $input): void
+    public function save(Page|Service $page, HomepageSection $section, array $input): void
     {
         abort_unless($section->page_id === $page->id, 404);
         $targetKey = $input['section_key'] ?? $section->section_key;

@@ -29,6 +29,11 @@ class Service extends Model
         return ['published_at' => 'datetime'];
     }
 
+    public function sections()
+    {
+        return $this->hasMany(HomepageSection::class, 'service_id')->orderBy('sort_order');
+    }
+
     public function scopePublished($query)
     {
         return $query->where('status', 'published')
