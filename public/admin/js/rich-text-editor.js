@@ -6,10 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
         tinymce.init({
             target: textarea,
             license_key: 'gpl',
-            plugins: compact ? 'lists link image code' : 'lists link image media table code searchreplace visualblocks wordcount anchor',
+            plugins: 'lists link image media table code searchreplace visualblocks wordcount anchor',
             menubar: compact ? false : 'edit insert format table',
             toolbar: compact
-                ? 'undo redo | blocks | bold italic underline | bullist numlist | link image | removeformat'
+                ? 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | blockquote | code'
                 : 'undo redo | blocks | bold italic underline | alignleft aligncenter alignright | bullist numlist | link image media table | blockquote | code',
             height: Number(textarea.dataset.richEditorHeight || (compact ? 240 : 420)),
             branding: false,
