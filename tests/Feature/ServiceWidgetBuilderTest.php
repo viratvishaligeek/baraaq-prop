@@ -27,6 +27,11 @@ class ServiceWidgetBuilderTest extends TestCase
 
         $key = 'about.home-4';
         $this->actingAs($user)
+            ->get(route('admin.services.builder', $service))
+            ->assertOk()
+            ->assertSee('Service builder');
+
+        $this->actingAs($user)
             ->post(route('admin.services.widgets.add', $service), ['section_key' => $key])
             ->assertRedirect();
 

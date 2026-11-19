@@ -9,7 +9,7 @@
             <p class="text-muted mb-0">{{ $service->title }} · {{ ucfirst($service->status) }} · Drag widgets to reorder them.</p>
         </div>
         <div class="d-flex flex-wrap gap-2">
-            <a href="{{ route('admin.content.index', 'services) }}" class="btn btn-light">Back to services</a>
+            <a href="{{ route('admin.content.index', 'services') }}" class="btn btn-light">Back to services</a>
             <a href="{{ route('admin.services.preview', $service) }}" class="btn btn-outline-primary" target="_blank" rel="noopener">Preview</a>
             @if ($service->status === 'published')
                 <form method="POST" action="{{ route('admin.services.duplicate', $service) }}">
