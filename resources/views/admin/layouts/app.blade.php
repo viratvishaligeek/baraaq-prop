@@ -38,7 +38,7 @@
                     @endif
                 </details>
             @endif
-            <details class="sidebar-group" @if (request()->routeIs('admin.content.*') || request()->routeIs('admin.comments.*')) open @endif>
+            <details class="sidebar-group" @if (request()->routeIs('admin.content.*') || request()->routeIs('admin.comments.*') || request()->routeIs('admin.tags.*')) open @endif>
                 <summary><i class="fa-regular fa-file-lines"></i> Content management</summary>
                 @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('posts.manage') || auth()->user()->hasPermission('posts.view') || auth()->user()->hasPermission('posts.create') || auth()->user()->hasPermission('posts.edit'))
                     <a class="sidebar-link {{ request()->route('type') === 'posts' ? 'active' : '' }}" href="{{ route('admin.content.index', 'posts') }}">Blog posts</a>

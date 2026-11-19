@@ -66,6 +66,7 @@ class PropertyDynamicDetailsTest extends TestCase
             'status' => 'published',
             'published_at' => now(),
             'description' => '<p>A welcoming family property.</p>',
+            'features' => ['Swimming pool', 'Private garden'],
         ]);
         $media = Media::create(['disk' => 'public', 'path' => 'properties/accommodations/master-bedroom.webp', 'original_name' => 'master-bedroom.webp', 'mime_type' => 'image/webp', 'size' => 2048]);
         $property->accommodations()->create([
@@ -84,6 +85,8 @@ class PropertyDynamicDetailsTest extends TestCase
         $this->get(route('properties.show', $property))
             ->assertOk()
             ->assertSee('Master bedroom')
+            ->assertSee('Swimming pool')
+            ->assertSee('Private garden')
             ->assertSee($media->url, false)
             ->assertSee('Is parking included?')
             ->assertSee('FAQPage')
