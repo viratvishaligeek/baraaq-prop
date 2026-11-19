@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Widget;
 use App\Models\WidgetArea;
 use App\Support\HtmlSanitizer;
+use App\Services\Widgets\CmsWidgetRegistry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;

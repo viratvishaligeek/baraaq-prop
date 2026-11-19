@@ -2,11 +2,11 @@
 @section('title', 'Website settings')
 @section('content')
     <div class="mb-4">
-        <h1 class="page-title">Website settings</h1>
+        <h1 class="page-title" id="general-settings">Website settings</h1>
         <p class="text-muted">One place for identity, navigation, contact details, appearance and default SEO.</p>
     </div>
     <form method="POST" enctype="multipart/form-data" action="{{ route('admin.settings.update') }}">@csrf @method('PUT')
-        <div class="content-card mb-4">
+        <div class="content-card mb-4" id="website-settings">
             <h4 class="mb-3">Website identity</h4>
             <div class="row g-3">
                 <div class="col-md-6">
@@ -125,7 +125,7 @@
             </div>
         </div>
         <div class="content-card mb-4">
-            <h4 class="mb-3">Global SEO defaults</h4>
+            <h4 class="mb-3" id="seo-settings">Global SEO defaults</h4>
             <div class="row g-3">
                 <div class="col-12">
                     <label class="form-label">Default meta title</label>
