@@ -93,12 +93,9 @@ class MediaImageEditingTest extends TestCase
 
     private function administrator(): User
     {
+        $this->seed(RolePermissionSeeder::class);
         $user = User::factory()->create(['is_active' => true]);
-        $role = Role::create(['name' => 'Administrator', 'slug' => 'administrator']);
-        $permission = Permission::create(['name' => 'Manage media', 'slug' => 'media.manage', 'group' => 'media']);
-        $dashboardPermission = Permission::create(['name' => 'View dashboard', 'slug' => 'dashboard.view', 'group' => 'dashboard']);
-        $role->permissions()->attach([$permission->id, $dashboardPermission->id]);
-        $user->roles()->attach($role);
+        $user->roles()->attach(Role::query()->where('slug', 'administrator')->firstOrFail());
 
         return $user;
     }
