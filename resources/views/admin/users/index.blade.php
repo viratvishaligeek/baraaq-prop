@@ -7,7 +7,7 @@
     <a class="btn btn-primary" href="{{ route('admin.users.create') }}">Add user</a>
 </div>
 <div class="content-card">
-    <table class="table align-middle" data-datatable>
+    <table class="table align-middle" data-datatable data-datatable-paging="false">
         <thead>
             <tr>
                 <th>User</th>

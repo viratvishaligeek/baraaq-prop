@@ -167,6 +167,9 @@
                 if (table.tHead && !table.querySelector('tbody td[colspan]') && !DataTable.isDataTable(table)) {
                     new DataTable(table, {
                         pageLength: 10,
+                        paging: table.dataset.datatablePaging !== 'false',
+                        info: table.dataset.datatablePaging !== 'false',
+                        lengthChange: table.dataset.datatablePaging !== 'false',
                         lengthMenu: [10, 25, 50, 100],
                         searching: true,
                         ordering: true,

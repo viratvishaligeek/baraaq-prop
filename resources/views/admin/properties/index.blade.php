@@ -16,7 +16,7 @@
     </div>
     <div class="content-card">
         <div class="table-responsive">
-            <table class="table align-middle" data-datatable>
+            <table class="table align-middle" data-datatable data-datatable-paging="false">
                 <thead>
                     <tr>
                         <th>Title</th>

@@ -83,11 +83,18 @@ class AdminRouteIntegrityTest extends TestCase
             ['admin.users.index', []],
         ];
 
+        $serverPaginated = ['admin.comments.index', 'admin.enquiries.index', 'admin.menus.index', 'admin.newsletters.index', 'admin.properties.index', 'admin.tags.index', 'admin.users.index'];
+
         foreach ($screens as [$name, $parameters]) {
             $response = $this->actingAs($admin)->get(route($name, $parameters));
             $response->assertOk();
             $response->assertSee('data-datatable', false, "Admin listing [{$name}] must opt its table into DataTables.");
             $response->assertSee('cdn.datatables.net/2.3.4/js/dataTables.min.js', false);
+            if (in_array($name, $serverPaginated, true)) {
+                $response->assertSee('data-datatable-paging="false"', false);
+            }
+            $response->assertSee('responsive: true', false);
+            $response->assertSee('DataTable.isDataTable(table)', false);
         }
     }
 
