@@ -5,7 +5,6 @@ return [
         'key' => 'team.home-2',
         'label' => 'Agent carousel — Home 2',
         'type' => 'team-slider',
-        'source_design' => 'home-2',
         'view' => 'frontend.sections.team.home-2',
         'defaults' => [
             'eyebrow' => 'Team Members',

@@ -5,7 +5,6 @@ return [
         'key' => 'blog.home-2',
         'label' => 'Latest articles carousel — Home 2',
         'type' => 'blog-slider',
-        'source_design' => 'home-2',
         'view' => 'frontend.sections.blog.home-2',
         'defaults' => [
             'eyebrow' => 'latest News',

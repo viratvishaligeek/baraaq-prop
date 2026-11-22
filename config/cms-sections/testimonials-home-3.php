@@ -5,7 +5,6 @@ return [
         'key' => 'testimonials.home-3',
         'label' => 'Trust score and testimonials — Home 3',
         'type' => 'testimonial-slider',
-        'source_design' => 'home-3',
         'view' => 'frontend.sections.testimonials.home-3',
         'defaults' => [
             'view_all_label' => 'View All Reviews',

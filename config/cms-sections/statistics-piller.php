@@ -35,7 +35,6 @@ return [
         'key' => 'statistics.home-9',
         'label' => 'Statistics — Home 9 counter strip',
         'type' => 'statistics',
-        'source_design' => 'home-9',
         'view' => 'frontend.sections.statistics.home-9',
         'defaults' => $defaults,
         'fields' => $fields,

@@ -5,7 +5,6 @@ return [
         'key' => 'home-details.home-9',
         'label' => 'Home details — Original Home 9 property facts',
         'type' => 'contact-panel',
-        'source_design' => 'home-9',
         'view' => 'frontend.sections.contact.home-9-details',
         'defaults' => [
             'eyebrow' => 'Home Details',

@@ -22,7 +22,7 @@ class HomepageTemplateSeeder extends Seeder
             ]
         );
 
-        if ($homepage->status !== 'published') {
+        if ($homepage->status !== 'published' || ! $homepage->published_at) {
             $homepage->update([
                 'status' => 'published',
                 'published_at' => $homepage->published_at ?: now(),

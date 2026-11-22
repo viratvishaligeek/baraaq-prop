@@ -5,7 +5,6 @@ return [
         'key' => 'about.home-9',
         'label' => 'About — Mission and vision triptych (Home 9)',
         'type' => 'about-composition',
-        'source_design' => 'home-9',
         'view' => 'frontend.sections.about.home-9',
         'defaults' => [
             'eyebrow' => 'About Us',

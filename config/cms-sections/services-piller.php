@@ -5,7 +5,6 @@ return [
         'key' => 'services.home-9',
         'label' => 'Services — Four-column service cards (Home 9)',
         'type' => 'service-list',
-        'source_design' => 'home-9',
         'view' => 'frontend.sections.services.home-9',
         'defaults' => [
             'eyebrow' => 'Our Services',

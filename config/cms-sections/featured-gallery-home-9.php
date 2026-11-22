@@ -5,7 +5,6 @@ return [
         'key' => 'featured-gallery.home-9',
         'label' => 'Featured property showcase — Home 9 gallery slider',
         'type' => 'featured-gallery-slider',
-        'source_design' => 'home-9',
         'view' => 'frontend.sections.gallery.featured-home-9',
         'defaults' => [
             'eyebrow' => 'Popular Properties',

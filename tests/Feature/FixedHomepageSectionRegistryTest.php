@@ -42,19 +42,20 @@ class FixedHomepageSectionRegistryTest extends TestCase
 
     public function test_fixed_homepage_section_keys_are_unique_per_homepage(): void
     {
-        $this->seed(DatabaseSeeder::class);
+        $this->seed(HomepageTemplateSeeder::class);
         $homepage = Homepage::query()->where('slug', 'home-9')->firstOrFail();
-        $section = HomepageSection::query()->where('homepage_id', $homepage->id)->where('section_key', 'hero.home-9')->firstOrFail();
-
-        $this->expectException(QueryException::class);
-        HomepageSection::create([
+        $attributes = [
             'homepage_id' => $homepage->id,
-            'section_key' => $section->section_key,
-            'section_type' => $section->section_type,
-            'sort_order' => 99,
+            'section_key' => 'hero.home-9',
+            'section_type' => 'hero',
+            'sort_order' => 1,
             'is_enabled' => true,
             'config' => [],
-        ]);
+        ];
+        HomepageSection::create($attributes);
+
+        $this->expectException(QueryException::class);
+        HomepageSection::create($attributes);
     }
 
 }
