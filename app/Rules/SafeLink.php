@@ -54,6 +54,24 @@ class SafeLink implements ValidationRule
         return false;
     }
 
+    public static function isHttpUrl(mixed $value): bool
+    {
+        if (! self::isValid($value)) {
+            return false;
+        }
+
+        $parts = parse_url(trim($value));
+
+        return is_array($parts)
+            && in_array(strtolower($parts['scheme'] ?? ''), ['http', 'https'], true)
+            && ! empty($parts['host']);
+    }
+
+    public static function sanitizeHttp(mixed $value, string $fallback = '#'): string
+    {
+        return self::isHttpUrl($value) ? trim($value) : $fallback;
+    }
+
     public static function sanitize(mixed $value, string $fallback = '#'): string
     {
         if (! is_string($value) || trim($value) === '' || ! self::isValid($value)) {

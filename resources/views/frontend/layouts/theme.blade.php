@@ -260,33 +260,33 @@
                             <ul>
                                 <li>
                                     <div class="th-social">
-                                        @if (!empty($siteSettings['social_facebook']))
-                                            <a href="{{ $siteSettings['social_facebook'] }}" target="_blank"
-                                                rel="noopener">
+                                        @if (\\App\\Rules\\SafeLink::isHttpUrl($siteSettings['social_facebook'] ?? null))
+                                            <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_facebook']) }}" target="_blank"
+                                                rel="noopener noreferrer">
                                                 <i class="fab fa-facebook-f">
                                                 </i>
                                             </a>
-                                            @endif @if (!empty($siteSettings['social_instagram']))
-                                                <a href="{{ $siteSettings['social_instagram'] }}" target="_blank"
-                                                    rel="noopener">
+                                            @endif @if (\\App\\Rules\\SafeLink::isHttpUrl($siteSettings['social_instagram'] ?? null))
+                                                <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_instagram']) }}" target="_blank"
+                                                    rel="noopener noreferrer">
                                                     <i class="fab fa-instagram">
                                                     </i>
                                                 </a>
-                                                @endif @if (!empty($siteSettings['social_linkedin']))
-                                                    <a href="{{ $siteSettings['social_linkedin'] }}" target="_blank"
-                                                        rel="noopener">
+                                                @endif @if (\\App\\Rules\\SafeLink::isHttpUrl($siteSettings['social_linkedin'] ?? null))
+                                                    <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_linkedin']) }}" target="_blank"
+                                                        rel="noopener noreferrer">
                                                         <i class="fab fa-linkedin-in">
                                                         </i>
                                                     </a>
-                                                    @endif @if (!empty($siteSettings['social_youtube']))
+                                                    @endif @if (\\App\\Rules\\SafeLink::isHttpUrl($siteSettings['social_youtube'] ?? null))
                                                         <a href="{{ $siteSettings['social_youtube'] }}"
-                                                            target="_blank" rel="noopener">
+                                                            target="_blank" rel="noopener noreferrer">
                                                             <i class="fab fa-youtube">
                                                             </i>
                                                         </a>
-                                                        @endif @if (!empty($siteSettings['social_x']))
-                                                            <a href="{{ $siteSettings['social_x'] }}" target="_blank"
-                                                                rel="noopener">
+                                                        @endif @if (\\App\\Rules\\SafeLink::isHttpUrl($siteSettings['social_x'] ?? null))
+                                                            <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_x']) }}" target="_blank"
+                                                                rel="noopener noreferrer">
                                                                 <i class="fab fa-x-twitter">
                                                                 </i>
                                                             </a>
@@ -492,8 +492,8 @@
                                     <div class="widget widget_banner footer-widget">
                                         <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? 'Pillar Location' }}</h3>
                                         <div class="widget-map">
-                                            @if (!empty($siteSettings['footer_map_embed_url']))
-                                                <iframe src="{{ $siteSettings['footer_map_embed_url'] }}"></iframe>
+                                            @if (\\App\\Rules\\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null))
+                                                <iframe src="{{ \\App\\Rules\\SafeLink::sanitizeHttp($siteSettings['footer_map_embed_url']) }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                                             @endif
                                         </div>
                                     </div>
@@ -562,7 +562,7 @@
                                                 </i>
                                             </a>
                                             @endif @if (!empty($siteSettings['social_youtube']))
-                                                <a href="{{ $siteSettings['social_youtube'] }}" target="_blank"
+                                                <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_youtube']) }}" target="_blank"
                                                     rel="noopener">
                                                     <i class="fab fa-youtube">
                                                     </i>
