@@ -555,8 +555,7 @@ $sections = array_merge($sections, require __DIR__.'/cms-sections/featured-prope
 $sections = array_merge($sections, require __DIR__.'/cms-sections/blog.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/search.php');
 
-return [
-    'sections' => array_intersect_key($sections, array_flip([
+$fixedHomepageSections = array_intersect_key($sections, array_flip([
         'hero.home-9',
         'about.home-9',
         'statistics.home-9',
@@ -567,5 +566,17 @@ return [
         'team.home-2',
         'testimonials.home-3',
         'blog.home-2',
-    ])),
-];
+    ]));
+
+foreach ($fixedHomepageSections as &$definition) {
+    foreach (['fields', 'defaults'] as $group) {
+        foreach (array_keys($definition[$group] ?? []) as $field) {
+            if (str_starts_with($field, 'widget_')) {
+                unset($definition[$group][$field]);
+            }
+        }
+    }
+}
+unset($definition);
+
+return ['sections' => $fixedHomepageSections];

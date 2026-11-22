@@ -65,7 +65,7 @@ class PillerDemoContentSeederTest extends TestCase
         $this->assertFalse(Schema::hasColumn('homepage_sections', 'page_id'));
         $this->assertFalse(Schema::hasColumn('homepage_sections', 'service_id'));
         $this->assertFalse(Schema::hasColumn('homepage_sections', 'reusable_section_id'));
-        $this->get('/')->assertOk()->assertViewIs('frontend.home-builder')
+        $this->get('/')->assertOk()->assertViewIs('frontend.homepage')
             ->assertSee('Discover')->assertSee('Most Suitable')->assertSee('Property')
             ->assertSee('Create Your Story')->assertSee('Best Properties Sale')
             ->assertSee('Meet Our Pillar Agents')->assertSee('What Clients Say About Pillar')

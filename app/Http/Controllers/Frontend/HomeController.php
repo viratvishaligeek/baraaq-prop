@@ -19,7 +19,7 @@ class HomeController extends Controller
 
         abort_unless($homepage, 503, 'The fixed homepage is not published yet.');
 
-        return view('frontend.home-builder', [
+        return view('frontend.homepage', [
             'homepage' => $homepage,
             'isFixedHomepage' => true,
         ]);

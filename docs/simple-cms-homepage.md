@@ -1,6 +1,6 @@
 # Fixed Homepage 9 CMS
 
-The public root route renders the published home-9 record only. Homepage content is stored in the homepages and homepage_sections tables; the original Home 9 section Blade views remain responsible for the visual design.
+The public root route renders the published home-9 record only. The fixed homepage renderer includes the original Home 9 Blade section views directly; it does not use a general page-builder runtime. Homepage content is stored in the homepages and homepage_sections tables; the original Home 9 section Blade views remain responsible for the visual design.
 
 Administrators with settings.manage access use Admin → Appearance & design → Homepage management to edit homepage SEO details and each registered Home 9 section's text, links, display options and images. Uploaded replacement images are stored on the public disk, registered in media, and attached to the relevant homepage section.
 

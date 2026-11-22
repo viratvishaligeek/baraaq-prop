@@ -7,6 +7,7 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('settings')) DB::table('settings')->where('key', 'dashboard_widgets')->delete();
         if (Schema::hasTable('media_attachments')) DB::table('media_attachments')->whereIn('mediable_type', ['App\\Models\\ReusableSection', 'App\\Models\\Widget'])->delete();
         if (Schema::hasTable('homepage_sections')) {
             Schema::table('homepage_sections', function (Blueprint $table) {

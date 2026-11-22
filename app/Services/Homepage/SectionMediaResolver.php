@@ -7,7 +7,7 @@ class SectionMediaResolver
     public function forRendering(HomepageSection $section, array $config): array
     {
         $definition = config('cms-sections.sections.' . $section->section_key, []);
-        $imageFields = collect($definition['fields'] ?? [])->filter(fn (array $schema) => ($schema['type'] ?? null) === 'image')->keys()->merge(['widget_background_image']);
+        $imageFields = collect($definition['fields'] ?? [])->filter(fn (array $schema) => ($schema['type'] ?? null) === 'image')->keys();
         $mediaIds = $imageFields->map(fn (string $field) => $config[$field] ?? null)->filter(fn ($value) => (is_string($value) || is_int($value)) && ctype_digit((string) $value))->map(fn ($value) => (int) $value)->unique()->values();
         if ($mediaIds->isEmpty()) return $config;
         $attachments = ($section->relationLoaded('mediaAttachments') ? $section->mediaAttachments : $section->mediaAttachments()->with('media')->get())->keyBy('field_key');

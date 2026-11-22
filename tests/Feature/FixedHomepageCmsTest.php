@@ -44,7 +44,7 @@ class FixedHomepageCmsTest extends TestCase
     {
         $homepage = $this->homepage();
         $this->heroSection($homepage);
-        $this->get('/')->assertOk()->assertViewIs('frontend.home-builder')
+        $this->get('/')->assertOk()->assertViewIs('frontend.homepage')
             ->assertSee('A fixed Home Nine heading')->assertSee('Made dynamic')->assertSee('Managed from the homepage CMS.');
     }
     public function test_homepage_admin_lists_fixed_home_nine_sections_and_saves_section_content(): void
@@ -55,6 +55,7 @@ class FixedHomepageCmsTest extends TestCase
         $this->actingAs($admin)->get(route('admin.homepages.index'))->assertOk()->assertSee('Homepage content')->assertSee('Hero — Home 9');
         $this->actingAs($admin)->patch(route('admin.homepages.sections.update', [$homepage, $section]), [
             'config' => ['heading_prefix' => 'Updated from admin'],
+                'is_enabled' => '1',
         ])->assertRedirect(route('admin.homepages.index'));
         $this->assertSame('Updated from admin', $section->fresh()->config['heading_prefix']);
         $this->get('/')->assertOk()->assertSee('Updated from admin');

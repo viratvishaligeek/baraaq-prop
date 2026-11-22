@@ -71,6 +71,7 @@ class HomepageController extends Controller
             };
         }
 
+        $rules['is_enabled'] = ['required', 'boolean'];
         $validated = $request->validate($rules);
         $submitted = $validated['config'] ?? [];
         $config = $section->config ?? [];
@@ -113,7 +114,7 @@ class HomepageController extends Controller
             }
         }
 
-        $section->update(['config' => $config]);
+        $section->update(['config' => $config, 'is_enabled' => (bool) $validated['is_enabled']]);
         $this->clearHomepageCache();
 
         return redirect()->route('admin.homepages.index')

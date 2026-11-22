@@ -28,6 +28,7 @@
             </div>
         </div>
     </div>
+    @if ($isPreview ?? false)<div class="container py-3"><span class="badge bg-warning text-dark">Preview — not publicly published</span></div>@endif
     @if ($page->content)
         <section class="space"><div class="container"><div class="row justify-content-center"><div class="col-lg-9">{!! \App\Support\HtmlSanitizer::sanitize($page->content) !!}</div></div></div></section>
     @endif
