@@ -66,12 +66,17 @@ Canonical URLs are generated from public routes for properties, posts, pages and
 
 The XML sitemap includes the public homepage, listings and published property, post, page and service routes.
 
+## Contact enquiries
+
+The public contact form accepts either an email address or a phone number; at least one reply channel is required. The database migration `2026_11_23_000001_make_enquiry_phone_optional.php` makes the phone column nullable so email-only enquiries can be stored. Existing records are preserved. Rolling this migration back converts null phone values to empty strings before restoring the historical non-null constraint.
+
 ## Database and production migration notes
 
-**Back up the production database before applying the fixed-homepage cleanup migrations.**
+**Back up the production database before applying the fixed-homepage cleanup migrations or later schema changes.**
 
 - `2026_11_22_000001_remove_legacy_page_builder_and_widget_schema.php` removes retired widget/reusable-section tables and related legacy data, removes obsolete homepage compositions and drops retired page/service section ownership. Its `down()` method intentionally does not reconstruct deleted data.
 - `2026_11_22_000002_simplify_fixed_homepage_schema.php` removes legacy design/composition metadata and adds a unique constraint on `(homepage_id, section_key)`. Its `down()` method is intentionally irreversible.
+- `2026_11_23_000001_make_enquiry_phone_optional.php` allows email-only enquiries. Its rollback preserves rows by converting null phone values to empty strings before restoring the non-null constraint.
 
 Before running the unique-key migration against an existing database, check for duplicates:
 
