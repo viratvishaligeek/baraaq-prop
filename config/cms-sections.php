@@ -555,18 +555,24 @@ $sections = array_merge($sections, require __DIR__.'/cms-sections/featured-prope
 $sections = array_merge($sections, require __DIR__.'/cms-sections/blog.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/search.php');
 
-$fixedHomepageSections = array_intersect_key($sections, array_flip([
-        'hero.home-9',
-        'about.home-9',
-        'statistics.home-9',
-        'services.home-9',
-        'properties.index',
-        'featured-gallery.home-9',
-        'home-details.home-9',
-        'team.home-2',
-        'testimonials.home-3',
-        'blog.home-2',
-    ]));
+$fixedHomepageKeys = [
+    'hero.home-9',
+    'about.home-9',
+    'statistics.home-9',
+    'services.home-9',
+    'properties.index',
+    'featured-gallery.home-9',
+    'home-details.home-9',
+    'team.home-2',
+    'testimonials.home-3',
+    'blog.home-2',
+];
+$fixedHomepageSections = [];
+foreach ($fixedHomepageKeys as $key) {
+    if (isset($sections[$key])) {
+        $fixedHomepageSections[$key] = $sections[$key];
+    }
+}
 
 foreach ($fixedHomepageSections as &$definition) {
     foreach (['fields', 'defaults'] as $group) {

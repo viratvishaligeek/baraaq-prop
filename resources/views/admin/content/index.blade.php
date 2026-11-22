@@ -70,9 +70,6 @@
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="4" class="text-center text-muted py-5">No {{ $type }} found.</td>
-                        </tr>
                     @endforelse
                 </tbody>
             </table>

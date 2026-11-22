@@ -172,7 +172,7 @@
                         ordering: true,
                         responsive: true,
                         autoWidth: false,
-                        language: { search: 'Search:', searchPlaceholder: 'Search records...' }
+                        language: { emptyTable: 'No records found.', search: 'Search:', searchPlaceholder: 'Search records...' }
                     });
                 }
             });
