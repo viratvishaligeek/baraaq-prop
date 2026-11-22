@@ -7,6 +7,7 @@ use App\Models\Homepage;
 use App\Models\HomepageSection;
 use App\Models\Media;
 use App\Models\Setting;
+use App\Support\HtmlSanitizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -72,8 +73,8 @@ class HomepageController extends Controller
         ]);
 
         $homepage->update([
-            'meta_title' => $data['meta_title'] ?? $homepage->meta_title,
-            'meta_description' => $data['meta_description'] ?? $homepage->meta_description,
+            'meta_title' => array_key_exists('meta_title', $data) ? $data['meta_title'] : $homepage->meta_title,
+            'meta_description' => array_key_exists('meta_description', $data) ? $data['meta_description'] : $homepage->meta_description,
         ]);
 
         $settingGroups = [
@@ -164,6 +165,13 @@ class HomepageController extends Controller
             if ($type === 'checkbox') {
                 if (array_key_exists($key, $submitted)) {
                     $config[$key] = (bool) $submitted[$key];
+                }
+                continue;
+            }
+
+            if ($type === 'richtext') {
+                if (array_key_exists($key, $submitted)) {
+                    $config[$key] = HtmlSanitizer::sanitize($submitted[$key]);
                 }
                 continue;
             }

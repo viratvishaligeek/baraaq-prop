@@ -87,6 +87,13 @@ class FixedHomepageCmsTest extends TestCase
         ])->assertRedirect(route('admin.homepages.index'));
         $this->assertSame('Baraaq Properties | Home', $homepage->fresh()->meta_title);
         $this->assertSame('Find a property with our local team.', $homepage->fresh()->meta_description);
+
+        $this->actingAs($admin)->patch(route('admin.homepages.update', $homepage), [
+            'meta_title' => '',
+            'meta_description' => '',
+        ])->assertRedirect(route('admin.homepages.index'));
+        $this->assertNull($homepage->fresh()->meta_title);
+        $this->assertNull($homepage->fresh()->meta_description);
     }
     public function test_homepage_image_replacement_is_stored_in_media_library_and_attached_to_section(): void
     {
