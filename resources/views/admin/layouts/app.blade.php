@@ -79,10 +79,6 @@
                         <a class="sidebar-link {{ request()->routeIs('admin.appearance.*') ? 'active' : '' }}" href="{{ route('admin.appearance.index') }}">Theme & appearance</a>
                         <a class="sidebar-link {{ request()->routeIs('admin.homepages.*') ? 'active' : '' }}" href="{{ route('admin.homepages.index') }}">Homepage management</a>
                     @endif
-                    @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('pages.view') || auth()->user()->hasPermission('pages.manage') || auth()->user()->hasPermission('services.manage'))
-                    @endif
-                    @if (auth()->user()->isAdministrator())
-                    @endif
                     @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('menus.manage'))
                         <a class="sidebar-link {{ request()->routeIs('admin.menus.*') ? 'active' : '' }}" href="{{ route('admin.menus.index') }}">Navigation menus</a>
                     @endif
