@@ -86,8 +86,8 @@ class MenuController extends Controller
             'menu' => $menu,
             'menuItems' => $items ?? collect(),
             'pages' => Page::where('status', 'published')->orderBy('title')->get(['id', 'title']),
-            'blogCategories' => Category::where('type', 'post')->orderBy('name')->get(['id', 'name']),
-            'propertyCategories' => Category::where('type', 'property')->orderBy('name')->get(['id', 'name']),
+            'blogCategories' => Category::where('type', 'post')->where('is_active', true)->orderBy('name')->get(['id', 'name']),
+            'propertyCategories' => Category::where('type', 'property')->where('is_active', true)->orderBy('name')->get(['id', 'name']),
             'services' => Service::published()->orderBy('title')->get(['id', 'title', 'slug']),
         ];
     }
@@ -136,11 +136,11 @@ class MenuController extends Controller
                 throw ValidationException::withMessages(['items.' . $index . '.link_id' => 'Choose a published page.']);
             }
 
-            if ($linkType === 'blog_category' && (! $linkId || ! Category::whereKey($linkId)->where('type', 'post')->exists())) {
+            if ($linkType === 'blog_category' && (! $linkId || ! Category::whereKey($linkId)->where('type', 'post')->where('is_active', true)->exists())) {
                 throw ValidationException::withMessages(['items.' . $index . '.link_id' => 'Choose a blog category.']);
             }
 
-            if ($linkType === 'property_category' && (! $linkId || ! Category::whereKey($linkId)->where('type', 'property')->exists())) {
+            if ($linkType === 'property_category' && (! $linkId || ! Category::whereKey($linkId)->where('type', 'property')->where('is_active', true)->exists())) {
                 throw ValidationException::withMessages(['items.' . $index . '.link_id' => 'Choose a property category.']);
             }
 

@@ -52,7 +52,7 @@ class MenuItem extends Model
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'link_id');
+        return $this->belongsTo(Category::class, 'link_id')->where('is_active', true);
     }
 
     public function service(): BelongsTo

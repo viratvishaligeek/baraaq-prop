@@ -61,6 +61,10 @@ class AdminRouteIntegrityTest extends TestCase
         $this->assertCount($names->count(), $names->unique());
         $this->assertFalse(Route::has('theme.page'));
         $this->assertFalse(Route::has('admin.homepages.builder'));
+        $this->assertFalse(Route::has('admin.widgets.index'));
+        $this->assertFalse(Route::has('admin.page-builder.index'));
+        $this->assertFalse(Route::has('admin.section-library.index'));
+        $this->assertFalse(Route::has('admin.reusable-sections.index'));
     }
 
     public function test_admin_data_tables_are_enabled_on_the_listing_screens(): void

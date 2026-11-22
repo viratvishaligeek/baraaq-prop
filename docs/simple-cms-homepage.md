@@ -22,13 +22,13 @@ Replacing an image does not silently delete an existing Media Library asset. Leg
 
 ## Admin tables
 
-Admin listing tables use DataTables 2 with Bootstrap 5 and Responsive extensions from the official CDN. Tables backed by full result sets use DataTables search, sorting and pagination. Larger server-paginated lists retain Laravel pagination and use DataTables search/sorting on the current page; DataTables paging is disabled on those tables to avoid two competing pagination controls. Tables initialize once and no npm package or frontend build step is required.
+Admin listing tables use DataTables 2 with Bootstrap 5 and Responsive extensions from the official CDN. Tables backed by full result sets use DataTables search, sorting and pagination. Larger server-paginated lists retain Laravel pagination and use DataTables search/sorting on the current page; DataTables paging is disabled on those tables to avoid two competing pagination controls. Tables initialize once; no new npm dependency or frontend build step is required.
 
 ## Production migration caution
 
-The repository contains 34 historical migrations. They are retained rather than rewritten or deleted: reducing migration file count is not worth breaking environments where those migrations have already run.
+The repository contains 34 migration files. Existing migration history is retained rather than rewritten or deleted: reducing migration file count is not worth breaking environments where those migrations have already run.
 
-The forward-only 2026_11_22_000001_remove_legacy_page_builder_and_widget_schema migration retires builder/widget records and schema. Its down() method intentionally does not reconstruct deleted data. Before applying it to a live database, verify its status with php artisan migrate:status, take and test a backup, and confirm the fixed Home 9 record and required section rows are present. Repository access cannot establish the migration state of a production database.
+The forward-only 2026_11_22_000001_remove_legacy_page_builder_and_widget_schema migration retires builder/widget records and schema. Its down() method intentionally does not reconstruct deleted data. Do not roll back across this migration: restore from a tested backup if reversal is required. Before applying it to a live database, verify its status with php artisan migrate:status, take and test a backup, and confirm the fixed Home 9 record and required section rows are present. Repository access cannot establish the migration state of a production database.
 
 ## Verification
 

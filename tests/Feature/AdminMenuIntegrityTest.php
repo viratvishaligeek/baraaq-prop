@@ -64,6 +64,30 @@ class AdminMenuIntegrityTest extends TestCase
         $this->assertSame(route('services.show', $service->slug), $cachedMenu->items->first()->resolved_url);
     }
 
+    public function test_inactive_categories_cannot_be_added_as_menu_destinations(): void
+    {
+        $admin = $this->administrator();
+        $category = \\App\\Models\\Category::create([
+            'name' => 'Hidden articles',
+            'slug' => 'hidden-articles',
+            'type' => 'post',
+            'is_active' => false,
+        ]);
+
+        $this->actingAs($admin)->post(route('admin.menus.store'), [
+            'name' => 'Inactive category menu',
+            'location' => 'inactive-category-menu',
+            'items' => [[
+                'label' => 'Hidden articles',
+                'link_type' => 'blog_category',
+                'link_id' => (string) $category->id,
+                'url' => '',
+                'target' => '_self',
+                'is_active' => '1',
+            ]],
+        ])->assertSessionHasErrors('items.0.link_id');
+    }
+
     public function test_menu_custom_links_reject_unsafe_schemes(): void
     {
         $admin = $this->administrator();
