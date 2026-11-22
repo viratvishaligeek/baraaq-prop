@@ -26,8 +26,8 @@ class ContentPreviewTest extends TestCase
         $service = Service::create(['title' => 'Draft preview service', 'slug' => 'draft-preview-service', 'content' => '<p>Service preview body.</p>', 'status' => 'draft']);
 
         $this->actingAs($user)->get(route('admin.content.preview', ['type' => 'posts', 'id' => $post->id]))->assertOk()->assertSee('Draft preview post');
-        $this->actingAs($user)->get(route('admin.content.preview', ['type' => 'pages', 'id' => $page->id]))->assertOk()->assertSee('Draft preview page');
-        $this->actingAs($user)->get(route('admin.content.preview', ['type' => 'services', 'id' => $service->id]))->assertOk()->assertSee('Draft preview service');
+        $this->actingAs($user)->get(route('admin.content.preview', ['type' => 'pages', 'id' => $page->id]))->assertOk()->assertSee('Draft preview page')->assertSee('Preview — not publicly published');
+        $this->actingAs($user)->get(route('admin.content.preview', ['type' => 'services', 'id' => $service->id]))->assertOk()->assertSee('Draft preview service')->assertSee('Preview — not publicly published');
 
         $this->assertSame('draft', $post->fresh()->status);
         $this->assertSame('draft', $page->fresh()->status);

@@ -36,7 +36,7 @@ class ContentPreviewController extends Controller
     {
         $page = Page::findOrFail($id);
 
-        return view('frontend.pages.show', ['page' => $page, 'isHomepage' => false, 'isBuilderPreview' => true]);
+        return view('frontend.pages.show', ['page' => $page, 'isHomepage' => false, 'isPreview' => true]);
     }
 
     private function service(int $id)

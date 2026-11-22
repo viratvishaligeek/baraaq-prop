@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Media;
 use App\Support\MediaReferenceChecker;
+use App\Services\MediaUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use RuntimeException;
 
 class MediaController extends Controller
 {
@@ -35,52 +35,10 @@ class MediaController extends Controller
             'variants.*.large' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
         ]);
 
-        $uploadedPaths = [];
-
-        try {
-            DB::transaction(function () use ($data, $request, &$uploadedPaths): void {
-                foreach ($data['files'] as $index => $file) {
-                    $path = $file->store('media', 'public');
-                    if (! $path) {
-                        throw new RuntimeException('A media file could not be stored.');
-                    }
-
-                    $uploadedPaths[] = $path;
-                    $attributes = [
-                        'uploaded_by' => $request->user()->id,
-                        'disk' => 'public',
-                        'path' => $path,
-                        'original_name' => $file->getClientOriginalName(),
-                        'mime_type' => $file->getMimeType(),
-                        'size' => $file->getSize(),
-                    ];
-
-                    foreach (['small', 'medium', 'large'] as $size) {
-                        $variant = $data['variants'][$index][$size] ?? null;
-                        if (! $variant) {
-                            continue;
-                        }
-
-                        $variantPath = $variant->store('media/variants/'.$size, 'public');
-                        if (! $variantPath) {
-                            throw new RuntimeException('A responsive image variant could not be stored.');
-                        }
-
-                        $uploadedPaths[] = $variantPath;
-                        $attributes[$size.'_path'] = $variantPath;
-                    }
-
-                    Media::create($attributes);
-                }
-            });
-        } catch (\Throwable $exception) {
-            Storage::disk('public')->delete($uploadedPaths);
-            throw $exception;
-        }
+        app(MediaUploadService::class)->store($request, $data['files'], $data['variants'] ?? []);
 
         return back()->with('success', 'Files uploaded with available responsive image variants.');
     }
-
     public function bulkDestroy(Request $request)
     {
         $data = $request->validate([
