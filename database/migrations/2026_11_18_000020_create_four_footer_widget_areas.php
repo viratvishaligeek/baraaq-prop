@@ -7,7 +7,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        $now = date('Y-m-d H:i:s');
+        $now = now();
 
         foreach ([
             'footer-1' => ['Footer section 1', 'Dynamic content for the first original footer column.'],
@@ -15,28 +15,24 @@ return new class extends Migration
             'footer-3' => ['Footer section 3', 'Dynamic content for the third original footer column.'],
             'footer-4' => ['Footer section 4', 'Dynamic content for the fourth original footer column.'],
         ] as $location => [$name, $description]) {
-            $values = [
+            // Seed only missing defaults. Never overwrite a site owner's existing widget area.
+            if (DB::table('widget_areas')->where('location', $location)->exists()) {
+                continue;
+            }
+
+            DB::table('widget_areas')->insert([
                 'name' => $name,
+                'location' => $location,
                 'description' => $description,
                 'is_active' => true,
+                'created_at' => $now,
                 'updated_at' => $now,
-            ];
-
-            if (DB::table('widget_areas')->where('location', $location)->exists()) {
-                DB::table('widget_areas')->where('location', $location)->update($values);
-            } else {
-                DB::table('widget_areas')->insert($values + [
-                    'location' => $location,
-                    'created_at' => $now,
-                ]);
-            }
+            ]);
         }
     }
 
     public function down(): void
     {
-        DB::table('widget_areas')->whereIn('location', [
-            'footer-1', 'footer-2', 'footer-3', 'footer-4',
-        ])->delete();
+        // Footer areas may have been customized after migration; preserve them on rollback.
     }
 };
