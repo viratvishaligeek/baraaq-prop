@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Menu;
 use App\Models\Page;
+use App\Models\Service;
+use App\Rules\SafeLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -84,8 +86,9 @@ class MenuController extends Controller
             'menu' => $menu,
             'menuItems' => $items ?? collect(),
             'pages' => Page::where('status', 'published')->orderBy('title')->get(['id', 'title']),
-            'blogCategories' => Category::where('type', 'post')->orderBy('name')->get(['id', 'name']),
-            'propertyCategories' => Category::where('type', 'property')->orderBy('name')->get(['id', 'name']),
+            'blogCategories' => Category::where('type', 'post')->where('is_active', true)->orderBy('name')->get(['id', 'name']),
+            'propertyCategories' => Category::where('type', 'property')->where('is_active', true)->orderBy('name')->get(['id', 'name']),
+            'services' => Service::published()->orderBy('title')->get(['id', 'title', 'slug']),
         ];
     }
 
@@ -98,7 +101,7 @@ class MenuController extends Controller
             'items.*.label' => ['required', 'string', 'max:120'],
             'items.*.link_type' => ['nullable', Rule::in(['custom', 'page', 'blog_category', 'property_category', 'service'])],
             'items.*.link_id' => ['nullable', 'integer'],
-            'items.*.url' => ['nullable', 'string', 'max:2048', 'regex:/^(https?:\/\/|\/|mailto:|tel:|#)/i'],
+            'items.*.url' => ['nullable', 'string', 'max:2048', new SafeLink()],
             'items.*.target' => ['required', Rule::in(['_self', '_blank'])],
             'items.*.parent_index' => ['nullable', 'integer', 'min:0', 'max:49'],
             'items.*.is_active' => ['nullable', 'boolean'],
@@ -133,12 +136,16 @@ class MenuController extends Controller
                 throw ValidationException::withMessages(['items.' . $index . '.link_id' => 'Choose a published page.']);
             }
 
-            if ($linkType === 'blog_category' && (! $linkId || ! Category::whereKey($linkId)->where('type', 'post')->exists())) {
+            if ($linkType === 'blog_category' && (! $linkId || ! Category::whereKey($linkId)->where('type', 'post')->where('is_active', true)->exists())) {
                 throw ValidationException::withMessages(['items.' . $index . '.link_id' => 'Choose a blog category.']);
             }
 
-            if ($linkType === 'property_category' && (! $linkId || ! Category::whereKey($linkId)->where('type', 'property')->exists())) {
+            if ($linkType === 'property_category' && (! $linkId || ! Category::whereKey($linkId)->where('type', 'property')->where('is_active', true)->exists())) {
                 throw ValidationException::withMessages(['items.' . $index . '.link_id' => 'Choose a property category.']);
+            }
+
+            if ($linkType === 'service' && (! $linkId || ! Service::published()->whereKey($linkId)->exists())) {
+                throw ValidationException::withMessages(['items.' . $index . '.link_id' => 'Choose a published service.']);
             }
 
             $created[$index] = $menu->allItems()->create([

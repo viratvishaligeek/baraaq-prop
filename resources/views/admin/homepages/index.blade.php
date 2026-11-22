@@ -52,6 +52,11 @@
                     <input class="form-control" name="site_tagline" maxlength="255" value="{{ old('site_tagline', $siteSettings['site_tagline'] ?? '') }}">
                 </div>
                 <div class="col-md-6">
+                    <label class="form-label">Header navigation menu location</label>
+                    <input class="form-control" name="header_menu_location" maxlength="60" value="{{ old('header_menu_location', $siteSettings['header_menu_location'] ?? 'primary') }}">
+                    <div class="form-text">Manage the menu items under Admin → Menus.</div>
+                </div>
+                <div class="col-md-6">
                     <label class="form-label">Header button label</label>
                     <input class="form-control" name="header_cta_label" maxlength="80" value="{{ old('header_cta_label', $siteSettings['header_cta_label'] ?? '') }}">
                 </div>
@@ -189,7 +194,7 @@
                     @foreach ($fields as $key => $field)
                         @php
                             $type = $field['type'] ?? 'text';
-                            $value = old('config.' . $key, $config[$key] ?? '');
+                            $value = old('config.' . $key, $config[$key] ?? ($definition['defaults'][$key] ?? ''));
                             $attachment = $section->mediaAttachments->firstWhere('field_key', $key);
                             $currentImage = $attachment?->media?->url;
                             if (!$currentImage && is_numeric($value)) {
@@ -223,9 +228,10 @@
                                         id="section-{{ $section->id }}-{{ $key }}" name="config[{{ $key }}]">
                                     <div class="form-text">Upload a replacement image (JPG, PNG, WebP or GIF; up to 10 MB). Leave empty to keep the current image.</div>
                                 @else
-                                    <input class="form-control" type="{{ in_array($type, ['number', 'url', 'color'], true) ? $type : 'text' }}"
+                                    <input class="form-control" type="{{ $type === 'number' ? 'number' : ($type === 'color' ? 'color' : 'text') }}"
                                         id="section-{{ $section->id }}-{{ $key }}" name="config[{{ $key }}]"
                                         value="{{ $value }}" maxlength="{{ $field['max'] ?? 255 }}"
+                                        @if ($type === 'url') inputmode="url" placeholder="/contact, #services, tel:+911234567890, mailto:info@example.com or https://example.com" @endif
                                         @if(isset($field['min'])) min="{{ $field['min'] }}" @endif
                                         @if(isset($field['max']) && $type === 'number') max="{{ $field['max'] }}" @endif>
                                 @endif

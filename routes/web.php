@@ -50,6 +50,3 @@ Route::get('/blog-details.html', fn() => redirect()->route('blog.index'));
 
 Route::get('/home-9.html', fn () => redirect()->route('home'));
 
-Route::get('/{template}.html', [\App\Http\Controllers\Frontend\ThemePageController::class, 'show'])
-    ->where('template', 'about|agency|agency-details|blog-grid-left-sidebar|blog-grid-right-sidebar|contact|error|faq|gallery|neighborhood-guide|pricing|service|service-details|service-right-sidebar|team|team-details')
-    ->name('theme.page');

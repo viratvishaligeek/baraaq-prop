@@ -7,7 +7,7 @@
     <a class="btn btn-primary" href="{{ route('admin.roles.create') }}">Create role</a>
 </div>
 <div class="content-card">
-    <table class="table align-middle">
+    <table class="table align-middle" data-datatable>
         <thead>
             <tr>
                 <th>Role</th>

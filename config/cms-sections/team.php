@@ -5,7 +5,6 @@ return [
         'key' => 'team.home-2',
         'label' => 'Agent carousel — Home 2',
         'type' => 'team-slider',
-        'source_design' => 'home-2',
         'view' => 'frontend.sections.team.home-2',
         'defaults' => [
             'eyebrow' => 'Team Members',
@@ -14,6 +13,7 @@ return [
             'columns' => 4,
             'show_email' => true,
             'show_chat_text' => true,
+            'empty_state_text' => 'Team profiles will appear here soon.',
             'chat_text' => 'Explore Property agents are here to help with all your buying, renting and selling goals. Find the home of your dreams with an expert you can trust.',
             'chat_link_label' => 'Let’s chat',
             'chat_link_url' => '/contact',
@@ -32,6 +32,7 @@ return [
             'columns' => ['label' => 'Desktop slides per view', 'type' => 'select', 'options' => [2 => '2', 3 => '3', 4 => '4']],
             'show_email' => ['label' => 'Show email action', 'type' => 'checkbox'],
             'show_chat_text' => ['label' => 'Show chat invitation', 'type' => 'checkbox'],
+            'empty_state_text' => ['label' => 'Empty state text', 'type' => 'text', 'max' => 255],
             'chat_text' => ['label' => 'Chat invitation text', 'type' => 'textarea', 'max' => 700],
             'chat_link_label' => ['label' => 'Chat link label', 'type' => 'text', 'max' => 80],
             'chat_link_url' => ['label' => 'Chat link URL', 'type' => 'url', 'max' => 2048],

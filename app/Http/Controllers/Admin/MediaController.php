@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Media;
+use App\Support\MediaReferenceChecker;
+use App\Services\MediaUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
@@ -15,13 +16,16 @@ class MediaController extends Controller
     {
         $media = Media::query()
             ->when(request('type') === 'images', fn ($query) => $query->where('mime_type', 'like', 'image/%'))
-            ->latest()->paginate(30)->withQueryString();
+            ->latest()
+            ->paginate(30)
+            ->withQueryString();
 
         return view('admin.media.index', compact('media'));
     }
-    public function store(Request $r)
+
+    public function store(Request $request)
     {
-        $data = $r->validate([
+        $data = $request->validate([
             'files' => ['required', 'array', 'min:1', 'max:20'],
             'files.*' => ['required', 'file', 'mimes:jpg,jpeg,png,webp,gif,pdf,mp4', 'max:10240'],
             'variants' => ['sometimes', 'array'],
@@ -31,26 +35,7 @@ class MediaController extends Controller
             'variants.*.large' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
         ]);
 
-        foreach ($data['files'] as $index => $file) {
-            $path = $file->store('media', 'public');
-            $attributes = [
-                'uploaded_by' => $r->user()->id,
-                'disk' => 'public',
-                'path' => $path,
-                'original_name' => $file->getClientOriginalName(),
-                'mime_type' => $file->getMimeType(),
-                'size' => $file->getSize(),
-            ];
-
-            foreach (['small', 'medium', 'large'] as $size) {
-                $variant = $data['variants'][$index][$size] ?? null;
-                if ($variant) {
-                    $attributes[$size . '_path'] = $variant->store('media/variants/' . $size, 'public');
-                }
-            }
-
-            Media::create($attributes);
-        }
+        app(MediaUploadService::class)->store($request, $data['files'], $data['variants'] ?? []);
 
         return back()->with('success', 'Files uploaded with available responsive image variants.');
     }
@@ -61,23 +46,31 @@ class MediaController extends Controller
             'media_ids.*' => ['required', 'integer', 'distinct', 'exists:media,id'],
         ]);
 
-        $deleted = 0;
+        $deletedMedia = [];
         $skipped = 0;
 
         foreach (Media::query()->whereIn('id', $data['media_ids'])->get() as $media) {
-            if ($media->attachments()->exists() || $this->isReferencedByContent($media)) {
+            if ($media->attachments()->exists() || app(MediaReferenceChecker::class)->isReferenced($media)) {
                 $skipped++;
                 continue;
             }
 
-            $this->deleteFiles($media);
-            $media->delete();
-            $deleted++;
+            $deletedMedia[] = $media;
         }
 
-        $response = back()->with('success', $deleted . ' media file(s) deleted.');
+        DB::transaction(function () use ($deletedMedia): void {
+            foreach ($deletedMedia as $media) {
+                $media->delete();
+            }
+        });
+
+        foreach ($deletedMedia as $media) {
+            $this->deleteFiles($media);
+        }
+
+        $response = back()->with('success', count($deletedMedia).' media file(s) deleted.');
         if ($skipped > 0) {
-            $response->withErrors(['media' => $skipped . ' selected file(s) were retained because website content still references them.']);
+            $response->withErrors(['media' => $skipped.' selected file(s) were retained because website content still references them.']);
         }
 
         return $response;
@@ -94,23 +87,47 @@ class MediaController extends Controller
             'variants.large' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
         ]);
 
-        $file = $data['image'];
-        $path = $file->store('media/edited', 'public');
-        $attributes = [
-            'uploaded_by' => $request->user()->id,
-            'disk' => 'public',
-            'path' => $path,
-            'original_name' => pathinfo($media->original_name, PATHINFO_FILENAME) . '-edited.' . $file->getClientOriginalExtension(),
-            'mime_type' => $file->getMimeType(),
-            'size' => $file->getSize(),
-            'alt_text' => $data['alt_text'] ?? $media->alt_text,
-        ];
-        foreach (['small', 'medium', 'large'] as $size) {
-            if (! empty($data['variants'][$size])) {
-                $attributes[$size . '_path'] = $data['variants'][$size]->store('media/variants/' . $size, 'public');
-            }
+        $uploadedPaths = [];
+
+        try {
+            $copy = DB::transaction(function () use ($data, $media, $request, &$uploadedPaths): Media {
+                $file = $data['image'];
+                $path = $file->store('media/edited', 'public');
+                if (! $path) {
+                    throw new RuntimeException('The edited image could not be stored.');
+                }
+
+                $uploadedPaths[] = $path;
+                $attributes = [
+                    'uploaded_by' => $request->user()->id,
+                    'disk' => 'public',
+                    'path' => $path,
+                    'original_name' => pathinfo($media->original_name, PATHINFO_FILENAME).'-edited.'.$file->getClientOriginalExtension(),
+                    'mime_type' => $file->getMimeType(),
+                    'size' => $file->getSize(),
+                    'alt_text' => $data['alt_text'] ?? $media->alt_text,
+                ];
+
+                foreach (['small', 'medium', 'large'] as $size) {
+                    if (empty($data['variants'][$size])) {
+                        continue;
+                    }
+
+                    $variantPath = $data['variants'][$size]->store('media/variants/'.$size, 'public');
+                    if (! $variantPath) {
+                        throw new RuntimeException('An edited responsive image variant could not be stored.');
+                    }
+
+                    $uploadedPaths[] = $variantPath;
+                    $attributes[$size.'_path'] = $variantPath;
+                }
+
+                return Media::create($attributes);
+            });
+        } catch (\Throwable $exception) {
+            Storage::disk('public')->delete($uploadedPaths);
+            throw $exception;
         }
-        $copy = Media::create($attributes);
 
         return response()->json([
             'saved' => true,
@@ -118,19 +135,23 @@ class MediaController extends Controller
         ], 201);
     }
 
-    public function update(Request $r, Media $media)
+    public function update(Request $request, Media $media)
     {
-        $data = $r->validate(['alt_text' => ['nullable', 'string', 'max:255']]);
+        $data = $request->validate(['alt_text' => ['nullable', 'string', 'max:255']]);
         $media->update($data);
+
         return back()->with('success', 'Media details updated.');
     }
+
     public function destroy(Media $media)
     {
-        if ($media->attachments()->exists() || $this->isReferencedByContent($media)) {
-            return back()->withErrors(['media' => 'This image is currently used by website content, a property gallery, an accommodation space, a homepage or a reusable section. Replace or clear those references before deleting it.']);
+        if ($media->attachments()->exists() || app(MediaReferenceChecker::class)->isReferenced($media)) {
+            return back()->withErrors(['media' => 'This image is currently used by website content, a property gallery, an accommodation space, the homepage or site settings. Replace or clear those references before deleting it.']);
         }
+
+        DB::transaction(fn () => $media->delete());
         $this->deleteFiles($media);
-        $media->delete();
+
         return back()->with('success', 'Media deleted.');
     }
 
@@ -143,37 +164,4 @@ class MediaController extends Controller
         }
     }
 
-    private function isReferencedByContent(Media $media): bool
-    {
-        if (Schema::hasTable('property_accommodations')
-            && Schema::hasColumn('property_accommodations', 'image_media_id')
-            && DB::table('property_accommodations')->where('image_media_id', $media->id)->exists()) {
-            return true;
-        }
-
-        $references = [
-            'properties' => ['featured_image', 'og_image'],
-            'property_images' => ['path'],
-            'posts' => ['featured_image', 'og_image'],
-            'services' => ['featured_image', 'og_image'],
-            'team_members' => ['photo'],
-            'testimonials' => ['photo'],
-            'banners' => ['image'],
-            'categories' => ['icon_path'],
-            'settings' => ['value'],
-        ];
-
-        foreach ($references as $table => $columns) {
-            if (! Schema::hasTable($table)) continue;
-
-            foreach ($columns as $column) {
-                if (Schema::hasColumn($table, $column)
-                    && DB::table($table)->where($column, $media->path)->exists()) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
 }

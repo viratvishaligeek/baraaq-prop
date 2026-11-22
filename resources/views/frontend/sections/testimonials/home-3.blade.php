@@ -23,7 +23,7 @@
 </i>
 </div>
                         <h4 class="review-title">
-<span class="number">Trust-score on <span class="counter-number">{{ $reviewCount }}</span>+</span> reviews</h4>
+<span class="number">{{ $sectionConfig['trust_score_prefix'] ?? 'Trust-score on' }} <span class="counter-number">{{ $reviewCount }}</span>+</span> {{ $sectionConfig['reviews_suffix'] ?? 'reviews' }}</h4>
                     </div>
                     <a class="th-btn tab-btn style3 radius" href="{{ $sectionConfig['view_all_url'] ?? '#' }}">{{ $sectionConfig['view_all_label'] ?? 'View All Reviews' }}</a>
                     <div class="testi-bottom-item">

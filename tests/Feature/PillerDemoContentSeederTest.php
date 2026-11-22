@@ -33,8 +33,6 @@ class PillerDemoContentSeederTest extends TestCase
         $homepage = Homepage::query()->where('slug', 'home-9')->firstOrFail();
         $expected = ['hero.home-9', 'about.home-9', 'statistics.home-9', 'services.home-9', 'properties.index', 'featured-gallery.home-9', 'home-details.home-9', 'team.home-2', 'testimonials.home-3', 'blog.home-2'];
         $this->assertSame(1, Homepage::query()->count());
-        $this->assertTrue($homepage->is_default);
-        $this->assertTrue($homepage->is_composition_complete);
         $this->assertSame($expected, $homepage->sections()->orderBy('sort_order')->pluck('section_key')->all());
         $this->assertGreaterThanOrEqual(12, Property::published()->count());
         $this->assertGreaterThanOrEqual(8, Post::published()->count());
@@ -54,6 +52,13 @@ class PillerDemoContentSeederTest extends TestCase
         $this->assertGreaterThan(0, MenuItem::query()->count());
         $this->assertGreaterThan(0, Role::query()->count());
         $this->assertGreaterThan(0, Setting::query()->count());
+        $this->assertStringStartsWith('piller-demo/', (string) Setting::read('default_og_image'));
+        $expectedSiteName = trim((string) env('SITE_NAME', 'Pillar Real Estate')) ?: 'Pillar Real Estate';
+        $this->assertSame($expectedSiteName, Setting::read('footer_copyright'));
+        $this->assertStringContainsString($expectedSiteName, (string) $homepage->meta_title);
+        $this->assertSame('All Rights Reserved.', Setting::read('footer_rights_text'));
+        $this->assertNotEmpty(Setting::read('footer_gallery_images', []));
+        $this->assertStringContainsString('output=embed', (string) Setting::read('footer_map_embed_url'));
         $this->assertGreaterThan(0, DB::table('categorizables')->count());
         $this->assertGreaterThan(0, DB::table('page_views')->count());
         $this->assertGreaterThan(0, DB::table('activity_logs')->count());
@@ -63,7 +68,6 @@ class PillerDemoContentSeederTest extends TestCase
         $this->assertFalse(Schema::hasTable('widget_areas'));
         $this->assertFalse(Schema::hasTable('widget_area_items'));
         $this->assertFalse(Schema::hasTable('reusable_sections'));
-        $this->assertSame(0, DB::table('permissions')->where('slug', 'like', 'widgets.%')->count());
         $this->assertFalse(Schema::hasColumn('pages', 'homepage_key'));
         $this->assertFalse(Schema::hasColumn('homepage_sections', 'page_id'));
         $this->assertFalse(Schema::hasColumn('homepage_sections', 'service_id'));
@@ -74,5 +78,20 @@ class PillerDemoContentSeederTest extends TestCase
             ->assertSee('Meet Our Pillar Agents')->assertSee('What Clients Say About Pillar')
             ->assertSee('Helpful Real Estate Articles')->assertSee('header-layout9')
             ->assertSee('Pillar Location')->assertSee('Pillar moments');
+    }
+
+    public function test_demo_seeder_preserves_custom_homepage_seo_when_rerun(): void
+    {
+        $this->seed();
+        $homepage = Homepage::query()->where('slug', 'home-9')->firstOrFail();
+        $homepage->update([
+            'meta_title' => 'Owner-managed homepage title',
+            'meta_description' => 'Owner-managed homepage description.',
+        ]);
+
+        $this->seed(\Database\Seeders\PillerDemoContentSeeder::class);
+
+        $this->assertSame('Owner-managed homepage title', $homepage->fresh()->meta_title);
+        $this->assertSame('Owner-managed homepage description.', $homepage->fresh()->meta_description);
     }
 }

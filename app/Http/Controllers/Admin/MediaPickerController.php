@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Media;
+use App\Services\MediaUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -15,7 +16,7 @@ class MediaPickerController extends Controller
         $permissions = [
             'media.manage', 'pages.manage', 'settings.manage', 'properties.manage',
             'posts.manage', 'services.manage', 'team.manage', 'testimonials.manage',
-            'categories.manage', 'banners.manage', 'widgets.manage',
+            'categories.manage', 'banners.manage',
         ];
 
         abort_unless($user && ($user->isAdministrator() || collect($permissions)->contains(
@@ -36,25 +37,9 @@ class MediaPickerController extends Controller
             'variants.*.large' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
         ]);
 
-        $uploaded = collect($data['files'])->map(function ($file, $index) use ($request, $data) {
-            $path = $file->store('media', 'public');
-            $attributes = [
-                'uploaded_by' => $request->user()->id,
-                'disk' => 'public',
-                'path' => $path,
-                'original_name' => $file->getClientOriginalName(),
-                'mime_type' => $file->getMimeType(),
-                'size' => $file->getSize(),
-            ];
-            foreach (['small', 'medium', 'large'] as $size) {
-                $variant = $data['variants'][$index][$size] ?? null;
-                if ($variant) {
-                    $attributes[$size . '_path'] = $variant->store('media/variants/' . $size, 'public');
-                }
-            }
-            $media = Media::create($attributes);
-
-            return [
+        $uploaded = app(MediaUploadService::class)
+            ->store($request, $data['files'], $data['variants'] ?? [])
+            ->map(fn (Media $media) => [
                 'id' => $media->id,
                 'name' => $media->original_name,
                 'url' => $media->url,
@@ -65,12 +50,10 @@ class MediaPickerController extends Controller
                 'mime_type' => $media->mime_type,
                 'size' => $media->size,
                 'disk' => $media->disk,
-            ];
-        });
+            ]);
 
         return response()->json(['uploaded' => true, 'data' => $uploaded], 201);
     }
-
     public function __invoke(Request $request)
     {
         $this->authorizePicker($request);

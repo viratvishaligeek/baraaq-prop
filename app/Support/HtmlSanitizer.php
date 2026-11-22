@@ -27,7 +27,7 @@ class HtmlSanitizer
         $previous = libxml_use_internal_errors(true);
         $document->loadHTML(
             '<?xml encoding="UTF-8"><div id="cms-safe-root">' . $html . '</div>',
-            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD
+            LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_NONET
         );
         libxml_clear_errors();
         libxml_use_internal_errors($previous);
@@ -89,8 +89,8 @@ class HtmlSanitizer
 
                 if (in_array($name, ['href', 'src'], true)) {
                     $pattern = $name === 'src'
-                        ? '~^(https?://|/)~i'
-                        : '~^(https?://|mailto:|tel:|/|#)~i';
+                        ? '~^(https?://|/(?!/))~i'
+                        : '~^(https?://|mailto:|tel:|/(?!/)|#)~i';
                     if (! preg_match($pattern, trim($attribute->value))) {
                         $child->removeAttribute($attribute->name);
                     }

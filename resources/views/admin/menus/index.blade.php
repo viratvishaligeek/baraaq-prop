@@ -8,7 +8,7 @@
         <a class="btn btn-primary" href="{{ route('admin.menus.create') }}">Create menu</a>
     </div>
     <div class="content-card">
-        <table class="table align-middle">
+        <table class="table align-middle" data-datatable data-datatable-paging="false">
             <thead>
                 <tr>
                     <th>Menu</th>
@@ -42,4 +42,5 @@
             </tbody>
         </table>
     </div>
+    {{ $menus->links() }}
 @endsection

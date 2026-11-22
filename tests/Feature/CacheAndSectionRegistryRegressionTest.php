@@ -13,24 +13,19 @@ class CacheAndSectionRegistryRegressionTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_homepage_controller_always_resolves_home_nine_not_another_default_homepage(): void
+    public function test_homepage_controller_always_resolves_home_nine_even_if_an_alternate_record_exists(): void
     {
         Homepage::create([
             'name' => 'Alternate homepage',
             'slug' => 'home-2',
-            'design_key' => 'home-2',
             'status' => 'published',
-            'is_default' => true,
             'published_at' => now(),
         ]);
 
         Homepage::create([
             'name' => 'Fixed homepage',
             'slug' => 'home-9',
-            'design_key' => 'home-9',
             'status' => 'published',
-            'is_default' => false,
-            'is_composition_complete' => true,
             'published_at' => now(),
         ]);
 

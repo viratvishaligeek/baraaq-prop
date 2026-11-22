@@ -2,11 +2,10 @@
 
 namespace App\Services\Homepage;
 
-use App\Models\Category;
 use App\Models\HomepageSection;
 use App\Models\Post;
-use App\Models\Service;
 use App\Models\Property;
+use App\Models\Service;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
 use Illuminate\Support\Collection;
@@ -21,44 +20,24 @@ class SectionDataResolver
             'columns' => $source['columns'] ?? ($config['columns'] ?? 3),
             'slider' => $source['slider'] ?? ($config['slider'] ?? true),
         ]);
-        $ids = array_values(array_filter(array_map('intval', $source['selected_ids'] ?? [])));
+
+        $ids = collect($source['selected_ids'] ?? [])
+            ->map(fn ($id) => (int) $id)
+            ->filter(fn (int $id) => $id > 0)
+            ->values()
+            ->all();
         $direction = ($source['sort_direction'] ?? 'desc') === 'asc' ? 'asc' : 'desc';
-
-        if ($section->section_key === 'hero.home-3') {
-            $mapProperties = Property::published()->whereNotNull('latitude')->whereNotNull('longitude')
-                ->with(['images', 'category'])->orderByDesc('is_featured')->latest('published_at')
-                ->limit(max(1, min(4, (int) ($config['map_card_limit'] ?? 4))))->get();
-            $latitudes = $mapProperties->map(fn (Property $property) => (float) $property->latitude);
-            $longitudes = $mapProperties->map(fn (Property $property) => (float) $property->longitude);
-
-            return [
-                'mapProperties' => $mapProperties,
-                'mapBounds' => ['min_lat' => $latitudes->min() ?? 0, 'max_lat' => $latitudes->max() ?? 0, 'min_lng' => $longitudes->min() ?? 0, 'max_lng' => $longitudes->max() ?? 0],
-                'cities' => Property::published()->whereNotNull('city')->where('city', '!=', '')->distinct()->orderBy('city')->pluck('city'),
-                'propertyTypes' => Property::published()->whereNotNull('property_type')->where('property_type', '!=', '')->distinct()->orderBy('property_type')->pluck('property_type'),
-                'listingTypes' => Property::published()->whereNotNull('listing_type')->where('listing_type', '!=', '')->distinct()->orderBy('listing_type')->pluck('listing_type'),
-                'bedroomOptions' => Property::published()->whereNotNull('bedrooms')->distinct()->orderBy('bedrooms')->pluck('bedrooms'),
-                'propertyCategories' => Category::query()->where('type', 'property')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(['id', 'name']),
-            ];
-        }
 
         return match ($section->section_type) {
             'service-list' => ['services' => $this->services($config, $ids, $direction)],
-            'city-explore-gallery' => $this->properties($config, $ids, $direction),
-            'category-slider' => ['categories' => $this->categories($config, $ids, $direction)],
+            'property-list' => ['properties' => $this->properties($config, $ids, $direction)],
+            'featured-gallery-slider' => ['featuredProperties' => $this->featuredProperties($config, $ids, $direction)],
             'team-slider' => ['teamMembers' => $this->teamMembers($config, $ids, $direction)],
             'testimonial-slider' => $this->testimonials($config, $ids, $direction),
-            'property-slider-grid', 'property-list' => $this->properties($config, $ids, $direction),
-            'featured-gallery-slider' => ['featuredProperties' => $this->featuredProperties($config, $ids, $direction)],
             'blog-slider' => ['posts' => $this->posts($config, $ids, $direction)],
-            'advanced-search' => [
-                'cities' => Property::published()->whereNotNull('city')->where('city', '!=', '')->distinct()->orderBy('city')->pluck('city'),
-                'propertyTypes' => Property::published()->whereNotNull('property_type')->where('property_type', '!=', '')->distinct()->orderBy('property_type')->pluck('property_type'),
-            ],
             default => [],
         };
     }
-
 
     private function services(array $config, array $ids, string $direction): Collection
     {
@@ -76,69 +55,123 @@ class SectionDataResolver
             ->get();
     }
 
-    private function testimonials(array $config, array $ids, string $direction): array
+    private function properties(array $config, array $ids, string $direction): Collection
     {
-        $query = Testimonial::query()->where('status', 'published')->where('is_active', true);
-        if ($ids !== []) $query->whereIn('id', $ids);
-        $filters = $config['filters'] ?? [];
-        if (isset($filters['min_rating']) && $filters['min_rating'] !== '') {
-            $query->where('rating', '>=', (int) $filters['min_rating']);
+        $query = Property::published();
+        if ($ids !== []) {
+            $query->whereIn('id', $ids);
         }
-        $sort = in_array($config['sort_by'] ?? 'sort_order', ['sort_order', 'created_at', 'name'], true) ? ($config['sort_by'] ?? 'sort_order') : 'sort_order';
-        $items = (clone $query)->orderBy($sort, $direction)->limit(max(1, min(24, (int) ($config['items_limit'] ?? 4))))->get();
 
-        return ['testimonials' => $items, 'averageRating' => round((float) ((clone $query)->whereNotNull('rating')->avg('rating') ?? 0), 1), 'reviewCount' => (clone $query)->count()];
-    }
+        $this->applyPropertyFilters($query, $config['filters'] ?? []);
+        $listingFilter = $config['listing_filter'] ?? 'all';
+        if (in_array($listingFilter, ['sale', 'rent'], true)) {
+            $query->where('listing_type', $listingFilter);
+        } elseif ($listingFilter === 'featured') {
+            $query->where('is_featured', true);
+        }
 
-    private function properties(array $config, array $ids, string $direction): array
-    {
-        $query = Property::published()->with(['images', 'category', 'creator:id,name']);
-        if ($ids !== []) $query->whereIn('id', $ids);
-        $filters = $config['filters'] ?? [];
-        $this->applyPropertyFilters($query, $filters);
-        $filter = $config['listing_filter'] ?? 'all';
-        if (in_array($filter, ['sale', 'rent'], true)) $query->where('listing_type', $filter);
-        elseif ($filter === 'featured') $query->where('is_featured', true);
-        $sort = in_array($config['sort_by'] ?? 'published_at', ['published_at', 'created_at', 'price'], true) ? ($config['sort_by'] ?? 'published_at') : 'published_at';
-        $properties = (clone $query)->orderBy($sort, $direction)->limit(max(1, min(24, (int) ($config['items_limit'] ?? 8))))->get();
-        $categories = Category::query()->where('type', 'property')->where('is_active', true)
-            ->whereHas('properties', fn ($q) => $q->published())
-            ->withCount(['properties' => fn ($q) => $q->published()])
-            ->orderBy('sort_order')->orderBy('name')->get();
+        $sort = in_array($config['sort_by'] ?? 'published_at', ['published_at', 'created_at', 'price'], true)
+            ? ($config['sort_by'] ?? 'published_at')
+            : 'published_at';
 
-        return ['properties' => $properties, 'propertyCategories' => $categories];
+        return $query->orderBy($sort, $direction)
+            ->limit(max(1, min(24, (int) ($config['items_limit'] ?? 8))))
+            ->get();
     }
 
     private function featuredProperties(array $config, array $ids, string $direction): Collection
     {
-        $query = Property::published()->where('is_featured', true)->with(['images', 'creator:id,name']);
-        if ($ids !== []) $query->whereIn('id', $ids);
-        $this->applyPropertyFilters($query, $config['filters'] ?? []);
-        $sort = in_array($config['sort_by'] ?? 'published_at', ['published_at', 'created_at', 'price'], true) ? ($config['sort_by'] ?? 'published_at') : 'published_at';
+        $query = Property::published()
+            ->where('is_featured', true)
+            ->with('creator:id,name');
 
-        return $query->orderBy($sort, $direction)->limit(max(1, min(24, (int) ($config['items_limit'] ?? 3))))->get();
+        if ($ids !== []) {
+            $query->whereIn('id', $ids);
+        }
+
+        $this->applyPropertyFilters($query, $config['filters'] ?? []);
+        $sort = in_array($config['sort_by'] ?? 'published_at', ['published_at', 'created_at', 'price'], true)
+            ? ($config['sort_by'] ?? 'published_at')
+            : 'published_at';
+
+        return $query->orderBy($sort, $direction)
+            ->limit(max(1, min(24, (int) ($config['items_limit'] ?? 3))))
+            ->get();
+    }
+
+    private function testimonials(array $config, array $ids, string $direction): array
+    {
+        $query = Testimonial::query()
+            ->where('status', 'published')
+            ->where('is_active', true);
+
+        if ($ids !== []) {
+            $query->whereIn('id', $ids);
+        }
+
+        $filters = $config['filters'] ?? [];
+        if (isset($filters['min_rating']) && $filters['min_rating'] !== '') {
+            $query->where('rating', '>=', (int) $filters['min_rating']);
+        }
+
+        $sort = in_array($config['sort_by'] ?? 'sort_order', ['sort_order', 'created_at', 'name'], true)
+            ? ($config['sort_by'] ?? 'sort_order')
+            : 'sort_order';
+        $items = (clone $query)
+            ->orderBy($sort, $direction)
+            ->limit(max(1, min(24, (int) ($config['items_limit'] ?? 4))))
+            ->get();
+
+        return [
+            'testimonials' => $items,
+            'averageRating' => round((float) ((clone $query)->whereNotNull('rating')->avg('rating') ?? 0), 1),
+            'reviewCount' => (clone $query)->count(),
+        ];
+    }
+
+    private function teamMembers(array $config, array $ids, string $direction): Collection
+    {
+        $query = TeamMember::query()
+            ->where('status', 'published')
+            ->where('is_active', true);
+
+        if ($ids !== []) {
+            $query->whereIn('id', $ids);
+        }
+
+        $designation = trim((string) ($config['filters']['designation'] ?? ''));
+        if ($designation !== '') {
+            $query->where('designation', 'like', '%' . $designation . '%');
+        }
+
+        $sort = in_array($config['sort_by'] ?? 'sort_order', ['sort_order', 'created_at', 'name'], true)
+            ? ($config['sort_by'] ?? 'sort_order')
+            : 'sort_order';
+
+        return $query->orderBy($sort, $direction)
+            ->limit(max(1, min(24, (int) ($config['items_limit'] ?? 6))))
+            ->get();
     }
 
     private function posts(array $config, array $ids, string $direction): Collection
     {
         $query = Post::published()->with('author');
-        if ($ids !== []) $query->whereIn('id', $ids);
+        if ($ids !== []) {
+            $query->whereIn('id', $ids);
+        }
+
         $categoryId = $config['filters']['category_id'] ?? null;
-        if ($categoryId) $query->whereHas('categories', fn ($categories) => $categories->whereKey((int) $categoryId));
-        $sort = in_array($config['sort_by'] ?? 'published_at', ['published_at', 'created_at', 'title'], true) ? ($config['sort_by'] ?? 'published_at') : 'published_at';
+        if ($categoryId) {
+            $query->whereHas('categories', fn ($categories) => $categories->whereKey((int) $categoryId));
+        }
 
-        return $query->orderBy($sort, $direction)->limit(max(1, min(24, (int) ($config['items_limit'] ?? 6))))->get();
-    }
+        $sort = in_array($config['sort_by'] ?? 'published_at', ['published_at', 'created_at', 'title'], true)
+            ? ($config['sort_by'] ?? 'published_at')
+            : 'published_at';
 
-    private function teamMembers(array $config, array $ids, string $direction): Collection
-    {
-        $query = TeamMember::query()->where('status', 'published')->where('is_active', true);
-        if ($ids !== []) $query->whereIn('id', $ids);
-        $designation = trim((string) ($config['filters']['designation'] ?? ''));
-        if ($designation !== '') $query->where('designation', 'like', '%' . $designation . '%');
-        $sort = in_array($config['sort_by'] ?? 'sort_order', ['sort_order', 'created_at', 'name'], true) ? ($config['sort_by'] ?? 'sort_order') : 'sort_order';
-
-        return $query->orderBy($sort, $direction)->limit(max(1, min(24, (int) ($config['items_limit'] ?? 6))))->get();
+        return $query->orderBy($sort, $direction)
+            ->limit(max(1, min(24, (int) ($config['items_limit'] ?? 6))))
+            ->get();
     }
 
     private function applyPropertyFilters($query, array $filters): void
@@ -147,29 +180,24 @@ class SectionDataResolver
         if (in_array($listingType, ['sale', 'rent', 'lease'], true)) {
             $query->where('listing_type', $listingType);
         }
+
         if (! empty($filters['category_id'])) {
             $query->where('category_id', (int) $filters['category_id']);
         }
+
         foreach (['city', 'property_type'] as $field) {
             $value = trim((string) ($filters[$field] ?? ''));
-            if ($value !== '') $query->where($field, 'like', '%' . $value . '%');
+            if ($value !== '') {
+                $query->where($field, 'like', '%' . $value . '%');
+            }
         }
+
         if (isset($filters['min_price']) && $filters['min_price'] !== '') {
             $query->where('price', '>=', (float) $filters['min_price']);
         }
+
         if (isset($filters['max_price']) && $filters['max_price'] !== '') {
             $query->where('price', '<=', (float) $filters['max_price']);
         }
-    }
-
-    private function categories(array $config, array $ids, string $direction): Collection
-    {
-        $query = Category::query()->where('type', 'property')->where('is_active', true)
-            ->withCount(['properties' => fn ($q) => $q->published()])
-            ->with(['properties' => fn ($q) => $q->published()->with('images')->latest('published_at')->limit(3)]);
-        if ($ids !== []) $query->whereIn('id', $ids);
-        $sort = in_array($config['sort_by'] ?? 'sort_order', ['sort_order', 'created_at', 'name'], true) ? ($config['sort_by'] ?? 'sort_order') : 'sort_order';
-
-        return $query->orderBy($sort, $direction)->limit(max(1, min(24, (int) ($config['items_limit'] ?? 7))))->get();
     }
 }

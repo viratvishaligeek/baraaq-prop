@@ -9,13 +9,23 @@ use App\Models\Service;
 
 class ContentPreviewController extends Controller
 {
-    public function show(string $type, int $id)
+    private function authorizePreview(string $type): void
     {
         $user = request()->user();
+
+        abort_unless(
+            $user && ($user->isAdministrator()
+                || $user->hasPermission($type.'.manage')
+                || $user->hasPermission($type.'.view')
+                || $user->hasPermission($type.'.edit')),
+            403
+        );
+    }
+
+    public function show(string $type, int $id)
+    {
         abort_unless(in_array($type, ['posts', 'pages', 'services'], true), 404);
-        $permission = $type . '.view';
-        $managePermission = $type . '.manage';
-        abort_unless($user && ($user->isAdministrator() || $user->hasPermission($permission) || $user->hasPermission($managePermission)), 403);
+        $this->authorizePreview($type);
 
         return match ($type) {
             'posts' => $this->post($id),
@@ -36,13 +46,13 @@ class ContentPreviewController extends Controller
     {
         $page = Page::findOrFail($id);
 
-        return view('frontend.pages.show', ['page' => $page, 'isHomepage' => false, 'isBuilderPreview' => true]);
+        return view('frontend.pages.show', ['page' => $page, 'isHomepage' => false, 'isPreview' => true]);
     }
 
     private function service(int $id)
     {
         $service = Service::findOrFail($id);
 
-        return view('frontend.services.show', ['service' => $service, 'isBuilderPreview' => true]);
+        return view('frontend.services.show', ['service' => $service, 'isPreview' => true]);
     }
 }

@@ -25,7 +25,7 @@
         <div class="content-card mb-4">
             <h2 class="section-title">{{ $label }}</h2>
             <div class="table-responsive">
-                <table class="table align-middle">
+                <table class="table align-middle" data-datatable>
                     <thead>
                         <tr>
                             <th>Content</th>

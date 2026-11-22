@@ -70,7 +70,7 @@
                         <div class="swiper-slide">
 <div class="blog-card">
 <div class="blog-content">
-<h3 class="box-title">News and articles will appear here once published.</h3>
+<h3 class="box-title">{{ $sectionConfig['empty_state_text'] ?? 'News and articles will appear here once published.' }}</h3>
 </div>
 </div>
 </div>

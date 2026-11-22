@@ -12,8 +12,7 @@ class Setting extends Model
     {
         // Cache scalar data only. Older releases cached a Setting model here,
         // which can become an incomplete object after a deployment.
-        cache()->forget('setting:' . $key);
-
+        // The new scalar cache key intentionally ignores legacy cached Setting models.
         $setting = cache()->remember(
             'setting:data:' . $key,
             3600,

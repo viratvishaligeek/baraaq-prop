@@ -5,7 +5,6 @@ return [
         'key' => 'blog.home-2',
         'label' => 'Latest articles carousel — Home 2',
         'type' => 'blog-slider',
-        'source_design' => 'home-2',
         'view' => 'frontend.sections.blog.home-2',
         'defaults' => [
             'eyebrow' => 'latest News',
@@ -17,6 +16,7 @@ return [
             'show_author' => true,
             'show_date' => true,
             'card_button_label' => 'Read More',
+            'empty_state_text' => 'News and articles will appear here once published.',
             'vertical_spacing' => 'space',
             'show_mobile' => true,
             'show_tablet' => true,
@@ -32,6 +32,7 @@ return [
             'show_author' => ['label' => 'Show author', 'type' => 'checkbox'],
             'show_date' => ['label' => 'Show publication date', 'type' => 'checkbox'],
             'card_button_label' => ['label' => 'Card button label', 'type' => 'text', 'max' => 80],
+            'empty_state_text' => ['label' => 'Empty state text', 'type' => 'text', 'max' => 255],
             'vertical_spacing' => ['label' => 'Section spacing', 'type' => 'select', 'options' => ['space' => 'Theme spacing', 'space-top' => 'Top only', 'space-bottom' => 'Bottom only', 'py-0' => 'No vertical spacing']],
             'background_color' => ['label' => 'Background color', 'type' => 'color'],
             'background_image' => ['label' => 'Background image', 'type' => 'image', 'max' => 2048],
