@@ -16,7 +16,7 @@ class MediaReferenceChecker
             return true;
         }
 
-        if ($this->isPathReferenced($media->path)) {
+        if ($this->homepageSectionReferencesMediaId($media->id) || $this->isPathReferenced($media->path)) {
             return true;
         }
 
@@ -32,6 +32,30 @@ class MediaReferenceChecker
 
             return in_array((int) $media->id, array_map('intval', $galleryIdsOnly), true)
                 || in_array($media->path, $galleryIds, true);
+        }
+
+        return false;
+    }
+
+    private function homepageSectionReferencesMediaId(int $mediaId): bool
+    {
+        if (! Schema::hasTable('homepage_sections') || ! Schema::hasColumn('homepage_sections', 'config')) {
+            return false;
+        }
+
+        foreach (DB::table('homepage_sections')->pluck('config') as $storedConfig) {
+            $config = is_array($storedConfig) ? $storedConfig : json_decode((string) $storedConfig, true);
+            if (! is_array($config)) {
+                continue;
+            }
+
+            foreach ($config as $key => $value) {
+                if (is_numeric($value)
+                    && (int) $value === $mediaId
+                    && preg_match('/image|photo|icon|background|logo|shape/i', (string) $key)) {
+                    return true;
+                }
+            }
         }
 
         return false;

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Homepage;
+use App\Models\HomepageSection;
 use App\Models\Media;
 use App\Models\Page;
 use App\Models\Role;
@@ -44,6 +46,47 @@ class AdminMediaIntegrityTest extends TestCase
             'slug' => 'page-with-social-image',
             'status' => 'published',
             'og_image' => $media->path,
+        ]);
+
+        $this->actingAs($admin)->from(route('admin.media.index'))
+            ->delete(route('admin.media.destroy', $media))
+            ->assertSessionHasErrors('media');
+
+        $this->assertDatabaseHas('media', ['id' => $media->id]);
+        Storage::disk('public')->assertExists($media->path);
+    }
+
+    public function test_media_id_in_legacy_homepage_section_config_cannot_be_deleted(): void
+    {
+        Storage::fake('public');
+        $admin = $this->administrator();
+        $media = Media::create([
+            'uploaded_by' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/legacy-homepage-hero.png',
+            'original_name' => 'legacy-homepage-hero.png',
+            'mime_type' => 'image/png',
+            'size' => 10,
+        ]);
+        Storage::disk('public')->put($media->path, 'image-data');
+
+        $homepage = Homepage::create([
+            'name' => 'Home 9',
+            'slug' => 'home-9',
+            'status' => 'published',
+            'is_default' => true,
+            'is_composition_complete' => true,
+            'published_at' => now(),
+        ]);
+        HomepageSection::create([
+            'homepage_id' => $homepage->id,
+            'instance_key' => 'legacy-hero',
+            'section_key' => 'hero.home-9',
+            'section_type' => 'hero',
+            'source_design' => 'home-9',
+            'sort_order' => 1,
+            'is_enabled' => true,
+            'config' => ['hero_image' => $media->id],
         ]);
 
         $this->actingAs($admin)->from(route('admin.media.index'))
