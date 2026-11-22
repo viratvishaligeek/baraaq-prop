@@ -5,15 +5,15 @@
 @section('content')
     @php
         $faviconPath = ltrim((string) ($settings['favicon'] ?? ''), '/');
-        $faviconUrl = $faviconPath === '' ? '' : (\\App\\Rules\\SafeLink::isHttpUrl($faviconPath)
+        $faviconUrl = $faviconPath === '' ? '' : (\App\Rules\SafeLink::isHttpUrl($faviconPath)
             ? $faviconPath
-            : (\\Illuminate\\Support\\Str::startsWith($faviconPath, 'theme-assets/')
+            : (\Illuminate\Support\Str::startsWith($faviconPath, 'theme-assets/')
                 ? asset($faviconPath)
                 : Storage::disk('public')->url($faviconPath)));
         $defaultOgPath = ltrim((string) ($settings['default_og_image'] ?? ''), '/');
-        $defaultOgUrl = $defaultOgPath === '' ? '' : (\\App\\Rules\\SafeLink::isHttpUrl($defaultOgPath)
+        $defaultOgUrl = $defaultOgPath === '' ? '' : (\App\Rules\SafeLink::isHttpUrl($defaultOgPath)
             ? $defaultOgPath
-            : (\\Illuminate\\Support\\Str::startsWith($defaultOgPath, 'theme-assets/')
+            : (\Illuminate\Support\Str::startsWith($defaultOgPath, 'theme-assets/')
                 ? asset($defaultOgPath)
                 : Storage::disk('public')->url($defaultOgPath)));
     @endphp

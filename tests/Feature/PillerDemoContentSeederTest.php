@@ -84,7 +84,7 @@ class PillerDemoContentSeederTest extends TestCase
             'meta_description' => 'Owner-managed homepage description.',
         ]);
 
-        $this->seed(\\Database\\Seeders\\PillerDemoContentSeeder::class);
+        $this->seed(\Database\Seeders\PillerDemoContentSeeder::class);
 
         $this->assertSame('Owner-managed homepage title', $homepage->fresh()->meta_title);
         $this->assertSame('Owner-managed homepage description.', $homepage->fresh()->meta_description);

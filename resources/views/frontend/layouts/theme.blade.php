@@ -19,9 +19,9 @@
         $defaultSocialPath = ltrim((string) ($siteSettings['default_og_image'] ?? ''), '/');
         $defaultSocialImage = $defaultSocialPath === ''
             ? asset('theme-assets/img/hero/hero-9-right.png')
-            : (\\App\\Rules\\SafeLink::isHttpUrl($defaultSocialPath)
+            : (\App\Rules\SafeLink::isHttpUrl($defaultSocialPath)
                 ? $defaultSocialPath
-                : (\\Illuminate\\Support\\Str::startsWith($defaultSocialPath, 'theme-assets/')
+                : (\Illuminate\Support\Str::startsWith($defaultSocialPath, 'theme-assets/')
                     ? asset($defaultSocialPath)
                     : Storage::disk('public')->url($defaultSocialPath)));
     @endphp

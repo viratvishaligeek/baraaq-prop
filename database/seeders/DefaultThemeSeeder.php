@@ -67,9 +67,9 @@ class DefaultThemeSeeder extends Seeder
             ['For Sale', '/properties?listing_type=sale', 'Properties', 2],
             ['For Rent', '/properties?listing_type=rent', 'Properties', 3],
             ['Services', '/services', null, 4],
-            ['About Us', '/about.html', null, 5],
+            ['About Us', '/about', null, 5],
             ['Blog', '/blog', null, 6],
-            ['Contact', '/contact.html', null, 7],
+            ['Contact', '/contact', null, 7],
         ]);
 
         $this->seedMenu('footer-quick-links', 'Footer quick links', [
@@ -92,10 +92,10 @@ class DefaultThemeSeeder extends Seeder
         $this->seedMenu('footer', 'Footer navigation', [
             ['Properties', '/properties', null, 0],
             ['Services', '/services', null, 1],
-            ['About Us', '/about.html', null, 2],
+            ['About Us', '/about', null, 2],
             ['Blog', '/blog', null, 3],
             ['Testimonials', '/testimonials', null, 4],
-            ['Contact', '/contact.html', null, 5],
+            ['Contact', '/contact', null, 5],
         ]);
     }
 
