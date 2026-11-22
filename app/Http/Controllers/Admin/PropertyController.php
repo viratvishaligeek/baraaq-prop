@@ -232,7 +232,7 @@ class PropertyController extends Controller
                 foreach ($galleryMediaIds as $mediaId) {
                     $media = Media::findOrFail((int) $mediaId);
                     if (! $created->images()->where('path', $media->path)->exists()) {
-                        $created->images()->create(['path' => $media->path]);
+                        $created->images()->create(['path' => $media->path, 'sort_order' => (int) $created->images()->max('sort_order') + 1]);
                     }
                 }
 
@@ -347,7 +347,7 @@ class PropertyController extends Controller
                 foreach ($galleryMediaIds as $mediaId) {
                     $media = Media::findOrFail((int) $mediaId);
                     if (! $property->images()->where('path', $media->path)->exists()) {
-                        $property->images()->create(['path' => $media->path]);
+                        $property->images()->create(['path' => $media->path, 'sort_order' => (int) $property->images()->max('sort_order') + 1]);
                     }
                 }
 
