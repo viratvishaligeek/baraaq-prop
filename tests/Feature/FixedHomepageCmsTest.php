@@ -4,6 +4,7 @@ use App\Models\Homepage;
 use App\Models\HomepageSection;
 use App\Models\Media;
 use App\Models\Role;
+use App\Models\Setting;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -104,6 +105,31 @@ class FixedHomepageCmsTest extends TestCase
         ]);
         Storage::disk('public')->assertExists($media->path);
     }
+    public function test_header_contact_and_footer_content_are_editable_from_the_homepage_menu(): void
+    {
+        Storage::fake('public');
+        $admin = $this->administrator();
+        $homepage = $this->homepage();
+
+        $this->actingAs($admin)->patch(route('admin.homepages.update', $homepage), [
+            'site_title' => 'Baraaq Property Group',
+            'site_phone' => '+91 98765 43210',
+            'site_email' => 'hello@baraaq.example',
+            'site_address' => 'Meerut, Uttar Pradesh',
+            'footer_about_heading' => 'About Baraaq',
+            'footer_map_embed_url' => 'https://maps.google.com/maps?q=Meerut',
+            'logo' => UploadedFile::fake()->image('brand.png'),
+            'footer_gallery_images' => [UploadedFile::fake()->image('gallery-one.png')],
+        ])->assertRedirect(route('admin.homepages.index'));
+
+        $this->assertSame('Baraaq Property Group', Setting::read('site_title'));
+        $this->assertSame('+91 98765 43210', Setting::read('site_phone'));
+        $this->assertSame('hello@baraaq.example', Setting::read('site_email'));
+        $this->assertSame('About Baraaq', Setting::read('footer_about_heading'));
+        $this->assertNotEmpty(Setting::read('logo'));
+        $this->assertCount(1, Setting::read('footer_gallery_images'));
+    }
+
     public function test_old_homepage_switching_and_builder_routes_are_not_registered(): void
     {
         $this->assertFalse(Route::has('admin.page-builder.index'));

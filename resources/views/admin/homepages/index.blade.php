@@ -110,7 +110,7 @@
                 ] as $key => $label)
                     <div class="col-md-6">
                         <label class="form-label">{{ $label }}</label>
-                        <input class="form-control" name="{{ $key }}" value="{{ old($key, $siteSettings[$key] ?? '') }}" maxlength="150">
+                        <input class="form-control" name="{{ $key }}" value="{{ old($key, $siteSettings[$key] ?? '') }}" maxlength="{{ str_contains($key, 'menu_location') ? 60 : 100 }}">
                     </div>
                 @endforeach
                 <div class="col-12">

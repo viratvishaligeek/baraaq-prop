@@ -371,6 +371,8 @@
             <div class="container">
                 @php
                     $footerMenu = \App\Models\Menu::cached($siteSettings['footer_menu_location'] ?? 'footer');
+                    $footerQuickLinks = \\App\\Models\\Menu::cached($siteSettings['footer_quick_links_menu_location'] ?? 'footer-quick-links');
+                    $footerSupport = \\App\\Models\\Menu::cached($siteSettings['footer_support_menu_location'] ?? 'footer-support');
                 @endphp
                 @if ($footerMenu && $footerMenu->items->isNotEmpty())
                     <nav class="cms-footer-navigation" aria-label="Footer navigation">
@@ -513,7 +515,7 @@
                         @endphp
                         <div class="simple-gallery-card">
                             <div class="gallery-img">
-                                <img src="{{ $galleryImageUrl }}" alt="Pillar property gallery">
+                                <img src="{{ $galleryImageUrl }}" alt="{{ $siteSettings['footer_gallery_title'] ?? ($siteSettings['site_title'] ?? '') }}">
                                 <a href="{{ $galleryImageUrl }}" class="icon-btn popup-image"><i class="fa-brands fa-instagram"></i></a>
                             </div>
                         </div>
