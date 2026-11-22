@@ -218,7 +218,7 @@ class PropertyController extends Controller
 
                 $created = Property::create($data);
 
-                foreach ($request->file('gallery', []) as $file) {
+                foreach ($request->file('gallery', []) as $index => $file) {
                     $media = $this->storeMediaUpload(
                         $request,
                         $file,
@@ -226,7 +226,7 @@ class PropertyController extends Controller
                         (string) $created->title,
                         $uploadedPaths
                     );
-                    $created->images()->create(['path' => $media->path]);
+                    $created->images()->create(['path' => $media->path, 'sort_order' => $index]);
                 }
 
                 foreach ($galleryMediaIds as $mediaId) {
@@ -341,7 +341,7 @@ class PropertyController extends Controller
                         (string) $property->title,
                         $uploadedPaths
                     );
-                    $property->images()->create(['path' => $media->path]);
+                    $property->images()->create(['path' => $media->path, 'sort_order' => (int) $property->images()->max('sort_order') + 1]);
                 }
 
                 foreach ($galleryMediaIds as $mediaId) {
