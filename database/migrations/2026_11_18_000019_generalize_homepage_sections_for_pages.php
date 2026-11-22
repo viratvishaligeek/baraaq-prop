@@ -20,9 +20,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (DB::table('homepage_sections')->whereNull('homepage_id')->exists()) {
+        if (DB::table('homepage_sections')->whereNull('homepage_id')->orWhereNotNull('page_id')->exists()) {
             throw new RuntimeException(
-                'Cannot roll back page-specific homepage sections automatically. Reassign or archive rows with a null homepage_id before rolling back.'
+                'Cannot roll back page-specific homepage sections automatically. Reassign or archive rows with a null homepage_id or a page_id before rolling back.'
             );
         }
 
