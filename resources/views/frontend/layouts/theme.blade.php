@@ -359,17 +359,9 @@
         </div>
     </header>
  
-    @endif   <div class="cms-widget-area cms-widget-area-header">
-        @include('frontend.partials.widget-area', ['location' => 'header'])
-    </div>
+    @endif
     <main>
-        <div class="container cms-widget-area cms-widget-area-homepage">
-            @include('frontend.partials.widget-area', ['location' => 'homepage'])
-        </div>
         @yield('content')
-        <aside class="cms-widget-area cms-widget-area-sidebar">
-            @include('frontend.partials.widget-area', ['location' => 'sidebar'])
-        </aside>
     </main>
     <footer class="footer-wrapper footer-layout1">
         <div class="footer-top-shape animation-infinite"
@@ -377,9 +369,6 @@
         </div>
         <div class="widget-area">
             <div class="container">
-                <div class="cms-widget-area cms-widget-area-footer">
-                    @include('frontend.partials.widget-area', ['location' => 'footer'])
-                </div>
                 @php
                     $footerMenu = \App\Models\Menu::cached($siteSettings['footer_menu_location'] ?? 'footer');
                 @endphp
@@ -391,9 +380,7 @@
                 @endif
                 <div class="footer-all-widget-wrapper">
                     <div class="footer-all-widget-item">
-                        @if (app(\App\Services\Widgets\WidgetRenderer::class)->forLocation('footer-1')->isNotEmpty())
-                            @include('frontend.partials.widget-area', ['location' => 'footer-1'])
-                        @else
+                        
 
                         <div class="widget footer-widget">
                             <h3 class="widget_title">About {{ $siteSettings['site_title'] ?? config('app.name') }}
@@ -443,15 +430,13 @@
                             </div>
                         </div>
                     
-                        @endif
+                        
                     </div>
                     <div class="footer-all-widget-item">
                         <div class="footer-right-wrap">
                             <div class="footer-item-wrap">
                                 <div class="footer-item">
-                                    @if (app(\App\Services\Widgets\WidgetRenderer::class)->forLocation('footer-2')->isNotEmpty())
-                                        @include('frontend.partials.widget-area', ['location' => 'footer-2'])
-                                    @else
+                                    
 
                                     <div class="widget widget_nav_menu footer-widget">
                                         <h3 class="widget_title">Services</h3>
@@ -467,12 +452,10 @@
                                         </div>
                                     </div>
                                 
-                                    @endif
+                                    
                                 </div>
                                 <div class="footer-item">
-                                    @if (app(\App\Services\Widgets\WidgetRenderer::class)->forLocation('footer-3')->isNotEmpty())
-                                        @include('frontend.partials.widget-area', ['location' => 'footer-3'])
-                                    @else
+                                    
 
                                     <div class="widget widget_nav_menu footer-widget">
                                         <h3 class="widget_title">Quick Links</h3>
@@ -500,12 +483,10 @@
                                         </div>
                                     </div>
                                 
-                                    @endif
+                                    
                                 </div>
                                 <div class="footer-item">
-                                    @if (app(\App\Services\Widgets\WidgetRenderer::class)->forLocation('footer-4')->isNotEmpty())
-                                        @include('frontend.partials.widget-area', ['location' => 'footer-4'])
-                                    @else
+                                    
 
                                     <div class="widget widget_nav_menu footer-widget">
                                         <h3 class="widget_title">Support</h3>
@@ -530,7 +511,7 @@
                                         </div>
                                     </div>
                                 
-                                    @endif
+                                    
                                 </div>
                                 <div class="footer-item">
                                     <div class="widget widget_banner footer-widget">

@@ -13,7 +13,6 @@ class HomeController extends Controller
         $homepage = Homepage::published()
             ->where('slug', 'home-9')
             ->with([
-                'sections.reusableSection.mediaAttachments.media',
                 'sections.mediaAttachments.media',
             ])
             ->first();

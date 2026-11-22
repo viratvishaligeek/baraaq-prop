@@ -21,7 +21,6 @@ class HomepageController extends Controller
 
         $homepage->load([
             'sections.mediaAttachments.media',
-            'sections.reusableSection.mediaAttachments.media',
         ]);
 
         return view('admin.homepages.index', [
