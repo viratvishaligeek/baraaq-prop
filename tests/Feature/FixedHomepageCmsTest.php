@@ -120,6 +120,7 @@ class FixedHomepageCmsTest extends TestCase
 
         $this->actingAs($admin)->patch(route('admin.homepages.update', $homepage), [
             'site_title' => 'Baraaq Property Group',
+            'header_menu_location' => 'primary',
             'site_phone' => '+91 98765 43210',
             'site_email' => 'hello@baraaq.example',
             'site_address' => 'Meerut, Uttar Pradesh',
@@ -131,6 +132,7 @@ class FixedHomepageCmsTest extends TestCase
         ])->assertRedirect(route('admin.homepages.index'));
 
         $this->assertSame('Baraaq Property Group', Setting::read('site_title'));
+        $this->assertSame('primary', Setting::read('header_menu_location'));
         $this->assertSame('+91 98765 43210', Setting::read('site_phone'));
         $this->assertSame('hello@baraaq.example', Setting::read('site_email'));
         $this->assertSame('About Baraaq', Setting::read('footer_about_heading'));
