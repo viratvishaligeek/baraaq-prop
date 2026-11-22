@@ -32,6 +32,132 @@
         </form>
     </div>
 
+    <div class="content-card mb-4">
+        <h2 class="section-title mb-1">Header and contact details</h2>
+        <p class="text-muted small mb-3">These details appear in the Home 9 header, footer and business information.</p>
+        <form method="POST" enctype="multipart/form-data" action="{{ route('admin.homepages.update', $homepage) }}">
+            @csrf
+            @method('PATCH')
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Website name</label>
+                    <input class="form-control" name="site_title" maxlength="150" value="{{ old('site_title', $siteSettings['site_title'] ?? '') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Business name</label>
+                    <input class="form-control" name="business_name" maxlength="190" value="{{ old('business_name', $siteSettings['business_name'] ?? '') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tagline</label>
+                    <input class="form-control" name="site_tagline" maxlength="255" value="{{ old('site_tagline', $siteSettings['site_tagline'] ?? '') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Header button label</label>
+                    <input class="form-control" name="header_cta_label" maxlength="80" value="{{ old('header_cta_label', $siteSettings['header_cta_label'] ?? '') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Header button URL</label>
+                    <input class="form-control" name="header_cta_url" maxlength="2048" value="{{ old('header_cta_url', $siteSettings['header_cta_url'] ?? '') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Contact email</label>
+                    <input class="form-control" type="email" name="site_email" maxlength="190" value="{{ old('site_email', $siteSettings['site_email'] ?? '') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Contact phone</label>
+                    <input class="form-control" name="site_phone" maxlength="30" value="{{ old('site_phone', $siteSettings['site_phone'] ?? '') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">WhatsApp number</label>
+                    <input class="form-control" name="whatsapp_number" maxlength="30" value="{{ old('whatsapp_number', $siteSettings['whatsapp_number'] ?? '') }}">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Business address</label>
+                    <textarea class="form-control" name="site_address" rows="2" maxlength="500">{{ old('site_address', $siteSettings['site_address'] ?? '') }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Header / footer logo</label>
+                    @if (!empty($siteSettings['logo']))
+                        <div class="mb-2"><img src="{{ asset('storage/' . $siteSettings['logo']) }}" alt="" style="max-width:180px;max-height:70px;object-fit:contain"></div>
+                    @endif
+                    <input class="form-control" type="file" name="logo" accept="image/jpeg,image/png,image/webp">
+                    <div class="form-text">Upload a replacement logo (up to 5 MB).</div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end mt-3"><button class="btn btn-primary" type="submit">Save header and contact details</button></div>
+        </form>
+    </div>
+
+    <div class="content-card mb-4">
+        <h2 class="section-title mb-1">Footer content, menus and social links</h2>
+        <p class="text-muted small mb-3">Manage footer headings, descriptions, contact map, menu locations, gallery and social destinations.</p>
+        <form method="POST" enctype="multipart/form-data" action="{{ route('admin.homepages.update', $homepage) }}">
+            @csrf
+            @method('PATCH')
+            <div class="row g-3">
+                @foreach ([
+                    'footer_about_heading' => 'About column heading',
+                    'footer_services_heading' => 'Services column heading',
+                    'footer_quick_links_heading' => 'Quick links heading',
+                    'footer_support_heading' => 'Support heading',
+                    'footer_location_heading' => 'Location heading',
+                    'footer_social_heading' => 'Social links heading',
+                    'footer_quick_links_menu_location' => 'Quick links menu location',
+                    'footer_support_menu_location' => 'Support menu location',
+                    'footer_menu_location' => 'Footer navigation menu location',
+                    'footer_gallery_handle' => 'Gallery handle',
+                    'footer_gallery_title' => 'Gallery title',
+                ] as $key => $label)
+                    <div class="col-md-6">
+                        <label class="form-label">{{ $label }}</label>
+                        <input class="form-control" name="{{ $key }}" value="{{ old($key, $siteSettings[$key] ?? '') }}" maxlength="150">
+                    </div>
+                @endforeach
+                <div class="col-12">
+                    <label class="form-label">Footer description</label>
+                    <textarea class="form-control" name="footer_description" rows="3" maxlength="1500">{{ old('footer_description', $siteSettings['footer_description'] ?? '') }}</textarea>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Footer copyright text</label>
+                    <input class="form-control" name="footer_copyright" maxlength="255" value="{{ old('footer_copyright', $siteSettings['footer_copyright'] ?? '') }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Footer map embed URL</label>
+                    <input class="form-control" name="footer_map_embed_url" value="{{ old('footer_map_embed_url', $siteSettings['footer_map_embed_url'] ?? '') }}" maxlength="2048">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Footer gallery images</label>
+                    @if (!empty($siteSettings['footer_gallery_images']))
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            @foreach ($siteSettings['footer_gallery_images'] as $galleryImage)
+                                @php
+                                    $galleryMedia = is_numeric($galleryImage) ? \App\Models\Media::query()->find((int) $galleryImage) : null;
+                                    $galleryUrl = $galleryMedia?->url ?? asset(ltrim((string) $galleryImage, '/'));
+                                @endphp
+                                <img src="{{ $galleryUrl }}" alt="" style="width:76px;height:58px;object-fit:cover" class="rounded border">
+                            @endforeach
+                        </div>
+                    @endif
+                    <input class="form-control" type="file" name="footer_gallery_images[]" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+                    <div class="form-text">Uploading images replaces the current footer gallery (up to 7 images, 5 MB each).</div>
+                </div>
+                @foreach ([
+                    'social_facebook' => 'Facebook URL',
+                    'social_instagram' => 'Instagram URL',
+                    'social_linkedin' => 'LinkedIn URL',
+                    'social_youtube' => 'YouTube URL',
+                    'social_x' => 'X URL',
+                ] as $key => $label)
+                    <div class="col-md-6">
+                        <label class="form-label">{{ $label }}</label>
+                        <input class="form-control" type="url" name="{{ $key }}" value="{{ old($key, $siteSettings[$key] ?? '') }}" maxlength="500">
+                    </div>
+                @endforeach
+            </div>
+            <div class="d-flex justify-content-end mt-3"><button class="btn btn-primary" type="submit">Save footer and social content</button></div>
+        </form>
+    </div>
+
     @forelse ($homepage->sections as $section)
         @php
             $definition = $sectionDefinitions[$section->section_key] ?? null;

@@ -383,7 +383,7 @@
                         
 
                         <div class="widget footer-widget">
-                            <h3 class="widget_title">About {{ $siteSettings['site_title'] ?? config('app.name') }}
+                            <h3 class="widget_title">{{ $siteSettings['footer_about_heading'] ?? 'About' }} {{ $siteSettings['site_title'] ?? config('app.name') }}
                             </h3>
                             <div class="th-widget-about">
                                 <p class="about-text">
@@ -439,7 +439,7 @@
                                     
 
                                     <div class="widget widget_nav_menu footer-widget">
-                                        <h3 class="widget_title">Services</h3>
+                                        <h3 class="widget_title">{{ $siteSettings['footer_services_heading'] ?? 'Services' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
                                                 @foreach (\App\Models\Service::published()->orderBy('title')->limit(5)->get() as $footerService)
@@ -458,27 +458,12 @@
                                     
 
                                     <div class="widget widget_nav_menu footer-widget">
-                                        <h3 class="widget_title">Quick Links</h3>
+                                        <h3 class="widget_title">{{ $siteSettings['footer_quick_links_heading'] ?? 'Quick Links' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
-                                                <li>
-                                                    <a href="{{ route('properties.index') }}">Properties</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('blog.index') }}">Blog</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('services.index') }}">Services</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('team.index') }}">Our team</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('testimonials.index') }}">Testimonials</a>
-                                                </li>
-                                                <li>
-                                                    <a href="{{ route('sitemap') }}">XML sitemap</a>
-                                                </li>
+                                                @if ($footerQuickLinks && $footerQuickLinks->items->isNotEmpty())
+                                                    @include('frontend.partials.menu-items', ['items' => $footerQuickLinks->items])
+                                                @endif
                                             </ul>
                                         </div>
                                     </div>
@@ -489,24 +474,12 @@
                                     
 
                                     <div class="widget widget_nav_menu footer-widget">
-                                        <h3 class="widget_title">Support</h3>
+                                        <h3 class="widget_title">{{ $siteSettings['footer_support_heading'] ?? 'Support' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
-                                                <li>
-                                                    <a href="contact.html">Help Center</a>
-                                                </li>
-                                                <li>
-                                                    <a href="service.html">FAQs</a>
-                                                </li>
-                                                <li>
-                                                    <a href="contact.html">Contact Us</a>
-                                                </li>
-                                                <li>
-                                                    <a href="contact.html">Ticket Support</a>
-                                                </li>
-                                                <li>
-                                                    <a href="contact.html">Live Chat</a>
-                                                </li>
+                                                @if ($footerSupport && $footerSupport->items->isNotEmpty())
+                                                    @include('frontend.partials.menu-items', ['items' => $footerSupport->items])
+                                                @endif
                                             </ul>
                                         </div>
                                     </div>
@@ -515,22 +488,22 @@
                                 </div>
                                 <div class="footer-item">
                                     <div class="widget widget_banner footer-widget">
-                                        <h3 class="widget_title">Pillar Location</h3>
+                                        <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? 'Pillar Location' }}</h3>
                                         <div class="widget-map">
-                                            <iframe
-                                                src="{{ $siteSettings['footer_map_embed_url'] ?? 'https://www.google.com/maps?q=Meerut,+Uttar+Pradesh&output=embed' }}">
-                                            </iframe>
+                                            @if (!empty($siteSettings['footer_map_embed_url']))
+                                                <iframe src="{{ $siteSettings['footer_map_embed_url'] }}"></iframe>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="footer-bottom-community">
                                 <div class="content">
-                                    <p>{{ $siteSettings['footer_gallery_handle'] ?? '@pillar on Instagram' }}</p>
-                                    <h4 class="box-title">{{ $siteSettings['footer_gallery_title'] ?? 'Nice Gallery' }}</h4>
+                                    <p>{{ $siteSettings['footer_gallery_handle'] ?? '' }}</p>
+                                    <h4 class="box-title">{{ $siteSettings['footer_gallery_title'] ?? '' }}</h4>
                                 </div>
                                 <div class="footer-gallery-wrapper">
-                    @foreach(($siteSettings['footer_gallery_images'] ?? ['theme-assets/img/gallery/footer-gallery-1-1.jpg','theme-assets/img/gallery/footer-gallery-1-2.jpg','theme-assets/img/gallery/footer-gallery-1-3.jpg','theme-assets/img/gallery/footer-gallery-1-5.jpg','theme-assets/img/gallery/footer-gallery-1-6.jpg','theme-assets/img/gallery/footer-gallery-1-7.jpg','theme-assets/img/gallery/footer-gallery-1-4.jpg']) as $galleryImage)
+                    @foreach(($siteSettings['footer_gallery_images'] ?? []) as $galleryImage)
                         @php
                             $galleryMedia = is_numeric($galleryImage) ? \App\Models\Media::query()->find((int) $galleryImage) : null;
                             $galleryImageUrl = $galleryMedia?->url
@@ -562,13 +535,12 @@
                         <p class="copyright-text">
                             <i class="fal fa-copyright">
                             </i> {{ date('Y') }}
-                            {{ $siteSettings['footer_copyright'] ?? ($siteSettings['site_title'] ?? config('app.name')) }}.
-                            All Rights Reserved.
+                            {{ $siteSettings['footer_copyright'] ?? ($siteSettings['site_title'] ?? config('app.name')) }}
                         </p>
                     </div>
                     <div class="col-auto">
                         <div class="footer-default-copy-right">
-                            <p>Social Media:</p>
+                            <p>{{ $siteSettings['footer_social_heading'] ?? 'Social Media:' }}</p>
                             <div class="th-social">
                                 @if (!empty($siteSettings['social_facebook']))
                                     <a href="{{ $siteSettings['social_facebook'] }}" target="_blank" rel="noopener">

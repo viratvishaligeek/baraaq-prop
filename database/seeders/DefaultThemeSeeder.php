@@ -29,11 +29,19 @@ class DefaultThemeSeeder extends Seeder
             'header_cta_label' => ['Browse Properties', 'navigation', 'string'],
             'header_cta_url' => ['/properties', 'navigation', 'string'],
             'footer_menu_location' => ['footer', 'navigation', 'string'],
+            'footer_quick_links_menu_location' => ['footer-quick-links', 'navigation', 'string'],
+            'footer_support_menu_location' => ['footer-support', 'navigation', 'string'],
+            'footer_about_heading' => ['About', 'footer', 'string'],
+            'footer_services_heading' => ['Services', 'footer', 'string'],
+            'footer_quick_links_heading' => ['Quick Links', 'footer', 'string'],
+            'footer_support_heading' => ['Support', 'footer', 'string'],
+            'footer_location_heading' => ['Pillar Location', 'footer', 'string'],
+            'footer_social_heading' => ['Social Media:', 'footer', 'string'],
             'sticky_header' => ['1', 'appearance', 'boolean'],
             'primary_color' => ['#068FFF', 'appearance', 'string'],
             'secondary_color' => ['#044DBC', 'appearance', 'string'],
             'footer_description' => ['', 'footer', 'string'],
-            'footer_copyright' => [$siteName, 'footer', 'string'],
+            'footer_copyright' => [$siteName.' — All Rights Reserved.', 'footer', 'string'],
             'meta_title' => [$siteName, 'seo', 'string'],
             'meta_description' => ['', 'seo', 'string'],
             'meta_keywords' => ['', 'seo', 'string'],
@@ -61,6 +69,23 @@ class DefaultThemeSeeder extends Seeder
             ['About Us', '/about.html', null, 5],
             ['Blog', '/blog', null, 6],
             ['Contact', '/contact.html', null, 7],
+        ]);
+
+        $this->seedMenu('footer-quick-links', 'Footer quick links', [
+            ['Properties', '/properties', null, 0],
+            ['Blog', '/blog', null, 1],
+            ['Services', '/services', null, 2],
+            ['Our team', '/team', null, 3],
+            ['Testimonials', '/testimonials', null, 4],
+            ['XML sitemap', '/sitemap.xml', null, 5],
+        ]);
+
+        $this->seedMenu('footer-support', 'Footer support', [
+            ['Help Center', '/contact', null, 0],
+            ['FAQs', '/services', null, 1],
+            ['Contact Us', '/contact', null, 2],
+            ['Ticket Support', '/contact', null, 3],
+            ['Live Chat', '/contact', null, 4],
         ]);
 
         $this->seedMenu('footer', 'Footer navigation', [
