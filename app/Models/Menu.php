@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -38,18 +39,29 @@ class Menu extends Model
             return null;
         }
 
-        $relations = [];
-        $prefix = 'items';
-        for ($depth = 0; $depth <= 4; $depth++) {
-            foreach (['page', 'category', 'service'] as $relation) {
-                $relations[] = $prefix.'.'.$relation;
-            }
-            if ($depth < 4) {
-                $prefix .= '.children';
-            }
+        $menu = static::query()
+            ->whereKey($menuId)
+            ->with('items.children.children.children.children')
+            ->first();
+
+        if (! $menu) {
+            return null;
         }
 
-        return static::query()->whereKey($menuId)->with($relations)->first();
+        $allItems = new EloquentCollection();
+        $collectItems = function ($items, int $depth = 0) use (&$collectItems, $allItems): void {
+            foreach ($items as $item) {
+                $allItems->push($item);
+                if ($depth < 4) {
+                    $collectItems($item->children, $depth + 1);
+                }
+            }
+        };
+
+        $collectItems($menu->items);
+        $allItems->load(['page', 'category', 'service']);
+
+        return $menu;
     }
 
     public static function forgetLocationCache(?string $location): void
