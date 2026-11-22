@@ -24,12 +24,8 @@ class ContentPreviewController extends Controller
 
     public function show(string $type, int $id)
     {
-        $user = request()->user();
         abort_unless(in_array($type, ['posts', 'pages', 'services'], true), 404);
         $this->authorizePreview($type);
-        $permission = $type . '.view';
-        $managePermission = $type . '.manage';
-        abort_unless($user && ($user->isAdministrator() || $user->hasPermission($permission) || $user->hasPermission($managePermission)), 403);
 
         return match ($type) {
             'posts' => $this->post($id),
@@ -57,6 +53,6 @@ class ContentPreviewController extends Controller
     {
         $service = Service::findOrFail($id);
 
-        return view('frontend.services.show', ['service' => $service, 'isBuilderPreview' => true]);
+        return view('frontend.services.show', ['service' => $service, 'isPreview' => true]);
     }
 }
