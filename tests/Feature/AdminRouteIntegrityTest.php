@@ -72,6 +72,7 @@ class AdminRouteIntegrityTest extends TestCase
         $admin = $this->administrator();
 
         $screens = [
+            ['admin.dashboard', []],
             ['admin.analytics.index', []],
             ['admin.comments.index', []],
             ['admin.content.index', ['pages']],
