@@ -279,6 +279,25 @@ class FixedHomepageCmsTest extends TestCase
         }
     }
 
+    public function test_featured_gallery_video_url_requires_an_absolute_http_url(): void
+    {
+        $admin = $this->administrator();
+        $homepage = $this->homepage();
+        $section = $this->createFixedSection($homepage, 'featured-gallery.home-9', 1);
+
+        foreach (['/contact', '#services', 'mailto:info@example.com', 'tel:+911234567890'] as $invalidUrl) {
+            $this->actingAs($admin)->patch(route('admin.homepages.sections.update', [$homepage, $section]), [
+                'config' => ['video_url' => $invalidUrl],
+            ])->assertSessionHasErrors('config.video_url');
+        }
+
+        $this->actingAs($admin)->patch(route('admin.homepages.sections.update', [$homepage, $section]), [
+            'config' => ['video_url' => 'https://www.youtube.com/watch?v=example'],
+        ])->assertRedirect(route('admin.homepages.index'));
+
+        $this->assertSame('https://www.youtube.com/watch?v=example', $section->fresh()->config['video_url']);
+    }
+
     public function test_partial_legacy_section_config_uses_registered_defaults_in_frontend_and_admin(): void
     {
         $admin = $this->administrator();

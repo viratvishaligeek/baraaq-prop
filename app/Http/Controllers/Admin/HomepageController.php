@@ -199,7 +199,7 @@ class HomepageController extends Controller
                 'checkbox' => ['sometimes', 'boolean'],
                 'number' => ['nullable', 'numeric', 'min:' . ($field['min'] ?? 0), 'max:' . ($field['max'] ?? 9999999)],
                 'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240'],
-                'url' => ['nullable', 'string', 'max:' . max(2048, $max), new SafeLink()],
+                'url' => array_merge(['nullable', 'string', 'max:' . max(2048, $max), new SafeLink()], $key === 'video_url' ? ['url'] : []),
                 'color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
                 'select' => ['nullable', 'string', 'in:' . implode(',', array_keys($field['options'] ?? []))],
                 default => ['nullable', 'string', 'max:' . $max],
