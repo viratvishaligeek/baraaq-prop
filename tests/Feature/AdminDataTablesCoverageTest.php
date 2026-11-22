@@ -43,6 +43,6 @@ class AdminDataTablesCoverageTest extends TestCase
         $this->actingAs($admin)->get(route('admin.media.index'))
             ->assertOk()
             ->assertDontSee('data-datatable', false)
-            ->assertSee('pagination', false);
+            ->assertViewHas('media', fn ($media) => $media instanceof LengthAwarePaginator);
     }
 }
