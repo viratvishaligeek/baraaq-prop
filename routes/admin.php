@@ -32,8 +32,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware(['auth', 'admin.access'])->group(function () {
         Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
-        Route::get('/dashboard/widgets', [DashboardController::class, 'manageWidgets'])->middleware('permission:settings.manage')->name('dashboard.widgets.edit');
-        Route::put('/dashboard/widgets', [DashboardController::class, 'updateWidgets'])->middleware('permission:settings.manage')->name('dashboard.widgets.update');
         Route::get('/analytics', [AnalyticsController::class, 'index'])->middleware('permission:analytics.view')->name('analytics.index');
 
         Route::get('/newsletters', [NewsletterController::class, 'index'])->middleware('permission:newsletters.manage')->name('newsletters.index');
