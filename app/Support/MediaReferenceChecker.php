@@ -24,8 +24,14 @@ class MediaReferenceChecker
             $galleryValue = DB::table('settings')->where('key', 'footer_gallery_images')->value('value');
             $galleryIds = is_string($galleryValue) ? json_decode($galleryValue, true) : null;
 
-            return is_array($galleryIds)
-                && in_array((int) $media->id, array_map('intval', $galleryIds), true);
+            if (! is_array($galleryIds)) {
+                return false;
+            }
+
+            $galleryIdsOnly = array_filter($galleryIds, 'is_numeric');
+
+            return in_array((int) $media->id, array_map('intval', $galleryIdsOnly), true)
+                || in_array($media->path, $galleryIds, true);
         }
 
         return false;

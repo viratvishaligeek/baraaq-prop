@@ -54,6 +54,29 @@ class AdminMediaIntegrityTest extends TestCase
         Storage::disk('public')->assertExists($media->path);
     }
 
+    public function test_media_path_stored_in_the_footer_gallery_cannot_be_deleted(): void
+    {
+        Storage::fake('public');
+        $admin = $this->administrator();
+        $media = Media::create([
+            'uploaded_by' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/footer-gallery-path.png',
+            'original_name' => 'footer-gallery-path.png',
+            'mime_type' => 'image/png',
+            'size' => 10,
+        ]);
+        Storage::disk('public')->put($media->path, 'image-data');
+        Setting::write('footer_gallery_images', [$media->path], 'footer', 'json');
+
+        $this->actingAs($admin)->from(route('admin.media.index'))
+            ->delete(route('admin.media.destroy', $media))
+            ->assertSessionHasErrors('media');
+
+        $this->assertDatabaseHas('media', ['id' => $media->id]);
+        Storage::disk('public')->assertExists($media->path);
+    }
+
     public function test_media_used_by_the_footer_gallery_setting_cannot_be_deleted(): void
     {
         Storage::fake('public');
