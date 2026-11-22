@@ -72,6 +72,7 @@
                         <div class="{{ in_array($type, ['textarea', 'richtext', 'image'], true) ? 'col-12' : 'col-md-6' }}">
                             @if ($type === 'checkbox')
                                 <div class="form-check mt-2">
+                                    <input type="hidden" name="config[{{ $key }}]" value="0">
                                     <input class="form-check-input" type="checkbox" id="section-{{ $section->id }}-{{ $key }}"
                                         name="config[{{ $key }}]" value="1" @checked((bool) $value)>
                                     <label class="form-check-label" for="section-{{ $section->id }}-{{ $key }}">{{ $field['label'] ?? str($key)->replace('_', ' ')->title() }}</label>

@@ -80,7 +80,9 @@ class HomepageController extends Controller
             $type = $field['type'] ?? 'text';
 
             if ($type === 'checkbox') {
-                $config[$key] = (bool) ($submitted[$key] ?? false);
+                if (array_key_exists($key, $submitted)) {
+                    $config[$key] = (bool) $submitted[$key];
+                }
                 continue;
             }
 

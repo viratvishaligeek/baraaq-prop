@@ -60,6 +60,22 @@ class FixedHomepageCmsTest extends TestCase
         $this->assertSame('Updated from admin', $section->fresh()->config['heading_prefix']);
         $this->get('/')->assertOk()->assertSee('Updated from admin');
     }
+    public function test_administrator_can_hide_a_fixed_homepage_section_without_removing_its_content(): void
+    {
+        $admin = $this->administrator();
+        $homepage = $this->homepage();
+        $section = $this->heroSection($homepage);
+
+        $this->actingAs($admin)->patch(route('admin.homepages.sections.update', [$homepage, $section]), [
+            'config' => ['heading_prefix' => 'Retained while hidden'],
+            'is_enabled' => '0',
+        ])->assertRedirect(route('admin.homepages.index'));
+
+        $this->assertFalse($section->fresh()->is_enabled);
+        $this->assertSame('Retained while hidden', $section->fresh()->config['heading_prefix']);
+        $this->get('/')->assertOk()->assertDontSee('Retained while hidden');
+    }
+
     public function test_homepage_seo_fields_are_editable_from_the_homepage_menu(): void
     {
         $admin = $this->administrator();

@@ -57,6 +57,8 @@ class PillerDemoContentSeederTest extends TestCase
         $this->assertGreaterThan(0, DB::table('categorizables')->count());
         $this->assertGreaterThan(0, DB::table('page_views')->count());
         $this->assertGreaterThan(0, DB::table('activity_logs')->count());
+        $this->assertSame(0, DB::table('permissions')->where('slug', 'like', 'widgets.%')->count());
+        $this->assertSame(0, DB::table('settings')->where('key', 'dashboard_widgets')->count());
         $this->assertFalse(Schema::hasTable('widgets'));
         $this->assertFalse(Schema::hasTable('widget_areas'));
         $this->assertFalse(Schema::hasTable('widget_area_items'));

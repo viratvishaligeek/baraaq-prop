@@ -53,7 +53,8 @@ return new class extends Migration
 
             DB::table('homepages')->where('slug', '<>', 'home-9')->delete();
             if ($fixedHomepageId) {
-                DB::table('homepages')->where('id', $fixedHomepageId)->update(['is_default' => true, 'deleted_at' => null]);
+                DB::table('homepages')->where('id', $fixedHomepageId)->update(['is_default' => true, 'deleted_at' => null, 'status' => 'published']);
+                DB::table('homepages')->where('id', $fixedHomepageId)->whereNull('published_at')->update(['published_at' => now()]);
                 foreach ($fixedSectionKeys as $position => $sectionKey) {
                     DB::table('homepage_sections')
                         ->where('homepage_id', $fixedHomepageId)
