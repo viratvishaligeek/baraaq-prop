@@ -14,7 +14,10 @@ return new class extends Migration
             return;
         }
 
+        // Only homepage-owned rows participate in the fixed Home 9 uniqueness rule.
+        // Legacy page/service rows may legitimately have a null homepage_id and repeat keys.
         $duplicate = DB::table('homepage_sections')
+            ->whereNotNull('homepage_id')
             ->select('homepage_id', 'section_key')
             ->groupBy('homepage_id', 'section_key')
             ->havingRaw('COUNT(*) > 1')
