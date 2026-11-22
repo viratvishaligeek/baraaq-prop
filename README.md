@@ -162,6 +162,8 @@ For a fresh installation, `DatabaseSeeder` creates the fixed Home 9 record and s
 
 ## Operational notes and verification
 
+- The public contact form requires at least one reply channel (email or phone). The `2026_11_23_000001_make_enquiry_phone_optional.php` migration supports email-only enquiries at the database level.
+
 - Uploads use Laravel's `public` filesystem disk. Create the storage symlink with `php artisan storage:link`.
 - Configure HTTPS and production database credentials before going live.
 - Enquiry submissions are stored in the database. Configure outbound mail separately if enquiry notifications are required.
