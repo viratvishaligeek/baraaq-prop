@@ -95,4 +95,33 @@ class LegacySchemaRetentionTest extends TestCase
             DB::table('homepage_sections')->whereNull('homepage_id')->where('section_key', 'legacy.page.section')->count()
         );
     }
+
+    public function test_footer_area_migration_preserves_customized_existing_areas_on_up_and_down(): void
+    {
+        $areaId = DB::table('widget_areas')->insertGetId([
+            'name' => 'Custom footer column',
+            'location' => 'footer-1',
+            'description' => 'Owner-authored footer content.',
+            'is_active' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $footerDefaults = require database_path('migrations/2026_11_18_000020_create_four_footer_widget_areas.php');
+        $footerDefaults->up();
+
+        $this->assertDatabaseHas('widget_areas', [
+            'id' => $areaId,
+            'name' => 'Custom footer column',
+            'description' => 'Owner-authored footer content.',
+            'is_active' => 0,
+        ]);
+
+        $footerDefaults->down();
+
+        $this->assertDatabaseHas('widget_areas', [
+            'id' => $areaId,
+            'location' => 'footer-1',
+        ]);
+    }
 }
