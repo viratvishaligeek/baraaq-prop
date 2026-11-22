@@ -57,6 +57,7 @@ class PillerDemoContentSeederTest extends TestCase
         $this->assertSame($expectedSiteName, Setting::read('footer_copyright'));
         $this->assertStringContainsString($expectedSiteName, (string) $homepage->meta_title);
         $this->assertSame('All Rights Reserved.', Setting::read('footer_rights_text'));
+        $this->assertNotEmpty(Setting::read('footer_gallery_images', []));
         $this->assertStringContainsString('output=embed', (string) Setting::read('footer_map_embed_url'));
         $this->assertGreaterThan(0, DB::table('categorizables')->count());
         $this->assertGreaterThan(0, DB::table('page_views')->count());
