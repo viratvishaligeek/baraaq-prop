@@ -394,7 +394,7 @@ class FixedHomepageCmsTest extends TestCase
             'status' => 'new',
         ]);
 
-        $enquiry = \\App\\Models\\Enquiry::query()->where('name', 'Contact Form Visitor')->firstOrFail();
+        $enquiry = \App\Models\\Enquiry::query()->where('name', 'Contact Form Visitor')->firstOrFail();
         $this->actingAs($admin)->patch(route('admin.enquiries.update', $enquiry), [
             'status' => 'contacted',
             'admin_notes' => 'Replied by email.',
@@ -479,7 +479,7 @@ class FixedHomepageCmsTest extends TestCase
             'meta_title' => 'Terms',
         ])->assertRedirect(route('admin.content.index', 'pages'));
 
-        $page = \\App\\Models\\Page::query()->where('slug', 'terms-of-service')->firstOrFail();
+        $page = \App\Models\\Page::query()->where('slug', 'terms-of-service')->firstOrFail();
         $this->assertSame($admin->id, $page->author_id);
 
         $this->actingAs($admin)->put(route('admin.content.update', ['pages', $page->id]), [
@@ -506,7 +506,7 @@ class FixedHomepageCmsTest extends TestCase
             'status' => 'draft',
         ])->assertRedirect(route('admin.content.index', 'services'));
 
-        $service = \\App\\Models\\Service::query()->where('slug', 'property-management')->firstOrFail();
+        $service = \App\Models\\Service::query()->where('slug', 'property-management')->firstOrFail();
 
         $this->actingAs($admin)->put(route('admin.content.update', ['services', $service->id]), [
             'title' => 'Premium Property Management',
