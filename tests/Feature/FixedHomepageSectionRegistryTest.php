@@ -89,4 +89,21 @@ class FixedHomepageSectionRegistryTest extends TestCase
         $this->expectException(QueryException::class);
         HomepageSection::create($attributes);
     }
+
+    public function test_every_literal_section_config_reference_is_editable_in_the_homepage_admin(): void
+    {
+        foreach (config('cms-sections.sections') as $key => $definition) {
+            $viewPath = resource_path('views/'.str_replace('.', '/', $definition['view']).'.blade.php');
+            $this->assertFileExists($viewPath, "Missing section view for [{$key}].");
+
+            $source = file_get_contents($viewPath);
+            preg_match_all("/\\\$sectionConfig\\[['\"]([^'\"]+)['\"]\\]/", $source, $matches);
+
+            $editableFields = array_keys($definition['fields'] ?? []);
+            $unmanagedFields = array_values(array_diff(array_unique($matches[1]), $editableFields));
+
+            $this->assertSame([], $unmanagedFields, "Section [{$key}] renders config keys that are not editable in Homepage admin.");
+        }
+    }
+
 }

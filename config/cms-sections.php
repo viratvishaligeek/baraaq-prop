@@ -8,7 +8,6 @@ $sections = [
         'view' => 'frontend.sections.hero.home-9',
         'defaults' => [
             'eyebrow' => 'Don’t Missed Out',
-            'heading' => 'Discover Most Suitable Property',
             'heading_prefix' => 'Discover',
             'heading_highlight' => 'Most Suitable',
             'heading_suffix' => 'Property',
