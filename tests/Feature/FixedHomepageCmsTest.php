@@ -286,7 +286,6 @@ class FixedHomepageCmsTest extends TestCase
         $definition = config('cms-sections.sections.hero.home-9');
 
         $section = $homepage->sections()->create([
-            'instance_key' => (string) Str::uuid(),
             'section_key' => 'hero.home-9',
             'section_type' => $definition['type'],
             'sort_order' => 1,
