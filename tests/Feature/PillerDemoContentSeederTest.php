@@ -55,7 +55,9 @@ class PillerDemoContentSeederTest extends TestCase
         $this->assertGreaterThan(0, Role::query()->count());
         $this->assertGreaterThan(0, Setting::query()->count());
         $this->assertStringStartsWith('piller-demo/', (string) Setting::read('default_og_image'));
-        $this->assertSame('Pillar Real Estate', Setting::read('footer_copyright'));
+        $expectedSiteName = trim((string) env('SITE_NAME', 'Pillar Real Estate')) ?: 'Pillar Real Estate';
+        $this->assertSame($expectedSiteName, Setting::read('footer_copyright'));
+        $this->assertStringContainsString($expectedSiteName, (string) $homepage->meta_title);
         $this->assertSame('All Rights Reserved.', Setting::read('footer_rights_text'));
         $this->assertGreaterThan(0, DB::table('categorizables')->count());
         $this->assertGreaterThan(0, DB::table('page_views')->count());

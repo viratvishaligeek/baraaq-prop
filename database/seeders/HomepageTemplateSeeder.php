@@ -9,6 +9,8 @@ class HomepageTemplateSeeder extends Seeder
 {
     public function run(): void
     {
+        $siteName = trim((string) env('SITE_NAME', 'Pillar Real Estate')) ?: 'Pillar Real Estate';
+
         $homepage = Homepage::query()->firstOrCreate(
             ['slug' => 'home-9'],
             [
@@ -18,8 +20,8 @@ class HomepageTemplateSeeder extends Seeder
                 'is_default' => true,
                 'is_composition_complete' => false,
                 'published_at' => now(),
-                'meta_title' => 'Discover Most Suitable Property | Pillar Real Estate',
-                'meta_description' => 'Explore thoughtfully selected properties and expert real estate services with Pillar Real Estate.',
+                'meta_title' => 'Discover Most Suitable Property | '.$siteName,
+                'meta_description' => 'Explore thoughtfully selected properties and expert real estate services with '.$siteName.'.',
             ]
         );
 
