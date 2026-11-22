@@ -259,6 +259,8 @@ class FixedHomepageCmsTest extends TestCase
         }
 
         $this->assertGreaterThan(0, $checkedFields, 'The fixed homepage registry must expose uploadable image fields.');
+
+        $this->get('/')->assertOk()->assertViewIs('frontend.homepage');
     }
 
     public function test_section_links_accept_relative_anchor_telephone_email_and_http_links(): void
