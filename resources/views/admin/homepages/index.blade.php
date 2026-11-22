@@ -90,7 +90,7 @@
 
     <div class="content-card mb-4">
         <h2 class="section-title mb-1">Footer content, menus and social links</h2>
-        <p class="text-muted small mb-3">Manage footer headings, descriptions, contact map, menu locations, gallery and social destinations.</p>
+        <p class="text-muted small mb-3">Manage footer headings, descriptions, contact map, gallery and social destinations. Edit the actual menu items under Admin → Menus.</p>
         <form method="POST" enctype="multipart/form-data" action="{{ route('admin.homepages.update', $homepage) }}">
             @csrf
             @method('PATCH')
@@ -132,7 +132,7 @@
                             @foreach ($siteSettings['footer_gallery_images'] as $galleryImage)
                                 @php
                                     $galleryMedia = is_numeric($galleryImage) ? \App\Models\Media::query()->find((int) $galleryImage) : null;
-                                    $galleryUrl = $galleryMedia?->url ?? asset(ltrim((string) $galleryImage, '/'));
+                                    $galleryUrl = $galleryMedia?->url ?? (\\Illuminate\\Support\\Str::startsWith((string) $galleryImage, ['http://', 'https://']) ? $galleryImage : asset(ltrim((string) $galleryImage, '/')));
                                 @endphp
                                 <img src="{{ $galleryUrl }}" alt="" style="width:76px;height:58px;object-fit:cover" class="rounded border">
                             @endforeach

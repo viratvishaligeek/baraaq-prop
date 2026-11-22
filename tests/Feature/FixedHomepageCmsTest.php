@@ -130,6 +130,16 @@ class FixedHomepageCmsTest extends TestCase
         $this->assertCount(1, Setting::read('footer_gallery_images'));
     }
 
+    public function test_homepage_header_button_rejects_unsafe_javascript_urls(): void
+    {
+        $admin = $this->administrator();
+        $homepage = $this->homepage();
+
+        $this->actingAs($admin)->patch(route('admin.homepages.update', $homepage), [
+            'header_cta_url' => 'javascript:alert(1)',
+        ])->assertSessionHasErrors('header_cta_url');
+    }
+
     public function test_old_homepage_switching_and_builder_routes_are_not_registered(): void
     {
         $this->assertFalse(Route::has('admin.page-builder.index'));

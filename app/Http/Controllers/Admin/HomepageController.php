@@ -46,7 +46,7 @@ class HomepageController extends Controller
             'whatsapp_number' => ['nullable', 'string', 'max:30'],
             'site_address' => ['nullable', 'string', 'max:500'],
             'header_cta_label' => ['nullable', 'string', 'max:80'],
-            'header_cta_url' => ['nullable', 'string', 'max:2048'],
+            'header_cta_url' => ['nullable', 'string', 'max:2048', $this->safeLinkRule()],
             'footer_description' => ['nullable', 'string', 'max:1500'],
             'footer_copyright' => ['nullable', 'string', 'max:255'],
             'footer_map_embed_url' => ['nullable', 'url', 'max:2048'],
@@ -146,7 +146,7 @@ class HomepageController extends Controller
                 'checkbox' => ['sometimes', 'boolean'],
                 'number' => ['nullable', 'numeric', 'min:' . ($field['min'] ?? 0), 'max:' . ($field['max'] ?? 9999999)],
                 'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240'],
-                'url' => ['nullable', 'string', 'max:' . max(2048, $max)],
+                'url' => ['nullable', 'string', 'max:' . max(2048, $max), $this->safeLinkRule()],
                 'color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
                 'select' => ['nullable', 'string', 'in:' . implode(',', array_keys($field['options'] ?? []))],
                 default => ['nullable', 'string', 'max:' . $max],
@@ -203,6 +203,19 @@ class HomepageController extends Controller
 
         return redirect()->route('admin.homepages.index')
             ->with('success', ($definition['label'] ?? 'Homepage section') . ' updated successfully.');
+    }
+
+    private function safeLinkRule(): \Closure
+    {
+        return static function ($attribute, $value, $fail): void {
+            if ($value === null || $value === '') {
+                return;
+            }
+
+            if (! is_string($value) || ! preg_match('~^(https?://|/(?!/)|#|mailto:|tel:)~i', $value)) {
+                $fail('The ' . $attribute . ' must be a safe web URL or a relative, email, or telephone link.');
+            }
+        };
     }
 
     private function ensureFixedHomepage(Homepage $homepage): void
