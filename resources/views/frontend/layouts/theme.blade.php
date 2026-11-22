@@ -371,8 +371,8 @@
             <div class="container">
                 @php
                     $footerMenu = \App\Models\Menu::cached($siteSettings['footer_menu_location'] ?? 'footer');
-                    $footerQuickLinks = \\App\\Models\\Menu::cached($siteSettings['footer_quick_links_menu_location'] ?? 'footer-quick-links');
-                    $footerSupport = \\App\\Models\\Menu::cached($siteSettings['footer_support_menu_location'] ?? 'footer-support');
+                    $footerQuickLinks = \App\Models\Menu::cached($siteSettings['footer_quick_links_menu_location'] ?? 'footer-quick-links');
+                    $footerSupport = \App\Models\Menu::cached($siteSettings['footer_support_menu_location'] ?? 'footer-support');
                 @endphp
                 @if ($footerMenu && $footerMenu->items->isNotEmpty())
                     <nav class="cms-footer-navigation" aria-label="Footer navigation">
