@@ -396,6 +396,19 @@ class FixedHomepageCmsTest extends TestCase
         $this->assertTrue(Route::has('about'));
     }
 
+    public function test_contact_enquiry_requires_at_least_one_reply_channel(): void
+    {
+        $this->from('/contact')->post(route('enquiries.store'), [
+            'name' => 'Visitor Without Contact Details',
+            'message' => 'Please contact me.',
+        ])->assertRedirect('/contact')
+            ->assertSessionHasErrors(['email', 'phone']);
+
+        $this->assertDatabaseMissing('enquiries', [
+            'name' => 'Visitor Without Contact Details',
+        ]);
+    }
+
 
     public function test_each_registered_homepage_section_renders_independently_on_the_public_homepage(): void
     {
