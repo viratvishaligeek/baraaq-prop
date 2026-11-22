@@ -57,7 +57,7 @@
                             </div>
                         </div>
                     @empty
-                        <div class="swiper-slide"><div class="team-card style-2"><div class="team-content">Team profiles will appear here soon.</div></div></div>
+                        <div class="swiper-slide"><div class="team-card style-2"><div class="team-content">{{ $sectionConfig['empty_state_text'] ?? 'Team profiles will appear here soon.' }}</div></div></div>
                     @endforelse
                 </div>
             </div>

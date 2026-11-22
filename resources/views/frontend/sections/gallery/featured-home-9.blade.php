@@ -35,18 +35,18 @@
                                                     <div class="box-text"><div class="icon"><img src="{{ asset('theme-assets/img/icon/popular-location.svg') }}" alt="icon"></div>{{ $property->address }}{{ $property->city ? ', '.$property->city : '' }}</div>
                                                 </div>
                                                 <ul class="property-featured">
-                                                    <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bed.svg') }}" alt="icon"></div>Bed {{ $property->bedrooms ?? '—' }}</li>
-                                                    <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bath.svg') }}" alt="icon"></div>Bath {{ $property->bathrooms ?? '—' }}</li>
+                                                    <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bed.svg') }}" alt="icon"></div>{{ $sectionConfig['bed_label'] ?? 'Bed' }} {{ $property->bedrooms ?? '—' }}</li>
+                                                    <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bath.svg') }}" alt="icon"></div>{{ $sectionConfig['bath_label'] ?? 'Bath' }} {{ $property->bathrooms ?? '—' }}</li>
                                                     <li><div class="icon"><img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="icon"></div>{{ $property->area ? number_format((float) $property->area).' '.$property->area_unit : '—' }}</li>
                                                 </ul>
                                                 <div class="property-bottom">
                                                     <h6 class="box-title">{{ $property->price_label ?: number_format((float) $property->price) }}</h6>
-                                                    <a class="th-btn sm style3 bg-theme text-white" href="{{ route('properties.show', $property) }}">View More</a>
+                                                    <a class="th-btn sm style3 bg-theme text-white" href="{{ route('properties.show', $property) }}">{{ $sectionConfig['card_button_label'] ?? 'View More' }}</a>
                                                 </div>
                                                 @if($property->creator)
                                                     <div class="agent-wrap">
                                                         <div class="thumb"><img src="{{ asset('theme-assets/img/gallery/property-agent.jpg') }}" alt="{{ $property->creator->name }}"></div>
-                                                        <div class="content"><h4 class="box-title">{{ $property->creator->name }}</h4><p class="box-text">Property Consultant</p></div>
+                                                        <div class="content"><h4 class="box-title">{{ $property->creator->name }}</h4><p class="box-text">{{ $sectionConfig['agent_role_label'] ?? 'Property Consultant' }}</p></div>
                                                     </div>
                                                 @endif
                                             </div>
@@ -63,10 +63,10 @@
             @endforeach
         </div>
         <div class="slider-pagination-wrapper">
-            <button data-slider-prev="#{{ $sliderId }}" class="slider-arrow default slider-prev style-2">prev</button>
+            <button data-slider-prev="#{{ $sliderId }}" class="slider-arrow default slider-prev style-2">{{ $sectionConfig['previous_button_label'] ?? 'prev' }}</button>
             <div class="slider-pagination2"></div>
             <div class="line"></div>
-            <button data-slider-next="#{{ $sliderId }}" class="slider-arrow default style-2">Next</button>
+            <button data-slider-next="#{{ $sliderId }}" class="slider-arrow default style-2">{{ $sectionConfig['next_button_label'] ?? 'Next' }}</button>
         </div>
     </div>
 </div>

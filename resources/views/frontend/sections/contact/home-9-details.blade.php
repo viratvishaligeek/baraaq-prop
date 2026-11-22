@@ -11,12 +11,12 @@
                 </div>
                 <div class="contact-list">
                     <ul>
-                        <li>Location <span>{{ $sectionConfig['location'] ?? '' }}</span></li>
-                        <li>Total Area <span>{{ $sectionConfig['total_area'] ?? '' }}</span></li>
-                        <li>Living Space <span>{{ $sectionConfig['living_space'] ?? '' }}</span></li>
-                        <li>Bedrooms <span>{{ $sectionConfig['bedrooms'] ?? '' }}</span></li>
-                        <li>Bathrooms <span>{{ $sectionConfig['bathrooms'] ?? '' }}</span></li>
-                        <li>Floors <span>{{ $sectionConfig['floors'] ?? '' }}</span></li>
+                        <li>{{ $sectionConfig['location_label'] ?? 'Location' }} <span>{{ $sectionConfig['location'] ?? '' }}</span></li>
+                        <li>{{ $sectionConfig['total_area_label'] ?? 'Total Area' }} <span>{{ $sectionConfig['total_area'] ?? '' }}</span></li>
+                        <li>{{ $sectionConfig['living_space_label'] ?? 'Living Space' }} <span>{{ $sectionConfig['living_space'] ?? '' }}</span></li>
+                        <li>{{ $sectionConfig['bedrooms_label'] ?? 'Bedrooms' }} <span>{{ $sectionConfig['bedrooms'] ?? '' }}</span></li>
+                        <li>{{ $sectionConfig['bathrooms_label'] ?? 'Bathrooms' }} <span>{{ $sectionConfig['bathrooms'] ?? '' }}</span></li>
+                        <li>{{ $sectionConfig['floors_label'] ?? 'Floors' }} <span>{{ $sectionConfig['floors'] ?? '' }}</span></li>
                     </ul>
                     @if(!empty($sectionConfig['button_label']))
                         <div class="btn"><a href="{{ $sectionConfig['button_url'] ?? '/about' }}" class="th-btn style7">{{ $sectionConfig['button_label'] }}</a></div>

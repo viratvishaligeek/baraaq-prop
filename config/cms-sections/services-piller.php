@@ -15,7 +15,6 @@ return [
             'columns' => '4',
             'button_label' => 'Explore All Services',
             'button_url' => '/services',
-            'card_link_label' => 'Explore Service',
             'empty_state_text' => 'No published services are available.',
             'vertical_spacing' => 'space',
             'background_color' => '',
