@@ -429,15 +429,7 @@ class PropertyController extends Controller
             return;
         }
 
-        $isReferenced = Property::withTrashed()
-            ->where(function ($query) use ($path): void {
-                $query->where('featured_image', $path)->orWhere('og_image', $path);
-            })
-            ->exists()
-            || PropertyImage::where('path', $path)->exists()
-            || app(MediaReferenceChecker::class)->isPathReferenced($path);
-
-        if (! $isReferenced) {
+        if (! app(MediaReferenceChecker::class)->isPathReferenced($path)) {
             Storage::disk('public')->delete($path);
         }
     }
