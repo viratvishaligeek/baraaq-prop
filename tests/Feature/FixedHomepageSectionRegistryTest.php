@@ -4,7 +4,7 @@ use App\Models\Homepage;
 use Database\Seeders\HomepageTemplateSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
-class PillerHomepagePresetTest extends TestCase
+class FixedHomepageSectionRegistryTest extends TestCase
 {
     use RefreshDatabase;
     public function test_only_home_nine_is_seeded_as_the_fixed_homepage(): void
