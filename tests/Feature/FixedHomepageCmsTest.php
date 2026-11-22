@@ -344,4 +344,24 @@ class FixedHomepageCmsTest extends TestCase
         $this->assertStringNotContainsString('javascript:', $saved);
     }
 
+
+    public function test_contact_page_renders_a_form_posting_to_the_registered_enquiry_handler(): void
+    {
+        $this->get('/contact')
+            ->assertOk()
+            ->assertViewIs('frontend.contact')
+            ->assertSee(route('enquiries.store'))
+            ->assertSee('name="name"', false)
+            ->assertSee('name="email"', false)
+            ->assertSee('name="phone"', false)
+            ->assertSee('name="message"', false);
+    }
+
+    public function test_about_alias_returns_to_the_fixed_homepage_about_section(): void
+    {
+        $this->get('/about')->assertRedirect(route('home').'#about');
+        $this->assertTrue(Route::has('contact'));
+        $this->assertTrue(Route::has('about'));
+    }
+
 }
