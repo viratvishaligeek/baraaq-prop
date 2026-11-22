@@ -260,31 +260,31 @@
                             <ul>
                                 <li>
                                     <div class="th-social">
-                                        @if (\\App\\Rules\\SafeLink::isHttpUrl($siteSettings['social_facebook'] ?? null))
+                                        @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_facebook'] ?? null))
                                             <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_facebook']) }}" target="_blank"
                                                 rel="noopener noreferrer">
                                                 <i class="fab fa-facebook-f">
                                                 </i>
                                             </a>
-                                            @endif @if (\\App\\Rules\\SafeLink::isHttpUrl($siteSettings['social_instagram'] ?? null))
+                                            @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_instagram'] ?? null))
                                                 <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_instagram']) }}" target="_blank"
                                                     rel="noopener noreferrer">
                                                     <i class="fab fa-instagram">
                                                     </i>
                                                 </a>
-                                                @endif @if (\\App\\Rules\\SafeLink::isHttpUrl($siteSettings['social_linkedin'] ?? null))
+                                                @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_linkedin'] ?? null))
                                                     <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_linkedin']) }}" target="_blank"
                                                         rel="noopener noreferrer">
                                                         <i class="fab fa-linkedin-in">
                                                         </i>
                                                     </a>
-                                                    @endif @if (\\App\\Rules\\SafeLink::isHttpUrl($siteSettings['social_youtube'] ?? null))
-                                                        <a href="{{ $siteSettings['social_youtube'] }}"
+                                                    @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_youtube'] ?? null))
+                                                        <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_youtube']) }}"
                                                             target="_blank" rel="noopener noreferrer">
                                                             <i class="fab fa-youtube">
                                                             </i>
                                                         </a>
-                                                        @endif @if (\\App\\Rules\\SafeLink::isHttpUrl($siteSettings['social_x'] ?? null))
+                                                        @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_x'] ?? null))
                                                             <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_x']) }}" target="_blank"
                                                                 rel="noopener noreferrer">
                                                                 <i class="fab fa-x-twitter">
@@ -292,7 +292,7 @@
                                                             </a>
                                                             @endif @if (!empty($siteSettings['whatsapp_number']))
                                                                 <a href="https://wa.me/{{ preg_replace('/\D+/', '', $siteSettings['whatsapp_number']) }}"
-                                                                    target="_blank" rel="noopener">
+                                                                    target="_blank" rel="noopener noreferrer">
                                                                     <i class="fab fa-whatsapp">
                                                                     </i>
                                                                 </a>
@@ -492,8 +492,8 @@
                                     <div class="widget widget_banner footer-widget">
                                         <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? 'Pillar Location' }}</h3>
                                         <div class="widget-map">
-                                            @if (\\App\\Rules\\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null))
-                                                <iframe src="{{ \\App\\Rules\\SafeLink::sanitizeHttp($siteSettings['footer_map_embed_url']) }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                            @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null))
+                                                <iframe src="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['footer_map_embed_url']) }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                                             @endif
                                         </div>
                                     </div>
@@ -544,38 +544,38 @@
                         <div class="footer-default-copy-right">
                             <p>{{ $siteSettings['footer_social_heading'] ?? 'Social Media:' }}</p>
                             <div class="th-social">
-                                @if (!empty($siteSettings['social_facebook']))
-                                    <a href="{{ $siteSettings['social_facebook'] }}" target="_blank" rel="noopener">
+                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_facebook'] ?? null))
+                                    <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_facebook']) }}" target="_blank" rel="noopener noreferrer">
                                         <i class="fab fa-facebook-f">
                                         </i>
                                     </a>
-                                    @endif @if (!empty($siteSettings['social_instagram']))
-                                        <a href="{{ $siteSettings['social_instagram'] }}" target="_blank"
-                                            rel="noopener">
+                                    @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_instagram'] ?? null))
+                                        <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_instagram']) }}" target="_blank"
+                                            rel="noopener noreferrer">
                                             <i class="fab fa-instagram">
                                             </i>
                                         </a>
-                                        @endif @if (!empty($siteSettings['social_linkedin']))
-                                            <a href="{{ $siteSettings['social_linkedin'] }}" target="_blank"
-                                                rel="noopener">
+                                        @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_linkedin'] ?? null))
+                                            <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_linkedin']) }}" target="_blank"
+                                                rel="noopener noreferrer">
                                                 <i class="fab fa-linkedin-in">
                                                 </i>
                                             </a>
-                                            @endif @if (!empty($siteSettings['social_youtube']))
+                                            @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_youtube'] ?? null))
                                                 <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_youtube']) }}" target="_blank"
-                                                    rel="noopener">
+                                                    rel="noopener noreferrer">
                                                     <i class="fab fa-youtube">
                                                     </i>
                                                 </a>
-                                                @endif @if (!empty($siteSettings['social_x']))
-                                                    <a href="{{ $siteSettings['social_x'] }}" target="_blank"
-                                                        rel="noopener">
+                                                @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_x'] ?? null))
+                                                    <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_x']) }}" target="_blank"
+                                                        rel="noopener noreferrer">
                                                         <i class="fab fa-x-twitter">
                                                         </i>
                                                     </a>
                                                     @endif @if (!empty($siteSettings['whatsapp_number']))
                                                         <a href="https://wa.me/{{ preg_replace('/\D+/', '', $siteSettings['whatsapp_number']) }}"
-                                                            target="_blank" rel="noopener">
+                                                            target="_blank" rel="noopener noreferrer">
                                                             <i class="fab fa-whatsapp">
                                                             </i>
                                                         </a>
