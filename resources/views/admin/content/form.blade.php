@@ -7,11 +7,6 @@
             @if ($item->exists && in_array($type, ['posts', 'pages', 'services'], true))
                 <a class="btn btn-outline-primary btn-sm" href="{{ route('admin.content.preview', [$type, $item->id]) }}" target="_blank" rel="noopener">Preview content</a>
             @endif
-        @if ($type === 'pages' && $item->exists)
-            <a class="btn btn-outline-primary btn-sm mt-2" href="{{ route('admin.pages.builder', $item) }}">Open universal page builder</a>
-        @elseif ($type === 'services' && $item->exists && (auth()->user()->isAdministrator() || auth()->user()->hasPermission('services.manage')))
-            <a class="btn btn-outline-primary btn-sm mt-2" href="{{ route('admin.services.builder', $item) }}">Open service widget builder</a>
-        @endif
     </div>
     <form method="POST" enctype="multipart/form-data"
         action="{{ $item->exists ? route('admin.content.update', [$type, $item->id]) : route('admin.content.store', $type) }}">

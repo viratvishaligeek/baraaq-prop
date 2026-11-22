@@ -15,15 +15,11 @@ use App\Models\Page;
 use App\Models\Post;
 use App\Models\Property;
 use App\Models\PropertyImage;
-use App\Models\ReusableSection;
 use App\Models\Service;
 use App\Models\Setting;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
 use App\Models\User;
-use App\Models\Widget;
-use App\Models\WidgetArea;
-use App\Models\WidgetAreaItem;
 use App\Models\HomepageSection;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Cache;
@@ -58,7 +54,6 @@ class PillerDemoContentSeeder extends Seeder
             $this->seedComments($posts);
             $this->seedNewsletterSubscribers();
             $this->seedMenus($propertyCategories, $postCategories);
-            $this->seedWidgets($propertyCategories);
             $this->seedHomeNine();
             $this->seedAnalytics();
         });
@@ -549,47 +544,6 @@ class PillerDemoContentSeeder extends Seeder
         Menu::forgetLocationCache($menu->location);
     }
 
-    private function seedWidgets(array $propertyCategories): void
-    {
-        $areas = [
-            'footer-1' => ['About Pillar', 'text', ['title' => 'About Pillar', 'body' => '<p>Pillar Realty combines local knowledge, considered advice and a carefully selected collection of homes. We make every property move feel simpler.</p>']],
-            'footer-2' => ['Featured Houses', 'featured_properties', ['title' => 'Featured Houses', 'limit' => 3]],
-            'footer-3' => ['Quick Links', 'text', ['title' => 'Quick Links', 'body' => '<ul><li><a href="/properties">Browse properties</a></li><li><a href="/services">Our services</a></li><li><a href="/about">About Pillar</a></li><li><a href="/blog">Property journal</a></li></ul>']],
-            'footer-4' => ['Support', 'text', ['title' => 'Support', 'body' => '<ul><li><a href="/frequently-asked-questions">FAQs</a></li><li><a href="/contact">Contact Us</a></li><li><a href="/contact">Viewing Assistance</a></li><li><a href="/privacy-policy">Privacy Policy</a></li><li><a href="/contact">Talk to an advisor</a></li></ul>']],
-        ];
-
-        foreach ($areas as $location => [$name, $type, $config]) {
-            $area = WidgetArea::query()->firstOrCreate(
-                ['location' => $location],
-                ['name' => $name, 'description' => 'Original Piller footer column powered by CMS widgets.', 'is_active' => true]
-            );
-            $widget = Widget::query()->firstOrCreate(
-                ['name' => $name, 'type' => $type],
-                ['config' => $config, 'status' => 'published']
-            );
-            WidgetAreaItem::query()->firstOrCreate(
-                ['widget_area_id' => $area->id, 'widget_id' => $widget->id],
-                ['sort_order' => 1, 'is_active' => true]
-            );
-        }
-
-        $socialArea = WidgetArea::query()->firstOrCreate(
-            ['location' => 'footer-social'],
-            ['name' => 'Footer social links', 'description' => 'Social links for the original footer.', 'is_active' => true]
-        );
-        $social = Widget::query()->firstOrCreate(
-            ['name' => 'Follow Pillar', 'type' => 'social'],
-            ['config' => ['title' => 'Follow Pillar', 'social_links' => [
-                ['label' => 'Instagram', 'url' => 'https://www.instagram.com/'],
-                ['label' => 'Facebook', 'url' => 'https://www.facebook.com/'],
-                ['label' => 'LinkedIn', 'url' => 'https://www.linkedin.com/'],
-            ]], 'status' => 'published']
-        );
-        WidgetAreaItem::query()->firstOrCreate(
-            ['widget_area_id' => $socialArea->id, 'widget_id' => $social->id],
-            ['sort_order' => 1, 'is_active' => true]
-        );
-    }
 
     private function seedHomeNine(): void
     {
@@ -598,7 +552,18 @@ class PillerDemoContentSeeder extends Seeder
             throw new RuntimeException('Home 9 template is missing. Run HomepageTemplateSeeder before PillerDemoContentSeeder.');
         }
 
-        $requiredKeys = array_merge(['hero.home-9'], config('cms-homepage-presets.home-9', []));
+        $requiredKeys = [
+            'hero.home-9',
+            'about.home-9',
+            'statistics.home-9',
+            'services.home-9',
+            'properties.index',
+            'featured-gallery.home-9',
+            'home-details.home-9',
+            'team.home-2',
+            'testimonials.home-3',
+            'blog.home-2',
+        ];
         $definitions = config('cms-sections.sections', []);
         $overrides = [
             'hero.home-9' => [
@@ -636,7 +601,7 @@ class PillerDemoContentSeeder extends Seeder
                 'items_limit' => 8,
                 'columns' => '4',
             ],
-            'properties.home-9' => [
+            'properties.index' => [
                 'eyebrow' => 'Popular Properties',
                 'heading' => 'Best Properties Sale',
                 'items_limit' => 8,
@@ -697,18 +662,6 @@ class PillerDemoContentSeeder extends Seeder
             $config = $this->replaceImagePathsWithMediaIds($config, $definition['fields'] ?? []);
             $source = $this->dataSourceFor($definition['type'] ?? '');
 
-            $reusable = ReusableSection::query()->firstOrCreate(
-                ['slug' => 'piller-home-9-'.Str::slug($key)],
-                [
-                    'name' => $definition['label'] ?? $key,
-                    'section_type' => $definition['type'],
-                    'section_key' => $key,
-                    'source_design' => 'home-9',
-                    'config' => $config,
-                    'status' => 'published',
-                ]
-            );
-
             $section = HomepageSection::query()
                 ->where('homepage_id', $homepage->id)
                 ->where('section_key', $key)
@@ -716,7 +669,6 @@ class PillerDemoContentSeeder extends Seeder
 
             if (! $section) {
                 $section = $homepage->sections()->create([
-                    'reusable_section_id' => $reusable->id,
                     'instance_key' => (string) Str::uuid(),
                     'section_key' => $key,
                     'section_type' => $definition['type'],
@@ -727,9 +679,6 @@ class PillerDemoContentSeeder extends Seeder
                     'data_source' => $source,
                 ]);
             } else {
-                if (! $section->reusable_section_id) {
-                    $section->update(['reusable_section_id' => $reusable->id]);
-                }
                 // Existing administrator edits are preserved on reruns.
             }
 
@@ -758,8 +707,6 @@ class PillerDemoContentSeeder extends Seeder
             'meta_description' => 'Explore thoughtfully selected properties and expert real estate services with Pillar Realty.',
         ]);
 
-        // A published CMS page can otherwise take precedence over the selected homepage at "/".
-        Page::query()->where('homepage_key', 'primary')->update(['homepage_key' => null]);
     }
 
     private function dataSourceFor(string $type): array

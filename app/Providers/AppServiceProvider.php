@@ -13,10 +13,6 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Homepage;
 use App\Models\HomepageSection;
-use App\Models\ReusableSection;
-use App\Models\WidgetArea;
-use App\Models\WidgetAreaItem;
-use App\Models\Widget;
 use App\Models\Page;
 use App\Models\Post;
 use App\Models\Property;
@@ -55,10 +51,6 @@ class AppServiceProvider extends ServiceProvider
                 Role::class,
                 Homepage::class,
                 HomepageSection::class,
-                ReusableSection::class,
-                WidgetArea::class,
-                WidgetAreaItem::class,
-                Widget::class,
                 Setting::class,
                 Page::class,
                 Post::class,

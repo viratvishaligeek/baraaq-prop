@@ -27,7 +27,6 @@ class RolePermissionSeeder extends Seeder
             'comments' => 'Comments',
             'menus' => 'Navigation menus',
             'media' => 'Media library',
-            'widgets' => 'Widgets',
             'enquiries' => 'Enquiries',
             'newsletters' => 'Newsletter subscribers',
             'settings' => 'Website settings',

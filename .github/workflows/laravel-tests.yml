@@ -3,8 +3,12 @@ name: Laravel tests
 on:
   push:
     branches:
+      - refactor/simple-cms-homepage
       - feat/piller-elementor-cms-v3
       - feature/complete-cms-admin-overhaul
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -65,5 +69,5 @@ jobs:
           cat /tmp/laravel-browser.log
           exit 1
 
-      - name: Test all ten Piller homepages at desktop, tablet and mobile sizes
+      - name: Test the fixed Home 9 homepage at desktop, tablet and mobile sizes
         run: APP_URL=http://127.0.0.1:8000 DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite npm run test:e2e

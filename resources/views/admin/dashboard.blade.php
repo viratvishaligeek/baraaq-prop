@@ -16,13 +16,8 @@
         </div>
     </div>
 
-    <div class="d-flex justify-content-end mb-2">
-        @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage'))
-            <a class="btn btn-sm btn-outline-secondary" href="{{ route('admin.dashboard.widgets.edit') }}"><i class="fa fa-sliders me-1"></i> Manage dashboard widgets</a>
-        @endif
-    </div>
     <div class="row g-3 mb-4">
-        @forelse($dashboardWidgets as $widget)
+        @forelse($dashboardCards as $widget)
             <div class="col-6 col-xl-3">
                 <a class="stat-card h-100 d-block text-decoration-none text-reset" href="{{ $widget['url'] }}" aria-label="View {{ $widget['label'] }}">
                     <div class="stat-icon"><i class="fa {{ $widget['icon'] }}"></i></div>
@@ -31,7 +26,7 @@
                 </a>
             </div>
         @empty
-            <div class="col-12"><div class="content-card text-muted">No dashboard widgets are enabled. <a href="{{ route('admin.dashboard.widgets.edit') }}">Add widgets</a>.</div></div>
+            <div class="col-12"><div class="content-card text-muted">Dashboard metrics will appear here when data is available.</div></div>
         @endforelse
     </div>
 
@@ -43,7 +38,7 @@
                     <a href="{{ route('admin.properties.index') }}">View all</a>
                 </div>
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0">
+                    <table class="table align-middle mb-0" data-datatable>
                         <thead><tr><th>Property</th><th>City</th><th>Status</th></tr></thead>
                         <tbody>
                             @forelse($recentProperties as $property)

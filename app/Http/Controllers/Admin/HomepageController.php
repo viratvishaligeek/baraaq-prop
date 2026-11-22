@@ -3,223 +3,238 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Banner;
 use App\Models\Homepage;
-use App\Models\Page;
-use App\Models\Post;
-use App\Models\Property;
-use App\Models\ReusableSection;
-use App\Models\TeamMember;
-use App\Services\Widgets\CmsWidgetRegistry;
+use App\Models\HomepageSection;
+use App\Models\Media;
+use App\Models\Setting;
+use App\Support\HtmlSanitizer;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class HomepageController extends Controller
 {
+    private const HOMEPAGE_SLUG = 'home-9';
+
     public function index()
     {
+        $homepage = Homepage::query()
+            ->where('slug', self::HOMEPAGE_SLUG)
+            ->firstOrFail();
+
+        $homepage->load([
+            'sections.mediaAttachments.media',
+        ]);
+
         return view('admin.homepages.index', [
-            'homepages' => Homepage::orderByDesc('is_default')
-                ->orderBy('name')
-                ->get(),
+            'homepage' => $homepage,
+            'sectionDefinitions' => config('cms-sections.sections', []),
+            'siteSettings' => Setting::allValues(),
         ]);
     }
 
-    public function builder(Homepage $homepage)
+    public function update(Request $request, Homepage $homepage)
     {
-        abort_unless($homepage->status === 'draft', 409, 'Create a draft copy before editing a published homepage.');
+        $this->ensureFixedHomepage($homepage);
 
-        return view('admin.homepages.builder', [
-            'homepage' => $homepage->load('sections.mediaAttachments.media', 'sections.reusableSection.mediaAttachments.media'),
-            'reusableSections' => ReusableSection::query()->where('status', 'published')->orderBy('name')->get(),
-            'availableSections' => config('cms-sections.sections', []),
-            'queryableTypes' => app(CmsWidgetRegistry::class)->queryableTypes(),
+        $data = $request->validate([
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:1000'],
+            'site_title' => ['nullable', 'string', 'max:150'],
+            'site_tagline' => ['nullable', 'string', 'max:255'],
+            'business_name' => ['nullable', 'string', 'max:190'],
+            'site_email' => ['nullable', 'email', 'max:190'],
+            'site_phone' => ['nullable', 'string', 'max:30'],
+            'whatsapp_number' => ['nullable', 'string', 'max:30'],
+            'site_address' => ['nullable', 'string', 'max:500'],
+            'header_cta_label' => ['nullable', 'string', 'max:80'],
+            'header_cta_url' => ['nullable', 'string', 'max:2048', $this->safeLinkRule()],
+            'footer_description' => ['nullable', 'string', 'max:1500'],
+            'footer_copyright' => ['nullable', 'string', 'max:255'],
+            'footer_rights_text' => ['nullable', 'string', 'max:255'],
+            'footer_map_embed_url' => ['nullable', 'url', 'max:2048'],
+            'footer_gallery_handle' => ['nullable', 'string', 'max:100'],
+            'footer_gallery_title' => ['nullable', 'string', 'max:100'],
+            'footer_about_heading' => ['nullable', 'string', 'max:100'],
+            'footer_services_heading' => ['nullable', 'string', 'max:100'],
+            'footer_quick_links_heading' => ['nullable', 'string', 'max:100'],
+            'footer_support_heading' => ['nullable', 'string', 'max:100'],
+            'footer_location_heading' => ['nullable', 'string', 'max:100'],
+            'footer_social_heading' => ['nullable', 'string', 'max:100'],
+            'footer_quick_links_menu_location' => ['nullable', 'string', 'max:60'],
+            'footer_support_menu_location' => ['nullable', 'string', 'max:60'],
+            'footer_menu_location' => ['nullable', 'string', 'max:60'],
+            'social_facebook' => ['nullable', 'url', 'max:500'],
+            'social_instagram' => ['nullable', 'url', 'max:500'],
+            'social_linkedin' => ['nullable', 'url', 'max:500'],
+            'social_youtube' => ['nullable', 'url', 'max:500'],
+            'social_x' => ['nullable', 'url', 'max:500'],
+            'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'footer_gallery_images' => ['nullable', 'array', 'max:7'],
+            'footer_gallery_images.*' => ['image', 'mimes:jpg,jpeg,png,webp,gif', 'max:5120'],
         ]);
-    }
 
-    public function duplicate(Homepage $homepage)
-    {
-        $sectionDefinitions = config('cms-sections.sections', []);
+        $homepage->update([
+            'meta_title' => array_key_exists('meta_title', $data) ? $data['meta_title'] : $homepage->meta_title,
+            'meta_description' => array_key_exists('meta_description', $data) ? $data['meta_description'] : $homepage->meta_description,
+        ]);
 
-        $draft = DB::transaction(function () use ($homepage, $sectionDefinitions) {
-            $copy = $homepage->replicate();
-            $copy->name = $homepage->name . ' (Draft)';
-            $copy->slug = Str::slug($homepage->slug . '-draft-' . now()->format('YmdHis') . '-' . Str::lower(Str::random(5)));
-            $copy->status = 'draft';
-            $copy->is_default = false;
-            $copy->is_composition_complete = false;
-            $copy->published_at = null;
-            $copy->created_by = auth()->id();
-            $copy->updated_by = auth()->id();
-            $copy->save();
+        $settingGroups = [
+            'site_title' => 'general', 'site_tagline' => 'general', 'business_name' => 'business',
+            'site_email' => 'contact', 'site_phone' => 'contact', 'whatsapp_number' => 'contact', 'site_address' => 'contact',
+            'header_cta_label' => 'navigation', 'header_cta_url' => 'navigation', 'footer_menu_location' => 'navigation',
+            'footer_quick_links_menu_location' => 'navigation', 'footer_support_menu_location' => 'navigation',
+            'footer_description' => 'footer', 'footer_copyright' => 'footer', 'footer_rights_text' => 'footer', 'footer_map_embed_url' => 'footer',
+            'footer_gallery_handle' => 'footer', 'footer_gallery_title' => 'footer',
+            'footer_about_heading' => 'footer', 'footer_services_heading' => 'footer',
+            'footer_quick_links_heading' => 'footer', 'footer_support_heading' => 'footer',
+            'footer_location_heading' => 'footer', 'footer_social_heading' => 'footer',
+            'social_facebook' => 'social', 'social_instagram' => 'social', 'social_linkedin' => 'social',
+            'social_youtube' => 'social', 'social_x' => 'social',
+        ];
 
-            $presentKeys = [];
-
-            foreach ($homepage->sections as $section) {
-                $sectionCopy = $section->replicate();
-                $sectionCopy->homepage_id = $copy->id;
-                $sectionCopy->instance_key = (string) Str::uuid();
-                $sectionCopy->save();
-                $presentKeys[] = $section->section_key;
-
-                foreach ($section->mediaAttachments as $attachment) {
-                    $sectionCopy->mediaAttachments()->create([
-                        'field_key' => $attachment->field_key,
-                        'media_id' => $attachment->media_id,
-                    ]);
-                }
+        foreach ($settingGroups as $key => $group) {
+            if (array_key_exists($key, $data)) {
+                Setting::write($key, $data[$key], $group, 'string');
             }
+        }
 
-            // Complete an existing partial composition without replacing or duplicating
-            // any section that an administrator has already configured.
-            $requiredKeys = array_merge(
-                ['hero.' . $homepage->design_key],
-                config('cms-homepage-presets.' . $homepage->design_key, [])
-            );
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo');
+            $path = $file->store('homepage/branding', 'public');
+            Media::create([
+                'uploaded_by' => $request->user()->id, 'disk' => 'public', 'path' => $path,
+                'original_name' => $file->getClientOriginalName(), 'mime_type' => $file->getMimeType(),
+                'size' => $file->getSize(), 'alt_text' => (string) ($data['site_title'] ?? $homepage->name),
+            ]);
+            Setting::write('logo', $path, 'branding', 'string');
+        }
 
-            foreach (array_values(array_unique($requiredKeys)) as $sectionKey) {
-                if (in_array($sectionKey, $presentKeys, true)) {
-                    continue;
-                }
-
-                $definition = $sectionDefinitions[$sectionKey] ?? null;
-                if (! $definition) {
-                    continue;
-                }
-
-                $copy->sections()->create([
-                    'instance_key' => (string) Str::uuid(),
-                    'section_key' => $definition['key'],
-                    'section_type' => $definition['type'],
-                    'source_design' => $definition['source_design'],
-                    'sort_order' => ((int) $copy->sections()->max('sort_order')) + 1,
-                    'is_enabled' => true,
-                    'config' => $definition['defaults'] ?? [],
+        if ($request->hasFile('footer_gallery_images')) {
+            $mediaIds = [];
+            foreach ($request->file('footer_gallery_images') as $file) {
+                $path = $file->store('homepage/footer-gallery', 'public');
+                $media = Media::create([
+                    'uploaded_by' => $request->user()->id, 'disk' => 'public', 'path' => $path,
+                    'original_name' => $file->getClientOriginalName(), 'mime_type' => $file->getMimeType(),
+                    'size' => $file->getSize(), 'alt_text' => 'Homepage footer gallery',
                 ]);
+                $mediaIds[] = $media->id;
+            }
+            Setting::write('footer_gallery_images', $mediaIds, 'footer', 'json');
+        }
+
+        $this->clearHomepageCache();
+
+        return redirect()->route('admin.homepages.index')
+            ->with('success', 'Homepage content and site-wide homepage details saved successfully.');
+    }
+
+    public function updateSection(Request $request, Homepage $homepage, HomepageSection $section)
+    {
+        $this->ensureFixedHomepage($homepage);
+        abort_unless((int) $section->homepage_id === (int) $homepage->id, 404);
+
+        $definition = config('cms-sections.sections.' . $section->section_key);
+        abort_unless(is_array($definition), 404, 'Homepage section definition was not found.');
+
+        $fields = $definition['fields'] ?? [];
+        $rules = [];
+
+        foreach ($fields as $key => $field) {
+            $type = $field['type'] ?? 'text';
+            $max = (int) ($field['max'] ?? 500);
+
+            $rules['config.' . $key] = match ($type) {
+                'checkbox' => ['sometimes', 'boolean'],
+                'number' => ['nullable', 'numeric', 'min:' . ($field['min'] ?? 0), 'max:' . ($field['max'] ?? 9999999)],
+                'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240'],
+                'url' => ['nullable', 'string', 'max:' . max(2048, $max), $this->safeLinkRule()],
+                'color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
+                'select' => ['nullable', 'string', 'in:' . implode(',', array_keys($field['options'] ?? []))],
+                default => ['nullable', 'string', 'max:' . $max],
+            };
+        }
+
+        $rules['is_enabled'] = ['sometimes', 'boolean'];
+        $validated = $request->validate($rules);
+        $submitted = $validated['config'] ?? [];
+        $config = $section->config ?? [];
+
+        foreach ($fields as $key => $field) {
+            $type = $field['type'] ?? 'text';
+
+            if ($type === 'checkbox') {
+                if (array_key_exists($key, $submitted)) {
+                    $config[$key] = (bool) $submitted[$key];
+                }
+                continue;
             }
 
-            return $copy;
-        });
+            if ($type === 'richtext') {
+                if (array_key_exists($key, $submitted)) {
+                    $config[$key] = HtmlSanitizer::sanitize($submitted[$key]);
+                }
+                continue;
+            }
 
-        return redirect()
-            ->route('admin.homepages.builder', $draft)
-            ->with('success', 'Draft copy created. The published homepage has not changed.');
-    }
+            if ($type === 'image') {
+                $file = $request->file('config.' . $key);
+                if (! $file) {
+                    continue;
+                }
 
-    public function preview(Homepage $homepage)
-    {
-        abort_unless($homepage->status === 'draft', 404);
+                $path = $file->store('homepage', 'public');
+                $media = Media::create([
+                    'uploaded_by' => $request->user()->id,
+                    'disk' => 'public',
+                    'path' => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getMimeType(),
+                    'size' => $file->getSize(),
+                    'alt_text' => (string) ($config[$key . '_alt'] ?? ''),
+                ]);
 
-        return view('frontend.home-builder', [
-            'homepage' => $homepage->load(['sections.reusableSection.mediaAttachments.media', 'sections.mediaAttachments.media']),
-            'properties' => Property::published()
-                ->with('category:id,name')
-                ->latest('published_at')
-                ->limit(6)
-                ->get(),
-            'featuredProperties' => Property::published()
-                ->where('is_featured', true)
-                ->with('category:id,name')
-                ->latest('published_at')
-                ->limit(4)
-                ->get(),
-            'banners' => Banner::visible()
-                ->where('placement', 'home')
-                ->orderBy('sort_order')
-                ->get(),
-            'posts' => Post::published()
-                ->with('author:id,name')
-                ->latest('published_at')
-                ->limit(3)
-                ->get(),
-            'teamMembers' => TeamMember::where('status', 'published')
-                ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->limit(4)
-                ->get(),
-            'isHomepagePreview' => true,
-        ]);
-    }
+                $section->mediaAttachments()->updateOrCreate(
+                    ['field_key' => $key],
+                    ['media_id' => $media->id]
+                );
+                $config[$key] = $media->id;
+                continue;
+            }
 
-    public function verifyComposition(Homepage $homepage)
-    {
-        abort_unless($homepage->status === 'draft', 409, 'Only a draft homepage can be verified.');
-
-        $required = array_merge(
-            ['hero.' . $homepage->design_key],
-            config('cms-homepage-presets.' . $homepage->design_key, [])
-        );
-        $sections = $homepage->sections()->get();
-        $present = $sections->pluck('section_key')->all();
-        $missing = array_values(array_diff($required, $present));
-
-        if ($missing !== []) {
-            return back()->withErrors([
-                'composition' => 'The original homepage composition is missing: ' . implode(', ', $missing),
-            ]);
+            if (array_key_exists($key, $submitted)) {
+                $config[$key] = $submitted[$key];
+            }
         }
 
-        $sectionDefinitions = config('cms-sections.sections', []);
-        $invalid = $sections->filter(function ($section) use ($sectionDefinitions) {
-            $definition = $sectionDefinitions[$section->section_key] ?? null;
+        $section->update(['config' => $config, 'is_enabled' => array_key_exists('is_enabled', $validated) ? (bool) $validated['is_enabled'] : $section->is_enabled]);
+        $this->clearHomepageCache();
 
-            return ! $definition || empty($definition['view']) || ! view()->exists($definition['view']);
-        })->pluck('section_key')->all();
-
-        if ($invalid !== []) {
-            return back()->withErrors([
-                'composition' => 'These sections do not resolve to registered frontend views: ' . implode(', ', $invalid),
-            ]);
-        }
-
-        $homepage->update([
-            'is_composition_complete' => true,
-            'updated_by' => auth()->id(),
-        ]);
-
-        return redirect()->route('admin.homepages.builder', $homepage)
-            ->with('success', 'Section coverage and registered frontend views are valid. Your manual desktop, tablet and mobile visual review is still required before publishing.');
+        return redirect()->route('admin.homepages.index')
+            ->with('success', ($definition['label'] ?? 'Homepage section') . ' updated successfully.');
     }
 
-    public function publish(Homepage $homepage)
+    private function safeLinkRule(): \Closure
     {
-        abort_unless($homepage->status === 'draft', 409, 'Only a draft homepage can be published.');
+        return static function ($attribute, $value, $fail): void {
+            if ($value === null || $value === '') {
+                return;
+            }
 
-        $homepage->update([
-            'status' => 'published',
-            'published_at' => now(),
-            'updated_by' => request()->user()->id,
-        ]);
-
-        Cache::forget('homepage:published-default');
-        Cache::forget('homepage:published-default:id');
-
-        return redirect()
-            ->route('admin.homepages.index')
-            ->with('success', 'Homepage draft published. Select it as the default to make it live.');
+            if (! is_string($value) || ! preg_match('~^(https?://|/(?!/)|#|mailto:|tel:)~i', $value)) {
+                $fail('The ' . $attribute . ' must be a safe web URL or a relative, email, or telephone link.');
+            }
+        };
     }
 
-    public function setDefault(Homepage $homepage)
+    private function ensureFixedHomepage(Homepage $homepage): void
     {
-        abort_unless($homepage->status === 'published', 422, 'Only a published homepage can be selected.');
-        abort_unless($homepage->is_composition_complete, 422, 'This homepage cannot become the live default until every source section has been extracted, configured and verified.');
+        abort_unless($homepage->slug === self::HOMEPAGE_SLUG, 404);
+    }
 
-        DB::transaction(function () use ($homepage) {
-            Homepage::query()->lockForUpdate()->update(['is_default' => false]);
-            Page::query()->whereNotNull('homepage_key')->lockForUpdate()->update(['homepage_key' => null]);
-
-            $homepage->update([
-                'is_default' => true,
-                'updated_by' => request()->user()->id,
-            ]);
-        });
-
+    private function clearHomepageCache(): void
+    {
         Cache::forget('homepage:published-default');
         Cache::forget('homepage:published-default:id');
-
-        return redirect()
-            ->route('admin.homepages.index')
-            ->with('success', 'Default homepage updated.');
     }
 }

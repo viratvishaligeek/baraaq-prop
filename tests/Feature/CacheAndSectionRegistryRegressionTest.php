@@ -13,23 +13,31 @@ class CacheAndSectionRegistryRegressionTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_homepage_controller_caches_only_the_homepage_id(): void
+    public function test_homepage_controller_always_resolves_home_nine_not_another_default_homepage(): void
     {
-        $homepage = Homepage::create([
-            'name' => 'Published homepage',
-            'slug' => 'published-homepage-cache-test',
-            'design_key' => 'index',
+        Homepage::create([
+            'name' => 'Alternate homepage',
+            'slug' => 'home-2',
+            'design_key' => 'home-2',
             'status' => 'published',
             'is_default' => true,
             'published_at' => now(),
         ]);
 
-        Cache::put('homepage:published-default', new \stdClass());
+        Homepage::create([
+            'name' => 'Fixed homepage',
+            'slug' => 'home-9',
+            'design_key' => 'home-9',
+            'status' => 'published',
+            'is_default' => false,
+            'is_composition_complete' => true,
+            'published_at' => now(),
+        ]);
 
-        app(HomeController::class)->__invoke();
+        $response = app(HomeController::class)->__invoke();
 
-        $this->assertSame($homepage->id, Cache::get('homepage:published-default:id'));
-        $this->assertNull(Cache::get('homepage:published-default'));
+        $this->assertSame('home-9', $response->getData()['homepage']->slug);
+        $this->assertSame('frontend.homepage', $response->name());
     }
 
     public function test_setting_read_ignores_legacy_model_cache_and_caches_scalar_data(): void
@@ -41,7 +49,6 @@ class CacheAndSectionRegistryRegressionTest extends TestCase
             'type' => 'string',
         ]);
 
-        // Simulate the legacy key that may contain a serialized Eloquent model.
         Cache::put('setting:site_title', new \stdClass());
 
         $this->assertSame('Pillar Real Estate', Setting::read('site_title'));
@@ -59,20 +66,28 @@ class CacheAndSectionRegistryRegressionTest extends TestCase
         ]);
 
         $this->assertSame('Old title', Setting::read('site_title'));
-
         Setting::write('site_title', 'New title');
-
         $this->assertSame('New title', Setting::read('site_title'));
     }
 
-    public function test_dotted_homepage_section_keys_are_registered_as_literal_array_keys(): void
+    public function test_dotted_section_registry_contains_only_the_fixed_home_nine_sections(): void
     {
+        $expected = [
+            'hero.home-9',
+            'about.home-9',
+            'statistics.home-9',
+            'services.home-9',
+            'properties.index',
+            'featured-gallery.home-9',
+            'home-details.home-9',
+            'team.home-2',
+            'testimonials.home-3',
+            'blog.home-2',
+        ];
         $sections = config('cms-sections.sections', []);
 
-        $this->assertArrayHasKey('hero.index', $sections);
-        $this->assertArrayHasKey('properties.index', $sections);
-        $this->assertSame('hero.index', $sections['hero.index']['key']);
-        $this->assertSame('properties.index', $sections['properties.index']['key']);
+        $this->assertSame($expected, array_keys($sections));
+        $this->assertArrayNotHasKey('hero.index', $sections);
 
         foreach ($sections as $key => $definition) {
             $this->assertSame($key, $definition['key'] ?? null, "Section registry key [{$key}] must match its definition key.");
