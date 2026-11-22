@@ -132,7 +132,7 @@
                             @foreach ($siteSettings['footer_gallery_images'] as $galleryImage)
                                 @php
                                     $galleryMedia = is_numeric($galleryImage) ? \App\Models\Media::query()->find((int) $galleryImage) : null;
-                                    $galleryUrl = $galleryMedia?->url ?? (\\Illuminate\\Support\\Str::startsWith((string) $galleryImage, ['http://', 'https://']) ? $galleryImage : asset(ltrim((string) $galleryImage, '/')));
+                                    $galleryUrl = $galleryMedia?->url ?? (\Illuminate\Support\Str::startsWith((string) $galleryImage, ['http://', 'https://']) ? $galleryImage : asset(ltrim((string) $galleryImage, '/')));
                                 @endphp
                                 <img src="{{ $galleryUrl }}" alt="" style="width:76px;height:58px;object-fit:cover" class="rounded border">
                             @endforeach

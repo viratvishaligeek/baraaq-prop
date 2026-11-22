@@ -103,6 +103,8 @@ class MenuCacheAndDefaultThemeSeederTest extends TestCase
         ]);
         $this->assertSame(8, Menu::where('location', 'primary')->first()->allItems()->count());
         $this->assertSame(6, Menu::where('location', 'footer')->first()->allItems()->count());
+        $this->assertSame(6, Menu::where('location', 'footer-quick-links')->first()->allItems()->count());
+        $this->assertSame(5, Menu::where('location', 'footer-support')->first()->allItems()->count());
         $this->assertDatabaseHas('categories', ['slug' => 'apartment', 'type' => 'property']);
         $this->assertDatabaseHas('categories', ['slug' => 'buying-guides', 'type' => 'post']);
 
