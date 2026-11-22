@@ -187,7 +187,7 @@ class MediaController extends Controller
 
     public function destroy(Media $media)
     {
-        if ($media->attachments()->exists() || $this->isReferencedByContent($media)) {
+        if ($media->attachments()->exists() || app(MediaReferenceChecker::class)->isReferenced($media)) {
             return back()->withErrors(['media' => 'This image is currently used by website content, a property gallery, an accommodation space, the homepage or site settings. Replace or clear those references before deleting it.']);
         }
 
