@@ -38,7 +38,7 @@
             <div class="content-card">
                 <h4 class="mb-3">Popular pages</h4>
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" data-datatable>
                         <thead>
                             <tr>
                                 <th>Path</th>
@@ -85,7 +85,7 @@
     <div class="content-card mt-4">
         <h4 class="mb-3">Recent inquiries</h4>
         <div class="table-responsive">
-            <table class="table">
+            <table class="table" data-datatable>
                 <thead>
                     <tr>
                         <th>Name</th>
