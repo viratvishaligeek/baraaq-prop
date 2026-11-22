@@ -83,7 +83,7 @@ class AdminContentIntegrityTest extends TestCase
             'og_image' => UploadedFile::fake()->image('service-social.png'),
         ])->assertRedirect(route('admin.content.index', 'services'));
 
-        $service = \\App\\Models\\Service::query()->where('slug', 'image-backed-service')->firstOrFail();
+        $service = \App\Models\Service::query()->where('slug', 'image-backed-service')->firstOrFail();
         $this->assertDatabaseHas('media', [
             'path' => $service->featured_image,
             'original_name' => 'service-featured.png',
