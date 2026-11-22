@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Homepage;
+use App\Models\Category;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\Role;
@@ -67,7 +68,7 @@ class AdminMenuIntegrityTest extends TestCase
     public function test_inactive_categories_cannot_be_added_as_menu_destinations(): void
     {
         $admin = $this->administrator();
-        $category = \\App\\Models\\Category::create([
+        $category = Category::create([
             'name' => 'Hidden articles',
             'slug' => 'hidden-articles',
             'type' => 'post',
