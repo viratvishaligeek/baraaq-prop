@@ -166,8 +166,13 @@ class AdminContentCrudMatrixTest extends TestCase
                 $this->assertDatabaseHas('media', ['path' => $path]);
             }
 
+            $updatePayload = array_merge($module['payload'], $module['updated']);
+            foreach ($module['images'] as $field) {
+                unset($updatePayload[$field]);
+            }
+
             $this->actingAs($admin)
-                ->put(route('admin.content.update', [$type, $item->id]), array_merge($module['payload'], $module['updated']))
+                ->put(route('admin.content.update', [$type, $item->id]), $updatePayload)
                 ->assertRedirect(route('admin.content.index', $type));
 
             $item->refresh();
