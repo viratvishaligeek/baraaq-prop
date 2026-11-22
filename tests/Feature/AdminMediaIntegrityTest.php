@@ -102,16 +102,12 @@ class AdminMediaIntegrityTest extends TestCase
             'name' => 'Home 9',
             'slug' => 'home-9',
             'status' => 'published',
-            'is_default' => true,
-            'is_composition_complete' => true,
             'published_at' => now(),
         ]);
         HomepageSection::create([
             'homepage_id' => $homepage->id,
-            'instance_key' => 'legacy-hero',
             'section_key' => 'hero.home-9',
             'section_type' => 'hero',
-            'source_design' => 'home-9',
             'sort_order' => 1,
             'is_enabled' => true,
             'config' => ['hero_image' => $media->id],

@@ -26,9 +26,9 @@ Admin listing tables use DataTables 2 with Bootstrap 5 and Responsive extensions
 
 ## Production migration caution
 
-The repository contains 34 migration files. Existing migration history is retained rather than rewritten or deleted: reducing migration file count is not worth breaking environments where those migrations have already run.
+The repository contains 35 migration files. Existing migration history is retained rather than rewritten or deleted: reducing migration file count is not worth breaking environments where those migrations have already run.
 
-The forward-only 2026_11_22_000001_remove_legacy_page_builder_and_widget_schema migration retires builder/widget records and schema. Its down() method intentionally does not reconstruct deleted data. Do not roll back across this migration: restore from a tested backup if reversal is required. Before applying it to a live database, verify its status with php artisan migrate:status, take and test a backup, and confirm the fixed Home 9 record and required section rows are present. Repository access cannot establish the migration state of a production database.
+The forward-only 2026_11_22_000001_remove_legacy_page_builder_and_widget_schema migration retires builder/widget records and schema. Its down() method intentionally does not reconstruct deleted data. Do not roll back across either cleanup migration: restore from a tested backup if reversal is required. Before applying it to a live database, verify its status with php artisan migrate:status, take and test a backup, and confirm the fixed Home 9 record and required section rows are present. Repository access cannot establish the migration state of a production database.
 
 ## Verification
 

@@ -10,10 +10,8 @@ class HomepageSection extends Model
 {
     protected $fillable = [
         'homepage_id',
-        'instance_key',
         'section_key',
         'section_type',
-        'source_design',
         'sort_order',
         'is_enabled',
         'config',

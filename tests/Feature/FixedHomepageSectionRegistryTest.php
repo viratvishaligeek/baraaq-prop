@@ -1,6 +1,9 @@
 <?php
 namespace Tests\Feature;
 use App\Models\Homepage;
+use App\Models\HomepageSection;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Schema;
 use Database\Seeders\HomepageTemplateSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -13,8 +16,7 @@ class FixedHomepageSectionRegistryTest extends TestCase
         $this->assertSame(1, Homepage::query()->count());
         $homepage = Homepage::query()->firstOrFail();
         $this->assertSame('home-9', $homepage->slug);
-        $this->assertSame('home-9', $homepage->design_key);
-        $this->assertTrue($homepage->is_default);
+        $this->assertSame('published', $homepage->status);
         $this->assertSame('published', $homepage->status);
     }
     public function test_active_section_registry_contains_only_the_fixed_home_nine_composition(): void
@@ -27,4 +29,32 @@ class FixedHomepageSectionRegistryTest extends TestCase
             $this->assertTrue(view()->exists($definition['view']));
         }
     }
+    public function test_fixed_homepage_schema_has_no_legacy_template_or_builder_columns(): void
+    {
+        foreach (['design_key', 'is_default', 'is_composition_complete'] as $column) {
+            $this->assertFalse(Schema::hasColumn('homepages', $column), "Unexpected legacy homepages column [{$column}].");
+        }
+
+        foreach (['instance_key', 'source_design'] as $column) {
+            $this->assertFalse(Schema::hasColumn('homepage_sections', $column), "Unexpected legacy homepage_sections column [{$column}].");
+        }
+    }
+
+    public function test_fixed_homepage_section_keys_are_unique_per_homepage(): void
+    {
+        $this->seed(DatabaseSeeder::class);
+        $homepage = Homepage::query()->where('slug', 'home-9')->firstOrFail();
+        $section = HomepageSection::query()->where('homepage_id', $homepage->id)->where('section_key', 'hero.home-9')->firstOrFail();
+
+        $this->expectException(QueryException::class);
+        HomepageSection::create([
+            'homepage_id' => $homepage->id,
+            'section_key' => $section->section_key,
+            'section_type' => $section->section_type,
+            'sort_order' => 99,
+            'is_enabled' => true,
+            'config' => [],
+        ]);
+    }
+
 }

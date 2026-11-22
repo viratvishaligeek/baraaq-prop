@@ -33,8 +33,6 @@ class PillerDemoContentSeederTest extends TestCase
         $homepage = Homepage::query()->where('slug', 'home-9')->firstOrFail();
         $expected = ['hero.home-9', 'about.home-9', 'statistics.home-9', 'services.home-9', 'properties.index', 'featured-gallery.home-9', 'home-details.home-9', 'team.home-2', 'testimonials.home-3', 'blog.home-2'];
         $this->assertSame(1, Homepage::query()->count());
-        $this->assertTrue($homepage->is_default);
-        $this->assertTrue($homepage->is_composition_complete);
         $this->assertSame($expected, $homepage->sections()->orderBy('sort_order')->pluck('section_key')->all());
         $this->assertGreaterThanOrEqual(12, Property::published()->count());
         $this->assertGreaterThanOrEqual(8, Post::published()->count());

@@ -25,14 +25,14 @@ class FixedHomepageCmsTest extends TestCase
     }
     private function homepage(): Homepage
     {
-        return Homepage::create(['name' => 'Home 9 — Fixed homepage', 'slug' => 'home-9', 'design_key' => 'home-9', 'status' => 'published', 'is_default' => true, 'is_composition_complete' => true, 'published_at' => now()]);
+        return Homepage::create(['name' => 'Home 9 — Fixed homepage', 'slug' => 'home-9', 'status' => 'published', 'published_at' => now()]);
     }
     private function heroSection(Homepage $homepage): HomepageSection
     {
         $definition = config('cms-sections.sections.hero.home-9');
         return $homepage->sections()->create([
-            'instance_key' => (string) Str::uuid(), 'section_key' => 'hero.home-9',
-            'section_type' => $definition['type'], 'source_design' => 'home-9',
+            'section_key' => 'hero.home-9',
+            'section_type' => $definition['type'],
             'sort_order' => 1, 'is_enabled' => true,
             'config' => array_merge($definition['defaults'] ?? [], [
                 'heading_prefix' => 'A fixed Home Nine heading', 'heading_highlight' => 'Made dynamic',
@@ -181,10 +181,8 @@ class FixedHomepageCmsTest extends TestCase
         $definition = config('cms-sections.sections.'.$key);
 
         return $homepage->sections()->create([
-            'instance_key' => (string) Str::uuid(),
             'section_key' => $key,
             'section_type' => $definition['type'],
-            'source_design' => $definition['source_design'] ?? 'home-9',
             'sort_order' => $sortOrder,
             'is_enabled' => true,
             'config' => $definition['defaults'] ?? [],
@@ -291,7 +289,6 @@ class FixedHomepageCmsTest extends TestCase
             'instance_key' => (string) Str::uuid(),
             'section_key' => 'hero.home-9',
             'section_type' => $definition['type'],
-            'source_design' => 'home-9',
             'sort_order' => 1,
             'is_enabled' => true,
             'config' => ['heading_prefix' => 'Partial saved config'],

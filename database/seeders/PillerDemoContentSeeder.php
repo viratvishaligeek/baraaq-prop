@@ -669,10 +669,8 @@ class PillerDemoContentSeeder extends Seeder
 
             if (! $section) {
                 $section = $homepage->sections()->create([
-                    'instance_key' => (string) Str::uuid(),
                     'section_key' => $key,
                     'section_type' => $definition['type'],
-                    'source_design' => $definition['source_design'] ?? 'home-9',
                     'sort_order' => $position + 1,
                     'is_enabled' => true,
                     'config' => $config,
@@ -692,16 +690,9 @@ class PillerDemoContentSeeder extends Seeder
             }
         }
 
-        Homepage::query()
-            ->where('id', '<>', $homepage->id)
-            ->update(['is_default' => false]);
-
         $homepage->update([
             'name' => 'Home 9 — Pillar Single Property',
-            'design_key' => 'home-9',
             'status' => 'published',
-            'is_default' => true,
-            'is_composition_complete' => true,
             'published_at' => $homepage->published_at ?: now(),
         ]);
 
