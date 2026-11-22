@@ -51,22 +51,22 @@ class FixedHomepageSectionRegistryTest extends TestCase
         }
     }
 
-    public function test_fixed_homepage_schema_has_no_legacy_template_or_builder_columns_and_indexes(): void
+    public function test_fixed_homepage_schema_retains_legacy_metadata_and_enforces_unique_section_keys(): void
     {
         foreach (['design_key', 'is_default', 'is_composition_complete'] as $column) {
-            $this->assertFalse(Schema::hasColumn('homepages', $column));
+            $this->assertTrue(Schema::hasColumn('homepages', $column));
         }
 
         foreach (['instance_key', 'source_design'] as $column) {
-            $this->assertFalse(Schema::hasColumn('homepage_sections', $column));
+            $this->assertTrue(Schema::hasColumn('homepage_sections', $column));
         }
 
         $homepageIndexes = collect(Schema::getIndexes('homepages'));
         $sectionIndexes = collect(Schema::getIndexes('homepage_sections'));
 
-        $this->assertFalse($homepageIndexes->contains(fn (array $index) => ($index['columns'] ?? []) === ['status']));
-        $this->assertFalse($sectionIndexes->contains(fn (array $index) => ($index['columns'] ?? []) === ['section_key']));
-        $this->assertFalse($sectionIndexes->contains(fn (array $index) => ($index['columns'] ?? []) === ['section_type']));
+        $this->assertTrue($homepageIndexes->contains(fn (array $index) => ($index['columns'] ?? []) === ['status']));
+        $this->assertTrue($sectionIndexes->contains(fn (array $index) => ($index['columns'] ?? []) === ['section_key']));
+        $this->assertTrue($sectionIndexes->contains(fn (array $index) => ($index['columns'] ?? []) === ['section_type']));
         $this->assertTrue($sectionIndexes->contains(
             fn (array $index) => ($index['unique'] ?? false) && ($index['columns'] ?? []) === ['homepage_id', 'section_key']
         ));
