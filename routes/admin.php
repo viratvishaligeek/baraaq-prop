@@ -18,7 +18,6 @@ use App\Http\Controllers\Admin\PropertyTaxonomyController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SettingsController;
-use App\Http\Controllers\Admin\ServiceBuilderController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;

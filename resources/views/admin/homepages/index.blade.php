@@ -53,6 +53,11 @@
                 action="{{ route('admin.homepages.sections.update', [$homepage, $section]) }}">
                 @csrf
                 @method('PATCH')
+                <input type="hidden" name="is_enabled" value="0">
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="section-{{ $section->id }}-enabled" name="is_enabled" value="1" @checked($section->is_enabled)>
+                    <label class="form-check-label" for="section-{{ $section->id }}-enabled">Show this section on the homepage</label>
+                </div>
                 <div class="row g-3">
                     @foreach ($fields as $key => $field)
                         @php
