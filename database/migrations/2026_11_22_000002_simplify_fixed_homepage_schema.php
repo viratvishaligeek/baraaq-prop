@@ -31,6 +31,12 @@ return new class extends Migration
             $sourceDesignIndex = $indexes->first(
                 fn (array $index): bool => ($index['columns'] ?? []) === ['source_design']
             );
+            $sectionKeyIndex = $indexes->first(
+                fn (array $index): bool => ($index['columns'] ?? []) === ['section_key']
+            );
+            $sectionTypeIndex = $indexes->first(
+                fn (array $index): bool => ($index['columns'] ?? []) === ['section_type']
+            );
             $sectionKeyUnique = $indexes->first(
                 fn (array $index): bool => ($index['unique'] ?? false)
                     && ($index['columns'] ?? []) === ['homepage_id', 'section_key']
@@ -41,14 +47,22 @@ return new class extends Migration
                 fn (string $column): bool => Schema::hasColumn('homepage_sections', $column)
             ));
 
-            if ($instanceIndex || $sourceDesignIndex || $columnsToDrop || ! $sectionKeyUnique) {
-                Schema::table('homepage_sections', function (Blueprint $table) use ($instanceIndex, $sourceDesignIndex, $columnsToDrop, $sectionKeyUnique): void {
+            if ($instanceIndex || $sourceDesignIndex || $sectionKeyIndex || $sectionTypeIndex || $columnsToDrop || ! $sectionKeyUnique) {
+                Schema::table('homepage_sections', function (Blueprint $table) use ($instanceIndex, $sourceDesignIndex, $sectionKeyIndex, $sectionTypeIndex, $columnsToDrop, $sectionKeyUnique): void {
                     if ($instanceIndex) {
                         $table->dropUnique($instanceIndex['name']);
                     }
 
                     if ($sourceDesignIndex) {
                         $table->dropIndex($sourceDesignIndex['name']);
+                    }
+
+                    if ($sectionKeyIndex) {
+                        $table->dropIndex($sectionKeyIndex['name']);
+                    }
+
+                    if ($sectionTypeIndex) {
+                        $table->dropIndex($sectionTypeIndex['name']);
                     }
 
                     if ($columnsToDrop !== []) {
@@ -70,20 +84,27 @@ return new class extends Migration
             $defaultIndex = $indexes->first(
                 fn (array $index): bool => ($index['columns'] ?? []) === ['is_default']
             );
+            $statusIndex = $indexes->first(
+                fn (array $index): bool => ($index['columns'] ?? []) === ['status']
+            );
 
             $columnsToDrop = array_values(array_filter(
                 ['design_key', 'is_default', 'is_composition_complete'],
                 fn (string $column): bool => Schema::hasColumn('homepages', $column)
             ));
 
-            if ($designKeyIndex || $defaultIndex || $columnsToDrop !== []) {
-                Schema::table('homepages', function (Blueprint $table) use ($designKeyIndex, $defaultIndex, $columnsToDrop): void {
+            if ($designKeyIndex || $defaultIndex || $statusIndex || $columnsToDrop !== []) {
+                Schema::table('homepages', function (Blueprint $table) use ($designKeyIndex, $defaultIndex, $statusIndex, $columnsToDrop): void {
                     if ($designKeyIndex) {
                         $table->dropIndex($designKeyIndex['name']);
                     }
 
                     if ($defaultIndex) {
                         $table->dropIndex($defaultIndex['name']);
+                    }
+
+                    if ($statusIndex) {
+                        $table->dropIndex($statusIndex['name']);
                     }
 
                     if ($columnsToDrop !== []) {
