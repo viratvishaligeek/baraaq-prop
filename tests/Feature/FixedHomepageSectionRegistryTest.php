@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\Homepage;
 use App\Models\HomepageSection;
+use App\Models\Service;
+use App\Services\Homepage\SectionDataResolver;
 use Database\Seeders\HomepageTemplateSeeder;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -104,6 +106,39 @@ class FixedHomepageSectionRegistryTest extends TestCase
 
             $this->assertSame([], $unmanagedFields, "Section [{$key}] renders config keys that are not editable in Homepage admin.");
         }
+    }
+
+
+    public function test_saved_section_item_limit_takes_precedence_over_legacy_data_source_limit(): void
+    {
+        $homepage = Homepage::create([
+            'name' => 'Home 9 — Fixed homepage',
+            'slug' => 'home-9',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        $section = $homepage->sections()->create([
+            'section_key' => 'services.home-9',
+            'section_type' => 'service-list',
+            'sort_order' => 1,
+            'is_enabled' => true,
+            'config' => ['items_limit' => 1, 'columns' => '4'],
+            'data_source' => ['limit' => 8, 'sort_by' => 'published_at', 'sort_direction' => 'desc'],
+        ]);
+
+        foreach ([1, 2] as $number) {
+            Service::create([
+                'title' => 'Published service '.$number,
+                'slug' => 'published-service-'.$number,
+                'status' => 'published',
+                'published_at' => now()->subMinutes($number),
+            ]);
+        }
+
+        $resolved = app(SectionDataResolver::class)->resolve($section);
+
+        $this->assertCount(1, $resolved['services']);
     }
 
 }
