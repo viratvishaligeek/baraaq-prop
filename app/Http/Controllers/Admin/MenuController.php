@@ -101,7 +101,7 @@ class MenuController extends Controller
             'items.*.label' => ['required', 'string', 'max:120'],
             'items.*.link_type' => ['nullable', Rule::in(['custom', 'page', 'blog_category', 'property_category', 'service'])],
             'items.*.link_id' => ['nullable', 'integer'],
-            'items.*.url' => ['nullable', 'string', 'max:2048', 'regex:/^(https?:\/\/|\/|mailto:|tel:|#)/i'],
+            'items.*.url' => ['nullable', 'string', 'max:2048', new SafeLink()],
             'items.*.target' => ['required', Rule::in(['_self', '_blank'])],
             'items.*.parent_index' => ['nullable', 'integer', 'min:0', 'max:49'],
             'items.*.is_active' => ['nullable', 'boolean'],
