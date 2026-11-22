@@ -13,7 +13,7 @@
             $renderConfig = array_merge($definition['defaults'] ?? [], $section->data_source ?? [], $section->config ?? []);
             foreach ($renderConfig as $configKey => $configValue) {
                 if (str_ends_with($configKey, '_url')) {
-                    $renderConfig[$configKey] = SafeLink::sanitize($configValue);
+                    $renderConfig[$configKey] = \\App\\Rules\\SafeLink::sanitize($configValue);
                 }
             }
             $renderConfig = app(\App\Services\Homepage\SectionMediaResolver::class)->forRendering($section, $renderConfig);
