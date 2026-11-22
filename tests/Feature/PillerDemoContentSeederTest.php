@@ -74,10 +74,13 @@ class PillerDemoContentSeederTest extends TestCase
         $this->assertFalse(Schema::hasColumn('homepage_sections', 'reusable_section_id'));
         $this->get('/')->assertOk()->assertViewIs('frontend.homepage')
             ->assertSee('Discover')->assertSee('Most Suitable')->assertSee('Property')
-            ->assertSee('Create Your Story')->assertSee('Best Properties Sale')
+            ->assertSee('Create Your Story')->assertSee('Our Mission')->assertSee('Our Vision')
+            ->assertSee('offices worldwide')->assertSee('Our Services')
+            ->assertSee('Best Properties Sale')->assertSee('Featured Properties')
+            ->assertSee('Ganga Nagar, Meerut, Uttar Pradesh')
             ->assertSee('Meet Our Pillar Agents')->assertSee('What Clients Say About Pillar')
-            ->assertSee('Helpful Real Estate Articles')->assertSee('header-layout9')
-            ->assertSee('Pillar Location')->assertSee('Pillar moments');
+            ->assertSee('Trustipilot')->assertSee('Helpful Real Estate Articles')
+            ->assertSee('header-layout9')->assertSee('Pillar Location')->assertSee('Pillar moments');
     }
 
     public function test_demo_seeder_preserves_custom_homepage_seo_when_rerun(): void
