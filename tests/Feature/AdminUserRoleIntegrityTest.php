@@ -88,10 +88,10 @@ class AdminUserRoleIntegrityTest extends TestCase
     {
         $admin = $this->administrator();
         $this->actingAs($admin)->delete(route('admin.roles.destroy', Role::where('slug', 'administrator')->firstOrFail()))
-            ->assertSessionHasErrors();
+            ->assertStatus(422);
 
         $this->actingAs($admin)->delete(route('admin.users.destroy', $admin))
-            ->assertSessionHasErrors();
+            ->assertStatus(422);
 
         $this->assertDatabaseHas('users', ['id' => $admin->id]);
         $this->assertDatabaseHas('roles', ['slug' => 'administrator']);
