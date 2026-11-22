@@ -82,7 +82,6 @@
                     @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('pages.view') || auth()->user()->hasPermission('pages.manage') || auth()->user()->hasPermission('services.manage'))
                     @endif
                     @if (auth()->user()->isAdministrator())
-                        <a class="sidebar-link {{ request()->routeIs('admin.widgets.*') ? 'active' : '' }}" href="{{ route('admin.widgets.index') }}">Widget library</a>
                     @endif
                     @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('menus.manage'))
                         <a class="sidebar-link {{ request()->routeIs('admin.menus.*') ? 'active' : '' }}" href="{{ route('admin.menus.index') }}">Navigation menus</a>
@@ -165,7 +164,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             if (!window.DataTable) return;
             document.querySelectorAll('.content-card table.table').forEach(function (table) {
-                if (!DataTable.isDataTable(table)) {
+                if (table.tHead && !DataTable.isDataTable(table)) {
                     new DataTable(table, {
                         pageLength: 10,
                         lengthMenu: [10, 25, 50, 100],

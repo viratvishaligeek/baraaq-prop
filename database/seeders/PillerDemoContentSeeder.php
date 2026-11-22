@@ -552,7 +552,18 @@ class PillerDemoContentSeeder extends Seeder
             throw new RuntimeException('Home 9 template is missing. Run HomepageTemplateSeeder before PillerDemoContentSeeder.');
         }
 
-        $requiredKeys = array_merge(['hero.home-9'], config('cms-homepage-presets.home-9', []));
+        $requiredKeys = [
+            'hero.home-9',
+            'about.home-9',
+            'statistics.home-9',
+            'services.home-9',
+            'properties.index',
+            'featured-gallery.home-9',
+            'home-details.home-9',
+            'team.home-2',
+            'testimonials.home-3',
+            'blog.home-2',
+        ];
         $definitions = config('cms-sections.sections', []);
         $overrides = [
             'hero.home-9' => [
