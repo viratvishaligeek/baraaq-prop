@@ -46,6 +46,7 @@ class FixedHomepageCmsTest extends TestCase
         $homepage = $this->homepage();
         $this->heroSection($homepage);
         $this->get('/')->assertOk()->assertViewIs('frontend.homepage')
+            ->assertSee('header-layout9')->assertDontSee('header-layout1')
             ->assertSee('A fixed Home Nine heading')->assertSee('Made dynamic')->assertSee('Managed from the homepage CMS.');
     }
     public function test_homepage_admin_lists_fixed_home_nine_sections_and_saves_section_content(): void
