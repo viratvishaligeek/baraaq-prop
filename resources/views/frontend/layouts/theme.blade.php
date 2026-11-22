@@ -203,7 +203,7 @@
             </div>
         </div>
     </div>
-    @if (isset($homepage) && $homepage?->design_key === 'home-9')
+    @if (isset($homepage) && $homepage?->slug === 'home-9')
         <header class="th-header header-default header-layout9">
             <div class="sticky-wrapper" data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
                 <div class="menu-area">

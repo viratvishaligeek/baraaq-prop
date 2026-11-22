@@ -10,6 +10,8 @@ use App\Models\Setting;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+Route::view('/contact', 'frontend.contact')->name('contact');
+Route::get('/about', fn () => redirect()->to(route('home').'#about'))->name('about');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('/robots.txt', function () {
     $configured = Setting::read('robots_rules', "User-agent: *\nAllow: /\nDisallow: /admin");

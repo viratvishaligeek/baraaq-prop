@@ -2,6 +2,11 @@
 namespace Tests\Feature;
 use App\Models\Homepage;
 use App\Models\HomepageSection;
+use App\Models\Post;
+use App\Models\Property;
+use App\Models\Service;
+use App\Models\TeamMember;
+use App\Models\Testimonial;
 use App\Models\Media;
 use App\Models\Role;
 use App\Models\Setting;
@@ -45,7 +50,10 @@ class FixedHomepageCmsTest extends TestCase
     {
         $homepage = $this->homepage();
         $this->heroSection($homepage);
+        $this->createFixedSection($homepage, 'about.home-9', 2);
         $this->get('/')->assertOk()->assertViewIs('frontend.homepage')
+            ->assertSee('header-layout9')->assertDontSee('header-layout1')
+            ->assertSee('id="about"', false)
             ->assertSee('A fixed Home Nine heading')->assertSee('Made dynamic')->assertSee('Managed from the homepage CMS.');
     }
     public function test_homepage_admin_lists_fixed_home_nine_sections_and_saves_section_content(): void
@@ -195,6 +203,40 @@ class FixedHomepageCmsTest extends TestCase
         $admin = $this->administrator();
         $homepage = $this->homepage();
 
+        Service::create([
+            'title' => 'Homepage test service',
+            'slug' => 'homepage-test-service',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        Property::create([
+            'title' => 'Homepage test property',
+            'slug' => 'homepage-test-property',
+            'listing_type' => 'sale',
+            'area_unit' => 'sqft',
+            'status' => 'published',
+            'is_featured' => true,
+            'published_at' => now(),
+        ]);
+        TeamMember::create([
+            'name' => 'Homepage test agent',
+            'status' => 'published',
+            'is_active' => true,
+        ]);
+        Testimonial::create([
+            'name' => 'Homepage test client',
+            'quote' => 'The homepage test testimonial.',
+            'status' => 'published',
+            'is_active' => true,
+            'rating' => 5,
+        ]);
+        Post::create([
+            'title' => 'Homepage test article',
+            'slug' => 'homepage-test-article',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
         foreach (array_keys(config('cms-sections.sections', [])) as $index => $key) {
             $definition = config('cms-sections.sections.'.$key);
             $fieldKey = null;
@@ -215,6 +257,7 @@ class FixedHomepageCmsTest extends TestCase
             ])->assertRedirect(route('admin.homepages.index'));
 
             $this->assertSame($value, $section->fresh()->config[$fieldKey], "Section [{$key}] did not persist [{$fieldKey}].");
+            $this->get('/')->assertOk()->assertSee($value);
         }
     }
 
@@ -256,6 +299,8 @@ class FixedHomepageCmsTest extends TestCase
         }
 
         $this->assertGreaterThan(0, $checkedFields, 'The fixed homepage registry must expose uploadable image fields.');
+
+        $this->get('/')->assertOk()->assertViewIs('frontend.homepage');
     }
 
     public function test_section_links_accept_relative_anchor_telephone_email_and_http_links(): void
@@ -341,6 +386,185 @@ class FixedHomepageCmsTest extends TestCase
         $this->assertStringContainsString('Safe copy', $saved);
         $this->assertStringNotContainsString('<script', $saved);
         $this->assertStringNotContainsString('javascript:', $saved);
+    }
+
+
+    public function test_contact_page_renders_a_form_posting_to_the_registered_enquiry_handler(): void
+    {
+        $admin = $this->administrator();
+        $this->actingAs($admin)->get(route('admin.enquiries.index'))
+            ->assertOk()
+            ->assertSee('value="contact"', false)
+            ->assertSee('Contact form');
+
+        $this->get('/contact')
+            ->assertOk()
+            ->assertViewIs('frontend.contact')
+            ->assertSee(route('enquiries.store'))
+            ->assertSee('name="name"', false)
+            ->assertSee('name="email"', false)
+            ->assertSee('name="phone"', false)
+            ->assertSee('name="message"', false);
+
+        $this->from('/contact')->post(route('enquiries.store'), [
+            'name' => 'Contact Form Visitor',
+            'email' => 'visitor@example.test',
+            'subject' => 'Property viewing',
+            'message' => 'Please contact me about available properties.',
+        ])->assertRedirect('/contact')->assertSessionHas('enquiry_success');
+
+        $this->assertDatabaseHas('enquiries', [
+            'name' => 'Contact Form Visitor',
+            'email' => 'visitor@example.test',
+            'phone' => null,
+            'subject' => 'Property viewing',
+            'source' => 'contact',
+            'status' => 'new',
+        ]);
+
+        $this->from('/contact')->post(route('enquiries.store'), [
+            'name' => 'Phone Only Visitor',
+            'phone' => '+919876543210',
+            'message' => 'Please call me about a property.',
+        ])->assertRedirect('/contact')->assertSessionHas('enquiry_success');
+
+        $this->assertDatabaseHas('enquiries', [
+            'name' => 'Phone Only Visitor',
+            'email' => null,
+            'phone' => '+919876543210',
+            'source' => 'contact',
+            'status' => 'new',
+        ]);
+
+        $enquiry = \App\Models\Enquiry::query()->where('name', 'Contact Form Visitor')->firstOrFail();
+        $this->actingAs($admin)->patch(route('admin.enquiries.update', $enquiry), [
+            'status' => 'contacted',
+            'admin_notes' => 'Replied by email.',
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('enquiries', [
+            'id' => $enquiry->id,
+            'status' => 'contacted',
+            'admin_notes' => 'Replied by email.',
+        ]);
+        $this->assertNotNull($enquiry->fresh()->contacted_at);
+    }
+
+    public function test_about_alias_returns_to_the_fixed_homepage_about_section(): void
+    {
+        $this->get('/about')->assertRedirect(route('home').'#about');
+        $this->assertTrue(Route::has('contact'));
+        $this->assertTrue(Route::has('about'));
+    }
+
+    public function test_contact_enquiry_requires_at_least_one_reply_channel(): void
+    {
+        $this->from('/contact')->post(route('enquiries.store'), [
+            'name' => 'Visitor Without Contact Details',
+            'message' => 'Please contact me.',
+        ])->assertRedirect('/contact')
+            ->assertSessionHasErrors(['email', 'phone']);
+
+        $this->assertDatabaseMissing('enquiries', [
+            'name' => 'Visitor Without Contact Details',
+        ]);
+    }
+
+
+    public function test_each_registered_homepage_section_renders_independently_on_the_public_homepage(): void
+    {
+        $homepage = $this->homepage();
+        $definitions = config('cms-sections.sections', []);
+
+        $this->assertCount(10, $definitions, 'The fixed homepage must register exactly ten sections.');
+
+        foreach ($definitions as $key => $definition) {
+            $this->assertArrayHasKey('view', $definition, "Section [{$key}] must declare a Blade view.");
+            $this->assertTrue(view()->exists($definition['view']), "Section [{$key}] references a missing view.");
+
+            $homepage->sections()->delete();
+            $section = $this->createFixedSection($homepage, $key, 1);
+
+            $response = $this->get('/');
+            $response->assertOk()->assertViewIs('frontend.homepage');
+
+            $this->assertSame($key, $section->fresh()->section_key);
+        }
+    }
+
+    public function test_admin_panel_core_modules_render_and_pages_and_services_can_be_created_and_updated(): void
+    {
+        $admin = $this->administrator();
+        $homepage = $this->homepage();
+
+        $adminRoutes = [
+            route('admin.dashboard'),
+            route('admin.homepages.index'),
+            route('admin.content.index', 'pages'),
+            route('admin.content.index', 'services'),
+            route('admin.properties.index'),
+            route('admin.enquiries.index'),
+            route('admin.users.index'),
+            route('admin.roles.index'),
+            route('admin.settings.edit'),
+        ];
+
+        foreach ($adminRoutes as $url) {
+            $this->actingAs($admin)->get($url)->assertOk();
+        }
+
+        $this->actingAs($admin)->post(route('admin.content.store', 'pages'), [
+            'title' => 'Terms of Service',
+            'slug' => 'terms-of-service',
+            'content' => '<p>Initial terms.</p>',
+            'status' => 'draft',
+            'meta_title' => 'Terms',
+        ])->assertRedirect(route('admin.content.index', 'pages'));
+
+        $page = \App\Models\Page::query()->where('slug', 'terms-of-service')->firstOrFail();
+        $this->assertSame($admin->id, $page->author_id);
+
+        $this->actingAs($admin)->put(route('admin.content.update', ['pages', $page->id]), [
+            'title' => 'Updated Terms of Service',
+            'slug' => 'terms-of-service',
+            'content' => '<p>Updated terms.</p>',
+            'status' => 'published',
+            'meta_title' => 'Updated Terms',
+            'meta_description' => 'Updated page metadata.',
+        ])->assertRedirect(route('admin.content.index', 'pages'));
+
+        $this->assertDatabaseHas('pages', [
+            'id' => $page->id,
+            'title' => 'Updated Terms of Service',
+            'status' => 'published',
+            'meta_title' => 'Updated Terms',
+        ]);
+
+        $this->actingAs($admin)->post(route('admin.content.store', 'services'), [
+            'title' => 'Property Management',
+            'slug' => 'property-management',
+            'excerpt' => 'End-to-end property care.',
+            'content' => '<p>Service details.</p>',
+            'status' => 'draft',
+        ])->assertRedirect(route('admin.content.index', 'services'));
+
+        $service = \App\Models\Service::query()->where('slug', 'property-management')->firstOrFail();
+
+        $this->actingAs($admin)->put(route('admin.content.update', ['services', $service->id]), [
+            'title' => 'Premium Property Management',
+            'slug' => 'property-management',
+            'excerpt' => 'Updated service summary.',
+            'content' => '<p>Updated service details.</p>',
+            'status' => 'published',
+            'meta_title' => 'Premium Property Management',
+        ])->assertRedirect(route('admin.content.index', 'services'));
+
+        $this->assertDatabaseHas('services', [
+            'id' => $service->id,
+            'title' => 'Premium Property Management',
+            'status' => 'published',
+            'meta_title' => 'Premium Property Management',
+        ]);
     }
 
 }

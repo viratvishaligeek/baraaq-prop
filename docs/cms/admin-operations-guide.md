@@ -1,100 +1,102 @@
 # CMS Admin Operations Guide
 
-This guide describes the operational workflows added to the BaraaQ Prop CMS. The original Piller theme remains the frontend design source of truth; the CMS stores content and widget configuration without replacing the supplied design system.
+The CMS keeps the supplied Piller theme as the frontend design source of truth. The public homepage is the fixed Home 9 composition; administrators edit its content and settings without switching designs or using the retired page/widget builders.
 
 ## Dashboard
 
-Open **Manage dashboard widgets** from the admin dashboard to configure the KPI collection.
-
-Each registered KPI supports:
-- Enable or disable without deleting its definition.
-- An approved internal destination.
-- An explicit display order.
-
-The current collection includes total properties, published properties, blog posts, pages, users, total and pending enquiries, comments and pending comments, visits and page views. Destination options are constrained to registered admin routes rather than arbitrary URLs.
+Use **Manage dashboard widgets** to enable or disable registered KPIs, choose approved internal destinations and set display order. Destinations are constrained to registered admin routes rather than arbitrary URLs.
 
 ## Properties
 
 The property editor supports:
-- Property type and category.
-- Property amenities/features as a repeatable list.
+- Property type, category and amenities/features.
 - Accommodation spaces with name, category, area, unit, description and included state.
-- Unlimited accommodation entries, with add/remove and move-up/move-down controls.
-- Custom key/value attributes for each space.
+- Repeatable accommodation entries with reorder controls and custom key/value attributes.
 - Optional accommodation image uploads or selection from the Media Library.
 - FAQ entries with ordering controls.
 - Per-property CTA mode and WhatsApp details.
 - SEO metadata, focus keyword and social image.
 
-Accommodation images are represented by Media records. The original image and available responsive variants are stored separately. Media referenced by an accommodation cannot be deleted until the reference is cleared. The public property page renders the space image, details, attributes and FAQs.
+Accommodation images are represented by Media records. Referenced media is protected from deletion until its references are cleared. Public property pages render accommodation details, attributes and FAQs.
 
-Property categories are filtered from the shared category manager. Property types and amenities are derived from the values currently used by property records. Create or edit values in the property editor; the taxonomy screens provide counts and links to matching properties.
+Property categories are managed through the shared category manager. Property types and amenities are derived from values used by property records; the taxonomy screens provide counts and links to matching properties.
 
-## Blog tags and comments
+## Blog, tags and comments
 
-Tags have a dedicated CRUD screen at **Content management → Tags**. A post can be assigned multiple tags. The public blog listing accepts a tag filter and post detail pages render links to the matching tag-filtered listing.
+Posts support categories, multiple tags, public tag filtering, publishing workflow and SEO/social metadata. Tags have a dedicated CRUD screen at **Content management → Tags**. Public comments are throttled and remain pending moderation until approved.
 
-Comments remain moderated through the existing comments module. Public comment submissions continue to use the existing throttled endpoint and moderation status.
+## Pages and services
 
-## Pages, services and widgets
+Pages and services use the standard content editor for create, update, draft preview and publishing. Draft previews do not publish content. Services have their own public listing and detail routes.
 
-The universal page builder hub is available at /admin/page-builder. The standalone Section Library at /admin/section-library lists every registered variation with an isolated rendered preview. The Widget Library also includes registered variation previews alongside custom widget management. Existing posts, pages and services can be previewed in their current draft state from the content editor; previewing does not publish them.
+The retired universal page builder, reusable section library, widget library and service widget builder are not part of the active CMS. Historical migrations remain in the repository for upgrade history; do not manually re-run or delete them.
 
-Pages use the universal page builder. Services have a service-specific builder backed by the same registered widget definitions and shared section persistence service.
+## Fixed Homepage 9
 
-Builder workflows include:
-- Add a registered design variation from the widget library.
-- Preview a variation in isolation before adding it.
-- Configure widget fields and registered data sources.
-- Duplicate, reorder, enable/disable and remove widget instances.
-- Preview a draft without publishing it.
-- Create a separate draft copy from a published service before making edits.
-- Publish the draft when it is ready.
+Open **Admin → Homepage content** at `/admin/homepages`.
 
-Service widget instances are stored using the service_id owner column on the shared section table. Existing page and homepage section ownership remains unchanged.
+The homepage has one fixed ten-section composition, in this order:
 
-## Homepage section library
+1. Hero — Home 9
+2. About — mission and vision
+3. Statistics — counter strip
+4. Services — service cards
+5. Featured properties — property listing
+6. Featured property showcase — gallery slider
+7. Home details — property facts
+8. Team — agent carousel
+9. Testimonials — trust score and reviews
+10. Blog — latest articles
 
-The section library is grouped by registered section family. Each variation links to an isolated rendered preview. Homepage section instances can be reordered, enabled/disabled and collapsed in the editor. Collapse state is remembered in the current browser.
+Each section has its own save operation and enabled/disabled control. Text, links, colors, limits, and registered image fields are edited from the section form. Rich text is sanitized before persistence. Image uploads create Media records and field attachments; leaving an image input empty retains its current image.
 
-The ten original Piller homepage source designs remain available. The builder uses registered section definitions and the shared widget renderer rather than embedding arbitrary HTML from the browser.
+The **Homepage SEO** form edits the fixed homepage title and description. The header/contact form edits the website name, business details, contact information, navigation location, CTA and logo. The footer form edits footer copy, menu locations, map URL, gallery and social links.
 
-## Media library and rich text
+Use **Website Settings** for global site-wide settings, and **Menus** to manage actual menu items. Changing the menu location in Homepage content does not create or edit menu items.
 
-The Media Library supports:
-- Multiple image uploads and document uploads.
-- Small, medium and large responsive image variants for supported images.
-- Alt-text editing.
-- Select-all, clear-selection and bulk deletion.
-- Reference-aware deletion protection for content, property galleries, accommodation images, homepage sections and reusable widget attachments.
-- A crop/resize editor that saves a new image copy and preserves the original.
+The public homepage is served at `/`. The contact page is served at `/contact` and posts to the existing throttled enquiry handler. The `/about` alias returns to the Home 9 about section.
 
-The shared Media Library picker is available in property, content and widget rich-text editor image insertion. The editor, automatic slug generator and live SERP preview are shared admin assets so their behavior stays consistent across content forms. Editors use TinyMCE's image file picker callback to select an existing library image. The picker upload workflow generates responsive variants in the browser.
+## Media library
+
+The Media Library supports multiple image/document uploads, alt-text editing, responsive variants for supported images, bulk selection/deletion, reference-aware deletion protection and a crop/resize editor that saves a new copy while preserving the original. The shared picker is available in supported content editors.
 
 ## SEO and indexing
 
-Canonical URLs are generated from the public route for properties, posts, pages and services. Editors do not need to maintain a manual canonical URL field.
+Canonical URLs are generated from public routes for properties, posts, pages and services. The SEO overview highlights missing metadata and social images. The Sitemap / indexing screen shows the current robots policy and XML sitemap. The robots endpoint emits supported directives only and appends the sitemap URL automatically.
 
-The SEO overview highlights missing metadata and social images. The dedicated Sitemap / indexing screen at /admin/seo/indexing shows the current robots policy, robots.txt directives and XML sitemap endpoint. Global SEO settings include meta robots policy and editable robots.txt directives. The robots endpoint only emits supported directives (User-agent, Allow, Disallow and Crawl-delay) and appends the current XML sitemap URL automatically.
+The XML sitemap includes the public homepage, listings and published property, post, page and service routes.
 
-The XML sitemap includes the public homepage, public listings and published property, post, page and service routes.
+## Contact enquiries
 
-## Data and migration notes
+The public contact form accepts either an email address or a phone number; at least one reply channel is required. The database migration `2026_11_23_000001_make_enquiry_phone_optional.php` makes the phone column nullable so email-only enquiries can be stored. Existing records are preserved. Rolling this migration back converts null phone values to empty strings before restoring the historical non-null constraint.
 
-The implementation is additive:
-- media gains nullable responsive variant paths.
-- homepage_sections gains nullable service_id ownership.
-- property_accommodations gains a nullable foreign key to the Media Library.
-- tags and post_tag provide reusable post tagging.
+## Database and production migration notes
 
-Existing property, page, homepage and media records are retained. Run migrations before using the new workflows:
+**Back up the production database before applying the fixed-homepage cleanup migrations or later schema changes.**
 
-    php artisan migrate --force
+- `2026_11_22_000001_remove_legacy_page_builder_and_widget_schema.php` removes retired widget/reusable-section tables and related legacy data, removes obsolete homepage compositions and drops retired page/service section ownership. Its `down()` method intentionally does not reconstruct deleted data.
+- `2026_11_22_000002_simplify_fixed_homepage_schema.php` removes legacy design/composition metadata and adds a unique constraint on `(homepage_id, section_key)`. Its `down()` method is intentionally irreversible.
+- `2026_11_23_000001_make_enquiry_phone_optional.php` allows email-only enquiries. Its rollback preserves rows by converting null phone values to empty strings before restoring the non-null constraint.
+
+Before running the unique-key migration against an existing database, check for duplicates:
+
+```sql
+SELECT homepage_id, section_key, COUNT(*)
+FROM homepage_sections
+GROUP BY homepage_id, section_key
+HAVING COUNT(*) > 1;
+```
+
+Reconcile any returned rows before migrating. Review the migration status and take a tested backup first. Do not roll back across either cleanup migration; restore the verified backup if a recovery is required.
+
+For a fresh installation, `DatabaseSeeder` creates the fixed Home 9 record and seeds the demo content and ten homepage sections. Do not run demo seeders against a live site unless you have reviewed their effects on the target database.
 
 ## Verification
 
-Run the Laravel suite:
+Run the Laravel suite with:
 
-    php artisan test
+```bash
+php artisan test
+```
 
-The GitHub Actions workflow additionally installs Playwright and checks the ten Piller homepage designs at desktop, tablet and mobile viewports. A successful PHP suite alone is not a substitute for the browser stage; verify the final workflow conclusion before release.
+The repository also defines a GitHub Actions workflow for the PHP suite and responsive browser checks. Confirm the actual workflow conclusion before release; the existence of a workflow definition alone does not mean the latest changes have been tested.

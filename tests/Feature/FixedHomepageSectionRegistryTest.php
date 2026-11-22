@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\Homepage;
 use App\Models\HomepageSection;
+use App\Models\Service;
+use App\Services\Homepage\SectionDataResolver;
 use Database\Seeders\HomepageTemplateSeeder;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -49,22 +51,22 @@ class FixedHomepageSectionRegistryTest extends TestCase
         }
     }
 
-    public function test_fixed_homepage_schema_has_no_legacy_template_or_builder_columns_and_indexes(): void
+    public function test_fixed_homepage_schema_retains_legacy_metadata_and_enforces_unique_section_keys(): void
     {
         foreach (['design_key', 'is_default', 'is_composition_complete'] as $column) {
-            $this->assertFalse(Schema::hasColumn('homepages', $column));
+            $this->assertTrue(Schema::hasColumn('homepages', $column));
         }
 
         foreach (['instance_key', 'source_design'] as $column) {
-            $this->assertFalse(Schema::hasColumn('homepage_sections', $column));
+            $this->assertTrue(Schema::hasColumn('homepage_sections', $column));
         }
 
         $homepageIndexes = collect(Schema::getIndexes('homepages'));
         $sectionIndexes = collect(Schema::getIndexes('homepage_sections'));
 
-        $this->assertFalse($homepageIndexes->contains(fn (array $index) => ($index['columns'] ?? []) === ['status']));
-        $this->assertFalse($sectionIndexes->contains(fn (array $index) => ($index['columns'] ?? []) === ['section_key']));
-        $this->assertFalse($sectionIndexes->contains(fn (array $index) => ($index['columns'] ?? []) === ['section_type']));
+        $this->assertTrue($homepageIndexes->contains(fn (array $index) => ($index['columns'] ?? []) === ['status']));
+        $this->assertTrue($sectionIndexes->contains(fn (array $index) => ($index['columns'] ?? []) === ['section_key']));
+        $this->assertTrue($sectionIndexes->contains(fn (array $index) => ($index['columns'] ?? []) === ['section_type']));
         $this->assertTrue($sectionIndexes->contains(
             fn (array $index) => ($index['unique'] ?? false) && ($index['columns'] ?? []) === ['homepage_id', 'section_key']
         ));
@@ -104,6 +106,39 @@ class FixedHomepageSectionRegistryTest extends TestCase
 
             $this->assertSame([], $unmanagedFields, "Section [{$key}] renders config keys that are not editable in Homepage admin.");
         }
+    }
+
+
+    public function test_saved_section_item_limit_takes_precedence_over_legacy_data_source_limit(): void
+    {
+        $homepage = Homepage::create([
+            'name' => 'Home 9 — Fixed homepage',
+            'slug' => 'home-9',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        $section = $homepage->sections()->create([
+            'section_key' => 'services.home-9',
+            'section_type' => 'service-list',
+            'sort_order' => 1,
+            'is_enabled' => true,
+            'config' => ['items_limit' => 1, 'columns' => '4'],
+            'data_source' => ['limit' => 8, 'sort_by' => 'published_at', 'sort_direction' => 'desc'],
+        ]);
+
+        foreach ([1, 2] as $number) {
+            Service::create([
+                'title' => 'Published service '.$number,
+                'slug' => 'published-service-'.$number,
+                'status' => 'published',
+                'published_at' => now()->subMinutes($number),
+            ]);
+        }
+
+        $resolved = app(SectionDataResolver::class)->resolve($section);
+
+        $this->assertCount(1, $resolved['services']);
     }
 
 }

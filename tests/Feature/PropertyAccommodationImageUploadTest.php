@@ -69,4 +69,60 @@ class PropertyAccommodationImageUploadTest extends TestCase
         Storage::disk('public')->assertExists($media->medium_path);
         Storage::disk('public')->assertExists($media->large_path);
     }
+
+    public function test_existing_media_library_image_can_be_selected_for_an_accommodation_and_survives_property_update(): void
+    {
+        Storage::fake('public');
+        $this->seed(RolePermissionSeeder::class);
+        $user = User::factory()->create(['is_active' => true]);
+        $user->roles()->attach(Role::query()->where('slug', 'administrator')->firstOrFail());
+
+        $media = Media::create([
+            'uploaded_by' => $user->id,
+            'disk' => 'public',
+            'path' => 'media/existing-kitchen.png',
+            'original_name' => 'existing-kitchen.png',
+            'mime_type' => 'image/png',
+            'size' => 12,
+            'alt_text' => 'Kitchen',
+        ]);
+        Storage::disk('public')->put($media->path, 'image-data');
+
+        $this->actingAs($user)->post(route('admin.properties.store'), [
+            'title' => 'Media library accommodation property',
+            'slug' => 'media-library-accommodation-property',
+            'listing_type' => 'sale',
+            'area_unit' => 'sqft',
+            'status' => 'draft',
+            'accommodations' => [[
+                'name' => 'Kitchen',
+                'image_media_id' => (string) $media->id,
+                'is_included' => '1',
+            ]],
+        ])->assertRedirect(route('admin.properties.index'));
+
+        $property = Property::query()->where('slug', 'media-library-accommodation-property')->firstOrFail();
+        $space = $property->accommodations()->firstOrFail();
+        $this->assertSame($media->id, $space->image_media_id);
+        $this->assertSame($media->url, $space->imageMedia->url);
+
+        $this->actingAs($user)->put(route('admin.properties.update', $property), [
+            'title' => 'Media library accommodation property updated',
+            'slug' => 'media-library-accommodation-property',
+            'listing_type' => 'sale',
+            'area_unit' => 'sqft',
+            'status' => 'draft',
+            'accommodations' => [[
+                'name' => 'Kitchen',
+                'image_media_id' => (string) $media->id,
+                'is_included' => '1',
+            ]],
+        ])->assertRedirect(route('admin.properties.index'));
+
+        $updatedSpace = $property->fresh()->accommodations()->firstOrFail();
+        $this->assertSame($media->id, $updatedSpace->image_media_id);
+        $this->assertDatabaseHas('media', ['id' => $media->id, 'path' => 'media/existing-kitchen.png']);
+        Storage::disk('public')->assertExists($media->path);
+    }
+
 }

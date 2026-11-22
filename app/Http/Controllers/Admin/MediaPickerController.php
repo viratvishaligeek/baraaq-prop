@@ -10,14 +10,21 @@ use Illuminate\Support\Facades\Storage;
 
 class MediaPickerController extends Controller
 {
-    private function authorizePicker(Request $request): void
+    private function authorizePicker(Request $request, bool $upload = false): void
     {
         $user = $request->user();
-        $permissions = [
-            'media.manage', 'pages.manage', 'settings.manage', 'properties.manage',
-            'posts.manage', 'services.manage', 'team.manage', 'testimonials.manage',
-            'categories.manage', 'banners.manage',
+        $modules = [
+            'properties', 'pages', 'posts', 'services', 'team',
+            'testimonials', 'categories', 'banners',
         ];
+        $actions = $upload ? ['manage', 'create', 'edit'] : ['manage', 'view', 'create', 'edit'];
+        $permissions = ['media.manage', 'settings.manage'];
+
+        foreach ($modules as $module) {
+            foreach ($actions as $action) {
+                $permissions[] = $module.'.'.$action;
+            }
+        }
 
         abort_unless($user && ($user->isAdministrator() || collect($permissions)->contains(
             fn (string $permission) => $user->hasPermission($permission)
@@ -26,7 +33,7 @@ class MediaPickerController extends Controller
 
     public function upload(Request $request)
     {
-        $this->authorizePicker($request);
+        $this->authorizePicker($request, true);
         $data = $request->validate([
             'files' => ['required', 'array', 'min:1', 'max:20'],
             'files.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240'],

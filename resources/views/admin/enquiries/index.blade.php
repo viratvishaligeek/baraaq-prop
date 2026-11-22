@@ -26,6 +26,7 @@
                 <select class="form-select" name="source">
                     <option value="">All sources</option>
                     <option value="website" @selected(($filters['source'] ?? '') === 'website')>Website</option>
+                    <option value="contact" @selected(($filters['source'] ?? '') === 'contact')>Contact form</option>
                     <option value="property" @selected(($filters['source'] ?? '') === 'property')>Property</option>
                 </select>
             </div>

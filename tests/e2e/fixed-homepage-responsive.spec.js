@@ -17,6 +17,15 @@ for (const viewport of viewports) {
     await expect(page.locator('.th-hero-wrapper.hero-9 h1')).toContainText('Discover');
     await expect(page.locator('body')).toContainText('Most Suitable');
     await expect(page.locator('.footer-wrapper.footer-layout1')).toBeAttached();
+
+    const documentWidth = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      content: document.documentElement.scrollWidth,
+    }));
+    expect(
+      documentWidth.content,
+      'Home 9 must not introduce horizontal page overflow at ' + viewport.name + ' width.'
+    ).toBeLessThanOrEqual(documentWidth.viewport);
   });
 }
 

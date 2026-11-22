@@ -25,7 +25,7 @@ class AdminRouteIntegrityTest extends TestCase
     public function test_routes_referenced_by_admin_and_frontend_navigation_are_registered(): void
     {
         $names = [
-            'home', 'sitemap', 'robots', 'blog.index', 'blog.show', 'properties.index', 'properties.show',
+            'home', 'contact', 'about', 'sitemap', 'robots', 'blog.index', 'blog.show', 'properties.index', 'properties.show',
             'services.index', 'services.show', 'team.index', 'testimonials.index', 'enquiries.store', 'newsletter.store',
             'admin.login.store', 'admin.logout', 'admin.dashboard', 'admin.analytics.index',
             'admin.properties.index', 'admin.properties.create', 'admin.properties.types', 'admin.properties.amenities',
