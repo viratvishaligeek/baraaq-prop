@@ -89,6 +89,29 @@ class MediaReferenceChecker
             }
         }
 
+        $richTextReferences = [
+            'posts' => ['content'],
+            'pages' => ['content'],
+            'services' => ['content'],
+            'properties' => ['description'],
+            'team_members' => ['bio'],
+            'testimonials' => ['quote'],
+            'banners' => ['description'],
+        ];
+
+        foreach ($richTextReferences as $table => $columns) {
+            if (! Schema::hasTable($table)) {
+                continue;
+            }
+
+            foreach ($columns as $column) {
+                if (Schema::hasColumn($table, $column)
+                    && DB::table($table)->where($column, 'like', '%'.$path.'%')->exists()) {
+                    return true;
+                }
+            }
+        }
+
         if (Schema::hasTable('homepage_sections') && Schema::hasColumn('homepage_sections', 'config')) {
             foreach (DB::table('homepage_sections')->pluck('config') as $storedConfig) {
                 $config = is_array($storedConfig) ? $storedConfig : json_decode((string) $storedConfig, true);

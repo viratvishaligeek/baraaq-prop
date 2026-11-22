@@ -56,6 +56,34 @@ class AdminMediaIntegrityTest extends TestCase
         Storage::disk('public')->assertExists($media->path);
     }
 
+    public function test_media_embedded_in_rich_text_content_cannot_be_deleted(): void
+    {
+        Storage::fake('public');
+        $admin = $this->administrator();
+        $media = Media::create([
+            'uploaded_by' => $admin->id,
+            'disk' => 'public',
+            'path' => 'media/inline-content-image.png',
+            'original_name' => 'inline-content-image.png',
+            'mime_type' => 'image/png',
+            'size' => 10,
+        ]);
+        Storage::disk('public')->put($media->path, 'image-data');
+        Page::create([
+            'title' => 'Page with inline media',
+            'slug' => 'page-with-inline-media',
+            'content' => '<p><img src="https://example.test/storage/media/inline-content-image.png" alt="Inline"></p>',
+            'status' => 'published',
+        ]);
+
+        $this->actingAs($admin)->from(route('admin.media.index'))
+            ->delete(route('admin.media.destroy', $media))
+            ->assertSessionHasErrors('media');
+
+        $this->assertDatabaseHas('media', ['id' => $media->id]);
+        Storage::disk('public')->assertExists($media->path);
+    }
+
     public function test_media_id_in_legacy_homepage_section_config_cannot_be_deleted(): void
     {
         Storage::fake('public');
