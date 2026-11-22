@@ -163,7 +163,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             if (!window.DataTable) return;
-            document.querySelectorAll('.content-card table.table').forEach(function (table) {
+            document.querySelectorAll('table[data-datatable]').forEach(function (table) {
                 if (table.tHead && !DataTable.isDataTable(table)) {
                     new DataTable(table, {
                         pageLength: 10,

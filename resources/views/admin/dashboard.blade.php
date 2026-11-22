@@ -38,7 +38,7 @@
                     <a href="{{ route('admin.properties.index') }}">View all</a>
                 </div>
                 <div class="table-responsive">
-                    <table class="table align-middle mb-0">
+                    <table class="table align-middle mb-0" data-datatable>
                         <thead><tr><th>Property</th><th>City</th><th>Status</th></tr></thead>
                         <tbody>
                             @forelse($recentProperties as $property)

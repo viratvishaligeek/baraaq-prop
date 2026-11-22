@@ -15,12 +15,8 @@
         @endif
     </div>
     <div class="content-card">
-        <form method="GET" class="row g-2 mb-3">
-            <div class="col-md-6">
-                <input class="form-control" name="search" value="{{ request('search') }}"
-                    placeholder="Search {{ $type }}...">
-            </div>
-            @if (in_array($type, ['posts', 'pages', 'services', 'team', 'testimonials']))
+        @if (in_array($type, ['posts', 'pages', 'services', 'team', 'testimonials']))
+            <form method="GET" class="row g-2 mb-3">
                 <div class="col-md-3">
                     <select class="form-select" name="status">
                         <option value="">All statuses</option>
@@ -29,14 +25,14 @@
                         @endforeach
                     </select>
                 </div>
-            @endif
-            <div class="col-md-auto">
-                <button class="btn btn-outline-primary">Filter</button>
-                <a class="btn btn-link" href="{{ route('admin.content.index', $type) }}">Reset</a>
-            </div>
-        </form>
+                <div class="col-md-auto">
+                    <button class="btn btn-outline-primary">Filter</button>
+                    <a class="btn btn-link" href="{{ route('admin.content.index', $type) }}">Reset</a>
+                </div>
+            </form>
+        @endif
         <div class="table-responsive">
-            <table class="table align-middle">
+            <table class="table align-middle" data-datatable>
                 <thead>
                     <tr>
                         <th>Title</th>
@@ -50,22 +46,10 @@
                         <tr>
                             <td class="fw-semibold">
                                 {{ $item->title ?? $item->name }}
-                                @if ($type === 'pages' && $item->homepage_key === 'primary')
-                                    <span class="badge bg-success ms-1">Homepage</span>
-                                @endif
                             </td>
                             <td>{{ $item->slug ?? ($item->designation ?? ($item->placement ?? '—')) }}</td>
                             <td>{{ isset($item->status) ? ucfirst($item->status) : (isset($item->is_active) ? ($item->is_active ? 'Active' : 'Inactive') : '—') }}</td>
                             <td class="text-end">
-                                @if ($type === 'pages' && $item->status === 'published' && $item->homepage_key !== 'primary' &&
-                                        (auth()->user()->isAdministrator() || auth()->user()->hasPermission('pages.manage')))
-                                    <form class="d-inline" method="POST"
-                                        action="{{ route('admin.pages.homepage', $item) }}">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button class="btn btn-sm btn-outline-success">Set as homepage</button>
-                                    </form>
-                                @endif
                                 @if (auth()->user()->isAdministrator() ||
                                         auth()->user()->hasPermission($type . '.manage') ||
                                         auth()->user()->hasPermission($type . '.edit'))
@@ -93,6 +77,5 @@
                 </tbody>
             </table>
         </div>
-        {{ $items->links() }}
     </div>
 @endsection

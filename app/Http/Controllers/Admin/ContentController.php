@@ -67,29 +67,11 @@ class ContentController extends Controller
     public function index(string $type)
     {
         $model = $this->model($type);
-        $searchColumns = match ($type) {
-            'posts', 'pages', 'services' => ['title', 'slug'],
-            'categories' => ['name', 'slug'],
-            'team' => ['name', 'designation', 'email'],
-            'testimonials' => ['name', 'company', 'quote'],
-            'banners' => ['title', 'placement'],
-            default => [],
-        };
-
         $items = $model::query()
-            ->when(request()->filled('search'), function ($query) use ($searchColumns) {
-                $term = request('search');
-                $query->where(function ($where) use ($term, $searchColumns) {
-                    foreach ($searchColumns as $column) {
-                        $where->orWhere($column, 'like', '%' . $term . '%');
-                    }
-                });
-            })
-            ->when(request()->filled('status') && in_array($type, ['posts', 'pages', 'services', 'team', 'testimonials']), fn($query) => $query->where('status', request('status')))
+            ->when(request()->filled('status') && in_array($type, ['posts', 'pages', 'services', 'team', 'testimonials']), fn ($query) => $query->where('status', request('status')))
             ->when($type === 'categories' && request()->filled('category_type'), fn ($query) => $query->where('type', request('category_type')))
             ->latest()
-            ->paginate(20)
-            ->withQueryString();
+            ->get();
 
         return view('admin.content.index', compact('type', 'items'));
     }
