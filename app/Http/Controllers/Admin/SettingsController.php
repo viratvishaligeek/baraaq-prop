@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Media;
 use App\Models\Setting;
+use App\Support\MediaReferenceChecker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -74,7 +75,9 @@ class SettingsController extends Controller
         $oldFiles = [];
         foreach ($replacements as $key => $newPath) {
             $oldPath = Setting::read($key);
-            if ($oldPath && $oldPath !== $newPath && ! Media::where('path', $oldPath)->exists()) {
+            if ($oldPath && $oldPath !== $newPath
+                && ! Media::where('path', $oldPath)->exists()
+                && ! app(MediaReferenceChecker::class)->isPathReferenced($oldPath)) {
                 $oldFiles[] = $oldPath;
             }
         }

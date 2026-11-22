@@ -14,6 +14,7 @@ use App\Models\TeamMember;
 use App\Models\Testimonial;
 use App\Rules\SafeLink;
 use App\Support\HtmlSanitizer;
+use App\Support\MediaReferenceChecker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -303,7 +304,12 @@ class ContentController extends Controller
             throw $exception;
         }
 
-        Storage::disk('public')->delete(array_values(array_unique($oldFiles)));
+        foreach (array_unique($oldFiles) as $oldPath) {
+            if (! Media::where('path', $oldPath)->exists()
+                && ! app(MediaReferenceChecker::class)->isPathReferenced($oldPath)) {
+                Storage::disk('public')->delete($oldPath);
+            }
+        }
 
         return redirect()->route('admin.content.index', $type)
             ->with('success', ucfirst($type).' item updated.');
