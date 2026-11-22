@@ -124,6 +124,7 @@ class FixedHomepageCmsTest extends TestCase
             'site_email' => 'hello@baraaq.example',
             'site_address' => 'Meerut, Uttar Pradesh',
             'footer_about_heading' => 'About Baraaq',
+            'footer_rights_text' => 'Copyright 2026 Baraaq.',
             'footer_map_embed_url' => 'https://maps.google.com/maps?q=Meerut',
             'logo' => UploadedFile::fake()->image('brand.png'),
             'footer_gallery_images' => [UploadedFile::fake()->image('gallery-one.png')],
@@ -133,6 +134,7 @@ class FixedHomepageCmsTest extends TestCase
         $this->assertSame('+91 98765 43210', Setting::read('site_phone'));
         $this->assertSame('hello@baraaq.example', Setting::read('site_email'));
         $this->assertSame('About Baraaq', Setting::read('footer_about_heading'));
+        $this->assertSame('Copyright 2026 Baraaq.', Setting::read('footer_rights_text'));
         $this->assertNotEmpty(Setting::read('logo'));
         $this->assertCount(1, Setting::read('footer_gallery_images'));
     }

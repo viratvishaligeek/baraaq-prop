@@ -106,6 +106,7 @@
                     'footer_support_menu_location' => 'Support menu location',
                     'footer_menu_location' => 'Footer navigation menu location',
                     'footer_gallery_handle' => 'Gallery handle',
+                    'footer_rights_text' => 'Copyright suffix / rights text',
                     'footer_gallery_title' => 'Gallery title',
                 ] as $key => $label)
                     <div class="col-md-6">

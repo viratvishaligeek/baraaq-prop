@@ -537,7 +537,7 @@
                         <p class="copyright-text">
                             <i class="fal fa-copyright">
                             </i> {{ date('Y') }}
-                            {{ $siteSettings['footer_copyright'] ?? ($siteSettings['site_title'] ?? config('app.name')) }}
+                            {{ $siteSettings['footer_copyright'] ?? ($siteSettings['site_title'] ?? config('app.name')) }} {{ $siteSettings['footer_rights_text'] ?? 'All Rights Reserved.' }}
                         </p>
                     </div>
                     <div class="col-auto">
