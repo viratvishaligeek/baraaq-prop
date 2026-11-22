@@ -61,6 +61,7 @@ class PillerDemoContentSeederTest extends TestCase
         $this->assertFalse(Schema::hasTable('widget_areas'));
         $this->assertFalse(Schema::hasTable('widget_area_items'));
         $this->assertFalse(Schema::hasTable('reusable_sections'));
+        $this->assertSame(0, DB::table('permissions')->where('slug', 'like', 'widgets.%')->count());
         $this->assertFalse(Schema::hasColumn('pages', 'homepage_key'));
         $this->assertFalse(Schema::hasColumn('homepage_sections', 'page_id'));
         $this->assertFalse(Schema::hasColumn('homepage_sections', 'service_id'));

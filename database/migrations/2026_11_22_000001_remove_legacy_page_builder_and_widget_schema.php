@@ -24,9 +24,16 @@ return new class extends Migration
         if (Schema::hasTable('homepages')) {
             $fixedHomepageId = DB::table('homepages')->where('slug', 'home-9')->value('id');
             $obsoleteSections = Schema::hasTable('homepage_sections') ? DB::table('homepage_sections') : null;
+            $fixedSectionKeys = [
+                'hero.home-9', 'about.home-9', 'statistics.home-9', 'services.home-9',
+                'properties.index', 'featured-gallery.home-9', 'home-details.home-9',
+                'team.home-2', 'testimonials.home-3', 'blog.home-2',
+            ];
             if ($obsoleteSections && $fixedHomepageId) {
-                $obsoleteSections->where(function ($query) use ($fixedHomepageId) {
-                    $query->whereNull('homepage_id')->orWhere('homepage_id', '<>', $fixedHomepageId);
+                $obsoleteSections->where(function ($query) use ($fixedHomepageId, $fixedSectionKeys) {
+                    $query->whereNull('homepage_id')
+                        ->orWhere('homepage_id', '<>', $fixedHomepageId)
+                        ->orWhereNotIn('section_key', $fixedSectionKeys);
                 });
             } elseif ($obsoleteSections) {
                 $obsoleteSections->whereNotNull('id');
@@ -47,6 +54,12 @@ return new class extends Migration
             DB::table('homepages')->where('slug', '<>', 'home-9')->delete();
             if ($fixedHomepageId) {
                 DB::table('homepages')->where('id', $fixedHomepageId)->update(['is_default' => true, 'deleted_at' => null]);
+                foreach ($fixedSectionKeys as $position => $sectionKey) {
+                    DB::table('homepage_sections')
+                        ->where('homepage_id', $fixedHomepageId)
+                        ->where('section_key', $sectionKey)
+                        ->update(['sort_order' => $position + 1]);
+                }
             }
         }
 

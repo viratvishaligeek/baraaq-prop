@@ -164,7 +164,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             if (!window.DataTable) return;
             document.querySelectorAll('table[data-datatable]').forEach(function (table) {
-                if (table.tHead && !DataTable.isDataTable(table)) {
+                if (table.tHead && !table.querySelector('tbody td[colspan]') && !DataTable.isDataTable(table)) {
                     new DataTable(table, {
                         pageLength: 10,
                         lengthMenu: [10, 25, 50, 100],
