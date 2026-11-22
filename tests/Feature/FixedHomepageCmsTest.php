@@ -2,6 +2,11 @@
 namespace Tests\Feature;
 use App\Models\Homepage;
 use App\Models\HomepageSection;
+use App\Models\Post;
+use App\Models\Property;
+use App\Models\Service;
+use App\Models\TeamMember;
+use App\Models\Testimonial;
 use App\Models\Media;
 use App\Models\Role;
 use App\Models\Setting;
@@ -198,6 +203,40 @@ class FixedHomepageCmsTest extends TestCase
         $admin = $this->administrator();
         $homepage = $this->homepage();
 
+        Service::create([
+            'title' => 'Homepage test service',
+            'slug' => 'homepage-test-service',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        Property::create([
+            'title' => 'Homepage test property',
+            'slug' => 'homepage-test-property',
+            'listing_type' => 'sale',
+            'area_unit' => 'sqft',
+            'status' => 'published',
+            'is_featured' => true,
+            'published_at' => now(),
+        ]);
+        TeamMember::create([
+            'name' => 'Homepage test agent',
+            'status' => 'published',
+            'is_active' => true,
+        ]);
+        Testimonial::create([
+            'name' => 'Homepage test client',
+            'quote' => 'The homepage test testimonial.',
+            'status' => 'published',
+            'is_active' => true,
+            'rating' => 5,
+        ]);
+        Post::create([
+            'title' => 'Homepage test article',
+            'slug' => 'homepage-test-article',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
         foreach (array_keys(config('cms-sections.sections', [])) as $index => $key) {
             $definition = config('cms-sections.sections.'.$key);
             $fieldKey = null;
@@ -218,6 +257,7 @@ class FixedHomepageCmsTest extends TestCase
             ])->assertRedirect(route('admin.homepages.index'));
 
             $this->assertSame($value, $section->fresh()->config[$fieldKey], "Section [{$key}] did not persist [{$fieldKey}].");
+            $this->get('/')->assertOk()->assertSee($value);
         }
     }
 
