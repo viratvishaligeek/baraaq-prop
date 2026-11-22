@@ -393,6 +393,19 @@ class FixedHomepageCmsTest extends TestCase
             'source' => 'contact',
             'status' => 'new',
         ]);
+
+        $enquiry = \\App\\Models\\Enquiry::query()->where('name', 'Contact Form Visitor')->firstOrFail();
+        $this->actingAs($admin)->patch(route('admin.enquiries.update', $enquiry), [
+            'status' => 'contacted',
+            'admin_notes' => 'Replied by email.',
+        ])->assertRedirect();
+
+        $this->assertDatabaseHas('enquiries', [
+            'id' => $enquiry->id,
+            'status' => 'contacted',
+            'admin_notes' => 'Replied by email.',
+        ]);
+        $this->assertNotNull($enquiry->fresh()->contacted_at);
     }
 
     public function test_about_alias_returns_to_the_fixed_homepage_about_section(): void
