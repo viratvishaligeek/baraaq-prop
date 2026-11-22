@@ -15,10 +15,12 @@ class SectionDataResolver
     public function resolve(HomepageSection $section, array $config = []): array
     {
         $source = $section->data_source ?? [];
+        // The fixed Homepage CMS exposes these values as editable section fields.
+        // Keep legacy data-source values as fallbacks, not overrides of saved admin content.
         $config = array_merge($config, $source, [
-            'items_limit' => $source['limit'] ?? ($config['items_limit'] ?? 6),
-            'columns' => $source['columns'] ?? ($config['columns'] ?? 3),
-            'slider' => $source['slider'] ?? ($config['slider'] ?? true),
+            'items_limit' => $config['items_limit'] ?? ($source['limit'] ?? 6),
+            'columns' => $config['columns'] ?? ($source['columns'] ?? 3),
+            'slider' => $config['slider'] ?? ($source['slider'] ?? true),
         ]);
 
         $ids = collect($source['selected_ids'] ?? [])
