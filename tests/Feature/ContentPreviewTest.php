@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Page;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\Post;
 use App\Models\Role;
 use App\Models\Service;

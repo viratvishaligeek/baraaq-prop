@@ -9,10 +9,24 @@ use App\Models\Service;
 
 class ContentPreviewController extends Controller
 {
+    private function authorizePreview(string $type): void
+    {
+        $user = request()->user();
+
+        abort_unless(
+            $user && ($user->isAdministrator()
+                || $user->hasPermission($type.'.manage')
+                || $user->hasPermission($type.'.view')
+                || $user->hasPermission($type.'.edit')),
+            403
+        );
+    }
+
     public function show(string $type, int $id)
     {
         $user = request()->user();
         abort_unless(in_array($type, ['posts', 'pages', 'services'], true), 404);
+        $this->authorizePreview($type);
         $permission = $type . '.view';
         $managePermission = $type . '.manage';
         abort_unless($user && ($user->isAdministrator() || $user->hasPermission($permission) || $user->hasPermission($managePermission)), 403);
