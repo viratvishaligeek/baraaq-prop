@@ -9,6 +9,14 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('permissions')) {
+            $widgetPermissionIds = DB::table('permissions')->where('slug', 'like', 'widgets.%')->pluck('id');
+            if ($widgetPermissionIds->isNotEmpty() && Schema::hasTable('permission_role')) {
+                DB::table('permission_role')->whereIn('permission_id', $widgetPermissionIds)->delete();
+            }
+            DB::table('permissions')->where('slug', 'like', 'widgets.%')->delete();
+        }
+
         if (Schema::hasTable('settings')) {
             DB::table('settings')->where('key', 'dashboard_widgets')->delete();
         }

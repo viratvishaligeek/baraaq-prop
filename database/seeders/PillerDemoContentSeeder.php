@@ -601,7 +601,7 @@ class PillerDemoContentSeeder extends Seeder
                 'items_limit' => 8,
                 'columns' => '4',
             ],
-            'properties.home-9' => [
+            'properties.index' => [
                 'eyebrow' => 'Popular Properties',
                 'heading' => 'Best Properties Sale',
                 'items_limit' => 8,
@@ -707,7 +707,6 @@ class PillerDemoContentSeeder extends Seeder
             'meta_description' => 'Explore thoughtfully selected properties and expert real estate services with Pillar Realty.',
         ]);
 
-        // A published CMS page can otherwise take precedence over the selected homepage at "/".
     }
 
     private function dataSourceFor(string $type): array
