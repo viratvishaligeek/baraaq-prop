@@ -1,144 +1,57 @@
 @extends('admin.layouts.app')
+
 @section('title', 'Website settings')
+
 @section('content')
     <div class="mb-4">
         <h1 class="page-title" id="general-settings">Website settings</h1>
-        <p class="text-muted">One place for identity, navigation, contact details, appearance and default SEO.</p>
+        <p class="text-muted">Manage global SEO defaults, appearance, favicon and technical scripts. Website identity, contact details, navigation, footer and social content are managed under Admin → Homepage.</p>
     </div>
-    <form method="POST" enctype="multipart/form-data" action="{{ route('admin.settings.update') }}">@csrf @method('PUT')
-        <div class="content-card mb-4" id="website-settings">
-            <h4 class="mb-3">Website identity</h4>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">Website name *</label>
-                    <input class="form-control" name="site_title"
-                        value="{{ old('site_title', $settings['site_title'] ?? config('app.name')) }}" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Tagline</label>
-                    <input class="form-control" name="site_tagline"
-                        value="{{ old('site_tagline', $settings['site_tagline'] ?? '') }}">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Logo</label>
-                    <input class="form-control" type="file" name="logo" id="upload-logo" accept="image/*">
-                    <input type="hidden" name="logo_media_id" id="media-logo" data-media-upload-input="upload-logo">
-                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-logo">Choose from Media Library</button>
-                    <div class="mt-2"><img src="{{ !empty($settings['logo']) ? Storage::disk('public')->url($settings['logo']) : '' }}"
-                        alt="Current logo" style="max-width:180px;max-height:70px" data-media-preview
-                        @if (empty($settings['logo'])) hidden @endif><span class="small text-muted" data-media-meta></span></div>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Favicon</label>
-                    <input class="form-control" type="file" name="favicon" id="upload-favicon" accept=".png,image/png">
-                    <input type="hidden" name="favicon_media_id" id="media-favicon" data-media-upload-input="upload-favicon">
-                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-favicon">Choose PNG from Media Library</button>
-                    <div class="mt-2"><img src="{{ !empty($settings['favicon']) ? Storage::disk('public')->url($settings['favicon']) : '' }}"
-                        alt="Current favicon" width="32" data-media-preview @if (empty($settings['favicon'])) hidden @endif><span class="small text-muted" data-media-meta></span></div>
-                </div>
-            </div>
-        </div>
+
+    <form method="POST" enctype="multipart/form-data" action="{{ route('admin.settings.update') }}">
+        @csrf
+        @method('PUT')
+
         <div class="content-card mb-4">
-            <h4 class="mb-3">Contact and business details</h4>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">Contact email</label>
-                    <input class="form-control" type="email" name="site_email"
-                        value="{{ old('site_email', $settings['site_email'] ?? '') }}">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Phone</label>
-                    <input class="form-control" name="site_phone"
-                        value="{{ old('site_phone', $settings['site_phone'] ?? '') }}">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">WhatsApp number</label>
-                    <input class="form-control" name="whatsapp_number"
-                        value="{{ old('whatsapp_number', $settings['whatsapp_number'] ?? '') }}">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Business name</label>
-                    <input class="form-control" name="business_name"
-                        value="{{ old('business_name', $settings['business_name'] ?? '') }}">
-                </div>
-                <div class="col-12">
-                    <label class="form-label">Full address</label>
-                    <textarea class="form-control" name="site_address" rows="2">{{ old('site_address', $settings['site_address'] ?? '') }}</textarea>
-                </div>
-                <div class="col-12">
-                    <label class="form-label">Business registration / legal detail</label>
-                    <input class="form-control" name="business_registration"
-                        value="{{ old('business_registration', $settings['business_registration'] ?? '') }}">
+            <h4 class="mb-3">Favicon</h4>
+            <div class="col-md-6">
+                <label class="form-label">Site favicon</label>
+                <input class="form-control" type="file" name="favicon" id="upload-favicon" accept=".png,.ico,image/png,image/x-icon">
+                <input type="hidden" name="favicon_media_id" id="media-favicon" data-media-upload-input="upload-favicon">
+                <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-favicon">Choose PNG from Media Library</button>
+                <div class="mt-2">
+                    <img src="{{ !empty($settings['favicon']) ? Storage::disk('public')->url($settings['favicon']) : '' }}"
+                        alt="Current favicon" width="32" data-media-preview @if (empty($settings['favicon'])) hidden @endif>
+                    <span class="small text-muted" data-media-meta></span>
                 </div>
             </div>
         </div>
+
         <div class="content-card mb-4">
-            <h4 class="mb-3">Header and footer</h4>
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label">Header menu location</label>
-                    <input class="form-control" name="header_menu_location"
-                        value="{{ old('header_menu_location', $settings['header_menu_location'] ?? 'primary') }}" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Header call-to-action label</label>
-                    <input class="form-control" name="header_cta_label"
-                        value="{{ old('header_cta_label', $settings['header_cta_label'] ?? 'Browse Properties') }}">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Header call-to-action URL</label>
-                    <input class="form-control" name="header_cta_url"
-                        value="{{ old('header_cta_url', $settings['header_cta_url'] ?? '/properties') }}"
-                        placeholder="/properties or https://example.com">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Footer menu location</label>
-                    <input class="form-control" name="footer_menu_location"
-                        value="{{ old('footer_menu_location', $settings['footer_menu_location'] ?? 'footer') }}" required>
-                </div>
-                <div class="col-12">
-                    <label class="form-label">Footer description</label>
-                    <textarea class="form-control" name="footer_description" rows="3">{{ old('footer_description', $settings['footer_description'] ?? '') }}</textarea>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label">Copyright text</label>
-                    <input class="form-control" name="footer_copyright"
-                        value="{{ old('footer_copyright', $settings['footer_copyright'] ?? '') }}">
-                </div>
-                <div class="col-md-6 form-check mt-5">
-                    <input class="form-check-input" type="checkbox" name="sticky_header" value="1" id="sticky-header"
-                        @checked(old('sticky_header', $settings['sticky_header'] ?? true))>
-                    <label class="form-check-label" for="sticky-header">Enable sticky header</label>
-                </div>
+            <h4 class="mb-3">Header behavior</h4>
+            <input type="hidden" name="sticky_header" value="0">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="sticky_header" value="1" id="sticky-header"
+                    @checked(old('sticky_header', $settings['sticky_header'] ?? true))>
+                <label class="form-check-label" for="sticky-header">Enable sticky header</label>
             </div>
         </div>
-        <div class="content-card mb-4">
-            <h4 class="mb-3">Social media</h4>
-            <div class="row g-3">
-                @foreach (['facebook' => 'Facebook', 'instagram' => 'Instagram', 'linkedin' => 'LinkedIn', 'youtube' => 'YouTube', 'x' => 'X / Twitter'] as $key => $label)
-                    <div class="col-md-6">
-                        <label class="form-label">{{ $label }} URL</label>
-                        <input class="form-control" type="url" name="social_{{ $key }}"
-                            value="{{ old('social_' . $key, $settings['social_' . $key] ?? '') }}">
-                    </div>
-                @endforeach
-            </div>
-        </div>
+
         <div class="content-card mb-4">
             <h4 class="mb-3" id="seo-settings">Global SEO defaults</h4>
             <div class="row g-3">
                 <div class="col-12">
                     <label class="form-label">Default meta title</label>
-                    <input class="form-control" name="meta_title"
+                    <input class="form-control" name="meta_title" maxlength="255"
                         value="{{ old('meta_title', $settings['meta_title'] ?? '') }}">
                 </div>
                 <div class="col-12">
                     <label class="form-label">Default meta description</label>
-                    <textarea class="form-control" name="meta_description" rows="3">{{ old('meta_description', $settings['meta_description'] ?? '') }}</textarea>
+                    <textarea class="form-control" name="meta_description" rows="3" maxlength="1000">{{ old('meta_description', $settings['meta_description'] ?? '') }}</textarea>
                 </div>
                 <div class="col-12">
                     <label class="form-label">Meta keywords</label>
-                    <input class="form-control" name="meta_keywords"
+                    <input class="form-control" name="meta_keywords" maxlength="1000"
                         value="{{ old('meta_keywords', $settings['meta_keywords'] ?? '') }}">
                 </div>
                 <div class="col-md-6">
@@ -150,22 +63,24 @@
                     </select>
                     <div class="mt-3">
                         <label class="form-label" for="robots-rules">robots.txt directives</label>
-                        <textarea class="form-control font-monospace" id="robots-rules" name="robots_rules" rows="6" placeholder="User-agent: *&#10;Allow: /&#10;Disallow: /admin">{{ old('robots_rules', $settings['robots_rules'] ?? "User-agent: *\nAllow: /\nDisallow: /admin") }}</textarea>
+                        <textarea class="form-control font-monospace" id="robots-rules" name="robots_rules" rows="6" maxlength="10000" placeholder="User-agent: *&#10;Allow: /&#10;Disallow: /admin">{{ old('robots_rules', $settings['robots_rules'] ?? "User-agent: *\nAllow: /\nDisallow: /admin") }}</textarea>
                         <div class="form-text">One directive per line. Supported directives: User-agent, Allow, Disallow and Crawl-delay. The sitemap URL is appended automatically.</div>
                     </div>
-
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Default social sharing image</label>
                     <input class="form-control" type="file" name="default_og_image" id="upload-default-og-image" accept="image/*">
                     <input type="hidden" name="default_og_image_media_id" id="media-default-og-image" data-media-upload-input="upload-default-og-image">
                     <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-default-og-image">Choose from Media Library</button>
-                    <div class="mt-2"><img src="{{ !empty($settings['default_og_image']) ? Storage::disk('public')->url($settings['default_og_image']) : '' }}"
-                        alt="Default social image preview" style="max-width:160px" data-media-preview
-                        @if (empty($settings['default_og_image'])) hidden @endif><span class="small text-muted" data-media-meta></span></div>
+                    <div class="mt-2">
+                        <img src="{{ !empty($settings['default_og_image']) ? Storage::disk('public')->url($settings['default_og_image']) : '' }}"
+                            alt="Default social image preview" style="max-width:160px" data-media-preview @if (empty($settings['default_og_image'])) hidden @endif>
+                        <span class="small text-muted" data-media-meta></span>
+                    </div>
                 </div>
             </div>
         </div>
+
         <div class="content-card mb-4">
             <h4 class="mb-3">Global appearance</h4>
             <div class="row g-3">
@@ -181,19 +96,20 @@
                 </div>
             </div>
         </div>
+
         <div class="content-card mb-4">
             <h4 class="mb-2">Global scripts</h4>
-            <p class="text-muted small">Only add scripts from providers you trust. These fields are rendered as
-                administrator-supplied code.</p>
+            <p class="text-muted small">Only add scripts from providers you trust. These fields are rendered as administrator-supplied code.</p>
             <div class="mb-3">
                 <label class="form-label">Head scripts</label>
-                <textarea class="form-control font-monospace" name="head_scripts" rows="5">{{ old('head_scripts', $settings['head_scripts'] ?? '') }}</textarea>
+                <textarea class="form-control font-monospace" name="head_scripts" rows="5" maxlength="20000">{{ old('head_scripts', $settings['head_scripts'] ?? '') }}</textarea>
             </div>
             <div>
                 <label class="form-label">Before closing body scripts</label>
-                <textarea class="form-control font-monospace" name="body_scripts" rows="5">{{ old('body_scripts', $settings['body_scripts'] ?? '') }}</textarea>
+                <textarea class="form-control font-monospace" name="body_scripts" rows="5" maxlength="20000">{{ old('body_scripts', $settings['body_scripts'] ?? '') }}</textarea>
             </div>
         </div>
-        <button class="btn btn-primary btn-lg">Save all settings</button>
+
+        <button class="btn btn-primary btn-lg">Save website settings</button>
     </form>
 @endsection
