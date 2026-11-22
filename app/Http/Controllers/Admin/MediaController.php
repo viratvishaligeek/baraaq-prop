@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Media;
+use App\Support\MediaReferenceChecker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 
@@ -92,7 +92,7 @@ class MediaController extends Controller
         $skipped = 0;
 
         foreach (Media::query()->whereIn('id', $data['media_ids'])->get() as $media) {
-            if ($media->attachments()->exists() || $this->isReferencedByContent($media)) {
+            if ($media->attachments()->exists() || app(MediaReferenceChecker::class)->isReferenced($media)) {
                 $skipped++;
                 continue;
             }
@@ -206,49 +206,4 @@ class MediaController extends Controller
         }
     }
 
-    private function isReferencedByContent(Media $media): bool
-    {
-        if (Schema::hasTable('property_accommodations')
-            && Schema::hasColumn('property_accommodations', 'image_media_id')
-            && DB::table('property_accommodations')->where('image_media_id', $media->id)->exists()) {
-            return true;
-        }
-
-        $references = [
-            'properties' => ['featured_image', 'og_image'],
-            'property_images' => ['path'],
-            'posts' => ['featured_image', 'og_image'],
-            'pages' => ['og_image'],
-            'services' => ['featured_image', 'og_image'],
-            'team_members' => ['photo'],
-            'testimonials' => ['photo'],
-            'banners' => ['image'],
-            'categories' => ['icon_path'],
-            'settings' => ['value'],
-        ];
-
-        foreach ($references as $table => $columns) {
-            if (! Schema::hasTable($table)) {
-                continue;
-            }
-
-            foreach ($columns as $column) {
-                if (Schema::hasColumn($table, $column)
-                    && DB::table($table)->where($column, $media->path)->exists()) {
-                    return true;
-                }
-            }
-        }
-
-        if (Schema::hasTable('settings')) {
-            $galleryValue = DB::table('settings')->where('key', 'footer_gallery_images')->value('value');
-            $galleryIds = is_string($galleryValue) ? json_decode($galleryValue, true) : null;
-
-            if (is_array($galleryIds) && in_array((int) $media->id, array_map('intval', $galleryIds), true)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

@@ -1,0 +1,81 @@
+<?php
+
+namespace App\Support;
+
+use App\Models\Media;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+class MediaReferenceChecker
+{
+    public function isReferenced(Media $media): bool
+    {
+        if (Schema::hasTable('property_accommodations')
+            && Schema::hasColumn('property_accommodations', 'image_media_id')
+            && DB::table('property_accommodations')->where('image_media_id', $media->id)->exists()) {
+            return true;
+        }
+
+        if ($this->isPathReferenced($media->path)) {
+            return true;
+        }
+
+        if (Schema::hasTable('settings')) {
+            $galleryValue = DB::table('settings')->where('key', 'footer_gallery_images')->value('value');
+            $galleryIds = is_string($galleryValue) ? json_decode($galleryValue, true) : null;
+
+            return is_array($galleryIds)
+                && in_array((int) $media->id, array_map('intval', $galleryIds), true);
+        }
+
+        return false;
+    }
+
+    public function isPathReferenced(string $path): bool
+    {
+        $references = [
+            'properties' => ['featured_image', 'og_image'],
+            'property_images' => ['path'],
+            'posts' => ['featured_image', 'og_image'],
+            'pages' => ['og_image'],
+            'services' => ['featured_image', 'og_image'],
+            'team_members' => ['photo'],
+            'testimonials' => ['photo'],
+            'banners' => ['image'],
+            'categories' => ['icon_path'],
+            'settings' => ['value'],
+        ];
+
+        foreach ($references as $table => $columns) {
+            if (! Schema::hasTable($table)) {
+                continue;
+            }
+
+            foreach ($columns as $column) {
+                if (Schema::hasColumn($table, $column)
+                    && DB::table($table)->where($column, $path)->exists()) {
+                    return true;
+                }
+            }
+        }
+
+        if (Schema::hasTable('homepage_sections') && Schema::hasColumn('homepage_sections', 'config')) {
+            foreach (DB::table('homepage_sections')->pluck('config') as $storedConfig) {
+                $config = is_array($storedConfig) ? $storedConfig : json_decode((string) $storedConfig, true);
+                if (! is_array($config)) {
+                    continue;
+                }
+
+                foreach ($config as $key => $value) {
+                    if (is_string($value)
+                        && $value === $path
+                        && preg_match('/image|photo|icon|background|logo|shape/i', (string) $key)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+}
