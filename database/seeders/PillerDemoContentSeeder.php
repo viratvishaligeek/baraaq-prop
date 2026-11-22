@@ -115,7 +115,8 @@ class PillerDemoContentSeeder extends Seeder
             $existing = Setting::query()->where('key', $key)->first();
 
             // Fill empty starter defaults, but never replace a value already configured by the site owner.
-            if (! $existing || trim((string) $existing->value) === '') {
+            $legacyMapUrl = $key === 'footer_map_embed_url' && $existing?->value === 'https://www.google.com/maps?q=Meerut';
+            if (! $existing || trim((string) $existing->value) === '' || $legacyMapUrl) {
                 Setting::write($key, $stored, $group, $type);
             }
         }
