@@ -349,6 +349,12 @@ class FixedHomepageCmsTest extends TestCase
 
     public function test_contact_page_renders_a_form_posting_to_the_registered_enquiry_handler(): void
     {
+        $admin = $this->administrator();
+        $this->actingAs($admin)->get(route('admin.enquiries.index'))
+            ->assertOk()
+            ->assertSee('value="contact"', false)
+            ->assertSee('Contact form');
+
         $this->get('/contact')
             ->assertOk()
             ->assertViewIs('frontend.contact')
