@@ -556,5 +556,16 @@ $sections = array_merge($sections, require __DIR__.'/cms-sections/blog.php');
 $sections = array_merge($sections, require __DIR__.'/cms-sections/search.php');
 
 return [
-    'sections' => $sections,
+    'sections' => array_intersect_key($sections, array_flip([
+        'hero.home-9',
+        'about.home-9',
+        'statistics.home-9',
+        'services.home-9',
+        'properties.index',
+        'featured-gallery.home-9',
+        'home-details.home-9',
+        'team.home-2',
+        'testimonials.home-3',
+        'blog.home-2',
+    ])),
 ];
