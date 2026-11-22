@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Page;
 use App\Models\Permission;
-use App\Models\Role;
 use App\Models\Post;
 use App\Models\Role;
 use App\Models\Service;
@@ -35,4 +34,24 @@ class ContentPreviewTest extends TestCase
         $this->assertSame('draft', $page->fresh()->status);
         $this->assertSame('draft', $service->fresh()->status);
     }
+    public function test_preview_requires_permission_for_the_requested_content_type(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+        $page = Page::create([
+            'title' => 'Restricted draft page',
+            'slug' => 'restricted-draft-page',
+            'content' => '<p>Private draft</p>',
+            'status' => 'draft',
+        ]);
+
+        $role = Role::create(['name' => 'Limited admin', 'slug' => 'limited-admin']);
+        $role->permissions()->attach(Permission::where('slug', 'admin.access')->firstOrFail());
+        $user = User::factory()->create(['is_active' => true]);
+        $user->roles()->attach($role);
+
+        $this->actingAs($user)
+            ->get(route('admin.content.preview', ['type' => 'pages', 'id' => $page->id]))
+            ->assertForbidden();
+    }
+
 }
