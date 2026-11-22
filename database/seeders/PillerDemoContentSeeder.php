@@ -65,7 +65,7 @@ class PillerDemoContentSeeder extends Seeder
 
     private function seedSettings(): void
     {
-        $site = trim((string) env('SITE_NAME', 'Pillar Realty')) ?: 'Pillar Realty';
+        $site = trim((string) env('SITE_NAME', 'Pillar Real Estate')) ?: 'Pillar Real Estate';
         $footerGalleryPaths = [
             'theme-assets/img/gallery/footer-gallery-1-1.jpg',
             'theme-assets/img/gallery/footer-gallery-1-2.jpg',
@@ -75,6 +75,7 @@ class PillerDemoContentSeeder extends Seeder
             'theme-assets/img/gallery/footer-gallery-1-7.jpg',
             'theme-assets/img/gallery/footer-gallery-1-4.jpg',
         ];
+        $defaultOgMedia = $this->themeMedia('theme-assets/img/hero/hero-9-right.png', 'Pillar social sharing image');
         $footerGalleryImages = [];
         foreach ($footerGalleryPaths as $galleryPath) {
             $galleryMedia = $this->themeMedia($galleryPath, 'Pillar Instagram gallery');
@@ -92,7 +93,8 @@ class PillerDemoContentSeeder extends Seeder
             'header_cta_label' => ['Add Listing', 'navigation', 'string'],
             'header_cta_url' => ['/contact', 'navigation', 'string'],
             'footer_description' => ['Pillar Realty brings local insight, considered advice and a carefully selected collection of homes together. From your first viewing to the final signature, our team makes every move feel simpler.', 'footer', 'string'],
-            'footer_copyright' => $site.' — All Rights Reserved.',
+            'footer_copyright' => [$site, 'footer', 'string'],
+            'footer_rights_text' => ['All Rights Reserved.', 'footer', 'string'],
             'footer_map_embed_url' => ['https://www.google.com/maps?q=Civil+Lines,+Meerut,+Uttar+Pradesh&output=embed', 'footer', 'string'],
             'footer_gallery_handle' => ['@pillarrealty on Instagram', 'footer', 'string'],
             'footer_gallery_title' => ['Pillar moments', 'footer', 'string'],
@@ -100,18 +102,15 @@ class PillerDemoContentSeeder extends Seeder
             'social_facebook' => ['https://www.facebook.com/', 'social', 'string'],
             'social_instagram' => ['https://www.instagram.com/', 'social', 'string'],
             'social_linkedin' => ['https://www.linkedin.com/', 'social', 'string'],
-            'primary_color' => '#068FFF',
-            'secondary_color' => '#044DBC',
-            'meta_title' => $site.' | Discover a better place to call home',
-            'meta_description' => 'Explore carefully selected homes, apartments and investment properties across Meerut and the Delhi NCR with the local property specialists at Pillar Realty.',
-            'meta_keywords' => 'real estate Meerut, homes for sale, apartments, property consultants, Delhi NCR',
-            'default_og_image' => '/theme-assets/img/hero/hero-9-right.png',
+            'primary_color' => ['#068FFF', 'appearance', 'string'],
+            'secondary_color' => ['#044DBC', 'appearance', 'string'],
+            'meta_title' => [$site.' | Discover a better place to call home', 'seo', 'string'],
+            'meta_description' => ['Explore carefully selected homes, apartments and investment properties across Meerut and the Delhi NCR with the local property specialists at Pillar Realty.', 'seo', 'string'],
+            'meta_keywords' => ['real estate Meerut, homes for sale, apartments, property consultants, Delhi NCR', 'seo', 'string'],
+            'default_og_image' => [$defaultOgMedia?->path ?? 'theme-assets/img/hero/hero-9-right.png', 'seo', 'string'],
         ];
 
-        foreach ($settings as $key => $value) {
-            [$stored, $group, $type] = is_array($value) && array_is_list($value) && count($value) === 3
-                ? $value
-                : [$value, 'general', 'string'];
+        foreach ($settings as $key => [$stored, $group, $type]) {
 
             $existing = Setting::query()->where('key', $key)->first();
 
@@ -703,8 +702,6 @@ class PillerDemoContentSeeder extends Seeder
             'is_default' => true,
             'is_composition_complete' => true,
             'published_at' => $homepage->published_at ?: now(),
-            'meta_title' => 'Discover Most Suitable Property | Pillar Realty',
-            'meta_description' => 'Explore thoughtfully selected properties and expert real estate services with Pillar Realty.',
         ]);
 
     }

@@ -148,6 +148,15 @@ class DefaultThemeSeeder extends Seeder
                     ]
                 );
 
+                $legacyUrl = match ($url) {
+                    '/about' => '/about.html',
+                    '/contact' => '/contact.html',
+                    default => null,
+                };
+                if ($legacyUrl && $item->url === $legacyUrl) {
+                    $item->update(['url' => $url]);
+                }
+
                 $parents[$label] = $item->id;
             }
         });

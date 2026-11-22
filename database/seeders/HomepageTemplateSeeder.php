@@ -18,6 +18,8 @@ class HomepageTemplateSeeder extends Seeder
                 'is_default' => true,
                 'is_composition_complete' => false,
                 'published_at' => now(),
+                'meta_title' => 'Discover Most Suitable Property | Pillar Real Estate',
+                'meta_description' => 'Explore thoughtfully selected properties and expert real estate services with Pillar Real Estate.',
             ]
         );
 

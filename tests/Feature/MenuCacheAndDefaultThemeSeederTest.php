@@ -101,7 +101,10 @@ class MenuCacheAndDefaultThemeSeederTest extends TestCase
             'key' => 'header_cta_url',
             'value' => '/properties',
         ]);
-        $this->assertSame(8, Menu::where('location', 'primary')->first()->allItems()->count());
+        $primaryMenu = Menu::where('location', 'primary')->firstOrFail();
+        $this->assertSame(8, $primaryMenu->allItems()->count());
+        $this->assertSame('/about', MenuItem::where('menu_id', $primaryMenu->id)->where('label', 'About Us')->value('url'));
+        $this->assertSame('/contact', MenuItem::where('menu_id', $primaryMenu->id)->where('label', 'Contact')->value('url'));
         $this->assertSame(6, Menu::where('location', 'footer')->first()->allItems()->count());
         $this->assertSame(6, Menu::where('location', 'footer-quick-links')->first()->allItems()->count());
         $this->assertSame(5, Menu::where('location', 'footer-support')->first()->allItems()->count());

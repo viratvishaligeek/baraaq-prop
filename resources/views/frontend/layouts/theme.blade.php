@@ -16,9 +16,14 @@
     <meta property="og:description" content="@yield('meta_description', $siteSettings['meta_description'] ?? '')">
     <meta property="og:url" content="@yield('canonical_url', url()->current())">
     @php
-        $defaultSocialImage = !empty($siteSettings['default_og_image'])
-            ? asset('storage/' . $siteSettings['default_og_image'])
-            : asset('theme-assets/img/hero/hero-10-1.jpg');
+        $defaultSocialPath = ltrim((string) ($siteSettings['default_og_image'] ?? ''), '/');
+        $defaultSocialImage = $defaultSocialPath === ''
+            ? asset('theme-assets/img/hero/hero-9-right.png')
+            : (\\App\\Rules\\SafeLink::isHttpUrl($defaultSocialPath)
+                ? $defaultSocialPath
+                : (\\Illuminate\\Support\\Str::startsWith($defaultSocialPath, 'theme-assets/')
+                    ? asset($defaultSocialPath)
+                    : Storage::disk('public')->url($defaultSocialPath)));
     @endphp
     <meta property="og:image" content="@yield('og_image', $defaultSocialImage)">
     <meta property="og:site_name" content="{{ $siteSettings['site_title'] ?? config('app.name') }}">

@@ -3,6 +3,20 @@
 @section('title', 'Website settings')
 
 @section('content')
+    @php
+        $faviconPath = ltrim((string) ($settings['favicon'] ?? ''), '/');
+        $faviconUrl = $faviconPath === '' ? '' : (\\App\\Rules\\SafeLink::isHttpUrl($faviconPath)
+            ? $faviconPath
+            : (\\Illuminate\\Support\\Str::startsWith($faviconPath, 'theme-assets/')
+                ? asset($faviconPath)
+                : Storage::disk('public')->url($faviconPath)));
+        $defaultOgPath = ltrim((string) ($settings['default_og_image'] ?? ''), '/');
+        $defaultOgUrl = $defaultOgPath === '' ? '' : (\\App\\Rules\\SafeLink::isHttpUrl($defaultOgPath)
+            ? $defaultOgPath
+            : (\\Illuminate\\Support\\Str::startsWith($defaultOgPath, 'theme-assets/')
+                ? asset($defaultOgPath)
+                : Storage::disk('public')->url($defaultOgPath)));
+    @endphp
     <div class="mb-4">
         <h1 class="page-title" id="general-settings">Website settings</h1>
         <p class="text-muted">Manage global SEO defaults, appearance, favicon and technical scripts. Website identity, contact details, navigation, footer and social content are managed under Admin → Homepage.</p>
@@ -20,7 +34,7 @@
                 <input type="hidden" name="favicon_media_id" id="media-favicon" data-media-upload-input="upload-favicon">
                 <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-favicon">Choose PNG from Media Library</button>
                 <div class="mt-2">
-                    <img src="{{ !empty($settings['favicon']) ? Storage::disk('public')->url($settings['favicon']) : '' }}"
+                    <img src="{{ $faviconUrl }}"
                         alt="Current favicon" width="32" data-media-preview @if (empty($settings['favicon'])) hidden @endif>
                     <span class="small text-muted" data-media-meta></span>
                 </div>
@@ -73,7 +87,7 @@
                     <input type="hidden" name="default_og_image_media_id" id="media-default-og-image" data-media-upload-input="upload-default-og-image">
                     <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-default-og-image">Choose from Media Library</button>
                     <div class="mt-2">
-                        <img src="{{ !empty($settings['default_og_image']) ? Storage::disk('public')->url($settings['default_og_image']) : '' }}"
+                        <img src="{{ $defaultOgUrl }}"
                             alt="Default social image preview" style="max-width:160px" data-media-preview @if (empty($settings['default_og_image'])) hidden @endif>
                         <span class="small text-muted" data-media-meta></span>
                     </div>
