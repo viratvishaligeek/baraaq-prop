@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Homepage;
-use Illuminate\Http\Response;
 
 class HomeController extends Controller
 {
@@ -21,7 +20,6 @@ class HomeController extends Controller
 
         return view('frontend.homepage', [
             'homepage' => $homepage,
-            'isFixedHomepage' => true,
         ]);
     }
 }

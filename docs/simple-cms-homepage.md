@@ -1,13 +1,15 @@
-# Fixed Homepage 9 CMS
+# Fixed Home 9 CMS
 
-The public root route renders the published home-9 record only. The fixed homepage renderer includes the original Home 9 Blade section views directly; it does not use a general page-builder runtime. Homepage content is stored in the homepages and homepage_sections tables; the original Home 9 section Blade views remain responsible for the visual design.
+The public root route renders the published \`home-9\` record only. The homepage uses ten registered section definitions and their original Home 9 Blade views. The section registry contains only the fixed composition; retired template variants and builder section catalogs are not loaded.
 
-Administrators with settings.manage access use Admin → Appearance & design → Homepage management to edit homepage SEO details, every registered Home 9 section's text, links, visibility and images, plus the header logo, business/contact details, footer content, gallery images and social destinations. Footer menu locations are configured there; menu items remain editable in Admin → Menus. Uploaded replacement images are stored on the public disk, registered in media, and attached to the relevant homepage section.
+Administrators with \`settings.manage\` access use Admin → Appearance & design → Homepage management to edit SEO, every fixed section's text, links, visibility and images, plus site branding, contact details, footer content, menus and social destinations. Footer menu items remain managed through Admin → Menus. Section link fields accept safe relative paths, fragments, telephone links, email links and absolute HTTP(S) URLs.
 
-The editor is a fixed, structured form. It does not support adding, deleting, reordering, duplicating, or switching homepage templates.
+Section saves and site-wide homepage settings are persisted in database transactions. Uploaded files are removed if the corresponding database transaction fails. Replaced media records remain in the media library rather than being deleted behind the administrator's back.
 
-The legacy page builder, section library, reusable-section system, front-end widget renderer, widget-area manager, and dashboard KPI widget configurator have been retired. Regular CMS Pages and Services continue to use their title/content fields.
+The editor is a fixed structured form. It does not support adding, deleting, reordering, duplicating or switching homepage templates. Regular CMS Pages and Services continue to use their existing content management workflows.
 
-A cleanup migration removes legacy builder/widget tables and page/service section references, and retains only the home-9 homepage record. Its down() method is intentionally non-restorative because retired widget and builder content is not recreated.
+## Production migration caution
 
-Admin listing tables inside .content-card use DataTables 2 with Bootstrap 5 and Responsive extensions loaded from the official CDN. No npm packages or frontend build steps are required.
+The existing \`2026_11_22_000001_remove_legacy_page_builder_and_widget_schema\` migration deletes legacy records and drops retired tables/columns. Its \`down()\` method intentionally does not reconstruct deleted data. Do not rewrite this historical migration if it has been executed in any environment. Before applying it to a live database, verify its status with \`php artisan migrate:status\`, take a tested backup, and confirm that the Home 9 record and required section rows are present. Repository access alone cannot establish the migration state of a production database.
+
+Admin listing tables use DataTables 2 with Bootstrap 5 and Responsive extensions from the official CDN. No npm packages or frontend build steps are required.
