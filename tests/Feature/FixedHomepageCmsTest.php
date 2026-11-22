@@ -45,8 +45,10 @@ class FixedHomepageCmsTest extends TestCase
     {
         $homepage = $this->homepage();
         $this->heroSection($homepage);
+        $this->createFixedSection($homepage, 'about.home-9', 2);
         $this->get('/')->assertOk()->assertViewIs('frontend.homepage')
             ->assertSee('header-layout9')->assertDontSee('header-layout1')
+            ->assertSee('id="about"', false)
             ->assertSee('A fixed Home Nine heading')->assertSee('Made dynamic')->assertSee('Managed from the homepage CMS.');
     }
     public function test_homepage_admin_lists_fixed_home_nine_sections_and_saves_section_content(): void
@@ -355,6 +357,21 @@ class FixedHomepageCmsTest extends TestCase
             ->assertSee('name="email"', false)
             ->assertSee('name="phone"', false)
             ->assertSee('name="message"', false);
+
+        $this->from('/contact')->post(route('enquiries.store'), [
+            'name' => 'Contact Form Visitor',
+            'email' => 'visitor@example.test',
+            'subject' => 'Property viewing',
+            'message' => 'Please contact me about available properties.',
+        ])->assertRedirect('/contact')->assertSessionHas('enquiry_success');
+
+        $this->assertDatabaseHas('enquiries', [
+            'name' => 'Contact Form Visitor',
+            'email' => 'visitor@example.test',
+            'subject' => 'Property viewing',
+            'source' => 'contact',
+            'status' => 'new',
+        ]);
     }
 
     public function test_about_alias_returns_to_the_fixed_homepage_about_section(): void
