@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Http\Controllers\Admin\MediaPickerController;
 use App\Models\Media;
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -71,4 +72,41 @@ class SharedMediaPickerUploadTest extends TestCase
 
         $this->assertDatabaseCount('media', 0);
     }
+
+    public function test_content_editor_with_page_edit_permission_can_browse_and_upload_to_the_shared_media_picker(): void
+    {
+        Storage::fake('public');
+
+        $dashboard = Permission::create([
+            'name' => 'View dashboard',
+            'slug' => 'dashboard.view',
+            'group' => 'dashboard',
+        ]);
+        $pageEdit = Permission::create([
+            'name' => 'Edit pages',
+            'slug' => 'pages.edit',
+            'group' => 'pages',
+        ]);
+        $role = Role::create([
+            'name' => 'Page editor',
+            'slug' => 'page-editor',
+        ]);
+        $role->permissions()->sync([$dashboard->id, $pageEdit->id]);
+
+        $user = User::factory()->create(['is_active' => true]);
+        $user->roles()->attach($role);
+
+        $this->actingAs($user)->get(route('admin.media.picker'))->assertOk();
+
+        $this->actingAs($user)->post(route('admin.media.picker.upload'), [
+            'files' => [UploadedFile::fake()->image('page-editor-upload.png')],
+        ])->assertCreated();
+
+        $this->assertDatabaseHas('media', [
+            'uploaded_by' => $user->id,
+            'original_name' => 'page-editor-upload.png',
+            'mime_type' => 'image/png',
+        ]);
+    }
+
 }
