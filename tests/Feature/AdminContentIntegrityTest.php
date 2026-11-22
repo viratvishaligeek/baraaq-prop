@@ -67,4 +67,51 @@ class AdminContentIntegrityTest extends TestCase
             'is_active' => '1',
         ])->assertSessionHasErrors('social_links');
     }
+
+    public function test_service_featured_and_social_images_persist_on_create_and_update(): void
+    {
+        Storage::fake('public');
+        $admin = $this->administrator();
+
+        $this->actingAs($admin)->post(route('admin.content.store', 'services'), [
+            'title' => 'Image-backed service',
+            'slug' => 'image-backed-service',
+            'excerpt' => 'A service with managed images.',
+            'content' => '<p>Service content.</p>',
+            'status' => 'draft',
+            'featured_image' => UploadedFile::fake()->image('service-featured.png'),
+            'og_image' => UploadedFile::fake()->image('service-social.png'),
+        ])->assertRedirect(route('admin.content.index', 'services'));
+
+        $service = \\App\\Models\\Service::query()->where('slug', 'image-backed-service')->firstOrFail();
+        $this->assertDatabaseHas('media', [
+            'path' => $service->featured_image,
+            'original_name' => 'service-featured.png',
+        ]);
+        $this->assertDatabaseHas('media', [
+            'path' => $service->og_image,
+            'original_name' => 'service-social.png',
+        ]);
+        Storage::disk('public')->assertExists($service->featured_image);
+        Storage::disk('public')->assertExists($service->og_image);
+
+        $this->actingAs($admin)->put(route('admin.content.update', ['services', $service->id]), [
+            'title' => 'Image-backed service updated',
+            'slug' => 'image-backed-service',
+            'excerpt' => 'Updated service summary.',
+            'content' => '<p>Updated service content.</p>',
+            'status' => 'draft',
+            'featured_image' => UploadedFile::fake()->image('service-featured-updated.png'),
+        ])->assertRedirect(route('admin.content.index', 'services'));
+
+        $service->refresh();
+        $this->assertDatabaseHas('media', [
+            'path' => $service->featured_image,
+            'original_name' => 'service-featured-updated.png',
+        ]);
+        Storage::disk('public')->assertExists($service->featured_image);
+        $this->assertNotEmpty($service->og_image);
+        Storage::disk('public')->assertExists($service->og_image);
+    }
+
 }
