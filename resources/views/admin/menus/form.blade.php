@@ -99,6 +99,10 @@
                                         <option data-type="property_category" value="{{ $record->id }}"
                                             @selected(($item['link_type'] ?? '') === 'property_category' && (string) ($item['link_id'] ?? '') === (string) $record->id)>Property: {{ $record->name }}</option>
                                     @endforeach
+                                    @foreach ($services as $record)
+                                        <option data-type="service" value="{{ $record->id }}"
+                                            @selected(($item['link_type'] ?? '') === 'service' && (string) ($item['link_id'] ?? '') === (string) $record->id)>Service: {{ $record->title }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col-md-1">
@@ -142,7 +146,7 @@
             function configure(row) {
                 const type = row.find('.link-type').val();
                 row.find('.custom-url').toggle(type === 'custom');
-                row.find('.dynamic-target').toggle(['page', 'blog_category', 'property_category'].includes(type));
+                row.find('.dynamic-target').toggle(['page', 'blog_category', 'property_category', 'service'].includes(type));
                 row.find('.link-id option').each(function() {
                     const option = $(this);
                     option.toggle(!option.data('type') || option.data('type') === type);
@@ -210,7 +214,8 @@
 <select class="form-select link-id" name="items[${i}][link_id]">
 <option value="">Choose...</option>@foreach ($pages as $record)<option data-type="page" value="{{ $record->id }}">Page: {{ $record->title }}</option>@endforeach
 @foreach ($blogCategories as $record)<option data-type="blog_category" value="{{ $record->id }}">Blog: {{ $record->name }}</option>@endforeach
-@foreach ($propertyCategories as $record)<option data-type="property_category" value="{{ $record->id }}">Property: {{ $record->name }}</option>@endforeach</select>
+@foreach ($propertyCategories as $record)<option data-type="property_category" value="{{ $record->id }}">Property: {{ $record->name }}</option>@endforeach
+@foreach ($services as $record)<option data-type="service" value="{{ $record->id }}">Service: {{ $record->title }}</option>@endforeach</select>
 </div>
 <div class="col-md-1">
 <label class="form-label">Parent</label>

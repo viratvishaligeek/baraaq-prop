@@ -38,10 +38,18 @@ class Menu extends Model
             return null;
         }
 
-        return static::query()
-            ->whereKey($menuId)
-            ->with('items.children.children.children.children')
-            ->first();
+        $relations = [];
+        $prefix = 'items';
+        for ($depth = 0; $depth <= 4; $depth++) {
+            foreach (['page', 'category', 'service'] as $relation) {
+                $relations[] = $prefix.'.'.$relation;
+            }
+            if ($depth < 4) {
+                $prefix .= '.children';
+            }
+        }
+
+        return static::query()->whereKey($menuId)->with($relations)->first();
     }
 
     public static function forgetLocationCache(?string $location): void

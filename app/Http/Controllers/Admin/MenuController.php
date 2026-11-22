@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Menu;
 use App\Models\Page;
+use App\Models\Service;
+use App\Rules\SafeLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -86,6 +88,7 @@ class MenuController extends Controller
             'pages' => Page::where('status', 'published')->orderBy('title')->get(['id', 'title']),
             'blogCategories' => Category::where('type', 'post')->orderBy('name')->get(['id', 'name']),
             'propertyCategories' => Category::where('type', 'property')->orderBy('name')->get(['id', 'name']),
+            'services' => Service::published()->orderBy('title')->get(['id', 'title', 'slug']),
         ];
     }
 
@@ -139,6 +142,10 @@ class MenuController extends Controller
 
             if ($linkType === 'property_category' && (! $linkId || ! Category::whereKey($linkId)->where('type', 'property')->exists())) {
                 throw ValidationException::withMessages(['items.' . $index . '.link_id' => 'Choose a property category.']);
+            }
+
+            if ($linkType === 'service' && (! $linkId || ! Service::published()->whereKey($linkId)->exists())) {
+                throw ValidationException::withMessages(['items.' . $index . '.link_id' => 'Choose a published service.']);
             }
 
             $created[$index] = $menu->allItems()->create([

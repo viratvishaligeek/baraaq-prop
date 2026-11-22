@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Rules\SafeLink;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MenuItem extends Model
 {
@@ -38,9 +40,24 @@ class MenuItem extends Model
         static::deleted($flushMenuCache);
     }
 
-    public function menu()
+    public function menu(): BelongsTo
     {
         return $this->belongsTo(Menu::class);
+    }
+
+    public function page(): BelongsTo
+    {
+        return $this->belongsTo(Page::class, 'link_id')->where('status', 'published');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'link_id');
+    }
+
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class, 'link_id')->published();
     }
 
     public function children()
@@ -53,16 +70,16 @@ class MenuItem extends Model
     public function getResolvedUrlAttribute(): string
     {
         if (($this->link_type ?? 'custom') === 'page' && $this->link_id) {
-            $page = Page::query()->whereKey($this->link_id)->where('status', 'published')->first();
+            $page = $this->page;
 
             return $page ? route('pages.show', $page->slug) : '#';
         }
 
         if (in_array($this->link_type, ['blog_category', 'property_category'], true) && $this->link_id) {
-            $category = Category::query()
-                ->whereKey($this->link_id)
-                ->where('type', $this->link_type === 'blog_category' ? 'post' : 'property')
-                ->first();
+            $category = $this->category;
+            if ($category && $category->type !== ($this->link_type === 'blog_category' ? 'post' : 'property')) {
+                $category = null;
+            }
 
             if (! $category) {
                 return '#';
@@ -74,11 +91,11 @@ class MenuItem extends Model
         }
 
         if (($this->link_type ?? 'custom') === 'service') {
-            $service = $this->link_id ? Service::published()->find($this->link_id) : null;
+            $service = $this->service;
 
             return $service ? route('services.show', $service->slug) : route('services.index');
         }
 
-        return $this->url ?: '#';
+        return SafeLink::sanitize($this->url);
     }
 }

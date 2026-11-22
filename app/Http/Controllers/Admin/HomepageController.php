@@ -7,6 +7,7 @@ use App\Models\Homepage;
 use App\Models\HomepageSection;
 use App\Models\Media;
 use App\Models\Setting;
+use App\Rules\SafeLink;
 use App\Support\HtmlSanitizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -49,7 +50,7 @@ class HomepageController extends Controller
             'site_address' => ['nullable', 'string', 'max:500'],
             'header_menu_location' => ['nullable', 'string', 'max:60'],
             'header_cta_label' => ['nullable', 'string', 'max:80'],
-            'header_cta_url' => ['nullable', 'string', 'max:2048', $this->safeLinkRule()],
+            'header_cta_url' => ['nullable', 'string', 'max:2048', new SafeLink()],
             'footer_description' => ['nullable', 'string', 'max:1500'],
             'footer_copyright' => ['nullable', 'string', 'max:255'],
             'footer_rights_text' => ['nullable', 'string', 'max:255'],
@@ -281,40 +282,6 @@ class HomepageController extends Controller
 
         return redirect()->route('admin.homepages.index')
             ->with('success', ($definition['label'] ?? 'Homepage section') . ' updated successfully.');
-    }
-
-    private function safeLinkRule(): \Closure
-    {
-        return static function ($attribute, $value, $fail): void {
-            if ($value === null || $value === '') {
-                return;
-            }
-
-            $value = trim((string) $value);
-            if ($value === '' || preg_match('/[\r\n\\\\]/', $value)) {
-                $fail('The ' . $attribute . ' must be a safe web URL or a relative, email, or telephone link.');
-                return;
-            }
-
-            if (preg_match('~^https?://~i', $value)) {
-                $parts = parse_url($value);
-                if (is_array($parts) && ! empty($parts['host'])) {
-                    return;
-                }
-            } elseif (str_starts_with($value, '/') && ! str_starts_with($value, '//')) {
-                return;
-            } elseif (str_starts_with($value, '#')) {
-                return;
-            } elseif (str_starts_with(strtolower($value), 'mailto:')
-                && filter_var(substr($value, 7), FILTER_VALIDATE_EMAIL)) {
-                return;
-            } elseif (str_starts_with(strtolower($value), 'tel:')
-                && preg_match('/^\+?[0-9().\-\s]{5,30}$/', substr($value, 4))) {
-                return;
-            }
-
-            $fail('The ' . $attribute . ' must be a safe web URL or a relative, email, or telephone link.');
-        };
     }
 
     private function ensureFixedHomepage(Homepage $homepage): void
