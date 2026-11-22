@@ -25,20 +25,6 @@ class AdminMediaIntegrityTest extends TestCase
         return $user;
     }
 
-    private function media(string $path): Media
-    {
-        Storage::disk('public')->put($path, 'image-data');
-
-        return Media::create([
-            'uploaded_by' => $this->administrator()->id,
-            'disk' => 'public',
-            'path' => $path,
-            'original_name' => basename($path),
-            'mime_type' => 'image/png',
-            'size' => 10,
-        ]);
-    }
-
     public function test_media_used_by_a_page_open_graph_image_cannot_be_deleted(): void
     {
         Storage::fake('public');
