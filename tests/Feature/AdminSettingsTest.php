@@ -6,6 +6,7 @@ use App\Models\Media;
 use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
+use Database\Seeders\HomepageTemplateSeeder;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -28,6 +29,7 @@ class AdminSettingsTest extends TestCase
     public function test_homepage_identity_navigation_and_footer_are_not_duplicated_in_general_settings(): void
     {
         $admin = $this->administrator();
+        $this->seed(HomepageTemplateSeeder::class);
 
         $this->actingAs($admin)->get(route('admin.settings.edit'))
             ->assertOk()
