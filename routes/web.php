@@ -6,7 +6,6 @@ use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\NewsletterController;
 use App\Http\Controllers\Frontend\SitemapController;
 use App\Http\Controllers\Frontend\PropertyController as FrontendPropertyController;
-use App\Http\Controllers\Frontend\ThemePageController;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Route;
 
@@ -42,7 +41,6 @@ Route::get('/team', [FrontendContentController::class, 'team'])->name('team.inde
 Route::get('/testimonials', [FrontendContentController::class, 'testimonials'])->name('testimonials.index');
 Route::get('/services/{service:slug}', [FrontendContentController::class, 'service'])->name('services.show');
 Route::post('/blog/{post:slug}/comments', [FrontendContentController::class, 'storeComment'])->middleware('throttle:3,10')->name('blog.comments.store');
-Route::get('/pages/{page:slug}', [FrontendContentController::class, 'page'])->name('pages.show');
 
 Route::get('/index.html', fn() => redirect()->route('home'));
 Route::get('/property.html', fn() => redirect()->route('properties.index'));
@@ -50,6 +48,8 @@ Route::get('/blog.html', fn() => redirect()->route('blog.index'));
 Route::get('/property-details.html', fn() => redirect()->route('properties.index'));
 Route::get('/blog-details.html', fn() => redirect()->route('blog.index'));
 
-Route::get('/{template}.html', [ThemePageController::class, 'show'])
-    ->where('template', 'about|agency|agency-details|blog-grid-left-sidebar|blog-grid-right-sidebar|contact|error|faq|gallery|home-10|home-2|home-3|home-4|home-5|home-6|home-7|home-8|home-9|neighborhood-guide|pricing|service|service-details|service-right-sidebar|team|team-details')
+Route::get('/home-9.html', fn () => redirect()->route('home'));
+
+Route::get('/{template}.html', [\App\Http\Controllers\Frontend\ThemePageController::class, 'show'])
+    ->where('template', 'about|agency|agency-details|blog-grid-left-sidebar|blog-grid-right-sidebar|contact|error|faq|gallery|neighborhood-guide|pricing|service|service-details|service-right-sidebar|team|team-details')
     ->name('theme.page');

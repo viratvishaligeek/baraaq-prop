@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/2.3.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/responsive/3.0.7/css/responsive.bootstrap5.min.css" rel="stylesheet">
     <link href="{{ asset('admin/css/admin.css') }}" rel="stylesheet">@stack('styles')
 </head>
 
@@ -70,18 +72,16 @@
                     <a class="sidebar-link {{ request()->routeIs('admin.comments.*') ? 'active' : '' }}" href="{{ route('admin.comments.index') }}">Comments</a>
                 @endif
             </details>
-            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage') || auth()->user()->hasPermission('widgets.manage') || auth()->user()->hasPermission('menus.manage'))
-                <details class="sidebar-group" @if (request()->routeIs('admin.appearance.*') || request()->routeIs('admin.homepages.*') || request()->routeIs('admin.page-builder.*') || request()->routeIs('admin.sections.*') || request()->routeIs('admin.widgets.*') || request()->routeIs('admin.menus.*')) open @endif>
+            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage') || auth()->user()->hasPermission('menus.manage'))
+                <details class="sidebar-group" @if (request()->routeIs('admin.appearance.*') || request()->routeIs('admin.homepages.*') || request()->routeIs('admin.menus.*')) open @endif>
                     <summary><i class="fa-solid fa-palette"></i> Appearance & design</summary>
                     @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('settings.manage'))
                         <a class="sidebar-link {{ request()->routeIs('admin.appearance.*') ? 'active' : '' }}" href="{{ route('admin.appearance.index') }}">Theme & appearance</a>
                         <a class="sidebar-link {{ request()->routeIs('admin.homepages.*') ? 'active' : '' }}" href="{{ route('admin.homepages.index') }}">Homepage management</a>
                     @endif
                     @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('pages.view') || auth()->user()->hasPermission('pages.manage') || auth()->user()->hasPermission('services.manage'))
-                        <a class="sidebar-link {{ request()->routeIs('admin.page-builder.*') ? 'active' : '' }}" href="{{ route('admin.page-builder.index') }}">Universal page builder</a>
-                        <a class="sidebar-link {{ request()->routeIs('admin.sections.*') ? 'active' : '' }}" href="{{ route('admin.sections.index') }}">Section library</a>
                     @endif
-                    @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('widgets.manage'))
+                    @if (auth()->user()->isAdministrator())
                         <a class="sidebar-link {{ request()->routeIs('admin.widgets.*') ? 'active' : '' }}" href="{{ route('admin.widgets.index') }}">Widget library</a>
                     @endif
                     @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('menus.manage'))
@@ -153,10 +153,32 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.7/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/3.0.7/js/responsive.bootstrap5.min.js"></script>
     <script src="{{ asset('admin/js/admin.js') }}"></script>
     @include('admin.partials.rich-text-editor')
     <script src="{{ asset('admin/js/slug-generator.js') }}"></script>
     <script src="{{ asset('admin/js/seo-preview.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!window.DataTable) return;
+            document.querySelectorAll('.content-card table.table').forEach(function (table) {
+                if (!DataTable.isDataTable(table)) {
+                    new DataTable(table, {
+                        pageLength: 10,
+                        lengthMenu: [10, 25, 50, 100],
+                        searching: true,
+                        ordering: true,
+                        responsive: true,
+                        autoWidth: false,
+                        language: { search: 'Search:', searchPlaceholder: 'Search records...' }
+                    });
+                }
+            });
+        });
+    </script>
     @stack('scripts')
     @if (session('success'))
         <script>
