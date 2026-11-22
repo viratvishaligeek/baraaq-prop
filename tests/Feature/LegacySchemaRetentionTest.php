@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class LegacySchemaRetentionTest extends TestCase
@@ -66,5 +67,32 @@ class LegacySchemaRetentionTest extends TestCase
         $this->assertTrue(Schema::hasColumn('homepage_sections', 'source_design'));
         $this->assertTrue(Schema::hasColumn('homepages', 'design_key'));
         $this->assertTrue(Schema::hasColumn('homepages', 'is_default'));
+    }
+
+    public function test_legacy_page_section_keys_with_null_homepage_ids_do_not_block_homepage_uniqueness(): void
+    {
+        foreach ([1, 2] as $position) {
+            DB::table('homepage_sections')->insert([
+                'homepage_id' => null,
+                'instance_key' => (string) Str::uuid(),
+                'section_key' => 'legacy.page.section',
+                'section_type' => 'text',
+                'source_design' => 'legacy',
+                'sort_order' => $position,
+                'is_enabled' => true,
+                'config' => json_encode(['content' => 'Preserved legacy content '.$position]),
+                'data_source' => json_encode([]),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        $fixedSchema = require database_path('migrations/2026_11_22_000002_simplify_fixed_homepage_schema.php');
+        $fixedSchema->up();
+
+        $this->assertSame(
+            2,
+            DB::table('homepage_sections')->whereNull('homepage_id')->where('section_key', 'legacy.page.section')->count()
+        );
     }
 }
