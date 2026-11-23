@@ -4,7 +4,10 @@ namespace Database\Seeders;
 
 use App\Models\Homepage;
 use App\Models\HomepageSection;
+use App\Models\Media;
+use App\Support\ThemeMediaImporter;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 use RuntimeException;
 
 class BuraaqhHomepageSeeder extends Seeder
@@ -107,6 +110,7 @@ class BuraaqhHomepageSeeder extends Seeder
                     'trust_brand' => '',
                     'trust_score_prefix' => '',
                     'reviews_suffix' => '',
+                    'avatar_group_image' => '',
                 ],
             ],
             'blog.home-2' => [
@@ -123,7 +127,44 @@ class BuraaqhHomepageSeeder extends Seeder
             ],
         ];
 
+        // These bundled theme photographs were visually inspected and dimension-checked.
+        // They are illustrative design assets, not photographs of Buraaqh listings.
+        $imageMap = [
+            'hero.home-9' => [
+                'background_image' => [
+                    'path' => 'theme-assets/img/hero/hero-10-2.jpg',
+                    'alt' => 'Illustrative modern building exterior used as a decorative homepage background',
+                ],
+                'foreground_image' => [
+                    'path' => 'theme-assets/img/hero/hero-9-right.png',
+                    'alt' => 'Illustrative detached home exterior; not a Buraaqh property listing',
+                ],
+            ],
+            'about.home-9' => [
+                'image_primary' => [
+                    'path' => 'theme-assets/img/why/why-choose-left-1.jpg',
+                    'alt' => 'Illustrative contemporary residential architecture',
+                ],
+                'image_secondary' => [
+                    'path' => 'theme-assets/img/hero/hero-8-left.jpg',
+                    'alt' => 'Illustrative modern residential homes',
+                ],
+                'image_tertiary' => [
+                    'path' => 'theme-assets/img/contact/contact-img.jpg',
+                    'alt' => 'Illustrative residential living space',
+                ],
+            ],
+            'home-details.home-9' => [
+                'image' => [
+                    'path' => 'theme-assets/img/hero/hero-10-3.jpg',
+                    'alt' => 'Illustrative modern home exterior; not a verified property listing',
+                ],
+            ],
+        ];
+
+        $importer = app(ThemeMediaImporter::class);
         $position = 0;
+
         foreach ($sections as $key => $definition) {
             $schema = $definitions[$key] ?? null;
 
@@ -132,7 +173,33 @@ class BuraaqhHomepageSeeder extends Seeder
             }
 
             $config = array_merge($schema['defaults'] ?? [], $definition['config'] ?? []);
-            HomepageSection::query()->firstOrCreate(
+            $imageFields = [];
+
+            foreach (($schema['fields'] ?? []) as $field => $fieldDefinition) {
+                if (($fieldDefinition['type'] ?? null) !== 'image') {
+                    continue;
+                }
+
+                $imageFields[] = $field;
+
+                if (isset($imageMap[$key][$field])) {
+                    $image = $imageMap[$key][$field];
+                    $media = $importer->import($image['path'], $image['alt']);
+
+                    $config[$field] = $media?->id;
+                    $config[$field.'_alt'] = $image['alt'];
+                    continue;
+                }
+
+                $value = $config[$field] ?? null;
+                if (is_string($value) && str_starts_with($value, '/theme-assets/')) {
+                    if (! File::isFile(public_path(ltrim($value, '/')))) {
+                        $config[$field] = null;
+                    }
+                }
+            }
+
+            $section = HomepageSection::query()->firstOrCreate(
                 ['homepage_id' => $homepage->id, 'section_key' => $key],
                 [
                     'section_type' => $schema['type'],
@@ -142,6 +209,55 @@ class BuraaqhHomepageSeeder extends Seeder
                     'data_source' => $this->dataSourceFor($schema['type']),
                 ]
             );
+
+            $persistedConfig = is_array($section->config) ? $section->config : [];
+            $configChanged = false;
+
+            foreach ($imageFields as $field) {
+                $currentValue = $persistedConfig[$field] ?? null;
+                $defaultValue = $schema['defaults'][$field] ?? null;
+
+                // Replace only the exact old theme-default path. Any different
+                // path or selected media ID belongs to the administrator.
+                if (
+                    isset($imageMap[$key][$field])
+                    && is_string($currentValue)
+                    && $currentValue === $defaultValue
+                ) {
+                    $image = $imageMap[$key][$field];
+                    $media = $importer->import($image['path'], $image['alt']);
+
+                    $persistedConfig[$field] = $media?->id;
+                    $persistedConfig[$field.'_alt'] = $image['alt'];
+                    $configChanged = true;
+                    $currentValue = $media?->id;
+                } elseif (
+                    is_string($currentValue)
+                    && str_starts_with($currentValue, '/theme-assets/')
+                    && ! File::isFile(public_path(ltrim($currentValue, '/')))
+                    && $currentValue === $defaultValue
+                ) {
+                    $persistedConfig[$field] = null;
+                    $configChanged = true;
+                    $currentValue = null;
+                }
+
+                if (
+                    (is_string($currentValue) || is_int($currentValue))
+                    && ctype_digit((string) $currentValue)
+                    && Media::query()->whereKey((int) $currentValue)->exists()
+                ) {
+                    $section->mediaAttachments()->firstOrCreate(
+                        ['field_key' => $field],
+                        ['media_id' => (int) $currentValue]
+                    );
+                }
+            }
+
+            if ($configChanged) {
+                $section->forceFill(['config' => $persistedConfig])->save();
+            }
+
             $position++;
         }
     }
