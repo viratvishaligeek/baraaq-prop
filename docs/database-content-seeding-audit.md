@@ -94,7 +94,7 @@ The existing Media Library architecture is retained: uploaded assets are represe
 
 ## 3. Seeder architecture
 
-`DatabaseSeeder` now runs the starter website seeders on a fresh installation regardless of whether the environment is local, testing, or production. The optional administrator account is created only when `CMS_ADMIN_EMAIL` and `CMS_ADMIN_PASSWORD` are configured; no default password or contact identity is invented.
+`DatabaseSeeder` now runs the starter website seeders on a fresh installation regardless of whether the environment is local, testing, or production. The optional administrator account is created only when `CMS_ADMIN_EMAIL` and `CMS_ADMIN_PASSWORD` are configured through `config/cms.php`; set those environment values before running the seeder. No default password or contact identity is invented.
 
 The Buraaqh seeder orchestration is:
 
