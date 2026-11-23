@@ -473,6 +473,11 @@ class ContentController extends Controller
                 'meta_description' => ['nullable', 'string', 'max:1000'],
                 'focus_keyword' => ['nullable', 'string', 'max:160'],
                 'og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'features_json' => ['nullable', 'json'],
+                'inside_images' => ['nullable', 'array', 'max:20'],
+                'inside_images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'remove_inside_images' => ['nullable', 'array'],
+                'remove_inside_images.*' => ['integer', Rule::exists('service_images', 'id')->where('service_id', $id)],
             ],
             'testimonials' => [
                 'name' => ['required', 'string', 'max:150'],
