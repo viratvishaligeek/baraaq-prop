@@ -5,6 +5,10 @@
         <div><h1 class="page-title mb-1">Blog tags</h1><p class="text-muted mb-0">Manage reusable tags assigned to blog posts.</p></div>
         <a class="btn btn-primary" href="{{ route('admin.tags.create') }}">Add tag</a>
     </div>
+    <form method="GET" class="content-card mb-3 row g-2 align-items-end">
+        <div class="col-md-5"><label class="form-label">Search tags</label><input class="form-control" name="q" value="{{ request('q') }}" placeholder="Tag name or slug"></div>
+        <div class="col-auto"><button class="btn btn-primary">Search</button><a class="btn btn-link" href="{{ route('admin.tags.index') }}">Reset</a></div>
+    </form>
     <div class="content-card">
         <div class="table-responsive"><table class="table align-middle" data-datatable data-datatable-paging="false"><thead><tr><th>Name</th><th>Slug</th><th>Posts</th><th></th></tr></thead><tbody>
             @forelse($tags as $tag)
