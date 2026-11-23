@@ -40,8 +40,8 @@ class SitemapController extends Controller
             $urls->push(['loc' => $page->canonical_url ?: route('pages.show', $page->slug), 'lastmod' => $page->updated_at]);
         }
 
-        foreach (NeighborhoodGuide::published()->get(['slug', 'updated_at']) as $guide) {
-            $urls->push(['loc' => route('neighborhood-guides.show', $guide->slug), 'lastmod' => $guide->updated_at]);
+        foreach (NeighborhoodGuide::published()->get(['slug', 'updated_at', 'canonical_url']) as $guide) {
+            $urls->push(['loc' => ($guide->canonical_url ?: route('neighborhood-guides.show', $guide->slug)), 'lastmod' => $guide->updated_at]);
         }
 
         foreach (Service::published()->get(['slug', 'updated_at', 'canonical_url']) as $service) {
