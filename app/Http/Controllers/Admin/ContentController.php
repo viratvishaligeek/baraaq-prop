@@ -162,7 +162,8 @@ class ContentController extends Controller
 
         $this->authorizePublish($type, $data['status'] ?? 'draft');
         $serviceFeatures = $type === 'services' ? $this->decodeServiceFeatures($data['features_json'] ?? null) : [];
-        unset($data['features_json'], $data['inside_images']);
+        $insideImageMediaIds = $type === 'services' ? ($data['inside_image_media_ids'] ?? []) : [];
+        unset($data['features_json'], $data['inside_images'], $data['inside_image_media_ids']);
         $insideImageFiles = $type === 'services' ? array_filter((array) $request->file('inside_images', [])) : [];
         $this->applyMediaSelections($data);
         $categoryIds = $data['category_ids'] ?? [];
@@ -209,6 +210,10 @@ class ContentController extends Controller
                 $uploadedPaths[] = $path;
                 $insideImageRows[] = ['path' => $path, 'alt_text' => $data['title']];
                 $uploadedMedia[] = $this->mediaAttributes($request, $file, $path, 'service_inside_image', $data);
+            }
+            foreach ($insideImageMediaIds as $mediaId) {
+                $media = Media::query()->whereKey($mediaId)->where('mime_type', 'like', 'image/%')->firstOrFail();
+                $insideImageRows[] = ['path' => $media->path, 'alt_text' => $media->alt_text ?: $data['title']];
             }
 
             if (in_array($type, ['posts', 'services'], true) && ($data['status'] ?? null) === 'published') {
@@ -279,11 +284,17 @@ class ContentController extends Controller
 
         $this->authorizePublish($type, $data['status'] ?? $item->status, $item->status);
         $serviceFeatures = $type === 'services' ? $this->decodeServiceFeatures($data['features_json'] ?? null) : [];
-        unset($data['features_json'], $data['inside_images']);
+        $insideImageMediaIds = $type === 'services' ? ($data['inside_image_media_ids'] ?? []) : [];
+        unset($data['features_json'], $data['inside_images'], $data['inside_image_media_ids']);
         $insideImageFiles = $type === 'services' ? array_filter((array) $request->file('inside_images', [])) : [];
         $removeInsideImageIds = $type === 'services' ? ($data['remove_inside_images'] ?? []) : [];
         unset($data['remove_inside_images']);
         $this->applyMediaSelections($data);
+        foreach (['image' => 'remove_image', 'featured_image' => 'remove_featured_image', 'photo' => 'remove_photo', 'icon_path' => 'remove_icon_path', 'og_image' => 'remove_og_image'] as $field => $removeInput) {
+            $mediaInput = match ($field) { 'image' => 'image_media_id', 'featured_image' => 'featured_image_media_id', 'photo' => 'photo_media_id', 'icon_path' => 'icon_media_id', 'og_image' => 'og_image_media_id' };
+            if ($request->boolean($removeInput) && ! $request->filled($mediaInput) && ! $request->hasFile($field)) $data[$field] = null;
+            unset($data[$removeInput]);
+        }
         $categoryIds = $data['category_ids'] ?? [];
         $tagIds = $data['tag_ids'] ?? [];
         unset($data['category_ids'], $data['tag_ids']);
@@ -308,9 +319,8 @@ class ContentController extends Controller
             'icon_media_id' => 'icon_path',
             'og_image_media_id' => 'og_image',
         ] as $input => $field) {
-            if ($request->filled($input) && $item->$field && ! Media::where('path', $item->$field)->exists()) {
-                $oldFiles[] = $item->$field;
-            }
+            $removeInput = match ($field) { 'image' => 'remove_image', 'featured_image' => 'remove_featured_image', 'photo' => 'remove_photo', 'icon_path' => 'remove_icon_path', 'og_image' => 'remove_og_image' };
+            if (($request->filled($input) || $request->boolean($removeInput)) && $item->$field && ! Media::where('path', $item->$field)->exists()) $oldFiles[] = $item->$field;
         }
 
         try {
@@ -341,6 +351,11 @@ class ContentController extends Controller
                 $uploadedPaths[] = $path;
                 $insideImageRows[] = ['path' => $path, 'alt_text' => $data['title'] ?? $item->title];
                 $uploadedMedia[] = $this->mediaAttributes($request, $file, $path, 'service_inside_image', $data + ['title' => $item->title]);
+            }
+            $existingInsidePaths = $item->images()->pluck('path')->all();
+            foreach ($insideImageMediaIds as $mediaId) {
+                $media = Media::query()->whereKey($mediaId)->where('mime_type', 'like', 'image/%')->firstOrFail();
+                if (! in_array($media->path, $existingInsidePaths, true)) $insideImageRows[] = ['path' => $media->path, 'alt_text' => $media->alt_text ?: ($data['title'] ?? $item->title)];
             }
 
             if (in_array($type, ['posts', 'services'], true)
@@ -498,6 +513,8 @@ class ContentController extends Controller
                 'features_json' => ['nullable', 'json', 'max:12000'],
                 'inside_images' => ['nullable', 'array', 'max:20'],
                 'inside_images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'inside_image_media_ids' => ['nullable', 'array', 'max:20'],
+                'inside_image_media_ids.*' => ['integer', 'distinct', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
                 'remove_inside_images' => ['nullable', 'array'],
                 'remove_inside_images.*' => ['integer', Rule::exists('service_images', 'id')->where('service_id', $id)],
             ],
@@ -513,6 +530,8 @@ class ContentController extends Controller
                 'is_active' => ['sometimes', 'boolean'],
             ],
         };
+
+        foreach (['remove_image', 'remove_featured_image', 'remove_photo', 'remove_icon_path', 'remove_og_image'] as $field) $rules[$field] = ['sometimes', 'boolean'];
 
         foreach ([
             'image_media_id',
