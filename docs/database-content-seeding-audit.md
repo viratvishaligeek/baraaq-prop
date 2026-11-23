@@ -127,7 +127,7 @@ Expected starter records on an empty database after `php artisan migrate --seed`
 | Services | 6 | Draft pending business confirmation |
 | Service features | 24 | Four scoped draft features per service |
 | Menus | 4 | Primary, footer, footer quick links, footer support |
-| Menu items | 25 | Stable, first-or-create navigation items |
+| Menu items | 27 | Stable, first-or-create navigation items |
 | Media records | 6 | Existing bundled theme images, labelled illustrative |
 | Media attachments | 6 | Homepage section image fields |
 
