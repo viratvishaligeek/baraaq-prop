@@ -39,6 +39,13 @@ class BuraaqhNavigationSeeder extends Seeder
             ['Residential vs Commercial', '/blog/residential-vs-commercial-property-buyer-guide', null],
             ['Contact', '/contact', null],
         ]);
+
+        $this->seedMenu('footer-support', 'Footer support', [
+            ['Frequently Asked Questions', '/faq', null],
+            ['Neighborhood Guides', '/neighborhood-guide', null],
+            ['Privacy Policy', '/privacy-policy', null],
+            ['Contact Us', '/contact', null],
+        ]);
     }
 
     private function seedMenu(string $location, string $name, array $items): void
