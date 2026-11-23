@@ -7,6 +7,8 @@ use App\Models\Page;
 use App\Models\Post;
 use App\Models\Property;
 use App\Models\Service;
+use App\Models\GalleryItem;
+use App\Models\NeighborhoodGuide;
 
 class SitemapController extends Controller
 {
@@ -19,6 +21,9 @@ class SitemapController extends Controller
             ['loc' => route('services.index'), 'lastmod' => now()],
             ['loc' => route('team.index'), 'lastmod' => now()],
             ['loc' => route('testimonials.index'), 'lastmod' => now()],
+            ['loc' => route('gallery.index'), 'lastmod' => now()],
+            ['loc' => route('faq.index'), 'lastmod' => now()],
+            ['loc' => route('neighborhood-guides.index'), 'lastmod' => now()],
         ]);
 
         foreach (Property::published()->get(['slug', 'updated_at']) as $property) {
@@ -31,6 +36,10 @@ class SitemapController extends Controller
 
         foreach (Page::where('status', 'published')->get(['slug', 'updated_at']) as $page) {
             $urls->push(['loc' => route('pages.show', $page->slug), 'lastmod' => $page->updated_at]);
+        }
+
+        foreach (NeighborhoodGuide::published()->get(['slug', 'updated_at']) as $guide) {
+            $urls->push(['loc' => route('neighborhood-guides.show', $guide->slug), 'lastmod' => $guide->updated_at]);
         }
 
         foreach (Service::published()->get(['slug', 'updated_at']) as $service) {
