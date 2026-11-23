@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\GalleryItem;
 use App\Models\NeighborhoodGuide;
 use App\Models\Post;
 use App\Models\Service;
@@ -81,4 +82,38 @@ class FrontendPaginationTest extends TestCase
             ->assertOk()
             ->assertSee('Bareilly property article 10');
     }
+    public function test_gallery_category_filter_is_applied_server_side_and_preserved_by_pagination(): void
+    {
+        foreach (range(1, 19) as $number) {
+            GalleryItem::query()->create([
+                'title' => 'Apartment gallery image '.$number,
+                'slug' => 'apartment-gallery-image-'.$number,
+                'description' => 'Approved apartment gallery image.',
+                'category' => 'apartment',
+                'status' => 'published',
+                'published_at' => now()->subMinutes($number),
+                'sort_order' => $number,
+            ]);
+        }
+
+        GalleryItem::query()->create([
+            'title' => 'Commercial gallery image',
+            'slug' => 'commercial-gallery-image',
+            'category' => 'commercial',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        $this->get(route('gallery.index', ['category' => 'apartment']))
+            ->assertOk()
+            ->assertSee('cat1', false)
+            ->assertSee(e(route('gallery.index', ['category' => 'apartment', 'page' => 2])), false)
+            ->assertDontSee('Commercial gallery image');
+
+        $this->get(route('gallery.index', ['category' => 'apartment', 'page' => 2]))
+            ->assertOk()
+            ->assertSee('Apartment gallery image 19')
+            ->assertDontSee('Commercial gallery image');
+    }
+
 }
