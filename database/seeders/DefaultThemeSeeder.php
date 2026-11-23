@@ -67,9 +67,12 @@ class DefaultThemeSeeder extends Seeder
             ['For Sale', '/properties?listing_type=sale', 'Properties', 2],
             ['For Rent', '/properties?listing_type=rent', 'Properties', 3],
             ['Services', '/services', null, 4],
-            ['About Us', '/about', null, 5],
-            ['Blog', '/blog', null, 6],
-            ['Contact', '/contact', null, 7],
+            ['Gallery', '/gallery', null, 5],
+            ['Neighborhood Guide', '/neighborhood-guide', null, 6],
+            ['FAQs', '/faq', null, 7],
+            ['About Us', '/about', null, 8],
+            ['Blog', '/blog', null, 9],
+            ['Contact', '/contact', null, 10],
         ]);
 
         $this->seedMenu('footer-quick-links', 'Footer quick links', [
@@ -154,6 +157,7 @@ class DefaultThemeSeeder extends Seeder
                 $legacyUrl = match ($url) {
                     '/about' => '/about.html',
                     '/contact' => '/contact.html',
+                    '/services' => '/services',
                     default => null,
                 };
                 if ($legacyUrl && $item->url === $legacyUrl) {
