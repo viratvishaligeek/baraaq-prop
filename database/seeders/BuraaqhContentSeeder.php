@@ -44,6 +44,7 @@ class BuraaqhContentSeeder extends Seeder
     public function run(): void
     {
         DB::transaction(function (): void {
+            $this->retireLegacyPillarDemoRecords();
             $this->authorId = User::query()->orderBy('id')->value('id');
 
             $this->seedSettings();
@@ -64,6 +65,50 @@ class BuraaqhContentSeeder extends Seeder
         Cache::forget('homepage:published-default');
         Cache::forget('homepage:published-default:id');
         Cache::forget('settings:all');
+    }
+
+    private function retireLegacyPillarDemoRecords(): void
+    {
+        $legacyPropertySlugs = [
+            'the-oakwood-residences', 'cedar-grove-villa', 'the-aranya-apartments',
+            'palm-court-independent-home', 'the-skyline-penthouse', 'maple-leaf-builder-floor',
+            'the-courtyard-house', 'riverside-commercial-suites', 'meadow-view-farmhouse',
+            'the-meridian-apartments', 'willow-creek-residence', 'orchid-business-plaza',
+            'silver-oak-residential-plot', 'lakeview-family-apartment', 'the-heritage-bungalow',
+            'studio-one-business-loft',
+        ];
+        Property::query()->whereIn('slug', $legacyPropertySlugs)->update([
+            'status' => 'draft',
+            'is_featured' => false,
+            'published_at' => null,
+            'whatsapp_number' => null,
+        ]);
+
+        TeamMember::query()->where('email', 'like', '%@pillarrealty.example')->delete();
+
+        Testimonial::query()->whereIn('name', [
+            'Julia Era', 'Carlos Bauch', 'Martha Collins', 'Daniel Foster',
+            'Sophia Bennett', 'Oliver Hayes', 'Aisha Khan', 'Noah Williams',
+        ])->update(['status' => 'draft', 'is_active' => false]);
+
+        Comment::query()->whereIn('email', [
+            'nisha@example.test', 'rahul@example.test', 'priya@example.test',
+            'arjun@example.test', 'kavya@example.test', 'manav@example.test',
+            'tara@example.test', 'neil@example.test', 'ritika@example.test', 'aditya@example.test',
+        ])->update(['status' => 'pending']);
+
+        Enquiry::query()->whereIn('email', [
+            'aarav.sharma@example.test', 'meera.kapoor@example.test', 'rohan.verma@example.test',
+            'ananya.singh@example.test', 'kabir.malhotra@example.test', 'ishita.jain@example.test',
+            'dev.mehta@example.test', 'sara.khan@example.test',
+        ])->update(['status' => 'closed', 'admin_notes' => 'Legacy synthetic demo enquiry — not a customer lead.']);
+
+        NewsletterSubscriber::query()->whereIn('email', [
+            'riya.shah@example.test', 'aditya.malhotra@example.test', 'neha.verma@example.test',
+            'ishaan.kapoor@example.test', 'simran.kaur@example.test', 'arjun.mehta@example.test',
+            'tanvi.joshi@example.test', 'rohit.singh@example.test', 'anika.bose@example.test',
+            'vivaan.gupta@example.test', 'sana.ali@example.test', 'karan.bhatia@example.test',
+        ])->delete();
     }
 
     private function seedSettings(): void
