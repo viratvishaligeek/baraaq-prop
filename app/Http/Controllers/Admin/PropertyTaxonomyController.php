@@ -31,13 +31,16 @@ class PropertyTaxonomyController extends Controller
     public function amenities()
     {
         $this->authorizeView();
-        $items = Property::query()->whereNotNull('features')->get(['id', 'features'])
-            ->flatMap(fn (Property $property) => collect($property->features ?? [])->map(fn ($feature) => trim((string) $feature)))
-            ->filter()
-            ->countBy()
-            ->sortKeys()
-            ->map(fn ($count, $name) => (object) ['name' => $name, 'properties_count' => $count])
-            ->values();
+        $counts = [];
+        foreach (DB::table('properties')->whereNotNull('features')->select('features')->cursor() as $row) {
+            $features = is_array($row->features) ? $row->features : json_decode((string) $row->features, true);
+            foreach (is_array($features) ? $features : [] as $feature) {
+                $name = trim((string) $feature);
+                if ($name !== '') $counts[$name] = ($counts[$name] ?? 0) + 1;
+            }
+        }
+        ksort($counts);
+        $items = collect($counts)->map(fn ($count, $name) => (object) ['name' => $name, 'properties_count' => $count])->values();
 
         return view('admin.properties.taxonomies', ['taxonomy' => 'amenities', 'items' => $items]);
     }
