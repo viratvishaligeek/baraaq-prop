@@ -8,7 +8,6 @@ use App\Models\NeighborhoodGuide;
 use App\Models\Post;
 use App\Models\Tag;
 use App\Models\User;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -281,7 +280,12 @@ HTML,
         }
 
         foreach ($articles as $article) {
-            $post = Post::query()->firstOrCreate(
+            $existingPost = Post::withTrashed()->where('slug', $article['slug'])->first();
+            if ($existingPost?->trashed()) {
+                continue;
+            }
+
+            $post = $existingPost ?? Post::query()->firstOrCreate(
                 ['slug' => $article['slug']],
                 [
                     'title' => $article['title'],
