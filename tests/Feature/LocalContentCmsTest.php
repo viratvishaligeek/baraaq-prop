@@ -1,22 +1,20 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\\Feature;
 
-use App\Models\FaqItem;
-use App\Models\GalleryItem;
-use App\Models\NeighborhoodGuide;
-use App\Models\Property;
-use App\Models\Post;
-use App\Models\Service;
-use App\Models\Property;
-use App\Models\Post;
-use App\Models\Role;
-use App\Models\User;
-use Database\Seeders\RolePermissionSeeder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
+use App\\Models\\FaqItem;
+use App\\Models\\GalleryItem;
+use App\\Models\\NeighborhoodGuide;
+use App\\Models\\Post;
+use App\\Models\\Property;
+use App\\Models\\Role;
+use App\\Models\\Service;
+use App\\Models\\User;
+use Database\\Seeders\\RolePermissionSeeder;
+use Illuminate\\Foundation\\Testing\\RefreshDatabase;
+use Illuminate\\Http\\UploadedFile;
+use Illuminate\\Support\\Facades\\Storage;
+use Tests\\TestCase;
 
 class LocalContentCmsTest extends TestCase
 {
