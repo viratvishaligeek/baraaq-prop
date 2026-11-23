@@ -173,11 +173,13 @@ class BuraaqhServiceSeeder extends Seeder
                 ]
             );
 
-            foreach ($data['features'] as $featureIndex => [$title, $description]) {
-                ServiceFeature::query()->firstOrCreate(
-                    ['service_id' => $service->id, 'title' => $title],
-                    ['description' => $description, 'sort_order' => $featureIndex + 1]
-                );
+            if ($service->wasRecentlyCreated) {
+                foreach ($data['features'] as $featureIndex => [$title, $description]) {
+                    ServiceFeature::query()->firstOrCreate(
+                        ['service_id' => $service->id, 'title' => $title],
+                        ['description' => $description, 'sort_order' => $featureIndex + 1]
+                    );
+                }
             }
         }
     }
