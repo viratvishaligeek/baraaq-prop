@@ -47,7 +47,6 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertSame(0, TeamMember::query()->count());
         $this->assertSame(10, HomepageSection::query()->count());
         $this->assertSame(6, MediaAttachment::query()->count());
-        $this->assertSame(6, MediaAttachment::query()->count());
         $this->assertSame(7, NeighborhoodGuide::query()->count());
         $this->assertSame(18, FaqItem::query()->count());
         $article = Post::query()->where('slug', 'complete-guide-buying-residential-property-bareilly')->firstOrFail();
