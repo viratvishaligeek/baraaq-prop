@@ -9,6 +9,16 @@ class HomepageTemplateSeeder extends Seeder
 {
     public function run(): void
     {
+        $existingHomepage = Homepage::withTrashed()->where('slug', 'home-9')->first();
+
+        if ($existingHomepage?->trashed()) {
+            return;
+        }
+
+        if ($existingHomepage) {
+            return;
+        }
+
         Homepage::query()->firstOrCreate(
             ['slug' => 'home-9'],
             [
