@@ -30,9 +30,12 @@
             <h4 class="mb-3">Favicon</h4>
             <div class="col-md-6">
                 <label class="form-label">Site favicon</label>
-                <input class="form-control" type="file" name="favicon" id="upload-favicon" accept=".png,.ico,image/png,image/x-icon">
-                <input type="hidden" name="favicon_media_id" id="media-favicon" data-media-upload-input="upload-favicon">
-                <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-favicon">Choose PNG from Media Library</button>
+                <input type="hidden" name="favicon_media_id" id="media-favicon" data-remove-flag-id="remove-favicon">
+                <input type="hidden" name="remove_favicon" id="remove-favicon" value="0">
+                <div class="d-flex flex-wrap gap-2 mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-open-media-picker data-target="media-favicon">Choose PNG from Media Library</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-clear-media data-target="media-favicon">Remove selected favicon</button>
+                </div>
                 <div class="mt-2">
                     <img src="{{ $faviconUrl }}"
                         alt="Current favicon" width="32" data-media-preview @if (empty($settings['favicon'])) hidden @endif>
@@ -97,9 +100,12 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Default social sharing image</label>
-                    <input class="form-control" type="file" name="default_og_image" id="upload-default-og-image" accept="image/*">
-                    <input type="hidden" name="default_og_image_media_id" id="media-default-og-image" data-media-upload-input="upload-default-og-image">
-                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-default-og-image">Choose from Media Library</button>
+                    <input type="hidden" name="default_og_image_media_id" id="media-default-og-image" data-remove-flag-id="remove-default-og-image">
+                    <input type="hidden" name="remove_default_og_image" id="remove-default-og-image" value="0">
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-open-media-picker data-target="media-default-og-image">Choose from Media Library</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-clear-media data-target="media-default-og-image">Remove selected image</button>
+                    </div>
                     <div class="mt-2">
                         <img src="{{ $defaultOgUrl }}"
                             alt="Default social image preview" style="max-width:160px" data-media-preview @if (empty($settings['default_og_image'])) hidden @endif>
