@@ -32,6 +32,9 @@ class RolePermissionSeeder extends Seeder
             'settings' => 'Website settings',
             'users' => 'Users and roles',
             'tags' => 'Blog tags',
+            'gallery' => 'Gallery items',
+            'faqs' => 'Frequently asked questions',
+            'neighborhood-guides' => 'Neighborhood guides',
         ];
 
         foreach ($modules as $slug => $label) {
