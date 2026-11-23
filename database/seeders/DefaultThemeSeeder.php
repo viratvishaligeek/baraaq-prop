@@ -133,9 +133,9 @@ class DefaultThemeSeeder extends Seeder
             ], true);
             $legacyDemoValue = $legacyGalleryImages || $legacyTextValue || $legacyMapUrl || $legacyContactOrSocial;
 
-            // Fill missing defaults and replace only known template/demo values.
-            // Any non-empty administrator-configured value is preserved.
-            if (trim($existingValue) === '' || $legacyDemoValue) {
+            // Replace only known template/demo values. An existing blank value may
+            // be an intentional administrator choice and is therefore preserved.
+            if ($legacyDemoValue) {
                 $writeValue = $type === 'json' ? (json_decode($value, true) ?? []) : $value;
                 Setting::write($key, $writeValue, $group, $type);
             }
