@@ -45,6 +45,7 @@ class BuraaqhContentSeeder extends Seeder
     {
         DB::transaction(function (): void {
             $this->retireLegacyPillarDemoRecords();
+            $this->replaceLegacyBrandContent();
             $this->authorId = User::query()->orderBy('id')->value('id');
 
             $this->seedSettings();
@@ -109,6 +110,54 @@ class BuraaqhContentSeeder extends Seeder
             'tanvi.joshi@example.test', 'rohit.singh@example.test', 'anika.bose@example.test',
             'vivaan.gupta@example.test', 'sana.ali@example.test', 'karan.bhatia@example.test',
         ])->delete();
+    }
+
+    private function replaceLegacyBrandContent(): void
+    {
+        $contentModels = [
+            Post::class => ['excerpt', 'content', 'meta_title', 'meta_description'],
+            Page::class => ['content', 'meta_title', 'meta_description'],
+            Service::class => ['excerpt', 'content', 'meta_title', 'meta_description'],
+            Banner::class => ['title', 'subtitle', 'description', 'button_text'],
+        ];
+
+        foreach ($contentModels as $model => $fields) {
+            $records = $model::query()->where(function ($query) use ($fields): void {
+                foreach ($fields as $index => $field) {
+                    $query->{$index === 0 ? 'where' : 'orWhere'}($field, 'like', '%Pillar%');
+                    $query->orWhere($field, 'like', '%Meerut%');
+                }
+            })->get();
+
+            foreach ($records as $record) {
+                foreach ($fields as $field) {
+                    if (! is_string($record->{$field})) continue;
+                    $record->{$field} = str_replace(
+                        ['Pillar Realty', 'Pillar', 'Meerut', 'Noida', 'Ghaziabad', 'Delhi NCR'],
+                        ['Buraaqh Properties', 'Buraaqh Properties', 'Bareilly', 'Bareilly', 'Bareilly', 'Bareilly region'],
+                        $record->{$field}
+                    );
+                }
+                $record->save();
+            }
+        }
+
+        foreach (MenuItem::query()->where('label', 'like', '%Pillar%')->get() as $item) {
+            $item->label = str_replace('Pillar', 'Buraaqh Properties', $item->label);
+            if (is_string($item->url)) $item->url = str_replace('pillar', 'buraaqh', $item->url);
+            $item->save();
+        }
+
+        if (class_exists(HomepageSection::class)) {
+            foreach (HomepageSection::query()->get() as $section) {
+                $config = $section->config;
+                $json = is_string($config) ? $config : json_encode($config);
+                if (! is_string($json) || ! str_contains($json, 'Pillar')) continue;
+                $json = str_replace(['Pillar Realty', 'Pillar', 'Meerut', 'Noida', 'Ghaziabad', 'Delhi NCR'], ['Buraaqh Properties', 'Buraaqh Properties', 'Bareilly', 'Bareilly', 'Bareilly', 'Bareilly region'], $json);
+                $section->config = is_string($config) ? $json : json_decode($json, true);
+                $section->save();
+            }
+        }
     }
 
     private function seedSettings(): void
