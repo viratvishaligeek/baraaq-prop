@@ -59,5 +59,16 @@
 @empty
     <p class="text-muted">No property listings are currently published.</p>
 @endforelse
-</div></div><div class="widget bg-smoke"><h3 class="widget_title">Contact Us</h3><p>Have a question about this service?</p><a href="{{ route('contact') }}" class="th-btn radius">Contact our team</a></div><div class="widget widget_banner" data-bg-src="{{ asset('theme-assets/img/bg/widget_banner.jpg') }}"><div class="widget-banner"><h2 class="title">We can help you to find real estate agency</h2><a href="{{ route('contact') }}" class="th-btn radius">Contact with Agent</a></div></div></aside></div></div></div></section>
+</div></div><div class="widget sidebar-contact-form">
+<h3 class="widget_title">Contact Us</h3>
+<div class="contact-form-widget">
+<form action="{{ route('enquiries.store') }}" method="POST" class="newsletter-form">
+@csrf
+<input type="hidden" name="subject" value="Service enquiry">
+<div class="form-group"><input class="form-control" type="text" name="name" value="{{ old('name') }}" placeholder="Your Name" required maxlength="150"></div>
+<div class="form-group"><input class="form-control" type="email" name="email" value="{{ old('email') }}" placeholder="Your Email" required></div>
+<div class="form-group"><input class="form-control" type="text" name="phone" value="{{ old('phone') }}" placeholder="Your Phone" required maxlength="30"></div>
+<div class="form-group mb-4"><textarea name="message" cols="30" rows="3" class="form-control" placeholder="Your Message">{{ old('message') }}</textarea></div>
+<div class="form-btn pt-2"><button type="submit" class="th-btn radius">Send Us</button></div>
+</form></div></div><div class="widget widget_banner" data-bg-src="{{ asset('theme-assets/img/bg/widget_banner.jpg') }}"><div class="widget-banner"><h2 class="title">We can help you to find real estate agency</h2><a href="{{ route('contact') }}" class="th-btn radius">Contact with Agent</a></div></div></aside></div></div></div></section>
 @endsection
