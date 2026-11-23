@@ -9,7 +9,7 @@ class HomepageTemplateSeeder extends Seeder
 {
     public function run(): void
     {
-        $siteName = trim((string) env('SITE_NAME', 'Buraaqh Properties Real Estate')) ?: 'Buraaqh Properties Real Estate';
+        $siteName = trim((string) env('SITE_NAME', 'Buraaqh Properties')) ?: 'Buraaqh Properties Real Estate';
 
         $homepage = Homepage::query()->firstOrCreate(
             ['slug' => 'home-9'],
@@ -22,11 +22,5 @@ class HomepageTemplateSeeder extends Seeder
             ]
         );
 
-        if ($homepage->status !== 'published' || ! $homepage->published_at) {
-            $homepage->update([
-                'status' => 'published',
-                'published_at' => $homepage->published_at ?: now(),
-            ]);
-        }
     }
 }
