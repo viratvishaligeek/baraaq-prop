@@ -15,7 +15,9 @@ class ContentController extends Controller
 {
     public function blog(Request $request)
     {
+        $filters = $request->validate(['q' => ['nullable', 'string', 'max:160'], 'category' => ['nullable', 'string', 'max:120'], 'tag' => ['nullable', 'string', 'max:120']]);
         $posts = Post::published()->with(['author:id,name', 'categories', 'tags'])
+            ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('title', 'like', '%'.$term.'%')->orWhere('excerpt', 'like', '%'.$term.'%')))
             ->when($request->filled('category'), function ($query) use ($request) {
                 $query->whereHas('categories', fn ($categories) => $categories->where('slug', $request->string('category')));
             })
@@ -28,6 +30,7 @@ class ContentController extends Controller
 
         return view('frontend.blog.index', [
             'posts' => $posts,
+            'searchTerm' => $filters['q'] ?? '',
             'activeCategory' => $request->query('category'),
             'activeTag' => $request->query('tag'),
             'categories' => Category::where('type', 'post')->where('is_active', true)->orderBy('name')->get(['id', 'name', 'slug']),
@@ -38,7 +41,15 @@ class ContentController extends Controller
     {
         abort_unless($post->status === 'published' && $post->published_at && $post->published_at->lte(now()), 404);
 
-        return view('frontend.blog.show', ['post' => $post->load(['categories', 'tags', 'comments' => fn ($query) => $query->where('status', 'approved')->latest()])]);
+        $post->load(['author:id,name', 'categories', 'tags', 'comments' => fn ($query) => $query->where('status', 'approved')->latest()]);
+        $relatedPosts = Post::published()
+            ->whereKeyNot($post->id)
+            ->when($post->categories->isNotEmpty(), fn ($query) => $query->whereHas('categories', fn ($categories) => $categories->whereIn('categories.id', $post->categories->pluck('id'))))
+            ->latest('published_at')
+            ->limit(3)
+            ->get();
+
+        return view('frontend.blog.show', compact('post', 'relatedPosts'));
     }
 
     public function storeComment(Request $request, Post $post)
@@ -49,16 +60,26 @@ class ContentController extends Controller
         return back()->with('comment_submitted', 'Your comment has been received and is awaiting moderation.');
     }
 
-    public function services()
+    public function services(Request $request)
     {
-        $services = Service::published()->latest('published_at')->paginate(12);
+        $filters = $request->validate(['q' => ['nullable', 'string', 'max:120']]);
+        $services = Service::published()
+            ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('title', 'like', '%'.$term.'%')->orWhere('excerpt', 'like', '%'.$term.'%')))
+            ->latest('published_at')->paginate(12)->withQueryString();
         return view('frontend.services.index', compact('services'));
     }
 
     public function service(Service $service)
     {
         abort_unless($service->status === 'published' && $service->published_at && $service->published_at->lte(now()), 404);
-        return view('frontend.services.show', compact('service'));
+        $service->load(['features', 'images']);
+        $relatedServices = Service::published()
+            ->whereKeyNot($service->id)
+            ->latest('published_at')
+            ->limit(3)
+            ->get();
+
+        return view('frontend.services.show', compact('service', 'relatedServices'));
     }
 
     public function team()
@@ -73,10 +94,38 @@ class ContentController extends Controller
         return view('frontend.testimonials.index', compact('testimonials'));
     }
 
+    public function contact()
+    {
+        $page = Page::query()
+            ->where('slug', 'contact')
+            ->where('status', 'published')
+            ->first();
+
+        return view('frontend.contact', compact('page'));
+    }
+
+    public function about()
+    {
+        $page = Page::query()
+            ->where('slug', 'about')
+            ->where('status', 'published')
+            ->firstOrFail();
+
+        return view('frontend.about', [
+            'page' => $page,
+            'canonicalUrl' => $page->canonical_url ?: route('about'),
+            'members' => TeamMember::query()->where('status', 'published')->where('is_active', true)->orderBy('sort_order')->limit(6)->get(),
+            'testimonials' => Testimonial::query()->where('status', 'published')->where('is_active', true)->orderBy('sort_order')->limit(6)->get(),
+        ]);
+    }
+
     public function page(Page $page)
     {
         abort_unless($page->status === 'published', 404);
 
-        return view('frontend.pages.show', compact('page'));
+        return view('frontend.pages.show', [
+            'page' => $page,
+            'canonicalUrl' => $page->canonical_url ?: route('pages.show', $page),
+        ]);
     }
 }

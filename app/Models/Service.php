@@ -29,6 +29,16 @@ class Service extends Model
         return ['published_at' => 'datetime'];
     }
 
+    public function features()
+    {
+        return $this->hasMany(ServiceFeature::class)->orderBy('sort_order');
+    }
+
+    public function images()
+    {
+        return $this->hasMany(ServiceImage::class)->orderBy('sort_order');
+    }
+
     public function scopePublished($query)
     {
         return $query->where('status', 'published')

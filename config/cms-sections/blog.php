@@ -9,7 +9,7 @@ return [
         'defaults' => [
             'eyebrow' => 'latest News',
             'heading' => 'Latest news & articles',
-            'description' => 'Car dealerships typically feature showrooms where the latest models are displayed in a well-lit, aesthetically pleasing environment.',
+            'description' => 'Practical articles about property decisions, ownership documents, neighbourhood checks and moving.',
             'button_label' => 'Explore All',
             'button_url' => '/blog',
             'items_limit' => 6,

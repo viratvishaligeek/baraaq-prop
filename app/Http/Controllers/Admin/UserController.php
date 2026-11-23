@@ -36,9 +36,11 @@ class UserController extends Controller
 
     public function index()
     {
-        return view('admin.users.index', [
-            'users' => User::with('roles')->latest()->paginate(20),
-        ]);
+        $filters = request()->validate(['q' => ['nullable', 'string', 'max:160']]);
+        $users = User::with('roles')
+            ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('name', 'like', '%'.$term.'%')->orWhere('email', 'like', '%'.$term.'%')->orWhere('phone', 'like', '%'.$term.'%')))
+            ->latest()->paginate(20)->withQueryString();
+        return view('admin.users.index', compact('users'));
     }
 
     public function create()

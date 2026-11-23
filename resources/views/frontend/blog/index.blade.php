@@ -1,32 +1,12 @@
-@extends('frontend.layouts.theme') @section('title','Blog · '.config('app.name')) @section('content')<div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcumb-bg.jpg') }}">
-<div class="container">
-<div class="breadcumb-content">
-<h1 class="breadcumb-title">Latest News</h1>
-<ul class="breadcumb-menu">
-<li>
-<a href="{{ route('home') }}">Home</a>
-</li>
-<li>Blog</li>
-</ul>
-</div>
-</div>
-</div>
-<section class="space">
-<div class="container">
-<div class="d-flex flex-wrap gap-2 mb-4">
-<a class="btn btn-sm {{ empty($activeCategory) ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('blog.index') }}">All articles</a>@foreach($categories as $category)<a class="btn btn-sm {{ $activeCategory === $category->slug ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ route('blog.index',['category'=>$category->slug]) }}">{{ $category->name }}</a>@endforeach</div>
-<div class="row gy-4">@forelse($posts as $post)<div class="col-md-6 col-xl-4">
-<article class="blog-card">
-<a href="{{ route('blog.show',$post) }}">
-<img class="w-100" src="{{ $post->featured_image?Storage::disk('public')->url($post->featured_image):asset('theme-assets/img/blog/blog_1_1.jpg') }}" alt="{{ $post->title }}">
-</a>
-<div class="blog-content">
-<h3>
-<a href="{{ route('blog.show',$post) }}">{{ $post->title }}</a>
-</h3>
-<p>{{ $post->excerpt }}</p>
-<a href="{{ route('blog.show',$post) }}">Read more</a>
-</div>
-</article>
-</div>@empty<div class="col-12 text-center">No articles published yet.</div>@endforelse</div>{{ $posts->links() }}</div>
-</section>@endsection
+@extends('frontend.layouts.theme')
+@section('title', \App\Models\Setting::read('blog_meta_title','Blog | '.config('app.name')))
+@section('meta_description', \App\Models\Setting::read('blog_meta_description','Real estate news and guidance.'))
+@section('canonical_url', route('blog.index'))
+@section('content')
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/blog/breadcrumb-bg.jpg') }}"><div class="container"><div class="breadcumb-content"><h1 class="breadcumb-title">Blog Grid</h1><ul class="breadcumb-menu"><li><a href="{{ route('home') }}">Home</a></li><li>Blog Grid</li></ul></div></div></div><form method="GET" action="{{ route('blog.index') }}" class="container mb-4"><div class="row g-2"><div class="col-md-5"><input class="form-control" type="search" name="q" value="{{ request('q') }}" placeholder="Search articles"></div><div class="col-md-4"><select class="form-select" name="category"><option value="">All categories</option>@foreach($categories as $category)<option value="{{ $category->slug }}" @selected(request('category')===$category->slug)>{{ $category->name }}</option>@endforeach</select></div><div class="col-auto"><button class="th-btn">Search</button></div></div></form><section class="th-blog-wrapper space-top space-extra-bottom"><div class="container"><div class="row gy-30 justify-content-center">@forelse ($posts as $post)
+<div class="col-lg-4 col-md-6"><div class="blog-card"><div class="blog-img"><a href="{{ route('blog.show', $post) }}"><img src="{{ $post->featured_image ? Storage::disk('public')->url($post->featured_image) : asset('theme-assets/img/blog/blog_1_1.jpg') }}" alt="{{ $post->title }}"></a><div class="date"><a href="{{ route('blog.show', $post) }}">{{ $post->published_at?->format("d M") }}</a></div></div><div class="blog-content"><div class="blog-meta"><a href="{{ route('blog.show', $post) }}"><i class="fa-solid fa-user"></i> {{ $post->author?->name ?? 'Buraaqh Properties' }}</a> <a href="{{ route('blog.show', $post) }}"><i class="fa-solid fa-comments"></i> No Comments</a></div><h3 class="box-title"><a href="{{ route('blog.show', $post) }}">{{ $post->title }}</a></h3><a href="{{ route('blog.show', $post) }}" class="th-btn pill style3">Read More</a></div></div></div>
+@empty
+<div class="col-12 text-center text-muted">No articles have been published yet.</div>
+@endforelse<div class="th-pagination text-center pt-4"><ul><li><a href="{{ route('blog.index') }}"><i class="far fa-arrow-left"></i></a></li><li><a href="{{ route('blog.index') }}">1</a></li><li><a href="{{ route('blog.index') }}">2</a></li><li><a href="{{ route('blog.index') }}">3</a></li><li><a class="next-page" href="{{ route('blog.index') }}">Next <i class="far fa-arrow-right"></i></a></li></ul></div></div></div></section>
+<div class="container mt-4">{{ $posts->withQueryString()->links() }}</div>
+@endsection

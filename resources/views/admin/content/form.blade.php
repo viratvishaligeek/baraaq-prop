@@ -279,6 +279,27 @@
                                 alt="Featured image preview" class="rounded" style="max-width:180px;max-height:100px;object-fit:cover"
                                 data-media-preview @if (!$item->featured_image) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                         </div>
+                        @if ($type === 'services')
+                            <div class="col-12">
+                                <label class="form-label">Service features (JSON array)</label>
+                                <textarea class="form-control font-monospace" name="features_json" rows="7" placeholder='[{"title":"Property review","description":"Review the requirements","icon":"fa-house"}]'>{{ old('features_json', json_encode(($serviceFeatures ?? collect())->map(fn($feature) => ['title' => $feature->title, 'description' => $feature->description, 'icon' => $feature->icon])->values(), JSON_PRETTY_PRINT)) }}</textarea>
+                                <div class="form-text">Each feature supports title, description and optional icon. Leave empty if no feature list is required.</div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Inside images</label>
+                                <input class="form-control" type="file" name="inside_images[]" accept="image/jpeg,image/png,image/webp" multiple>
+                                @if (($serviceImages ?? collect())->isNotEmpty())
+                                    <div class="row g-3 mt-1">
+                                        @foreach ($serviceImages as $serviceImage)
+                                            <div class="col-6 col-md-3">
+                                                <img class="img-fluid rounded" src="{{ Storage::disk('public')->url($serviceImage->path) }}" alt="{{ $serviceImage->alt_text }}">
+                                                <label class="form-check mt-1"><input class="form-check-input" type="checkbox" name="remove_inside_images[]" value="{{ $serviceImage->id }}"> Remove this image</label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
                         @if ($type === 'posts')
                             <div class="col-12">
                                 <label class="form-label">Tags</label>
@@ -386,6 +407,32 @@
                     }
                     $('[name="type"]').on('change', filterParentCategories);
                     filterParentCategories();
+                });
+            </script>
+        @endpush
+    @endif
+    @if ($type === 'services')
+        @push('scripts')
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const input = document.querySelector('input[name="inside_images[]"]');
+                    if (!input) return;
+                    const previews = document.createElement('div');
+                    previews.className = 'd-flex flex-wrap gap-2 mt-2';
+                    input.insertAdjacentElement('afterend', previews);
+                    input.addEventListener('change', function () {
+                        previews.innerHTML = '';
+                        Array.from(input.files || []).forEach(function (file) {
+                            const image = document.createElement('img');
+                            image.src = URL.createObjectURL(file);
+                            image.alt = file.name;
+                            image.className = 'rounded';
+                            image.style.width = '120px';
+                            image.style.height = '88px';
+                            image.style.objectFit = 'cover';
+                            previews.appendChild(image);
+                        });
+                    });
                 });
             </script>
         @endpush

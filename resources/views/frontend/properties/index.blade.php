@@ -1,95 +1,16 @@
 @extends('frontend.layouts.theme')
-@section('title','Properties · '.config('app.name'))
-@section('meta_description',\App\Models\Setting::read('meta_description','Browse available properties'))
+@section('title', \App\Models\Setting::read('properties_meta_title','Properties | '.config('app.name')))
+@section('meta_description', \App\Models\Setting::read('properties_meta_description','Browse published property listings.'))
+@section('canonical_url', route('properties.index'))
 @section('content')
-<div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcumb-bg.jpg') }}">
-<div class="container">
-<div class="breadcumb-content">
-<h1 class="breadcumb-title">Properties</h1>
-<ul class="breadcumb-menu">
-<li>
-<a href="{{ route('home') }}">Home</a>
-</li>
-<li>Properties</li>
-</ul>
-</div>
-</div>
-</div>
-<section class="th-blog-wrapper space-top space-extra-bottom">
-<div class="container">
-<form method="GET" action="{{ route('properties.index') }}" class="property-search-form mb-5">
-<div class="row g-3">
-<div class="col-lg-3 col-md-6">
-<input class="form-control" name="q" value="{{ request('q') }}" placeholder="Search properties">
-</div>
-<div class="col-lg-2 col-md-6">
-<input class="form-control" name="city" value="{{ request('city') }}" placeholder="City">
-</div>
-<div class="col-lg-2 col-md-6">
-<select class="form-select" name="listing_type">
-<option value="">Buy or rent</option>
-<option value="sale" @selected(request('listing_type')==='sale')>For sale</option>
-<option value="rent" @selected(request('listing_type')==='rent')>For rent</option>
-<option value="lease" @selected(request('listing_type')==='lease')>For lease</option>
-</select>
-</div>
-<div class="col-lg-2 col-md-6">
-<input class="form-control" name="property_type" value="{{ request('property_type') }}" placeholder="Type">
-</div>
-<div class="col-lg-1 col-md-6">
-<input class="form-control" type="number" name="min_price" value="{{ request('min_price') }}" placeholder="Min">
-</div>
-<div class="col-lg-1 col-md-6">
-<input class="form-control" type="number" name="max_price" value="{{ request('max_price') }}" placeholder="Max">
-</div>
-<div class="col-lg-1 col-md-12">
-<button class="th-btn w-100">Search</button>
-</div>
-</div>
-</form>
-<div class="row gy-4">@forelse($properties as $property)<div class="col-xl-4 col-lg-6 col-md-6">
-<div class="popular-list-1 grid-style">
-<div class="thumb-wrapper">
-<a class="popular-popup-image" href="{{ $property->featured_image?Storage::disk('public')->url($property->featured_image):asset('theme-assets/img/popular/popular-1-1.jpg') }}">
-<img src="{{ $property->featured_image?Storage::disk('public')->url($property->featured_image):asset('theme-assets/img/popular/popular-1-1.jpg') }}" alt="{{ $property->title }}">
-</a>
-<div class="popular-badge">
-<img src="{{ asset('theme-assets/img/icon/sell_rent_icon.svg') }}" alt="icon">
-<p>{{ $property->listing_type==='rent'?'For Rent':'For Sale' }}</p>
-</div>
-</div>
-<div class="property-content">
-<div class="media-body">
-<h3 class="box-title">
-<a href="{{ route('properties.show',$property) }}">{{ $property->title }}</a>
-</h3>
-<div class="box-text">
-<div class="icon">
-<img src="{{ asset('theme-assets/img/icon/popular-location.svg') }}" alt="icon">
-</div>{{ $property->address }} {{ $property->city }}</div>
-</div>
-<ul class="property-featured">
-<li>
-<div class="icon">
-<img src="{{ asset('theme-assets/img/icon/bed.svg') }}" alt="icon">
-</div>Bed {{ $property->bedrooms??'—' }}</li>
-<li>
-<div class="icon">
-<img src="{{ asset('theme-assets/img/icon/bath.svg') }}" alt="icon">
-</div>Bath {{ $property->bathrooms??'—' }}</li>
-<li>
-<div class="icon">
-<img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="icon">
-</div>{{ $property->area?number_format((float)$property->area).' '.$property->area_unit:'—' }}</li>
-</ul>
-<div class="property-bottom">
-<h6 class="box-title">{{ $property->price?number_format((float)$property->price,2):$property->price_label }}</h6>
-<a class="th-btn sm style3 pill" href="{{ route('properties.show',$property) }}">View More</a>
-</div>
-</div>
-</div>
-</div>@empty<div class="col-12 text-center py-5">No matching properties found.</div>@endforelse</div>
-<div class="mt-5">{{ $properties->links() }}</div>
-</div>
-</section>
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/blog/breadcrumb-bg.jpg') }}"><div class="container"><div class="breadcumb-content"><h1 class="breadcumb-title">Properties</h1><ul class="breadcumb-menu"><li><a href="{{ route('home') }}">Home</a></li><li>Properties</li></ul></div></div></div><form method="GET" action="{{ route('properties.index') }}" class="container property-search-form mb-4"><div class="row g-3"><div class="col-lg-3"><input class="form-control" name="q" value="{{ request('q') }}" placeholder="Search properties"></div><div class="col-lg-2"><input class="form-control" name="city" value="{{ request('city') }}" placeholder="City"></div><div class="col-lg-2"><select class="form-select" name="listing_type"><option value="">Buy or rent</option><option value="sale" @selected(request('listing_type')==='sale')>For sale</option><option value="rent" @selected(request('listing_type')==='rent')>For rent</option><option value="lease" @selected(request('listing_type')==='lease')>For lease</option></select></div><div class="col-lg-2"><input class="form-control" type="number" name="min_price" value="{{ request('min_price') }}" placeholder="Min price"></div><div class="col-lg-2"><input class="form-control" type="number" name="max_price" value="{{ request('max_price') }}" placeholder="Max price"></div><div class="col-lg-1"><button class="th-btn w-100">Search</button></div></div></form><section class="th-blog-wrapper space-top space-extra-bottom"><div class="container"><div class="th-sort-bar property-style"><div class="row justify-content-between align-items-center"><div class="col-md"><h4 class="box-title text-start fadeinup wow" data-wow-duration="1.5s" data-wow-delay="0.1s">Property Listing</h4></div><div class="col-md-auto"><div class="sorting-filter-wrap fadeinup wow" data-wow-duration="1.5s" data-wow-delay="0.3s"><div class="nav" role="tablist"><a class="active" href="property.html#" id="tab-shop-list" data-bs-toggle="tab" data-bs-target="#tab-list" role="tab" aria-controls="tab-grid" aria-selected="false"><i class="fa-solid fa-list"></i></a> <a href="property.html#" id="tab-shop-grid" data-bs-toggle="tab" data-bs-target="#tab-grid" role="tab" aria-controls="tab-grid" aria-selected="true"><i class="fa-light fa-grid-2"></i></a></div><form class="woocommerce-ordering" method="get"><select name="orderby" class="orderby" aria-label="Shop order"><option value="menu_order" selected="selected">Default Sorting</option><option value="popularity">Sort by popularity</option><option value="rating">Sort by average rating</option><option value="date">Sort by latest</option><option value="price">Sort by price: low to high</option><option value="price-desc">Sort by price: high to low</option></select></form></div></div></div></div><div class="tab-content" id="nav-tabContent"><div class="tab-pane fade" id="tab-grid" role="tabpanel" aria-labelledby="tab-shop-grid"><div class="row gy-40">@forelse ($properties as $property)
+<div class="col-xl-4 col-lg-6 col-md-6 fadeinup wow"><div class="popular-list-1 grid-style"><div class="thumb-wrapper"><div class="th-slider" data-slider-options='{"loop":false, "autoplay": false,"autoHeight": true, "effect":"fade"}'><div class="swiper-wrapper"><div class="swiper-slide"><a class="popular-popup-image" href="{{ $property->featured_image ? Storage::disk('public')->url($property->featured_image) : asset('theme-assets/img/popular/popular-1-1.jpg') }}"><img src="{{ $property->featured_image ? Storage::disk('public')->url($property->featured_image) : asset('theme-assets/img/popular/popular-1-1.jpg') }}" alt="{{ $property->title }}"></a></div><div class="swiper-slide"><a class="popular-popup-image" href="{{ $property->featured_image ? Storage::disk('public')->url($property->featured_image) : asset('theme-assets/img/popular/popular-1-1.jpg') }}"><img src="{{ $property->featured_image ? Storage::disk('public')->url($property->featured_image) : asset('theme-assets/img/popular/popular-1-1.jpg') }}" alt="{{ $property->title }}"></a></div></div><div class="icon-wrap"><button class="slider-arrow slider-prev"><i class="far fa-arrow-left"></i></button> <button class="slider-arrow slider-next"><i class="far fa-arrow-right"></i></button></div></div><div class="actions"><a href="#" class="icon-btn"><i class="fas fa-heart"></i></a></div><div class="actions-style-2-wrapper"><div class="actions style-2"><a href="property.html#" class="icon-btn"><span class="action-text">Add To Favorite</span> <i class="fa-solid fa-bookmark"></i> </a><a href="{{ $property->featured_image ? Storage::disk('public')->url($property->featured_image) : asset('theme-assets/img/popular/popular-1-1.jpg') }}" class="icon-btn popular-popup-image"><span class="action-text">View all img</span> <i class="fa-solid fa-camera"></i></a></div></div><div class="popular-badge"><img src="{{ asset('theme-assets/img/icon/sell_rent_icon.svg') }}" alt="icon"><p>{{ $property->listing_type === 'rent' ? 'For Rent' : ($property->listing_type === 'lease' ? 'For Lease' : 'For Sale') }}</p></div></div><div class="property-content"><div class="media-body"><h3 class="box-title"><a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a></h3><div class="box-text"><div class="icon"><img src="{{ asset('theme-assets/img/icon/popular-location.svg') }}" alt="icon"></div>{{ trim(($property->address ? $property->address.', ' : '').$property->city) }}</div></div><ul class="property-featured"><li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bed.svg') }}" alt="icon"></div>Bed {{ $property->bedrooms ?? '—' }}</li><li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bath.svg') }}" alt="icon"></div>Bath {{ $property->bathrooms ?? '—' }}</li><li><div class="icon"><img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="icon"></div>{{ $property->area ? number_format((float) $property->area).' '.($property->area_unit ?? 'sqft') : '—' }}</li></ul><div class="property-bottom"><h6 class="box-title">{{ $property->price ? number_format((float) $property->price, 2) : ($property->price_label ?? 'Price on request') }}</h6><a class="th-btn sm style3 pill" href="{{ route('properties.show', $property) }}">View More</a></div></div></div></div>
+@empty
+<div class="col-12 text-center text-muted">No matching properties are available.</div>
+@endforelse</div></div><div class="tab-pane fade active show" id="tab-list" role="tabpanel" aria-labelledby="tab-shop-list"><div class="row gy-40 justify-content-center"><div class="col-xl-8 col-lg-12"><div class="row gy-30">@forelse ($properties as $property)
+<div class="col-xl-12 fadeinup wow"><div class="popular-list-1 list-style"><div class="thumb-wrapper"><div class="th-slider" data-slider-options='{"loop":false, "autoplay": false,"autoHeight": true, "effect":"fade"}'><div class="swiper-wrapper"><div class="swiper-slide"><a class="popular-popup-image" href="{{ $property->featured_image ? Storage::disk('public')->url($property->featured_image) : asset('theme-assets/img/popular/popular-1-1.jpg') }}"><img src="{{ $property->featured_image ? Storage::disk('public')->url($property->featured_image) : asset('theme-assets/img/popular/popular-1-1.jpg') }}" alt="{{ $property->title }}"></a></div><div class="swiper-slide"><a class="popular-popup-image" href="{{ $property->featured_image ? Storage::disk('public')->url($property->featured_image) : asset('theme-assets/img/popular/popular-1-1.jpg') }}"><img src="{{ $property->featured_image ? Storage::disk('public')->url($property->featured_image) : asset('theme-assets/img/popular/popular-1-1.jpg') }}" alt="{{ $property->title }}"></a></div></div><div class="icon-wrap"><button class="slider-arrow slider-prev"><i class="far fa-arrow-left"></i></button> <button class="slider-arrow slider-next"><i class="far fa-arrow-right"></i></button></div></div><div class="actions"><a href="#" class="icon-btn"><i class="fas fa-heart"></i></a></div><div class="actions-style-2-wrapper"><div class="actions style-2"><a href="property.html#" class="icon-btn"><span class="action-text">Add To Favorite</span> <i class="fa-solid fa-bookmark"></i> </a><a href="{{ $property->featured_image ? Storage::disk('public')->url($property->featured_image) : asset('theme-assets/img/popular/popular-1-1.jpg') }}" class="icon-btn popular-popup-image"><span class="action-text">View all img</span> <i class="fa-solid fa-camera"></i></a></div></div><div class="popular-badge"><img src="{{ asset('theme-assets/img/icon/sell_rent_icon.svg') }}" alt="icon"><p>{{ $property->listing_type === 'rent' ? 'For Rent' : ($property->listing_type === 'lease' ? 'For Lease' : 'For Sale') }}</p></div></div><div class="property-content"><div class="media-body"><h3 class="box-title"><a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a></h3><div class="box-text"><div class="icon"><img src="{{ asset('theme-assets/img/icon/popular-location.svg') }}" alt="icon"></div>{{ trim(($property->address ? $property->address.', ' : '').$property->city) }}</div></div><ul class="property-featured"><li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bed.svg') }}" alt="icon"></div>Bed {{ $property->bedrooms ?? '—' }}</li><li><div class="icon"><img src="{{ asset('theme-assets/img/icon/bath.svg') }}" alt="icon"></div>Bath {{ $property->bathrooms ?? '—' }}</li><li><div class="icon"><img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="icon"></div>{{ $property->area ? number_format((float) $property->area).' '.($property->area_unit ?? 'sqft') : '—' }}</li></ul><div class="property-bottom"><h6 class="box-title">{{ $property->price ? number_format((float) $property->price, 2) : ($property->price_label ?? 'Price on request') }}</h6><a class="th-btn sm style3 pill" href="{{ route('properties.show', $property) }}">View More</a></div></div></div></div>
+@empty
+<div class="col-12 text-center text-muted">No matching properties are available.</div>
+@endforelse</div></div><div class="col-xl-4 col-lg-6"><aside class="sidebar-area"><div class="widget widget_search"><h3 class="widget_title">search</h3><form class="search-form" method="GET" action="{{ route('properties.index') }}"><input type="search" name="q" value="{{ request('q') }}" placeholder="Enter Keyword"> <button type="submit"><i class="far fa-search"></i></button></form></div><div class="widget"><h3 class="widget_title">Featured Properties</h3><div class="recent-post-wrap featured-listing">@forelse($properties->getCollection()->take(3) as $featuredProperty)<div class="recent-post"><div class="media-img"><a href="{{ route('properties.show',$featuredProperty) }}">@if($featuredProperty->featured_image)<img src="{{ Storage::disk('public')->url($featuredProperty->featured_image) }}" alt="{{ $featuredProperty->title }}">@endif</a></div><div class="media-body"><h4 class="post-title"><a class="text-inherit" href="{{ route('properties.show',$featuredProperty) }}">{{ $featuredProperty->title }}</a></h4><div class="property-features-wrap"><div class="property-features-item"><h5 class="feature-title">Bed {{ $featuredProperty->bedrooms ?? '—' }}</h5></div><div class="divider"></div><div class="property-features-item"><h5 class="feature-title">Bath {{ $featuredProperty->bathrooms ?? '—' }}</h5></div></div><div class="recent-post-meta">{{ $featuredProperty->price ? number_format((float)$featuredProperty->price,2) : ($featuredProperty->price_label ?? 'Price on request') }}</div></div></div>@empty<p class="text-muted">No featured properties are currently available.</p>@endforelse</div></div><div class="widget bg-smoke"><h3 class="widget_title">Contact Us</h3><p>Need help finding the right property?</p><a href="{{ route('contact') }}" class="th-btn radius">Talk to our team</a></div><div class="widget widget_banner" data-bg-src="{{ asset('theme-assets/img/bg/widget_banner.jpg') }}"><div class="widget-banner"><h2 class="title">We can help you to find real estate agency</h2><a href="{{ route('contact') }}" class="th-btn radius">Contact with Agent</a></div></div></aside></div></div></div></div></div></section>
+<div class="container mt-4">{{ $properties->withQueryString()->links() }}</div>
 @endsection

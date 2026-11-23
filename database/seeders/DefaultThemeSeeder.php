@@ -26,8 +26,8 @@ class DefaultThemeSeeder extends Seeder
             'logo' => ['', 'branding', 'string'],
             'favicon' => ['', 'branding', 'string'],
             'header_menu_location' => ['primary', 'navigation', 'string'],
-            'header_cta_label' => ['Browse Properties', 'navigation', 'string'],
-            'header_cta_url' => ['/properties', 'navigation', 'string'],
+            'header_cta_label' => ['Send Enquiry', 'navigation', 'string'],
+            'header_cta_url' => ['/contact', 'navigation', 'string'],
             'footer_menu_location' => ['footer', 'navigation', 'string'],
             'footer_quick_links_menu_location' => ['footer-quick-links', 'navigation', 'string'],
             'footer_support_menu_location' => ['footer-support', 'navigation', 'string'],
@@ -67,26 +67,30 @@ class DefaultThemeSeeder extends Seeder
             ['For Sale', '/properties?listing_type=sale', 'Properties', 2],
             ['For Rent', '/properties?listing_type=rent', 'Properties', 3],
             ['Services', '/services', null, 4],
-            ['About Us', '/about', null, 5],
-            ['Blog', '/blog', null, 6],
-            ['Contact', '/contact', null, 7],
+            ['Gallery', '/gallery', null, 5],
+            ['Neighborhood Guide', '/neighborhood-guide', null, 6],
+            ['FAQs', '/faq', null, 7],
+            ['About Us', '/about', null, 8],
+            ['Blog', '/blog', null, 9],
+            ['Contact', '/contact', null, 10],
         ]);
 
         $this->seedMenu('footer-quick-links', 'Footer quick links', [
             ['Properties', '/properties', null, 0],
             ['Blog', '/blog', null, 1],
             ['Services', '/services', null, 2],
-            ['Our team', '/team', null, 3],
-            ['Testimonials', '/testimonials', null, 4],
-            ['XML sitemap', '/sitemap.xml', null, 5],
+            ['Gallery', '/gallery', null, 3],
+            ['Neighborhood Guide', '/neighborhood-guide', null, 4],
+            ['FAQs', '/faq', null, 5],
+            ['Our team', '/team', null, 6],
+            ['Testimonials', '/testimonials', null, 7],
+            ['XML sitemap', '/sitemap.xml', null, 8],
         ]);
 
         $this->seedMenu('footer-support', 'Footer support', [
-            ['Help Center', '/contact', null, 0],
-            ['FAQs', '/services', null, 1],
+            ['Help Center', '/faq', null, 0],
+            ['FAQs', '/faq', null, 1],
             ['Contact Us', '/contact', null, 2],
-            ['Ticket Support', '/contact', null, 3],
-            ['Live Chat', '/contact', null, 4],
         ]);
 
         $this->seedMenu('footer', 'Footer navigation', [
@@ -95,7 +99,10 @@ class DefaultThemeSeeder extends Seeder
             ['About Us', '/about', null, 2],
             ['Blog', '/blog', null, 3],
             ['Testimonials', '/testimonials', null, 4],
-            ['Contact', '/contact', null, 5],
+            ['Gallery', '/gallery', null, 5],
+            ['Neighborhood Guide', '/neighborhood-guide', null, 6],
+            ['FAQs', '/faq', null, 7],
+            ['Contact', '/contact', null, 8],
         ]);
     }
 
@@ -151,6 +158,7 @@ class DefaultThemeSeeder extends Seeder
                 $legacyUrl = match ($url) {
                     '/about' => '/about.html',
                     '/contact' => '/contact.html',
+                    '/faq' => '/services',
                     default => null,
                 };
                 if ($legacyUrl && $item->url === $legacyUrl) {
@@ -160,6 +168,10 @@ class DefaultThemeSeeder extends Seeder
                 $parents[$label] = $item->id;
             }
         });
+
+        if ($location === 'footer-support') {
+            MenuItem::query()->where('menu_id', $menu->id)->whereIn('label', ['Ticket Support', 'Live Chat'])->update(['is_active' => false]);
+        }
 
         Menu::forgetLocationCache($location);
     }

@@ -90,17 +90,46 @@ class ContentController extends Controller
     public function index(string $type)
     {
         $model = $this->model($type);
+        $filters = request()->validate([
+            'q' => ['nullable', 'string', 'max:160'],
+            'status' => ['nullable', Rule::in(['draft', 'published', 'archived'])],
+            'category_type' => ['nullable', Rule::in(['property', 'post'])],
+        ]);
+
+        $searchColumns = match ($type) {
+            'posts', 'services' => ['title', 'slug', 'excerpt'],
+            'pages' => ['title', 'slug'],
+            'categories' => ['name', 'slug', 'description'],
+            'banners' => ['title', 'subtitle', 'placement'],
+            'team' => ['name', 'designation', 'email'],
+            'testimonials' => ['name', 'designation', 'company', 'quote'],
+            default => [],
+        };
+
         $items = $model::query()
             ->when(
-                request()->filled('status') && in_array($type, ['posts', 'pages', 'services', 'team', 'testimonials'], true),
-                fn ($query) => $query->where('status', request('status'))
+                ! empty($filters['q']),
+                function ($query) use ($filters, $searchColumns): void {
+                    $term = '%'.trim($filters['q']).'%';
+                    $query->where(function ($search) use ($searchColumns, $term): void {
+                        foreach ($searchColumns as $index => $column) {
+                            $method = $index === 0 ? 'where' : 'orWhere';
+                            $search->{$method}($column, 'like', $term);
+                        }
+                    });
+                }
             )
             ->when(
-                $type === 'categories' && request()->filled('category_type'),
-                fn ($query) => $query->where('type', request('category_type'))
+                ! empty($filters['status']) && in_array($type, ['posts', 'pages', 'services', 'team', 'testimonials'], true),
+                fn ($query) => $query->where('status', $filters['status'])
+            )
+            ->when(
+                $type === 'categories' && ! empty($filters['category_type']),
+                fn ($query) => $query->where('type', $filters['category_type'])
             )
             ->latest()
-            ->get();
+            ->paginate(25)
+            ->withQueryString();
 
         return view('admin.content.index', compact('type', 'items'));
     }
@@ -117,6 +146,8 @@ class ContentController extends Controller
             'selectedTagIds' => [],
             'parentCategories' => $type === 'categories' ? Category::orderBy('name')->get() : collect(),
             'mediaItems' => Media::where('mime_type', 'like', 'image/%')->latest()->limit(100)->get(['id', 'path', 'original_name']),
+            'serviceFeatures' => collect(),
+            'serviceImages' => collect(),
         ]);
     }
 
@@ -130,6 +161,9 @@ class ContentController extends Controller
         }
 
         $this->authorizePublish($type, $data['status'] ?? 'draft');
+        $serviceFeatures = $type === 'services' ? $this->decodeServiceFeatures($data['features_json'] ?? null) : [];
+        unset($data['features_json'], $data['inside_images']);
+        $insideImageFiles = $type === 'services' ? array_filter((array) $request->file('inside_images', [])) : [];
         $this->applyMediaSelections($data);
         $categoryIds = $data['category_ids'] ?? [];
         $tagIds = $data['tag_ids'] ?? [];
@@ -168,6 +202,15 @@ class ContentController extends Controller
                 $uploadedMedia[] = $this->mediaAttributes($request, $file, $path, $field, $data);
             }
 
+            $insideImageRows = [];
+            foreach ($insideImageFiles as $file) {
+                $path = $file->store('services/inside', 'public');
+                if (! $path) throw new RuntimeException('A service inside image could not be stored.');
+                $uploadedPaths[] = $path;
+                $insideImageRows[] = ['path' => $path, 'alt_text' => $data['title']];
+                $uploadedMedia[] = $this->mediaAttributes($request, $file, $path, 'service_inside_image', $data);
+            }
+
             if (in_array($type, ['posts', 'services'], true) && ($data['status'] ?? null) === 'published') {
                 $data['published_at'] = now();
             }
@@ -176,11 +219,18 @@ class ContentController extends Controller
                 $data['is_active'] = $request->boolean('is_active');
             }
 
-            DB::transaction(function () use ($model, $data, $type, $categoryIds, $tagIds, $uploadedMedia): void {
+            DB::transaction(function () use ($model, $data, $type, $categoryIds, $tagIds, $uploadedMedia, $serviceFeatures, $insideImageRows): void {
                 $created = $model::create($data);
 
                 foreach ($uploadedMedia as $attributes) {
                     Media::create($attributes);
+                }
+
+                if ($type === 'services') {
+                    foreach ($serviceFeatures as $index => $feature) {
+                        if (! empty($feature['title'])) $created->features()->create(['title' => $feature['title'], 'description' => $feature['description'] ?? null, 'icon' => $feature['icon'] ?? null, 'sort_order' => $index + 1]);
+                    }
+                    foreach ($insideImageRows as $index => $image) $created->images()->create($image + ['sort_order' => $index + 1]);
                 }
 
                 if ($type === 'posts') {
@@ -212,6 +262,8 @@ class ContentController extends Controller
                 ? Category::where('type', $item->type)->where('id', '!=', $item->id)->orderBy('name')->get()
                 : collect(),
             'mediaItems' => Media::where('mime_type', 'like', 'image/%')->latest()->limit(100)->get(['id', 'path', 'original_name']),
+            'serviceFeatures' => $type === 'services' ? $item->features()->get() : collect(),
+            'serviceImages' => $type === 'services' ? $item->images()->get() : collect(),
         ]);
     }
 
@@ -226,6 +278,11 @@ class ContentController extends Controller
         }
 
         $this->authorizePublish($type, $data['status'] ?? $item->status, $item->status);
+        $serviceFeatures = $type === 'services' ? $this->decodeServiceFeatures($data['features_json'] ?? null) : [];
+        unset($data['features_json'], $data['inside_images']);
+        $insideImageFiles = $type === 'services' ? array_filter((array) $request->file('inside_images', [])) : [];
+        $removeInsideImageIds = $type === 'services' ? ($data['remove_inside_images'] ?? []) : [];
+        unset($data['remove_inside_images']);
         $this->applyMediaSelections($data);
         $categoryIds = $data['category_ids'] ?? [];
         $tagIds = $data['tag_ids'] ?? [];
@@ -277,6 +334,15 @@ class ContentController extends Controller
                 $uploadedMedia[] = $this->mediaAttributes($request, $file, $path, $field, $data);
             }
 
+            $insideImageRows = [];
+            foreach ($insideImageFiles as $file) {
+                $path = $file->store('services/inside', 'public');
+                if (! $path) throw new RuntimeException('A service inside image could not be stored.');
+                $uploadedPaths[] = $path;
+                $insideImageRows[] = ['path' => $path, 'alt_text' => $data['title'] ?? $item->title];
+                $uploadedMedia[] = $this->mediaAttributes($request, $file, $path, 'service_inside_image', $data + ['title' => $item->title]);
+            }
+
             if (in_array($type, ['posts', 'services'], true)
                 && ($data['status'] ?? null) === 'published'
                 && ! $item->published_at) {
@@ -287,11 +353,20 @@ class ContentController extends Controller
                 $data['is_active'] = $request->boolean('is_active');
             }
 
-            DB::transaction(function () use ($item, $data, $type, $categoryIds, $tagIds, $uploadedMedia): void {
+            DB::transaction(function () use ($item, $data, $type, $categoryIds, $tagIds, $uploadedMedia, $serviceFeatures, $insideImageRows, $removeInsideImageIds): void {
                 $item->update($data);
 
                 foreach ($uploadedMedia as $attributes) {
                     Media::create($attributes);
+                }
+
+                if ($type === 'services') {
+                    $item->features()->delete();
+                    foreach ($serviceFeatures as $index => $feature) {
+                        if (! empty($feature['title'])) $item->features()->create(['title' => $feature['title'], 'description' => $feature['description'] ?? null, 'icon' => $feature['icon'] ?? null, 'sort_order' => $index + 1]);
+                    }
+                    if ($removeInsideImageIds) $item->images()->whereIn('id', $removeInsideImageIds)->delete();
+                    foreach ($insideImageRows as $index => $image) $item->images()->create($image + ['sort_order' => $item->images()->count() + $index + 1]);
                 }
 
                 if ($type === 'posts') {
@@ -321,6 +396,28 @@ class ContentController extends Controller
         $model::findOrFail($id)->delete();
 
         return back()->with('success', 'Item moved to trash.');
+    }
+
+    private function decodeServiceFeatures(?string $json): array
+    {
+        if ($json === null || trim($json) === '') return [];
+        $features = json_decode($json, true);
+        if (! is_array($features) || ! array_is_list($features)) {
+            throw ValidationException::withMessages(['features_json' => 'Service features must be a JSON array.']);
+        }
+
+        foreach ($features as $feature) {
+            if (! is_array($feature)
+                || ! is_string($feature['title'] ?? null)
+                || trim($feature['title']) === ''
+                || mb_strlen($feature['title']) > 180
+                || (isset($feature['description']) && ! is_string($feature['description']))
+                || (isset($feature['icon']) && ! is_string($feature['icon']))) {
+                throw ValidationException::withMessages(['features_json' => 'Each service feature needs a title and may include a description and icon name.']);
+            }
+        }
+
+        return $features;
     }
 
     private function validated(Request $request, string $type, ?int $id = null): array
@@ -397,7 +494,12 @@ class ContentController extends Controller
                 'meta_title' => ['nullable', 'string', 'max:255'],
                 'meta_description' => ['nullable', 'string', 'max:1000'],
                 'focus_keyword' => ['nullable', 'string', 'max:160'],
-                'og_image' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
+                'og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'features_json' => ['nullable', 'json', 'max:12000'],
+                'inside_images' => ['nullable', 'array', 'max:20'],
+                'inside_images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'remove_inside_images' => ['nullable', 'array'],
+                'remove_inside_images.*' => ['integer', Rule::exists('service_images', 'id')->where('service_id', $id)],
             ],
             'testimonials' => [
                 'name' => ['required', 'string', 'max:150'],

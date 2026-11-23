@@ -1,7 +1,7 @@
 @extends('frontend.layouts.theme')
 @section('title', $page->meta_title ?: $page->title)
 @section('meta_description', $page->meta_description ?: \App\Models\Setting::read('meta_description', ''))
-@section('canonical_url', route('pages.show', $page))
+@section('canonical_url', $canonicalUrl ?? route('pages.show', $page))
 @section('og_image', $page->og_image ? asset('storage/' . $page->og_image) : (!empty($siteSettings['default_og_image']) ? asset('storage/' . $siteSettings['default_og_image']) : asset('theme-assets/img/hero/hero-10-1.jpg')))
 @section('structured_data')
     @php
@@ -10,7 +10,7 @@
         '@type' => 'WebPage',
         'name' => $page->meta_title ?: $page->title,
         'description' => $page->meta_description ?: ($siteSettings['meta_description'] ?? ''),
-        'url' => ($isHomepage ?? false) ? route('home') : route('pages.show', $page),
+        'url' => $canonicalUrl ?? (($isHomepage ?? false) ? route('home') : route('pages.show', $page)),
     
         ];
     @endphp

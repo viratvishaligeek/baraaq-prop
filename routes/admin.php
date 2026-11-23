@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\PropertyTaxonomyController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\SiteContentController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
@@ -71,6 +72,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/content/{type}/{id}/edit', [ContentController::class, 'edit'])->name('content.edit');
         Route::put('/content/{type}/{id}', [ContentController::class, 'update'])->name('content.update');
         Route::delete('/content/{type}/{id}', [ContentController::class, 'destroy'])->name('content.destroy');
+
+        Route::get('/site-content/{type}', [SiteContentController::class, 'index'])->name('site-content.index');
+        Route::get('/site-content/{type}/create', [SiteContentController::class, 'create'])->name('site-content.create');
+        Route::post('/site-content/{type}', [SiteContentController::class, 'store'])->name('site-content.store');
+        Route::get('/site-content/{type}/{id}/edit', [SiteContentController::class, 'edit'])->name('site-content.edit');
+        Route::put('/site-content/{type}/{id}', [SiteContentController::class, 'update'])->name('site-content.update');
+        Route::delete('/site-content/{type}/{id}', [SiteContentController::class, 'destroy'])->name('site-content.destroy');
 
         Route::get('/media/picker', MediaPickerController::class)->name('media.picker');
         Route::post('/media/picker', [MediaPickerController::class, 'upload'])->name('media.picker.upload');

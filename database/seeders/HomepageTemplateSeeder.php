@@ -18,7 +18,7 @@ class HomepageTemplateSeeder extends Seeder
                 'status' => 'published',
                 'published_at' => now(),
                 'meta_title' => 'Discover Most Suitable Property | '.$siteName,
-                'meta_description' => 'Explore thoughtfully selected properties and expert real estate services with '.$siteName.'.',
+                'meta_description' => 'Explore property information and share your requirements with '.$siteName.' in Bareilly, Uttar Pradesh.',
             ]
         );
 

@@ -15,13 +15,20 @@ class MediaController extends Controller
 {
     public function index()
     {
+        $filters = request()->validate([
+            'q' => ['nullable', 'string', 'max:160'],
+            'type' => ['nullable', 'in:images,documents'],
+        ]);
+
         $media = Media::query()
-            ->when(request('type') === 'images', fn ($query) => $query->where('mime_type', 'like', 'image/%'))
+            ->when(($filters['type'] ?? null) === 'images', fn ($query) => $query->where('mime_type', 'like', 'image/%'))
+            ->when(($filters['type'] ?? null) === 'documents', fn ($query) => $query->whereNotNull('mime_type')->where('mime_type', 'not like', 'image/%'))
+            ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('original_name', 'like', '%'.$term.'%')->orWhere('path', 'like', '%'.$term.'%')->orWhere('alt_text', 'like', '%'.$term.'%')))
             ->latest()
             ->paginate(30)
             ->withQueryString();
 
-        return view('admin.media.index', compact('media'));
+        return view('admin.media.index', compact('media', 'filters'));
     }
 
     public function store(Request $request)

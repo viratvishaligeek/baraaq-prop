@@ -1,47 +1,7 @@
 @extends('frontend.layouts.theme')
-
 @section('title', $service->meta_title ?: $service->title)
-@section('meta_description', $service->meta_description ?: \App\Models\Setting::read('meta_description', ''))
-@section('canonical_url', route('services.show', $service))
-@section('og_image', $service->og_image ? asset('storage/'.$service->og_image) : ($service->featured_image ? Storage::disk('public')->url($service->featured_image) : (!empty($siteSettings['default_og_image']) ? asset('storage/'.$siteSettings['default_og_image']) : asset('theme-assets/img/hero/hero-10-1.jpg'))))
-
-@section('structured_data')
-    @php
-        $structuredData = [
-            '@context' => 'https://schema.org',
-            '@type' => 'Service',
-            'name' => $service->title,
-            'description' => $service->meta_description ?: $service->excerpt,
-            'url' => route('services.show', $service),
-            'image' => $service->featured_image ? Storage::disk('public')->url($service->featured_image) : null,
-            'provider' => [
-                '@type' => 'Organization',
-                'name' => $siteSettings['business_name'] ?? $siteSettings['site_title'] ?? config('app.name'),
-            ],
-        ];
-    @endphp
-    <script type="application/ld+json">{!! json_encode($structuredData, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
-@endsection
-
+@section('meta_description', $service->meta_description ?: $service->excerpt)
+@section('canonical_url', $service->canonical_url ?: route('services.show',$service))
 @section('content')
-    <div class="breadcumb-wrapper">
-        <div class="container">
-            <div class="breadcumb-content">
-                <h1 class="breadcumb-title">{{ $service->title }}</h1>
-                <ul class="breadcumb-menu">
-                    <li><a href="{{ route('home') }}">Home</a></li>
-                    <li><a href="{{ route('services.index') }}">Services</a></li>
-                    <li>{{ $service->title }}</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    @if ($isPreview ?? false)<div class="container py-3"><span class="badge bg-warning text-dark">Preview — not publicly published</span></div>@endif
-    <section class="space"><div class="container"><div class="row justify-content-center"><div class="col-lg-9">
-        @if ($service->featured_image)<img class="w-100 rounded mb-4" src="{{ Storage::disk('public')->url($service->featured_image) }}" alt="{{ $service->title }}">@endif
-        @if ($service->excerpt)<p class="lead">{{ $service->excerpt }}</p>@endif
-        <div>{!! \App\Support\HtmlSanitizer::sanitize($service->content) !!}</div>
-    </div></div></div></section>
-
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcrumb-bg.jpg') }}"><div class="container"><div class="breadcumb-content"><h1 class="breadcumb-title">{{ $service->title }}</h1><ul class="breadcumb-menu"><li><a href="{{ route('home') }}">Home</a></li><li>{{ $service->title }}</li></ul></div></div></div><section class="space space-extra-bottom"><div class="container"><div class="row"><div class="col-xxl-8 col-lg-8"><div class="page-single mb-2"><div class="page-img"><img src="{{ $service->featured_image ? Storage::disk('public')->url($service->featured_image) : asset('theme-assets/img/service/service_details.jpg') }}" alt="Service Image"><ul class="tag-wrap"><li><span>Featured</span></li><li class="box-review-wrap"><div class="box-review"><i class="fa-sharp fa-solid fa-star"></i><div class="rating"><span>4.8</span></div></div></li></ul></div><div class="page-content"><h2 class="sec-title">{{ $service->title }}</h2><p>{{ $service->excerpt }}</p><div class="mb-30">{!! \App\Support\HtmlSanitizer::sanitize($service->content ?? "") !!}</div><div class="row gx-30"><div class="col-md-12 mb-40"><div><img class="w-100 blog-radius-img" src="{{ asset('theme-assets/img/service/service_details-inner.jpg') }}" alt="service_Image"></div></div></div>@if($service->features->isNotEmpty())<section class="space-top"><h2 class="sec-title mb-3">Service features</h2><div class="checklist mb-50"><ul>@foreach($service->features as $feature)<li><i class="fa-regular fa-circle-check"></i> <strong>{{ $feature->title }}</strong> @if($feature->description) — {{ $feature->description }} @endif</li>@endforeach</ul></div></section>@endif<h2 class="sec-title mb-3">Highlights</h2><div class="checklist mb-50"><ul>@forelse($service->features as $feature)<li><i class="fa-regular fa-circle-check"></i> <strong>{{ $feature->title }}</strong> @if($feature->description) — {{ $feature->description }} @endif</li>@empty<li>Service features will be published soon.</li>@endforelse</ul></div><div class="row gy-4 mb-80"><div class="col-md-12"><h2 class="sec-title mb-2">From Amazing Gallery</h2></div>@forelse($service->images as $image)<div class="col-xl-6"><div class="property-gallery-card"><div class="property-gallery-card-img"><img class="w-100" src="{{ Storage::disk('public')->url($image->path) }}" alt="{{ $image->alt_text ?: $service->title }}"></div><a class="icon-btn popup-image" href="{{ Storage::disk('public')->url($image->path) }}"><i class="fa-solid fa-eye"></i></a></div></div>@empty @if($service->featured_image)<div class="col-12"><img class="w-100" src="{{ Storage::disk('public')->url($service->featured_image) }}" alt="{{ $service->title }}"></div>@endif @endforelse</div><div class="row mb-1"><div class="service-contact-panel mb-4"><h3 class="blog-inner-title h4">Discuss this service</h3><p>Talk with our team about scope, timing and availability.</p><a href="{{ route('contact') }}" class="th-btn radius">Enquire about this service</a></div></div><div class="row mt-3"></div></div></div></div><div class="col-xxl-4 col-lg-4"><aside class="sidebar-area"><div class="widget widget_search"><h3 class="widget_title">search</h3><form class="search-form" method="GET" action="{{ route('services.index') }}"><input type="search" name="q" value="{{ request('q') }}" placeholder="Enter Keyword"> <button type="submit"><i class="far fa-search"></i></button></form></div><div class="widget"><h3 class="widget_title">Related Services</h3><div class="recent-post-wrap">@forelse($relatedServices as $relatedService)<div class="recent-post"><div class="media-img"><a href="{{ route('services.show',$relatedService) }}">@if($relatedService->featured_image)<img src="{{ Storage::disk('public')->url($relatedService->featured_image) }}" alt="{{ $relatedService->title }}">@endif</a></div><div class="media-body"><h4 class="post-title"><a class="text-inherit" href="{{ route('services.show',$relatedService) }}">{{ $relatedService->title }}</a></h4><p>{{ $relatedService->excerpt }}</p></div></div>@empty<p class="text-muted">More services will be published soon.</p>@endforelse</div></div><div class="widget bg-smoke"><h3 class="widget_title">Contact Us</h3><p>Have a question about this service?</p><a href="{{ route('contact') }}" class="th-btn radius">Contact our team</a></div><div class="widget widget_banner" data-bg-src="{{ asset('theme-assets/img/bg/widget_banner.jpg') }}"><div class="widget-banner"><h2 class="title">We can help you to find real estate agency</h2><a href="{{ route('contact') }}" class="th-btn radius">Contact with Agent</a></div></div></aside></div></div></div></section>
 @endsection

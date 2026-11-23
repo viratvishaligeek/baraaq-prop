@@ -1,76 +1,8 @@
 @extends('frontend.layouts.theme')
-
-@section('title', 'Contact Us · '.($siteSettings['site_title'] ?? config('app.name')))
-@section('meta_description', 'Contact our property team for viewing requests, property advice and general enquiries.')
-
+@section('title', $page?->meta_title ?: 'Contact Us · '.config('app.name'))
+@section('meta_description', $page?->meta_description ?: \App\Models\Setting::read('meta_description','Contact our team.'))
+@section('canonical_url', $page?->canonical_url ?: route('contact'))
 @section('content')
-    <section class="space">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-xl-8 col-lg-9">
-                    <div class="title-area text-center">
-                        <p class="sub-title">Get in touch</p>
-                        <h1 class="sec-title">How can we help you?</h1>
-                        <p>Send our team a message and we will get back to you as soon as possible.</p>
-                    </div>
-
-                    <div class="contact-form p-4 p-lg-5">
-                        @if (session('enquiry_success'))
-                            <div class="alert alert-success" role="status">{{ session('enquiry_success') }}</div>
-                        @endif
-
-                        @if ($errors->any())
-                            <div class="alert alert-danger" role="alert">
-                                <p class="mb-1 fw-semibold">Please review the following:</p>
-                                <ul class="mb-0">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-
-                        <form method="POST" action="{{ route('enquiries.store') }}">
-                            @csrf
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label" for="contact-name">Your name</label>
-                                    <input class="form-control" id="contact-name" name="name" value="{{ old('name') }}" maxlength="150" autocomplete="name" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label" for="contact-subject">Subject</label>
-                                    <input class="form-control" id="contact-subject" name="subject" value="{{ old('subject') }}" maxlength="120">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label" for="contact-email">Email address</label>
-                                    <input class="form-control" id="contact-email" type="email" name="email" value="{{ old('email') }}" maxlength="190" autocomplete="email">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label" for="contact-phone">Phone number</label>
-                                    <input class="form-control" id="contact-phone" name="phone" value="{{ old('phone') }}" maxlength="30" autocomplete="tel">
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label" for="contact-message">Message</label>
-                                    <textarea class="form-control" id="contact-message" name="message" rows="5" maxlength="5000">{{ old('message') }}</textarea>
-                                </div>
-                                <div class="col-12">
-                                    <p class="form-text mb-2">Please provide either an email address or a phone number so we can reply.</p>
-                                    <button class="th-btn" type="submit">Send enquiry</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="row g-3 mt-3 text-center">
-                        @if (!empty($siteSettings['site_phone']))
-                            <div class="col-md-6"><a href="tel:{{ preg_replace('/\\D+/', '', $siteSettings['site_phone']) }}">{{ $siteSettings['site_phone'] }}</a></div>
-                        @endif
-                        @if (!empty($siteSettings['site_email']))
-                            <div class="col-md-6"><a href="mailto:{{ $siteSettings['site_email'] }}">{{ $siteSettings['site_email'] }}</a></div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcrumb-bg.jpg') }}"><div class="container"><div class="breadcumb-content"><h1 class="breadcumb-title">{{ $page?->title ?? "Contact Us" }}</h1><ul class="breadcumb-menu"><li><a href="{{ route('home') }}">Home</a></li><li>Contact with Us</li></ul></div></div></div><div class="contact-area-2 space-top" id="contact-sec"><div class="container"><div class="row gy-4 justify-content-center"><div class="col-xl-4 col-lg-6 contact-feature-wrap"><div class="contact-feature"><div class="contact-feature-icon"><i class="fas fa-location-dot"></i></div><div class="media-body"><p class="contact-feature_label">Office Address</p><a href="{{ !empty($siteSettings['site_address']) ? 'https://www.google.com/maps/search/?api=1&query='.urlencode($siteSettings['site_address']) : '#' }}" class="contact-feature_link">{{ $siteSettings['site_address'] ?? '' }}</a></div></div></div><div class="col-xl-4 col-lg-6 contact-feature-wrap"><div class="contact-feature"><div class="contact-feature-icon"><i class="fas fa-phone"></i></div><div class="media-body"><p class="contact-feature_label">Phone Number</p>@if(!empty($siteSettings['site_phone']))<a href="tel:{{ preg_replace('/\D+/', '', $siteSettings['site_phone']) }}" class="contact-feature_link">{{ $siteSettings['site_phone'] }}</a>@endif</div></div></div><div class="col-xl-4 col-lg-6 contact-feature-wrap"><div class="contact-feature"><div class="contact-feature-icon"><i class="fas fa-envelope"></i></div><div class="media-body"><p class="contact-feature_label">Email Address</p>@if(!empty($siteSettings['site_email']))<a href="mailto:{{ $siteSettings['site_email'] }}" class="contact-feature_link">{{ $siteSettings['site_email'] }}</a>@endif</div></div></div></div></div></div><div class="contact-form-area"><div class="container"><div class="row gx-0"><div class="col-xl-12"><div class="contact-all-wrapper"><div class="contact-form-wrap"><form action="{{ route('enquiries.store') }}" method="POST" class="contact-form ajax-contact">@csrf<h3 class="form-title text-anime-style-2">Do you have questions? Contact Us</h3><div class="row"><div class="form-group col-md-6"><input type="text" class="form-control" name="name" id="name" value="{{ old('name') }}" placeholder="Name *" required></div><div class="form-group col-md-6"><input type="tel" class="form-control" name="phone" id="number" value="{{ old('phone') }}" placeholder="Phone *"></div><div class="form-group col-md-12"><input type="email" class="form-control" name="email" id="email" value="{{ old('email') }}" placeholder="Email Address *"></div><div class="form-group col-md-12"><select name="subject" id="subject" class="orderby"><option value="" disabled="" selected="" hidden="">Select Subject</option><option value="Apartment">Apartment</option><option value="House">House</option><option value="Villa">Villa</option><option value="Land">Land</option></select></div><div class="form-group col-12"><textarea name="message" id="message" cols="30" rows="3" class="form-control" placeholder="Your Message *">{{ old('message') }}</textarea></div><div class="form-btn text-start col-12"><button class="th-btn radius">Send message</button></div></div><p class="form-messages mb-0 mt-3">@if(session('enquiry_success')){{ session('enquiry_success') }}@endif</p>@if($errors->any())<div class="alert alert-danger mt-3">@foreach($errors->all() as $error)<p class="mb-1">{{ $error }}</p>@endforeach</div>@endif</form></div><div class="contact-form-thumb overflow-hidden"><img src="{{ asset('theme-assets/img/contact/contact-page-thumb.jpg') }}" alt="img"></div></div></div></div></div></div><div class="space-top"><div class="container-fluid p-0"><div class="contact-map"><iframe src="{{ AppRulesSafeLink::sanitizeHttp($siteSettings['footer_map_embed_url'] ?? '') }}" allowfullscreen="" loading="lazy"></iframe><div class="contact-icon"><img src="{{ asset('theme-assets/img/icon/con-location-dot.svg') }}" alt="img"></div></div></div></div>
+@if($page?->content)<section class="space"><div class="container"><div class="cms-page-content">{!! \App\Support\HtmlSanitizer::sanitize($page->content) !!}</div></div></section>@endif
 @endsection

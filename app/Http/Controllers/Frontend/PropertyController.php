@@ -112,11 +112,13 @@ class PropertyController extends Controller
         );
 
         $property->load(['category', 'images', 'accommodations.imageMedia', 'faqs']);
-        $related = Property::published()
-            ->where('id', '!=', $property->id)
-            ->where('city', $property->city)
-            ->limit(3)
-            ->get();
+        $relatedQuery = Property::published()->whereKeyNot($property->id);
+        if (filled($property->city)) {
+            $relatedQuery->where('city', $property->city);
+        } elseif ($property->category_id) {
+            $relatedQuery->where('category_id', $property->category_id);
+        }
+        $related = $relatedQuery->latest('published_at')->limit(3)->get();
 
         return view('frontend.properties.show', compact('property', 'related'));
     }

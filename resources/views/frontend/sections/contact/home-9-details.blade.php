@@ -1,6 +1,8 @@
 @php
+    $hasVerifiedDetails = collect(['location', 'total_area', 'living_space', 'bedrooms', 'bathrooms', 'floors'])->contains(fn ($field) => filled($sectionConfig[$field] ?? null));
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
+@if ($hasVerifiedDetails)
 <section class="space overflow-hidden {{ $visibility }}" id="home-details-{{ $section->id }}">
     <div class="container">
         <div class="row">
@@ -31,3 +33,4 @@
         </div>
     </div>
 </section>
+@endif

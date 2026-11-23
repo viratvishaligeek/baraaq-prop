@@ -6,8 +6,9 @@
     </div>
     <a class="btn btn-primary" href="{{ route('admin.users.create') }}">Add user</a>
 </div>
+<form method="GET" class="content-card mb-3 row g-2 align-items-end"><div class="col-md-5"><label class="form-label">Search users</label><input class="form-control" name="q" value="{{ request('q') }}" placeholder="Name, email or phone"></div><div class="col-auto"><button class="btn btn-primary">Search</button><a class="btn btn-link" href="{{ route('admin.users.index') }}">Reset</a></div></form>
 <div class="content-card">
-    <table class="table align-middle" data-datatable data-datatable-paging="false">
+    <table class="table align-middle" data-datatable data-datatable-paging="false" data-datatable-searching="false">
         <thead>
             <tr>
                 <th>User</th>

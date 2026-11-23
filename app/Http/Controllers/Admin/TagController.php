@@ -19,7 +19,11 @@ class TagController extends Controller
     public function index()
     {
         $this->authorizeTags();
-        return view('admin.tags.index', ['tags' => Tag::withCount('posts')->orderBy('name')->paginate(25)]);
+        $filters = request()->validate(['q' => ['nullable', 'string', 'max:120']]);
+        $tags = Tag::withCount('posts')
+            ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('name', 'like', '%'.$term.'%')->orWhere('slug', 'like', '%'.$term.'%')))
+            ->orderBy('name')->paginate(25)->withQueryString();
+        return view('admin.tags.index', compact('tags'));
     }
 
     public function create()

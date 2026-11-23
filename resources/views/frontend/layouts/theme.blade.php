@@ -32,28 +32,10 @@
     <meta name="twitter:description" content="@yield('meta_description', $siteSettings['meta_description'] ?? '')">
     <meta name="twitter:image" content="@yield('og_image', $defaultSocialImage)">
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
-    <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('theme-assets/img/favicons/apple-icon-57x57.png') }}">
-    <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('theme-assets/img/favicons/apple-icon-60x60.png') }}">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('theme-assets/img/favicons/apple-icon-72x72.png') }}">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('theme-assets/img/favicons/apple-icon-76x76.png') }}">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('theme-assets/img/favicons/apple-icon-114x114.png') }}">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('theme-assets/img/favicons/apple-icon-120x120.png') }}">
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('theme-assets/img/favicons/apple-icon-144x144.png') }}">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('theme-assets/img/favicons/apple-icon-152x152.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180"
-        href="{{ asset('theme-assets/img/favicons/apple-icon-180x180.png') }}">
-    <link rel="icon"
-        href="{{ !empty($siteSettings['favicon']) ? asset('storage/' . $siteSettings['favicon']) : asset('theme-assets/img/favicons/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32"
-        href="{{ asset('theme-assets/img/favicons/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="96x96"
-        href="{{ asset('theme-assets/img/favicons/favicon-96x96.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16"
-        href="{{ asset('theme-assets/img/favicons/favicon-16x16.png') }}">
-    <link rel="manifest" href="{{ asset('theme-assets/img/favicons/manifest.json') }}">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="{{ asset('theme-assets/img/favicons/ms-icon-144x144.png') }}">
-    <meta name="theme-color" content="#ffffff">
+    @if (!empty($siteSettings['favicon']))
+        <link rel="icon" href="{{ asset('storage/' . $siteSettings['favicon']) }}">
+        <link rel="apple-touch-icon" href="{{ asset('storage/' . $siteSettings['favicon']) }}">
+    @endif
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -70,6 +52,19 @@
                 {{ $siteSettings['secondary_color'] ?? '#044DBC' }};
         }
 
+        .site-brand-wordmark {
+            display: inline-block;
+            color: var(--title-color, #17202a);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: clamp(18px, 2vw, 24px);
+            font-weight: 800;
+            letter-spacing: -.045em;
+            line-height: 1.05;
+            white-space: nowrap;
+        }
+        .site-brand-wordmark--inverse { color: #fff; }
+        .mobile-logo .site-brand-wordmark { font-size: 20px; }
+
         html, body {
             overflow-x: clip;
         }
@@ -83,9 +78,10 @@
     @php
         $organization = [
             '@context' => 'https://schema.org',
-            '@type' => 'Organization',
+            '@type' => 'RealEstateAgent',
             'name' => $siteSettings['business_name'] ?? ($siteSettings['site_title'] ?? config('app.name')),
             'url' => url('/'),
+            'areaServed' => ['@type' => 'City', 'name' => $siteSettings['service_area_city'] ?? 'Bareilly'],
             'logo' => !empty($siteSettings['logo']) ? Storage::disk('public')->url($siteSettings['logo']) : null,
             'email' => $siteSettings['site_email'] ?? null,
             'telephone' => $siteSettings['site_phone'] ?? null,
@@ -123,14 +119,10 @@
     <div class="preloader">
         <button class="th-btn preloaderCls">Cancel Preloader</button>
         <div id="preloader" class="preloader-inner">
-            <div class="txt-loading">
-                <span data-text-preloader="P" class="letters-loading">P </span>
-                <span data-text-preloader="I" class="letters-loading">I </span>
-                <span data-text-preloader="L" class="letters-loading">L </span>
-                <span data-text-preloader="L" class="letters-loading">L
-                </span>
-                <span data-text-preloader="E" class="letters-loading">E </span>
-                <span data-text-preloader="R" class="letters-loading">R</span>
+            <div class="txt-loading" aria-label="{{ $siteSettings['site_title'] ?? 'Buraaqh Properties' }}">
+                @foreach (mb_str_split((string) ($siteSettings['site_title'] ?? 'Buraaqh Properties')) as $letter)
+                    <span data-text-preloader="{{ e($letter) }}" class="letters-loading">{{ $letter }}</span>
+                @endforeach
             </div>
         </div>
     </div>
@@ -196,9 +188,7 @@
                 <a href="{{ route('home') }}">
                     @if (!empty($siteSettings['logo']))
                         <img src="{{ asset('storage/' . $siteSettings['logo']) }}"
-                        alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">@else<img
-                            src="{{ asset('theme-assets/img/logo.svg') }}"
-                            alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                        alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">@else<span class="site-brand-wordmark">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
                     @endif
                 </a>
             </div>
@@ -207,7 +197,26 @@
             </div>
         </div>
     </div>
-    <header class="th-header header-default header-layout9">
+    @unless (request()->routeIs('home'))
+        <div class="header-top">
+            <div class="container">
+                <div class="row justify-content-center justify-content-lg-between align-items-center gy-2">
+                    <div class="col-auto d-none d-lg-block">
+                        <div class="header-links"><ul>
+                            @if (!empty($siteSettings['site_email']))<li><i class="fa-solid fa-envelope"></i> <a href="mailto:{{ $siteSettings['site_email'] }}">{{ $siteSettings['site_email'] }}</a></li>@endif
+                            @if (!empty($siteSettings['site_phone']))<li><i class="fa-solid fa-phone"></i> <a href="tel:{{ preg_replace('/\D+/', '', $siteSettings['site_phone']) }}">{{ $siteSettings['site_phone'] }}</a></li>@endif
+                        </ul></div>
+                    </div>
+                    <div class="col-auto"><div class="header-links"><ul><li><div class="th-social">
+                        @foreach (['facebook'=>'social_facebook','twitter'=>'social_x','linkedin'=>'social_linkedin','instagram'=>'social_instagram','youtube'=>'social_youtube'] as $network=>$setting)
+                            @if (!empty($siteSettings[$setting]))<a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings[$setting]) }}" target="_blank" rel="noopener noreferrer" aria-label="{{ ucfirst($network) }}"><i class="fab fa-{{ $network === 'facebook' ? 'facebook-f' : ($network === 'twitter' ? 'twitter' : $network) }}"></i></a>@endif
+                        @endforeach
+                    </div></li></ul></div></div>
+                </div>
+            </div>
+        </div>
+    @endunless
+    <header class="th-header header-default {{ request()->routeIs('home') ? 'header-layout9' : '' }}">
         <div class="sticky-wrapper" data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
             <div class="menu-area">
                 <div class="container">
@@ -218,7 +227,7 @@
                                     @if (!empty($siteSettings['logo']))
                                         <img src="{{ asset('storage/' . $siteSettings['logo']) }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
                                     @else
-                                        <img src="{{ asset('theme-assets/img/logo.svg') }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                        <span class="site-brand-wordmark">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
                                     @endif
                                 </a>
                             </div>
@@ -247,7 +256,7 @@
     <main>
         @yield('content')
     </main>
-    <footer class="footer-wrapper footer-layout1">
+    <footer class="footer-wrapper {{ request()->routeIs('home') ? 'footer-layout1' : 'footer-default' }}">
             <div class="widget-area">
             <div class="container">
                 @php
@@ -304,9 +313,7 @@
                                     <a href="{{ route('home') }}">
                                         @if (!empty($siteSettings['logo']))
                                             <img src="{{ asset('storage/' . $siteSettings['logo']) }}"
-                                            alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">@else<img
-                                                src="{{ asset('theme-assets/img/logo-white.svg') }}"
-                                                alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                            alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">@else<span class="site-brand-wordmark site-brand-wordmark--inverse">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
                                         @endif
                                     </a>
                                 </div>
@@ -318,6 +325,8 @@
                     <div class="footer-all-widget-item">
                         <div class="footer-right-wrap">
                             <div class="footer-item-wrap">
+                                @php $footerServices = \App\Models\Service::published()->orderBy('title')->limit(5)->get(); @endphp
+                                @if ($footerServices->isNotEmpty())
                                 <div class="footer-item">
                                     
 
@@ -325,7 +334,7 @@
                                         <h3 class="widget_title">{{ $siteSettings['footer_services_heading'] ?? '' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
-                                                @foreach (\App\Models\Service::published()->orderBy('title')->limit(5)->get() as $footerService)
+                                                @foreach ($footerServices as $footerService)
                                                     <li>
                                                         <a
                                                             href="{{ route('services.show', $footerService) }}">{{ $footerService->title }}</a>
@@ -337,6 +346,8 @@
                                 
                                     
                                 </div>
+                                
+                                @endif
                                 <div class="footer-item">
                                     
 
@@ -369,17 +380,38 @@
                                 
                                     
                                 </div>
-                                <div class="footer-item">
-                                    <div class="widget widget_banner footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? '' }}</h3>
-                                        <div class="widget-map">
-                                            @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null))
+                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null))
+                                    <div class="footer-item">
+                                        <div class="widget widget_banner footer-widget">
+                                            <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? '' }}</h3>
+                                            <div class="widget-map">
                                                 <iframe src="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['footer_map_embed_url']) }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                                            @endif
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
+                            @unless (request()->routeIs('home'))
+                            <div class="footer-right-bottom-wrap">
+                                <div class="footer-right-bottom-item help">
+                                    <div class="footer-right-bottom-item__thumb help"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-1.png') }}" alt=""></div>
+                                    <div class="footer-right-bottom-item__content"><h4 class="box-title"><a href="{{ route('contact') }}">{{ $siteSettings['footer_cta_text'] ?? 'Need help buying or selling?' }}</a></h4></div>
+                                </div>
+                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['app_store_url'] ?? null))
+                                <div class="footer-right-bottom-item scan">
+                                    <div class="footer-right-bottom-item__thumb"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-2.png') }}" alt=""></div>
+                                    <div class="footer-right-bottom-item__content"><p>Download on the</p><h4 class="box-title"><a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['app_store_url']) }}" target="_blank" rel="noopener noreferrer">App Store</a></h4></div>
+                                </div>
+                                @endif
+                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['play_store_url'] ?? null))
+                                <div class="footer-right-bottom-item scan">
+                                    <div class="footer-right-bottom-item__thumb"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-3.png') }}" alt=""></div>
+                                    <div class="footer-right-bottom-item__content"><p>GET IT ON</p><h4 class="box-title"><a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['play_store_url']) }}" target="_blank" rel="noopener noreferrer">Google Play</a></h4></div>
+                                </div>
+                                @endif
+                            </div>
+                            @endunless
+                            @if (request()->routeIs('home') && !empty($siteSettings['footer_gallery_images']))
                             <div class="footer-bottom-community">
                                 <div class="content">
                                     <p>{{ $siteSettings['footer_gallery_handle'] ?? '' }}</p>
@@ -408,6 +440,7 @@
                 </div>
             </div>
         </div>
+                            @endif
         <div class="copyright-wrap">
             <div class="footer-bottom-top-shape animation-infinite"
                 data-bg-src="{{ asset('theme-assets/img/icon/footer-bottom-top-shape.png') }}">

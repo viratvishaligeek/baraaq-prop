@@ -68,6 +68,20 @@
                     <input class="form-control" name="meta_keywords" maxlength="1000"
                         value="{{ old('meta_keywords', $settings['meta_keywords'] ?? '') }}">
                 </div>
+                <div class="col-12"><h5 class="mt-2 mb-0">Local content SEO</h5><p class="text-muted small mb-0">Search snippets for Gallery, FAQs and Neighborhood Guides.</p></div>
+                <div class="col-md-6"><label class="form-label">Gallery meta title</label><input class="form-control" name="gallery_meta_title" maxlength="255" value="{{ old('gallery_meta_title', $settings['gallery_meta_title'] ?? '') }}"></div>
+                <div class="col-md-6"><label class="form-label">FAQ meta title</label><input class="form-control" name="faq_meta_title" maxlength="255" value="{{ old('faq_meta_title', $settings['faq_meta_title'] ?? '') }}"></div>
+                <div class="col-md-6"><label class="form-label">Gallery meta description</label><textarea class="form-control" name="gallery_meta_description" rows="2" maxlength="1000">{{ old('gallery_meta_description', $settings['gallery_meta_description'] ?? '') }}</textarea></div>
+                <div class="col-md-6"><label class="form-label">Gallery page heading</label><input class="form-control" name="gallery_page_heading" maxlength="180" value="{{ old('gallery_page_heading', $settings['gallery_page_heading'] ?? 'Property Gallery') }}"></div>
+                <div class="col-md-6"><label class="form-label">Gallery page introduction</label><textarea class="form-control" name="gallery_page_intro" rows="2" maxlength="500">{{ old('gallery_page_intro', $settings['gallery_page_intro'] ?? '') }}</textarea></div>
+                <div class="col-md-6"><label class="form-label">FAQ meta description</label><textarea class="form-control" name="faq_meta_description" rows="2" maxlength="1000">{{ old('faq_meta_description', $settings['faq_meta_description'] ?? '') }}</textarea></div>
+                <div class="col-md-6"><label class="form-label">FAQ page heading</label><input class="form-control" name="faq_page_heading" maxlength="180" value="{{ old('faq_page_heading', $settings['faq_page_heading'] ?? 'Frequently Asked Questions') }}"></div>
+                <div class="col-md-6"><label class="form-label">FAQ page introduction</label><textarea class="form-control" name="faq_page_intro" rows="2" maxlength="500">{{ old('faq_page_intro', $settings['faq_page_intro'] ?? '') }}</textarea></div>
+                <div class="col-md-6"><label class="form-label">Neighborhood Guides meta title</label><input class="form-control" name="neighborhood_guides_meta_title" maxlength="255" value="{{ old('neighborhood_guides_meta_title', $settings['neighborhood_guides_meta_title'] ?? '') }}"></div>
+                <div class="col-md-6"><label class="form-label">Neighborhood Guides meta description</label><textarea class="form-control" name="neighborhood_guides_meta_description" rows="2" maxlength="1000">{{ old('neighborhood_guides_meta_description', $settings['neighborhood_guides_meta_description'] ?? '') }}</textarea></div>
+                <div class="col-md-6"><label class="form-label">Neighborhood Guides page heading</label><input class="form-control" name="neighborhood_guides_page_heading" maxlength="180" value="{{ old('neighborhood_guides_page_heading', $settings['neighborhood_guides_page_heading'] ?? 'Neighborhood Guides') }}"></div>
+                <div class="col-md-6"><label class="form-label">Neighborhood Guides page introduction</label><textarea class="form-control" name="neighborhood_guides_page_intro" rows="2" maxlength="500">{{ old('neighborhood_guides_page_intro', $settings['neighborhood_guides_page_intro'] ?? '') }}</textarea></div>
+                <div class="col-md-6"><label class="form-label">Service area city</label><input class="form-control" name="service_area_city" maxlength="100" value="{{ old('service_area_city', $settings['service_area_city'] ?? 'Bareilly') }}"></div>
                 <div class="col-md-6">
                     <label class="form-label">Robots policy</label>
                     <select class="form-select" name="meta_robots">

@@ -15,24 +15,37 @@
         @endif
     </div>
     <div class="content-card">
-        @if (in_array($type, ['posts', 'pages', 'services', 'team', 'testimonials']))
-            <form method="GET" class="row g-2 mb-3">
+        <form method="GET" class="row g-2 mb-3">
+            <div class="col-md-4">
+                <input class="form-control" type="search" name="q" value="{{ request('q') }}"
+                    placeholder="Search {{ $type }}..." aria-label="Search {{ $type }}">
+            </div>
+            @if (in_array($type, ['posts', 'pages', 'services', 'team', 'testimonials']))
                 <div class="col-md-3">
-                    <select class="form-select" name="status">
+                    <select class="form-select" name="status" aria-label="Filter by publication status">
                         <option value="">All statuses</option>
                         @foreach (in_array($type, ['team', 'testimonials']) ? ['draft', 'published'] : ['draft', 'published', 'archived'] as $status)
                             <option value="{{ $status }}" @selected(request('status') === $status)>{{ ucfirst($status) }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-auto">
-                    <button class="btn btn-outline-primary">Filter</button>
-                    <a class="btn btn-link" href="{{ route('admin.content.index', $type) }}">Reset</a>
+            @endif
+            @if ($type === 'categories')
+                <div class="col-md-3">
+                    <select class="form-select" name="category_type" aria-label="Filter category type">
+                        <option value="">All category types</option>
+                        <option value="property" @selected(request('category_type') === 'property')>Property</option>
+                        <option value="post" @selected(request('category_type') === 'post')>Blog</option>
+                    </select>
                 </div>
-            </form>
-        @endif
+            @endif
+            <div class="col-md-auto">
+                <button class="btn btn-outline-primary" type="submit">Search / filter</button>
+                <a class="btn btn-link" href="{{ route('admin.content.index', $type) }}">Reset</a>
+            </div>
+        </form>
         <div class="table-responsive">
-            <table class="table align-middle" data-datatable>
+            <table class="table align-middle" data-datatable data-datatable-paging="false" data-datatable-searching="false">
                 <thead>
                     <tr>
                         <th>Title</th>
@@ -73,6 +86,10 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+            <small class="text-muted">Showing {{ $items->firstItem() ?? 0 }}–{{ $items->lastItem() ?? 0 }} of {{ $items->total() }} records</small>
+            {{ $items->links() }}
         </div>
     </div>
 @endsection

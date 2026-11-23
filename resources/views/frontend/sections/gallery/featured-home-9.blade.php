@@ -16,7 +16,7 @@
             @foreach($items as $property)
                 @php
                     $background = $sectionConfig['background_image_'.min($loop->iteration, 3)] ?? asset('theme-assets/img/gallery/gallery-2-'.min($loop->iteration, 3).'.jpg');
-                    $propertyImage = $property->featured_image ? Storage::disk('public')->url($property->featured_image) : asset('theme-assets/img/popular/popular-1-'.min($loop->iteration, 12).'.jpg');
+                    $propertyImage = $property->featured_image ? Storage::disk('public')->url($property->featured_image) : null;
                 @endphp
                 <div class="swiper-slide">
                     <div class="gallery-4-inner" data-bg-src="{{ $background }}">
@@ -54,7 +54,11 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3 col-lg-5 col-xl-6 col-xxl-7">
+                                    @if ($propertyImage)
                                     <a href="{{ $propertyImage }}" class="popular-popup-image"><img class="img-fluid" src="{{ $propertyImage }}" alt="{{ $property->title }}"></a>
+                                @else
+                                    <div class="bg-light d-flex align-items-center justify-content-center text-muted rounded" style="min-height: 240px">Image not provided</div>
+                                @endif
                                 </div>
                             </div>
                         </div>

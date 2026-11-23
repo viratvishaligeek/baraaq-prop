@@ -38,7 +38,7 @@
     </div>
     <div class="content-card">
         <div class="table-responsive">
-            <table class="table align-middle" data-datatable data-datatable-paging="false">
+            <table class="table align-middle" data-datatable data-datatable-paging="false" data-datatable-searching="false">
                 <thead>
                     <tr>
                         <th>Contact</th>

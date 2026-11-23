@@ -49,18 +49,30 @@ class PropertyController extends Controller
     public function index()
     {
         $this->authorizeAction('view');
+        $filters = request()->validate([
+            'q' => ['nullable', 'string', 'max:160'],
+            'status' => ['nullable', Rule::in(['draft', 'published', 'archived'])],
+            'property_type' => ['nullable', 'string', 'max:60'],
+            'feature' => ['nullable', 'string', 'max:120'],
+        ]);
 
         return view('admin.properties.index', [
             'properties' => Property::with('category:id,name')
-                ->when(
-                    in_array(request('status'), ['draft', 'published', 'archived'], true),
-                    fn ($query) => $query->where('status', request('status'))
-                )
-                ->when(request()->filled('property_type'), fn ($query) => $query->where('property_type', request('property_type')))
-                ->when(request()->filled('feature'), fn ($query) => $query->whereJsonContains('features', request('feature')))
+                ->when($filters['q'] ?? null, function ($query, $term): void {
+                    $query->where(function ($search) use ($term): void {
+                        foreach (['title', 'slug', 'reference', 'address', 'city'] as $index => $column) {
+                            $search->{$index === 0 ? 'where' : 'orWhere'}($column, 'like', '%'.trim($term).'%');
+                        }
+                    });
+                })
+                ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
+                ->when($filters['property_type'] ?? null, fn ($query, $type) => $query->where('property_type', $type))
+                ->when($filters['feature'] ?? null, fn ($query, $feature) => $query->whereJsonContains('features', $feature))
                 ->latest()
                 ->paginate(15)
                 ->withQueryString(),
+            'propertyTypes' => Property::query()->whereNotNull('property_type')->distinct()->orderBy('property_type')->pluck('property_type'),
+            'filters' => $filters,
         ]);
     }
 

@@ -14,9 +14,16 @@
                 </i>Add property</a>
         @endif
     </div>
+    <form method="GET" class="content-card mb-3 row g-2 align-items-end">
+        <div class="col-md-4"><label class="form-label">Search</label><input class="form-control" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Title, reference, address or city"></div>
+        <div class="col-md-2"><label class="form-label">Status</label><select class="form-select" name="status"><option value="">All statuses</option>@foreach(['draft','published','archived'] as $status)<option value="{{ $status }}" @selected(($filters['status'] ?? '') === $status)>{{ ucfirst($status) }}</option>@endforeach</select></div>
+        <div class="col-md-2"><label class="form-label">Property type</label><select class="form-select" name="property_type"><option value="">All types</option>@foreach($propertyTypes as $type)<option value="{{ $type }}" @selected(($filters['property_type'] ?? '') === $type)>{{ $type }}</option>@endforeach</select></div>
+        <div class="col-md-2"><label class="form-label">Feature</label><input class="form-control" name="feature" value="{{ $filters['feature'] ?? '' }}" placeholder="e.g. parking"></div>
+        <div class="col-md-2 d-flex gap-2"><button class="btn btn-primary flex-grow-1">Filter</button><a class="btn btn-light" href="{{ route('admin.properties.index') }}">Reset</a></div>
+    </form>
     <div class="content-card">
         <div class="table-responsive">
-            <table class="table align-middle" data-datatable data-datatable-paging="false">
+            <table class="table align-middle" data-datatable data-datatable-paging="false" data-datatable-searching="false">
                 <thead>
                     <tr>
                         <th>Title</th>
