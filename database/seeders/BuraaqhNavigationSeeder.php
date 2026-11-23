@@ -37,6 +37,8 @@ class BuraaqhNavigationSeeder extends Seeder
             ['Property Buying Guide', '/blog/complete-guide-buying-residential-property-bareilly', null],
             ['Property Documents', '/blog/documents-check-before-buying-property-uttar-pradesh', null],
             ['Residential vs Commercial', '/blog/residential-vs-commercial-property-buyer-guide', null],
+            ['Buy with Buraaqh Properties', '/pages/buy-with-buraaqh', null],
+            ['Sell with Buraaqh Properties', '/pages/sell-with-buraaqh', null],
             ['Contact', '/contact', null],
         ]);
 
