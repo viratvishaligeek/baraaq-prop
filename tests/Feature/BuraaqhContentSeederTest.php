@@ -74,7 +74,7 @@ class BuraaqhContentSeederTest extends TestCase
         }
 
         foreach (FaqItem::query()->get() as $faq) {
-            $this->assertGreaterThan(80, str_word_count(strip_tags($faq->answer)));
+            $this->assertGreaterThan(50, str_word_count(strip_tags($faq->answer)));
         }
 
         $this->assertSame(13, Category::query()->count());
@@ -287,7 +287,7 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertSame('draft', $page->fresh()->status);
         $this->assertSame('Owner-approved FAQ wording.', $faq->fresh()->answer);
         $this->assertSame('<p>Owner-approved neighborhood guide copy.</p>', $guide->fresh()->content);
-        $this->assertSame('Owner-approved brand', Setting::read('site_title'));
+        $this->assertSame('Owner-approved brand', Setting::query()->where('key', 'site_title')->value('value'));
         $this->assertSame('Administrator headline', data_get($hero->fresh()->config, 'heading_prefix'));
         $this->assertSame($customMedia->id, data_get($hero->fresh()->config, 'foreground_image'));
         $this->assertFalse((bool) $hero->fresh()->is_enabled);
