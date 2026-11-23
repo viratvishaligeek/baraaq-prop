@@ -96,7 +96,7 @@ The existing Media Library architecture is retained: uploaded assets are represe
 
 `DatabaseSeeder` now runs the starter website seeders on a fresh installation regardless of whether the environment is local, testing, or production. The optional administrator account is created only when `CMS_ADMIN_EMAIL` and `CMS_ADMIN_PASSWORD` are configured through `config/cms.php`; set those environment values before running the seeder. No default password or contact identity is invented.
 
-The parallel `BuraaqhBlogSeeder` and `BuraaqhLocalContentSeeder` implementations on the updated base branch were consolidated into one `BuraaqhEditorialSeeder` because articles, tags, FAQs, and locality guides share the same publication and idempotency rules. This avoids two competing sources for the same editorial records.
+The existing `BuraaqhBlogSeeder` and `BuraaqhLocalContentSeeder` modules are retained and expanded rather than replaced with duplicate editorial modules. The blog seeder owns long-form articles and tags; the local-content seeder owns FAQs and neighborhood guides. `BuraaqhContentSeeder` orchestrates both after categories and pages are available.
 
 The Buraaqh seeder orchestration is:
 
