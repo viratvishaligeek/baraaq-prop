@@ -366,16 +366,16 @@
                                 
                                     
                                 </div>
-                                <div class="footer-item">
-                                    <div class="widget widget_banner footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? '' }}</h3>
-                                        <div class="widget-map">
-                                            @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null))
+                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null))
+                                    <div class="footer-item">
+                                        <div class="widget widget_banner footer-widget">
+                                            <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? '' }}</h3>
+                                            <div class="widget-map">
                                                 <iframe src="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['footer_map_embed_url']) }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                                            @endif
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endif
                             </div>
                             @if (!empty($siteSettings['footer_gallery_images']))
                             <div class="footer-bottom-community">
