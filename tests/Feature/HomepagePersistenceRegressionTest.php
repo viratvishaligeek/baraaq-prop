@@ -74,7 +74,7 @@ class HomepagePersistenceRegressionTest extends TestCase
             'published_at' => now(),
         ]);
 
-        $definition = config('cms-sections.sections.properties.index');
+        $definition = (config('cms-sections.sections', [])['properties.index'] ?? null);
         $section = $homepage->sections()->create([
             'instance_key' => (string) Str::uuid(),
             'section_key' => 'properties.index',
