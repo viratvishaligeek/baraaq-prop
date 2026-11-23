@@ -215,7 +215,7 @@ class BuraaqhContentSeeder extends Seeder
                 $category->forceFill([
                     'description' => $category->description ?: $description,
                     'icon_path' => $category->icon_path ?: '/theme-assets/img/'.$icon,
-                    'is_active' => false,
+                    'is_active' => true,
                 ])->save();
             }
             $property[$slug] = $category;
@@ -397,9 +397,9 @@ class BuraaqhContentSeeder extends Seeder
     private function seedBanners(): void
     {
         $rows = [
-            ['Discover a place that feels like home', 'Thoughtful homes. Local expertise.', 'Explore a considered collection of properties across Bareilly and the Bareilly region.', 'popular/popular-1-1.jpg', 'Explore Properties', '/properties'],
-            ['Make your next move with confidence', 'Advice that puts you first', 'Speak with a property specialist about buying, selling or renting.', 'popular/popular-1-4.jpg', 'Talk to our team', '/contact'],
-            ['Find the right space for your business', 'Commercial property, made simpler', 'Explore office and retail opportunities in well-connected locations.', 'popular/popular-1-8.jpg', 'View Commercial', '/properties?property_type=Commercial'],
+            ['Share your property enquiry', 'Buraaqh Properties · Bareilly', 'Use the website contact form to share your requirements and ask about current availability.', '', 'Contact Us', '/contact'],
+            ['Property information', 'Clear details matter', 'Review the information available and confirm current details directly before making a decision.', '', 'Contact Us', '/contact'],
+            ['Property enquiries', 'Bareilly, Uttar Pradesh', 'Share your property requirements so the business can confirm whether suitable information is available.', '', 'Send Enquiry', '/contact'],
         ];
 
         foreach ($rows as $index => [$title, $subtitle, $description, $image, $button, $url]) {
@@ -408,11 +408,11 @@ class BuraaqhContentSeeder extends Seeder
                 [
                     'subtitle' => $subtitle,
                     'description' => $description,
-                    'image' => $this->themeImagePath('img/'.$image),
+                    'image' => null,
                     'button_text' => $button,
                     'button_url' => $url,
                     'sort_order' => $index + 1,
-                    'is_active' => true,
+                    'is_active' => false,
                 ]
             );
         }
