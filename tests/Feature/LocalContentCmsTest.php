@@ -177,6 +177,16 @@ class LocalContentCmsTest extends TestCase
         ])->assertRedirect(route('admin.site-content.index', 'faqs'));
 
         $this->assertDatabaseHas('faq_items', ['question' => 'What should buyers verify?']);
+        $faq = FaqItem::query()->where('question', 'What should buyers verify?')->firstOrFail();
+
+        $this->actingAs($admin)->put(route('admin.site-content.update', ['type' => 'faqs', 'id' => $faq->id]), [
+            'question' => $faq->question,
+            'answer' => 'Updated owner-approved answer.',
+            'category' => 'Buying',
+            'sort_order' => 1,
+            'is_active' => '0',
+        ])->assertRedirect(route('admin.site-content.index', 'faqs'));
+        $this->assertDatabaseHas('faq_items', ['id' => $faq->id, 'answer' => 'Updated owner-approved answer.', 'is_active' => false]);
 
         $this->actingAs($admin)->post(route('admin.site-content.store', 'gallery'), [
             'title' => 'Bareilly property gallery image',
@@ -202,5 +212,59 @@ class LocalContentCmsTest extends TestCase
 
         $this->assertDatabaseHas('gallery_items', ['id' => $gallery->id, 'image' => null]);
         Storage::disk('public')->assertExists($storedPath);
+
+        $guideUpload = UploadedFile::fake()->image('neighborhood.jpg', 1000, 700);
+        $this->actingAs($admin)->post(route('admin.site-content.store', 'neighborhood-guides'), [
+            'title' => 'Bareilly neighborhood guide',
+            'slug' => 'bareilly-neighborhood-guide',
+            'locality' => 'Civil Lines',
+            'city' => 'Bareilly',
+            'state' => 'Uttar Pradesh',
+            'excerpt' => 'A practical locality checklist.',
+            'content' => '<p>Review current local conditions.</p>',
+            'image' => $guideUpload,
+            'alt_text' => 'Bareilly neighborhood street',
+            'status' => 'published',
+            'sort_order' => 1,
+        ])->assertRedirect(route('admin.site-content.index', 'neighborhood-guides'));
+
+        $guide = NeighborhoodGuide::query()->where('slug', 'bareilly-neighborhood-guide')->firstOrFail();
+        $guidePath = $guide->hero_image;
+        $this->assertDatabaseHas('media', ['original_name' => 'neighborhood.jpg']);
+
+        $this->actingAs($admin)->put(route('admin.site-content.update', ['type' => 'neighborhood-guides', 'id' => $guide->id]), [
+            'title' => $guide->title,
+            'slug' => $guide->slug,
+            'locality' => $guide->locality,
+            'city' => $guide->city,
+            'state' => $guide->state,
+            'excerpt' => 'Updated locality checklist.',
+            'content' => '<p>Updated guide copy.</p>',
+            'alt_text' => $guide->alt_text,
+            'status' => 'draft',
+            'remove_image' => '1',
+            'sort_order' => 1,
+        ])->assertRedirect(route('admin.site-content.index', 'neighborhood-guides'));
+
+        $this->assertDatabaseHas('neighborhood_guides', ['id' => $guide->id, 'hero_image' => null, 'status' => 'draft']);
+        Storage::disk('public')->assertExists($guidePath);
+
+        $this->actingAs($admin)->delete(route('admin.site-content.destroy', ['type' => 'neighborhood-guides', 'id' => $guide->id]))
+            ->assertRedirect(route('admin.site-content.index', 'neighborhood-guides'));
+        $this->assertSoftDeleted('neighborhood_guides', ['id' => $guide->id]);
+
+        $this->actingAs($admin)->delete(route('admin.site-content.destroy', ['type' => 'gallery', 'id' => $gallery->id]))
+            ->assertRedirect(route('admin.site-content.index', 'gallery'));
+        $this->assertSoftDeleted('gallery_items', ['id' => $gallery->id]);
+
+        $galleryMedia = \\App\\Models\\Media::query()->where('path', $storedPath)->firstOrFail();
+        $this->actingAs($admin)->delete(route('admin.media.destroy', $galleryMedia))
+            ->assertRedirect();
+        $this->assertDatabaseMissing('media', ['id' => $galleryMedia->id]);
+        Storage::disk('public')->assertMissing($storedPath);
+
+        $this->actingAs($admin)->delete(route('admin.site-content.destroy', ['type' => 'faqs', 'id' => $faq->id]))
+            ->assertRedirect(route('admin.site-content.index', 'faqs'));
+        $this->assertSoftDeleted('faq_items', ['id' => $faq->id]);
     }
 }
