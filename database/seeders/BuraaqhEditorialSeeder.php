@@ -337,15 +337,20 @@ HTML,
         ];
 
         foreach ($faqs as $index => [$question, $answer]) {
-            FaqItem::query()->firstOrCreate(
-                ['question' => $question],
-                [
-                    'answer' => $answer,
-                    'category' => 'Property guidance',
-                    'sort_order' => 20 + $index,
-                    'is_active' => true,
-                ]
-            );
+            $existing = FaqItem::withTrashed()->where('question', $question)->first();
+
+            // Do not resurrect a question that an administrator deliberately deleted.
+            if ($existing?->trashed() || $existing) {
+                continue;
+            }
+
+            FaqItem::query()->create([
+                'question' => $question,
+                'answer' => $answer,
+                'category' => 'Property guidance',
+                'sort_order' => 20 + $index,
+                'is_active' => true,
+            ]);
         }
     }
 
@@ -386,9 +391,9 @@ HTML,
         ];
 
         foreach ($faqs as $faqData) {
-            $faq = FaqItem::query()->where('question', $faqData['question'])->first();
+            $faq = FaqItem::withTrashed()->where('question', $faqData['question'])->first();
 
-            if ($faq && $faq->answer === $faqData['old']) {
+            if ($faq && ! $faq->trashed() && $faq->answer === $faqData['old']) {
                 $faq->update([
                     'answer' => $faqData['new'],
                     'category' => 'Property guidance',
