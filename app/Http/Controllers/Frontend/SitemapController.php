@@ -16,6 +16,8 @@ class SitemapController extends Controller
     {
         $urls = collect([
             ['loc' => route('home'), 'lastmod' => now()],
+            ['loc' => route('about'), 'lastmod' => now()],
+            ['loc' => route('contact'), 'lastmod' => now()],
             ['loc' => route('properties.index'), 'lastmod' => now()],
             ['loc' => route('blog.index'), 'lastmod' => now()],
             ['loc' => route('services.index'), 'lastmod' => now()],
