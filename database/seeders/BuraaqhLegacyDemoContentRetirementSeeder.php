@@ -78,8 +78,33 @@ class BuraaqhLegacyDemoContentRetirementSeeder extends Seeder
         Page::query()->whereIn('slug', ['buy-with-pillar', 'sell-with-pillar'])
             ->update(['status' => 'draft']);
 
-        Post::query()->where('slug', 'planning-a-delhi-ncr-move')
-            ->update(['status' => 'draft', 'published_at' => null]);
+        $legacyPostSlugs = [
+            'building-gains-housing-stocks',
+            'first-time-homebuyer-checklist',
+            'neighbourhood-infrastructure-property-value',
+            'prepare-your-home-for-sale',
+            'apartment-vs-independent-home',
+            'design-details-compact-homes',
+            'property-purchase-documents-guide',
+            'rental-yield-investor-guide',
+            'home-maintenance-habits',
+            'planning-a-bareilly-move',
+        ];
+
+        foreach (Post::query()->whereIn('slug', $legacyPostSlugs)->get() as $post) {
+            $legacyContent = '<p>'.$post->excerpt.'</p><p>Property decisions are easier when the information is clear and the next step is practical. Start by understanding your priorities, compare the available options and take time to review the details that matter to your household or investment plan.</p><p>Property conditions, documents and transaction requirements vary. Treat this article as general information only, verify current records and seek independent professional advice before making a decision.</p>';
+
+            // Retire only the exact short copy created by the old demo seeder.
+            // If an administrator edited the article, its status and content stay intact.
+            if ($post->content === $legacyContent) {
+                $post->forceFill(['status' => 'draft', 'published_at' => null])->save();
+            }
+        }
+
+        $delhiMove = Post::query()->where('slug', 'planning-a-delhi-ncr-move')->first();
+        if ($delhiMove && str_contains((string) $delhiMove->content, 'Planning a move in Delhi')) {
+            $delhiMove->forceFill(['status' => 'draft', 'published_at' => null])->save();
+        }
 
         Testimonial::query()->whereIn('name', [
             'Julia Era',
