@@ -634,7 +634,8 @@ class BuraaqhContentSeeder extends Seeder
             ],
             'properties.index' => [
                 'eyebrow' => 'Popular Properties',
-                'heading' => 'Best Properties Sale',
+                'heading' => 'Property Listings',
+                'empty_state_text' => 'No verified property listings are currently published. Please contact us with your requirements.',
                 'items_limit' => 8,
                 'listing_filter' => 'all',
                 'button_label' => 'View All Properties',
@@ -649,6 +650,7 @@ class BuraaqhContentSeeder extends Seeder
                 'eyebrow' => 'Team Members',
                 'heading' => 'Meet the Team',
                 'items_limit' => 6,
+                'empty_state_text' => 'Team profiles will be published after the business confirms the details.',
                 'chat_text' => 'Share your property requirements through the contact form and confirm available services directly with the team.',
                 'chat_link_label' => 'Contact us',
                 'chat_link_url' => '/contact',
