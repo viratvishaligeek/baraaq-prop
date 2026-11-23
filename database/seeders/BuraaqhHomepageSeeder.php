@@ -14,7 +14,11 @@ class BuraaqhHomepageSeeder extends Seeder
 {
     public function run(): void
     {
-        $homepage = Homepage::query()->where('slug', 'home-9')->first();
+        $homepage = Homepage::withTrashed()->where('slug', 'home-9')->first();
+
+        if ($homepage?->trashed()) {
+            return;
+        }
 
         if (! $homepage) {
             throw new RuntimeException('Home 9 must be created by HomepageTemplateSeeder before BuraaqhHomepageSeeder.');
@@ -172,10 +176,16 @@ class BuraaqhHomepageSeeder extends Seeder
                 throw new RuntimeException('Home 9 section is not renderable: '.$key);
             }
 
-            $existingSection = HomepageSection::query()
+            $existingSection = HomepageSection::withTrashed()
                 ->where('homepage_id', $homepage->id)
                 ->where('section_key', $key)
                 ->first();
+
+            if ($existingSection?->trashed()) {
+                $position++;
+                continue;
+            }
+
             $config = array_merge($schema['defaults'] ?? [], $definition['config'] ?? []);
             $imageFields = [];
 
