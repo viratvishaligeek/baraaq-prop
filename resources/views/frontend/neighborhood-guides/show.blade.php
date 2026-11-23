@@ -8,5 +8,5 @@
 @endsection
 @section('content')
 <div class="breadcumb-wrapper"><div class="container"><div class="breadcumb-content"><h1 class="breadcumb-title">{{ $guide->title }}</h1><p>{{ $guide->locality }}, {{ $guide->city }}, {{ $guide->state }}</p></div></div></div>
-<section class="space"><div class="container"><div class="row justify-content-center"><div class="col-lg-9">@if($guide->hero_image)<img class="w-100 rounded mb-4" src="{{ Storage::disk('public')->url($guide->hero_image) }}" alt="{{ $guide->title }}">@endif @if($guide->excerpt)<p class="lead">{{ $guide->excerpt }}</p>@endif<div>{!! \App\Support\HtmlSanitizer::sanitize($guide->content) !!}</div></div></div></div></section>
+<section class="space"><div class="container"><div class="row justify-content-center"><div class="col-lg-9">@if($guide->hero_image)<img class="w-100 rounded mb-4" src="{{ Storage::disk('public')->url($guide->hero_image) }}" alt="{{ $guide->alt_text ?: $guide->title }}">@endif @if($guide->excerpt)<p class="lead">{{ $guide->excerpt }}</p>@endif<div>{!! \App\Support\HtmlSanitizer::sanitize($guide->content) !!}</div></div></div></div></section>
 @endsection
