@@ -10,7 +10,7 @@
         <div class="col-auto"><button class="btn btn-primary">Search</button><a class="btn btn-link" href="{{ route('admin.tags.index') }}">Reset</a></div>
     </form>
     <div class="content-card">
-        <div class="table-responsive"><table class="table align-middle" data-datatable data-datatable-paging="false"><thead><tr><th>Name</th><th>Slug</th><th>Posts</th><th></th></tr></thead><tbody>
+        <div class="table-responsive"><table class="table align-middle" data-datatable data-datatable-paging="false" data-datatable-searching="false"><thead><tr><th>Name</th><th>Slug</th><th>Posts</th><th></th></tr></thead><tbody>
             @forelse($tags as $tag)
                 <tr><td class="fw-semibold">{{ $tag->name }}</td><td><code>{{ $tag->slug }}</code></td><td>{{ $tag->posts_count }}</td><td class="text-end"><a class="btn btn-sm btn-light" href="{{ route('admin.tags.edit', $tag) }}">Edit</a><form class="d-inline" method="POST" action="{{ route('admin.tags.destroy', $tag) }}" onsubmit="return confirm('Delete this tag? Posts will remain intact.')">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger">Delete</button></form></td></tr>
             @empty
