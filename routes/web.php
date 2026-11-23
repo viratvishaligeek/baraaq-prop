@@ -53,6 +53,7 @@ Route::get('/team', [FrontendContentController::class, 'team'])->name('team.inde
 Route::get('/testimonials', [FrontendContentController::class, 'testimonials'])->name('testimonials.index');
 Route::get('/services/{service:slug}', [FrontendContentController::class, 'service'])->name('services.show');
 Route::post('/blog/{post:slug}/comments', [FrontendContentController::class, 'storeComment'])->middleware('throttle:3,10')->name('blog.comments.store');
+Route::post('/services/{service:slug}/comments', [FrontendContentController::class, 'storeServiceComment'])->middleware('throttle:3,10')->name('services.comments.store');
 
 // Preserve the original HTML-template entry points while resolving detail pages
 // against published database records instead of sending every detail URL to an index.
