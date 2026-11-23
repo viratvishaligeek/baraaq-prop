@@ -22,6 +22,12 @@
         <div class="alert alert-danger" role="alert"><ul class="mb-0">@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
     @endif
 
+    <form method="GET" class="content-card mb-3 row g-2 align-items-end">
+        <div class="col-md-5"><label class="form-label">Search media</label><input class="form-control" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Filename, path or alt text"></div>
+        <div class="col-md-3"><label class="form-label">File type</label><select class="form-select" name="type"><option value="">All files</option><option value="images" @selected(($filters['type'] ?? '') === 'images')>Images</option><option value="documents" @selected(($filters['type'] ?? '') === 'documents')>Documents and video</option></select></div>
+        <div class="col-auto"><button class="btn btn-primary">Search</button><a class="btn btn-link" href="{{ route('admin.media.index') }}">Reset</a></div>
+    </form>
+
     <form id="bulk-media-form" method="POST" action="{{ route('admin.media.bulk-destroy') }}" class="content-card mb-3 d-flex flex-wrap align-items-center justify-content-between gap-2" onsubmit="return confirm('Delete all selected media files? Files used by website content will be retained.')">
         @csrf @method('DELETE')
         <div class="d-flex align-items-center gap-3">
