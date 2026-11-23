@@ -66,7 +66,8 @@ class DemoPropertySeederTest extends TestCase
 
         $this->assertSame(24, PropertyImage::query()->count());
         $this->assertSame(36, PropertyAccommodation::query()->count());
-        $this->assertSame(24, PropertyFaq::query()->count());\n        $this->assertSame(6, GalleryItem::published()->count());
+        $this->assertSame(24, PropertyFaq::query()->count());
+        $this->assertSame(6, GalleryItem::published()->count());
         $this->assertSame([], DB::select('PRAGMA foreign_key_check'));
 
         $property = $properties->firstOrFail();
@@ -74,7 +75,11 @@ class DemoPropertySeederTest extends TestCase
             ->assertOk()
             ->assertSee($property->title);
 
-        $this->get(route('gallery.index'))\n            ->assertOk()\n            ->assertSee('Illustrative Apartment Architecture — Demo Image');\n\n        $this->get(route('properties.show', $property))
+        $this->get(route('gallery.index'))
+            ->assertOk()
+            ->assertSee('Illustrative Apartment Architecture — Demo Image');
+
+        $this->get(route('properties.show', $property))
             ->assertOk()
             ->assertSee($property->title)
             ->assertSee('About This Property')
