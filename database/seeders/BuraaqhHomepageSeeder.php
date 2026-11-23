@@ -193,7 +193,13 @@ class BuraaqhHomepageSeeder extends Seeder
 
                     // Import only for a new section or an untouched theme default.
                     // Administrator-selected media and custom paths remain untouched.
-                    if (! $existingSection || $existingValue === $defaultValue) {
+                    $existingAttachmentId = $existingSection && $existingValue === $defaultValue
+                        ? $existingSection->mediaAttachments()->where('field_key', $field)->value('media_id')
+                        : null;
+
+                    if ($existingAttachmentId && Media::query()->whereKey($existingAttachmentId)->exists()) {
+                        $config[$field] = (int) $existingAttachmentId;
+                    } elseif (! $existingSection || $existingValue === $defaultValue) {
                         $media = $importer->import($image['path'], $image['alt']);
                         $config[$field] = $media?->id;
                         $config[$field.'_alt'] = $image['alt'];
@@ -229,9 +235,23 @@ class BuraaqhHomepageSeeder extends Seeder
                 $currentValue = $persistedConfig[$field] ?? null;
                 $defaultValue = $schema['defaults'][$field] ?? null;
 
-                // Replace only the exact old theme-default path. Any different
-                // path or selected media ID belongs to the administrator.
+                // If the administrator selected media through the attachment
+                // relation while the config still contains the old theme path,
+                // keep that selected media and align the config to it.
+                $existingAttachmentId = $section->mediaAttachments()
+                    ->where('field_key', $field)
+                    ->value('media_id');
+
                 if (
+                    is_string($currentValue)
+                    && $currentValue === $defaultValue
+                    && $existingAttachmentId
+                    && Media::query()->whereKey($existingAttachmentId)->exists()
+                ) {
+                    $persistedConfig[$field] = (int) $existingAttachmentId;
+                    $configChanged = true;
+                    $currentValue = (int) $existingAttachmentId;
+                } elseif (
                     isset($imageMap[$key][$field])
                     && is_string($currentValue)
                     && $currentValue === $defaultValue
