@@ -128,6 +128,9 @@ class BuraaqhContentSeeder extends Seeder
                 foreach ($fields as $index => $field) {
                     $query->{$index === 0 ? 'where' : 'orWhere'}($field, 'like', '%Pillar%');
                     $query->orWhere($field, 'like', '%Meerut%');
+                    $query->orWhere($field, 'like', '%Noida%');
+                    $query->orWhere($field, 'like', '%Ghaziabad%');
+                    $query->orWhere($field, 'like', '%Delhi NCR%');
                 }
             })->get();
 
@@ -161,7 +164,7 @@ class BuraaqhContentSeeder extends Seeder
             foreach (HomepageSection::query()->get() as $section) {
                 $config = $section->config;
                 $json = is_string($config) ? $config : json_encode($config);
-                if (! is_string($json) || (! str_contains($json, 'Pillar') && ! str_contains($json, 'Meerut'))) continue;
+                if (! is_string($json) || (! str_contains($json, 'Pillar') && ! str_contains($json, 'Meerut') && ! str_contains($json, 'Noida') && ! str_contains($json, 'Ghaziabad') && ! str_contains($json, 'Delhi NCR'))) continue;
                 $json = str_replace(['Pillar Realty', 'Pillar', 'Meerut', 'Noida', 'Ghaziabad', 'Delhi NCR'], ['Buraaqh Properties', 'Buraaqh Properties', 'Bareilly', 'Bareilly', 'Bareilly', 'Bareilly region'], $json);
                 $section->config = is_string($config) ? $json : json_decode($json, true);
                 $section->save();
