@@ -13,7 +13,7 @@
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
 
-<section class="{{ $sectionConfig['vertical_spacing'] ?? 'space' }} overflow-hidden {{ $visibility }}" id="blog-sec-{{ $section->id }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif @if(!empty($sectionConfig['background_image'])) data-bg-src="{{ $sectionConfig['background_image'] }}" @endif>
+<section class="{{ $sectionConfig['vertical_spacing'] ?? '' }} overflow-hidden {{ $visibility }}" id="blog-sec-{{ $section->id }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif @if(!empty($sectionConfig['background_image'])) data-bg-src="{{ $sectionConfig['background_image'] }}" @endif>
     <div class="container">
         <div class="row justify-content-lg-between justify-content-center align-items-end">
             <div class="col-lg-6">
@@ -62,7 +62,7 @@
                                     <h3 class="box-title">
 <a href="{{ route('blog.show', $post) }}">{{ $post->title }}</a>
 </h3>
-                                    <a href="{{ route('blog.show', $post) }}" class="th-btn pill style3">{{ $sectionConfig['card_button_label'] ?? 'Read More' }}</a>
+                                    <a href="{{ route('blog.show', $post) }}" class="th-btn pill style3">{{ $sectionConfig['card_button_label'] ?? '' }}</a>
                                 </div>
                             </div>
                         </div>
@@ -70,7 +70,7 @@
                         <div class="swiper-slide">
 <div class="blog-card">
 <div class="blog-content">
-<h3 class="box-title">{{ $sectionConfig['empty_state_text'] ?? 'News and articles will appear here once published.' }}</h3>
+<h3 class="box-title">{{ $sectionConfig['empty_state_text'] ?? '' }}</h3>
 </div>
 </div>
 </div>

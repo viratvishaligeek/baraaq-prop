@@ -182,6 +182,10 @@
             </button>
         </form>
     </div>
+    @php
+        // Resolve the configured menu before both mobile and desktop navigation render.
+        $primaryMenu = \App\Models\Menu::cached($siteSettings['header_menu_location'] ?? 'primary');
+    @endphp
     <div class="th-menu-wrapper">
         <div class="th-menu-area text-center">
             <button class="th-menu-toggle">
@@ -203,115 +207,8 @@
             </div>
         </div>
     </div>
-    @if (isset($homepage) && $homepage?->slug === 'home-9')
-        <header class="th-header header-default header-layout9">
-            <div class="sticky-wrapper" data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
-                <div class="menu-area">
-                    <div class="container">
-                        <div class="row align-items-center justify-content-between">
-                            <div class="col-auto">
-                                <div class="header-logo">
-                                    <a href="{{ route('home') }}">
-                                        @if (!empty($siteSettings['logo']))
-                                            <img src="{{ asset('storage/'.$siteSettings['logo']) }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
-                                        @else
-                                            <img src="{{ asset('theme-assets/img/logo.svg') }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
-                                        @endif
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <nav class="main-menu d-none d-lg-inline-block">
-                                    <ul>@include('frontend.partials.navigation')</ul>
-                                </nav>
-                                <button type="button" class="th-menu-toggle d-block d-lg-none"><i class="far fa-bars"></i></button>
-                            </div>
-                            <div class="col-auto d-none d-xl-block">
-                                <div class="header-button">
-                                    <a href="{{ \App\Rules\SafeLink::sanitize($siteSettings['header_cta_url'] ?? route('properties.index')) }}" class="th-btn bg-black">
-                                        <i class="fa-regular fa-house-chimney me-2"></i> {{ $siteSettings['header_cta_label'] ?? 'Add Listing' }}
-                                    </a>
-                                    <button type="button" class="icon-btn searchBoxToggler"><i class="far fa-search"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-    @else
-    <header class="th-header header-default header-layout1">
-        <div class="header-top">
-            <div class="container">
-                <div class="row justify-content-center justify-content-lg-between align-items-center gy-2">
-                    <div class="col-auto d-none d-lg-block">
-                        <div class="header-links">
-                            <ul>
-                                <li>
-                                    <i class="fa-solid fa-envelope">
-                                    </i> <a
-                                        href="mailto:{{ $siteSettings['site_email'] ?? '' }}">{{ \App\Models\Setting::read('site_email', '') }}</a>
-                                </li>
-                                <li>
-                                    <i class="fa-solid fa-phone">
-                                    </i> <a
-                                        href="tel:{{ preg_replace('/\D+/', '', \App\Models\Setting::read('site_phone', '')) }}">{{ $siteSettings['site_phone'] ?? '' }}</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <div class="header-links">
-                            <ul>
-                                <li>
-                                    <div class="th-social">
-                                        @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_facebook'] ?? null))
-                                            <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_facebook']) }}" target="_blank"
-                                                rel="noopener noreferrer">
-                                                <i class="fab fa-facebook-f">
-                                                </i>
-                                            </a>
-                                            @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_instagram'] ?? null))
-                                                <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_instagram']) }}" target="_blank"
-                                                    rel="noopener noreferrer">
-                                                    <i class="fab fa-instagram">
-                                                    </i>
-                                                </a>
-                                                @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_linkedin'] ?? null))
-                                                    <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_linkedin']) }}" target="_blank"
-                                                        rel="noopener noreferrer">
-                                                        <i class="fab fa-linkedin-in">
-                                                        </i>
-                                                    </a>
-                                                    @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_youtube'] ?? null))
-                                                        <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_youtube']) }}"
-                                                            target="_blank" rel="noopener noreferrer">
-                                                            <i class="fab fa-youtube">
-                                                            </i>
-                                                        </a>
-                                                        @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_x'] ?? null))
-                                                            <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_x']) }}" target="_blank"
-                                                                rel="noopener noreferrer">
-                                                                <i class="fab fa-x-twitter">
-                                                                </i>
-                                                            </a>
-                                                            @endif @if (!empty($siteSettings['whatsapp_number']))
-                                                                <a href="https://wa.me/{{ preg_replace('/\D+/', '', $siteSettings['whatsapp_number']) }}"
-                                                                    target="_blank" rel="noopener noreferrer">
-                                                                    <i class="fab fa-whatsapp">
-                                                                    </i>
-                                                                </a>
-                                                            @endif
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="sticky-wrapper"
-            data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
+    <header class="th-header header-default header-layout9">
+        <div class="sticky-wrapper" data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
             <div class="menu-area">
                 <div class="container">
                     <div class="row align-items-center justify-content-between">
@@ -319,43 +216,27 @@
                             <div class="header-logo">
                                 <a href="{{ route('home') }}">
                                     @if (!empty($siteSettings['logo']))
-                                        <img src="{{ asset('storage/' . $siteSettings['logo']) }}"
-                                        alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">@else<img
-                                            src="{{ asset('theme-assets/img/logo-white.svg') }}"
-                                            alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                        <img src="{{ asset('storage/' . $siteSettings['logo']) }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                    @else
+                                        <img src="{{ asset('theme-assets/img/logo.svg') }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
                                     @endif
                                 </a>
                             </div>
                         </div>
                         <div class="col-auto">
-                            @php
-                                $primaryMenu = \App\Models\Menu::cached(
-                                    $siteSettings['header_menu_location'] ?? 'primary',
-                                );
-                            @endphp
-                            @if ($primaryMenu)
-                                <nav class="main-menu d-none d-lg-inline-block">
-                                    <ul>@include('frontend.partials.navigation')</ul>
-                                </nav>
-                            @else
-                                <nav class="main-menu d-none d-lg-inline-block">
-                                    <ul>@include('frontend.partials.navigation')</ul>
-                                </nav>
-                            @endif
-                            <button type="button" class="th-menu-toggle d-block d-lg-none">
-                                <i class="far fa-bars">
-                                </i>
-                            </button>
+                            <nav class="main-menu d-none d-lg-inline-block">
+                                <ul>@include('frontend.partials.navigation')</ul>
+                            </nav>
+                            <button type="button" class="th-menu-toggle d-block d-lg-none" aria-label="Open navigation"><i class="far fa-bars"></i></button>
                         </div>
                         <div class="col-auto d-none d-xl-block">
                             <div class="header-button">
-                                <a href="{{ \App\Rules\SafeLink::sanitize($siteSettings['header_cta_url'] ?? route('properties.index')) }}" class="th-btn outline pill text-white">
-                                    <i class="fa-regular fa-house-chimney me-2">
-                                    </i> {{ $siteSettings['header_cta_label'] ?? 'Browse Properties' }} </a>
-                                <button type="button" class="icon-btn searchBoxToggler text-white">
-                                    <i class="far fa-search">
-                                    </i>
-                                </button>
+                                @if (!empty($siteSettings['header_cta_label']) && !empty($siteSettings['header_cta_url']))
+                                    <a href="{{ \App\Rules\SafeLink::sanitize($siteSettings['header_cta_url']) }}" class="th-btn bg-black">
+                                        <i class="fa-regular fa-house-chimney me-2"></i> {{ $siteSettings['header_cta_label'] }}
+                                    </a>
+                                @endif
+                                <button type="button" class="icon-btn searchBoxToggler" aria-label="Search properties"><i class="far fa-search"></i></button>
                             </div>
                         </div>
                     </div>
@@ -363,21 +244,16 @@
             </div>
         </div>
     </header>
- 
-    @endif
     <main>
         @yield('content')
     </main>
     <footer class="footer-wrapper footer-layout1">
-        <div class="footer-top-shape animation-infinite"
-            data-bg-src="{{ asset('theme-assets/img/icon/footer-top-shape.png') }}">
-        </div>
-        <div class="widget-area">
+            <div class="widget-area">
             <div class="container">
                 @php
-                    $footerMenu = \App\Models\Menu::cached($siteSettings['footer_menu_location'] ?? 'footer');
-                    $footerQuickLinks = \App\Models\Menu::cached($siteSettings['footer_quick_links_menu_location'] ?? 'footer-quick-links');
-                    $footerSupport = \App\Models\Menu::cached($siteSettings['footer_support_menu_location'] ?? 'footer-support');
+                    $footerMenu = \App\Models\Menu::cached($siteSettings['footer_menu_location'] ?? '');
+                    $footerQuickLinks = \App\Models\Menu::cached($siteSettings['footer_quick_links_menu_location'] ?? '');
+                    $footerSupport = \App\Models\Menu::cached($siteSettings['footer_support_menu_location'] ?? '');
                 @endphp
                 @if ($footerMenu && $footerMenu->items->isNotEmpty())
                     <nav class="cms-footer-navigation" aria-label="Footer navigation">
@@ -390,11 +266,11 @@
                         
 
                         <div class="widget footer-widget">
-                            <h3 class="widget_title">{{ $siteSettings['footer_about_heading'] ?? 'About' }} {{ $siteSettings['site_title'] ?? config('app.name') }}
+                            <h3 class="widget_title">{{ $siteSettings['footer_about_heading'] ?? '' }} {{ $siteSettings['site_title'] ?? config('app.name') }}
                             </h3>
                             <div class="th-widget-about">
                                 <p class="about-text">
-                                    {{ $siteSettings['footer_description'] ?? ($siteSettings['site_tagline'] ?? '') }}
+                                    {{ $siteSettings['footer_description'] ?? '' }}
                                 </p>
                                 <div class="footer-info-wrap">
                                     <div class="footer-info">
@@ -446,7 +322,7 @@
                                     
 
                                     <div class="widget widget_nav_menu footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_services_heading'] ?? 'Services' }}</h3>
+                                        <h3 class="widget_title">{{ $siteSettings['footer_services_heading'] ?? '' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
                                                 @foreach (\App\Models\Service::published()->orderBy('title')->limit(5)->get() as $footerService)
@@ -465,7 +341,7 @@
                                     
 
                                     <div class="widget widget_nav_menu footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_quick_links_heading'] ?? 'Quick Links' }}</h3>
+                                        <h3 class="widget_title">{{ $siteSettings['footer_quick_links_heading'] ?? '' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
                                                 @if ($footerQuickLinks && $footerQuickLinks->items->isNotEmpty())
@@ -481,7 +357,7 @@
                                     
 
                                     <div class="widget widget_nav_menu footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_support_heading'] ?? 'Support' }}</h3>
+                                        <h3 class="widget_title">{{ $siteSettings['footer_support_heading'] ?? '' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
                                                 @if ($footerSupport && $footerSupport->items->isNotEmpty())
@@ -495,7 +371,7 @@
                                 </div>
                                 <div class="footer-item">
                                     <div class="widget widget_banner footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? 'Pillar Location' }}</h3>
+                                        <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? '' }}</h3>
                                         <div class="widget-map">
                                             @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null))
                                                 <iframe src="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['footer_map_embed_url']) }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -542,12 +418,12 @@
                         <p class="copyright-text">
                             <i class="fal fa-copyright">
                             </i> {{ date('Y') }}
-                            {{ $siteSettings['footer_copyright'] ?? ($siteSettings['site_title'] ?? config('app.name')) }} {{ $siteSettings['footer_rights_text'] ?? 'All Rights Reserved.' }}
+                            {{ $siteSettings['footer_copyright'] ?? '' }} {{ $siteSettings['footer_rights_text'] ?? '' }}
                         </p>
                     </div>
                     <div class="col-auto">
                         <div class="footer-default-copy-right">
-                            <p>{{ $siteSettings['footer_social_heading'] ?? 'Social Media:' }}</p>
+                            <p>{{ $siteSettings['footer_social_heading'] ?? '' }}</p>
                             <div class="th-social">
                                 @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_facebook'] ?? null))
                                     <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_facebook']) }}" target="_blank" rel="noopener noreferrer">

@@ -34,7 +34,7 @@ class FixedHomepageCmsTest extends TestCase
     }
     private function heroSection(Homepage $homepage): HomepageSection
     {
-        $definition = config('cms-sections.sections.hero.home-9');
+        $definition = (config('cms-sections.sections', [])['hero.home-9'] ?? null);
         return $homepage->sections()->create([
             'section_key' => 'hero.home-9',
             'section_type' => $definition['type'],
@@ -186,7 +186,7 @@ class FixedHomepageCmsTest extends TestCase
 
     private function createFixedSection(Homepage $homepage, string $key, int $sortOrder = 1): HomepageSection
     {
-        $definition = config('cms-sections.sections.'.$key);
+        $definition = (config('cms-sections.sections', [])[$key] ?? null);
 
         return $homepage->sections()->create([
             'section_key' => $key,

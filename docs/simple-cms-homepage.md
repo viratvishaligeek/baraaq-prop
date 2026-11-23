@@ -20,15 +20,23 @@ Homepage section saves, homepage-wide settings, general website settings, CMS co
 
 Replacing an image does not silently delete an existing Media Library asset. Legacy files that are not represented in the Media Library are only removed after their known content references have been checked.
 
+## Persistence correctness
+
+Homepage section registry identifiers are literal dotted keys, such as hero.home-9 and properties.index. Admin updates and media rendering resolve these keys from the registry array instead of treating the identifier as a nested config path. Persisted Admin section configuration takes precedence over legacy data_source values during rendering. New HomepageSection records receive an instance UUID when one is not supplied. Both homepage forms submit PATCH requests: admin.homepages.update handles root-level SEO and site/footer settings, while admin.homepages.sections.update handles config[field] values, uploaded config images and is_enabled. Both routes are inside the authenticated admin.access group and require settings.manage. The field-name audit matched the direct homepage form inputs to update() validation and section inputs to the registry-driven updateSection() rules.
+
+The Home 9 header and inner-page headers now share one responsive header layout. Mobile and desktop navigation use the same Admin-selected menu location; the frontend no longer substitutes a hardcoded navigation list when no menu is configured. Public CMS pages are available through the pages.show route used by dynamic menu links.
+
+The default DatabaseSeeder runs demo content automatically only in local/testing environments. Other environments require the explicit SEED_DEMO_CONTENT=true opt-in. The fixed homepage, default theme settings and roles/permissions remain part of the baseline seeding flow.
+
 ## Admin tables
 
 Admin listing tables use DataTables 2 with Bootstrap 5 and Responsive extensions from the official CDN. Tables backed by full result sets use DataTables search, sorting and pagination. Larger server-paginated lists retain Laravel pagination and use DataTables search/sorting on the current page; DataTables paging is disabled on those tables to avoid two competing pagination controls. Tables initialize once; no new npm dependency or frontend build step is required.
 
 ## Production migration caution
 
-The repository contains 35 migration files. Existing migration history is retained rather than rewritten or deleted: reducing migration file count is not worth breaking environments where those migrations have already run.
+The repository contains 36 migration files. Existing migration history is retained rather than rewritten or deleted: reducing migration file count is not worth breaking environments where those migrations have already run.
 
-The forward-only 2026_11_22_000001_remove_legacy_page_builder_and_widget_schema migration retires builder/widget records and schema. Its down() method intentionally does not reconstruct deleted data. Do not roll back across either cleanup migration: restore from a tested backup if reversal is required. Before applying it to a live database, verify its status with php artisan migrate:status, take and test a backup, and confirm the fixed Home 9 record and required section rows are present. Repository access cannot establish the migration state of a production database.
+The 2026_11_22_000001_remove_legacy_page_builder_and_widget_schema migration is intentionally a no-op: it preserves legacy widgets, widget areas, reusable sections and their administrator-authored data. It does not drop those tables or records. The 2026_11_22_000002_simplify_fixed_homepage_schema migration checks for duplicate homepage section keys before adding its unique index. Its rollback removes only that index. Do not physically remove legacy tables until a separate export, backup, dependency and retention review is complete. The page-generalization migration has a guarded rollback that refuses to make homepage_id required while page-owned rows remain; the optional enquiry-phone migration's rollback converts null values to empty strings before restoring NOT NULL. Repository access cannot establish the migration state or row contents of a production database.
 
 ## Verification
 

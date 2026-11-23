@@ -19,10 +19,10 @@
     <div class="row g-3 mb-4">
         @forelse($dashboardCards as $card)
             <div class="col-6 col-xl-3">
-                <a class="stat-card h-100 d-block text-decoration-none text-reset" href="{{ $card['url'] }}" aria-label="View {{ $widget['label'] }}">
-                    <div class="stat-icon"><i class="fa {{ $widget['icon'] }}"></i></div>
-                    <div class="text-muted small">{{ $widget['label'] }}</div>
-                    <div class="stat-value">{{ number_format($widget['value']) }}</div>
+                <a class="stat-card h-100 d-block text-decoration-none text-reset" href="{{ $card['url'] }}" aria-label="View {{ $card['label'] }}">
+                    <div class="stat-icon"><i class="fa {{ $card['icon'] }}"></i></div>
+                    <div class="text-muted small">{{ $card['label'] }}</div>
+                    <div class="stat-value">{{ number_format($card['value']) }}</div>
                 </a>
             </div>
         @empty

@@ -17,11 +17,14 @@ class SectionDataResolver
         $source = $section->data_source ?? [];
         // The fixed Homepage CMS exposes these values as editable section fields.
         // Keep legacy data-source values as fallbacks, not overrides of saved admin content.
-        $config = array_merge($config, $source, [
-            'items_limit' => $config['items_limit'] ?? ($source['limit'] ?? 6),
-            'columns' => $config['columns'] ?? ($source['columns'] ?? 3),
-            'slider' => $config['slider'] ?? ($source['slider'] ?? true),
-        ]);
+        // Admin-saved section configuration must always win over legacy data-source
+        // options. The caller has already merged section defaults, legacy data_source,
+        // and persisted config in that order; reversing this merge silently discarded
+        // saved values such as filters, sort options, columns and slider settings.
+        $config = array_merge($source, $config);
+        $config['items_limit'] = $config['items_limit'] ?? ($source['limit'] ?? 6);
+        $config['columns'] = $config['columns'] ?? ($source['columns'] ?? 3);
+        $config['slider'] = $config['slider'] ?? ($source['slider'] ?? true);
 
         $ids = collect($source['selected_ids'] ?? [])
             ->map(fn ($id) => (int) $id)

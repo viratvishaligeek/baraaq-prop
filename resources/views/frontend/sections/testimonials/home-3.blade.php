@@ -4,7 +4,7 @@
     $sliderId = 'testiSlide3-'.$section->id;
 @endphp
 
-<section class="testi-card-area-3 {{ $sectionConfig['vertical_spacing'] ?? 'space' }} overflow-hidden {{ $visibility }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif>
+<section class="testi-card-area-3 {{ $sectionConfig['vertical_spacing'] ?? '' }} overflow-hidden {{ $visibility }}" @if(!empty($sectionConfig['background_color'])) style="background-color: {{ $sectionConfig['background_color'] }};" @endif>
     <div class="container">
         <div class="row gy-40 gx-100 justify-content-center align-items-end">
             <div class="col-lg-4">
@@ -23,9 +23,9 @@
 </i>
 </div>
                         <h4 class="review-title">
-<span class="number">{{ $sectionConfig['trust_score_prefix'] ?? 'Trust-score on' }} <span class="counter-number">{{ $reviewCount }}</span>+</span> {{ $sectionConfig['reviews_suffix'] ?? 'reviews' }}</h4>
+<span class="number">{{ $sectionConfig['trust_score_prefix'] ?? '' }} <span class="counter-number">{{ $reviewCount }}</span>+</span> {{ $sectionConfig['reviews_suffix'] ?? '' }}</h4>
                     </div>
-                    <a class="th-btn tab-btn style3 radius" href="{{ $sectionConfig['view_all_url'] ?? '#' }}">{{ $sectionConfig['view_all_label'] ?? 'View All Reviews' }}</a>
+                    <a class="th-btn tab-btn style3 radius" href="{{ $sectionConfig['view_all_url'] ?? '' }}">{{ $sectionConfig['view_all_label'] ?? '' }}</a>
                     <div class="testi-bottom-item">
                         <div class="trust-content">
 <div class="icon">@if(!empty($sectionConfig['star_icon_image']))<img src="{{ $sectionConfig['star_icon_image'] }}" alt="Star">@endif</div>

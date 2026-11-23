@@ -16,7 +16,7 @@ $sections = [
             'primary_button_url' => '/properties',
             'secondary_button_label' => 'Request A Visit',
             'secondary_button_url' => '/contact',
-            'background_image' => '/theme-assets/img/hero/hero-9-bg.png',
+            'background_image' => '/theme-assets/img/hero/hero-10-2.jpg',
             'foreground_image' => '/theme-assets/img/hero/hero-9-right.png',
         ],
         'fields' => [
