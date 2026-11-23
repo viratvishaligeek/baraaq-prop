@@ -14,7 +14,7 @@
     $visibility = trim((!($sectionConfig['show_mobile'] ?? true) ? ' d-none d-md-block' : '').(!($sectionConfig['show_tablet'] ?? true) ? ' d-md-none d-lg-block' : '').(!($sectionConfig['show_desktop'] ?? true) ? ' d-lg-none' : ''));
 @endphp
 
-<section class="team-area-1 {{ $sectionConfig['vertical_spacing'] ?? 'space-bottom' }} overflow-hidden {{ $visibility }}">
+<section class="team-area-1 {{ $sectionConfig['vertical_spacing'] ?? '' }} overflow-hidden {{ $visibility }}">
     @if(!empty($sectionConfig['decorative_shape']))
         <div class="shape-mockup jump d-none d-lg-block" style="top: 6%; right: 4%;"><img src="{{ $sectionConfig['decorative_shape'] }}" alt="img"></div>
     @endif
@@ -57,7 +57,7 @@
                             </div>
                         </div>
                     @empty
-                        <div class="swiper-slide"><div class="team-card style-2"><div class="team-content">{{ $sectionConfig['empty_state_text'] ?? 'Team profiles will appear here soon.' }}</div></div></div>
+                        <div class="swiper-slide"><div class="team-card style-2"><div class="team-content">{{ $sectionConfig['empty_state_text'] ?? '' }}</div></div></div>
                     @endforelse
                 </div>
             </div>
@@ -70,7 +70,7 @@
                     <p class="chat-text-wrap text-center pe-xl-5 ps-xl-5 mb-0{{ ($sectionConfig['animate_cards'] ?? true) ? ' fadeinup wow' : '' }}" data-wow-delay="0.2s">
                         {{ $sectionConfig['chat_text'] ?? '' }}
                         @if(!empty($sectionConfig['chat_link_label']))
-                            <a class="text-theme" href="{{ $sectionConfig['chat_link_url'] ?? '#' }}"> {{ $sectionConfig['chat_link_label'] }}</a>
+                            <a class="text-theme" href="{{ $sectionConfig['chat_link_url'] ?? '' }}"> {{ $sectionConfig['chat_link_label'] }}</a>
                         @endif
                     </p>
                 </div>
