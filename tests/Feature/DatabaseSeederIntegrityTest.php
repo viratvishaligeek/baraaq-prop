@@ -19,8 +19,8 @@ class DatabaseSeederIntegrityTest extends TestCase
 
         $firstRunCounts = $this->databaseTableCounts();
 
-        // A second complete run must neither duplicate records nor remove
-        // administrator-owned or otherwise existing rows.
+        // A second complete run must not create duplicate records or change
+        // the number of rows in any table.
         $this->seed();
 
         $this->assertSame(
