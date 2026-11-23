@@ -315,6 +315,7 @@ class BuraaqhContentSeederTest extends TestCase
         ]);
 
         Setting::query()->where('key', 'site_title')->update(['value' => 'Owner-approved brand']);
+        Setting::query()->where('key', 'site_tagline')->update(['value' => '']);
         $hero = HomepageSection::query()->where('section_key', 'hero.home-9')->firstOrFail();
         $customMediaPath = 'owner/approved-hero.jpg';
         Storage::disk('public')->put($customMediaPath, 'owner-selected-image');
@@ -349,6 +350,7 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertSame('Owner-approved FAQ wording.', $faq->fresh()->answer);
         $this->assertSame('<p>Owner-approved neighborhood guide copy.</p>', $guide->fresh()->content);
         $this->assertSame('Owner-approved brand', Setting::query()->where('key', 'site_title')->value('value'));
+        $this->assertSame('', Setting::query()->where('key', 'site_tagline')->value('value'));
         $this->assertSame('Administrator headline', data_get($hero->fresh()->config, 'heading_prefix'));
         $this->assertSame($customMedia->id, data_get($hero->fresh()->config, 'foreground_image'));
         $this->assertFalse((bool) $hero->fresh()->is_enabled);
