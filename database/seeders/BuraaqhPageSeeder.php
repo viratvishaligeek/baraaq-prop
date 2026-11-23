@@ -11,7 +11,10 @@ class BuraaqhPageSeeder extends Seeder
 {
     public function run(): void
     {
-        $authorId = User::query()->orderBy('id')->value('id');
+        $authorId = User::query()
+            ->whereHas('roles', fn ($query) => $query->where('slug', 'administrator'))
+            ->orderBy('id')
+            ->value('id');
 
         $pages = [
             [
