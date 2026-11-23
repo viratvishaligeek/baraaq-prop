@@ -68,6 +68,13 @@ class PropertyDynamicDetailsTest extends TestCase
             'description' => '<p>A welcoming family property.</p>',
             'features' => ['Swimming pool', 'Private garden'],
         ]);
+        Property::create([
+            'title' => 'Related Bareilly home',
+            'slug' => 'related-bareilly-home',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
         $media = Media::create(['disk' => 'public', 'path' => 'properties/accommodations/master-bedroom.webp', 'original_name' => 'master-bedroom.webp', 'mime_type' => 'image/webp', 'size' => 2048]);
         $property->accommodations()->create([
             'image_media_id' => $media->id,
@@ -91,6 +98,8 @@ class PropertyDynamicDetailsTest extends TestCase
             ->assertSee('Private garden')
             ->assertSee($media->url, false)
             ->assertSee('Is parking included?')
+            ->assertSee('Related properties')
+            ->assertSee('Related Bareilly home')
             ->assertSee('FAQPage')
             ->assertSee('RealEstateListing');
     }
