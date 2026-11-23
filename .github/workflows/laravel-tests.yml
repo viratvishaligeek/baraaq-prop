@@ -62,7 +62,7 @@ jobs:
         run: |
           touch database/database.sqlite
           php artisan storage:link --force
-          DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan migrate --seed --force
+          SEED_DEMO_CONTENT=true DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan migrate --seed --force
 
       - name: Start Laravel for browser tests
         run: |
