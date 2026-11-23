@@ -1,0 +1,14 @@
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+return new class extends Migration {
+ public function up(): void {
+  Schema::create('gallery_items',function(Blueprint $t){$t->id();$t->string('title');$t->string('slug')->unique();$t->text('description')->nullable();$t->string('image');$t->string('alt_text')->nullable();$t->unsignedInteger('sort_order')->default(0);$t->string('status',20)->default('draft')->index();$t->timestamp('published_at')->nullable();$t->string('meta_title')->nullable();$t->text('meta_description')->nullable();$t->string('canonical_url',2048)->nullable();$t->string('og_image')->nullable();$t->timestamps();$t->softDeletes();$t->index(['status','sort_order']);});
+  Schema::create('faq_items',function(Blueprint $t){$t->id();$t->string('question');$t->longText('answer');$t->string('category',120)->nullable()->index();$t->unsignedInteger('sort_order')->default(0);$t->boolean('is_active')->default(true)->index();$t->timestamps();$t->softDeletes();});
+  Schema::create('neighborhood_guides',function(Blueprint $t){$t->id();$t->string('title');$t->string('slug')->unique();$t->string('locality',160);$t->string('city',100)->default('Bareilly');$t->string('state',100)->default('Uttar Pradesh');$t->string('excerpt',500)->nullable();$t->longText('content')->nullable();$t->string('hero_image')->nullable();$t->string('status',20)->default('draft')->index();$t->timestamp('published_at')->nullable();$t->string('meta_title')->nullable();$t->text('meta_description')->nullable();$t->string('canonical_url',2048)->nullable();$t->string('og_image')->nullable();$t->string('focus_keyword',160)->nullable();$t->timestamps();$t->softDeletes();$t->index(['city','status','published_at']);});
+  Schema::create('service_features',function(Blueprint $t){$t->id();$t->foreignId('service_id')->constrained()->cascadeOnDelete();$t->string('title',180);$t->text('description')->nullable();$t->string('icon')->nullable();$t->unsignedInteger('sort_order')->default(0);$t->timestamps();$t->index(['service_id','sort_order']);});
+  Schema::create('service_images',function(Blueprint $t){$t->id();$t->foreignId('service_id')->constrained()->cascadeOnDelete();$t->string('path');$t->string('alt_text')->nullable();$t->unsignedInteger('sort_order')->default(0);$t->timestamps();$t->index(['service_id','sort_order']);});
+ }
+ public function down(): void {Schema::dropIfExists('service_images');Schema::dropIfExists('service_features');Schema::dropIfExists('neighborhood_guides');Schema::dropIfExists('faq_items');Schema::dropIfExists('gallery_items');}
+};
