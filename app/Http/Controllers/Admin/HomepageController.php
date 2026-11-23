@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 
 class HomepageController extends Controller
@@ -72,6 +73,11 @@ class HomepageController extends Controller
             'social_youtube' => ['nullable', 'url', 'max:500', new SafeLink()],
             'social_x' => ['nullable', 'url', 'max:500', new SafeLink()],
             'logo' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
+            'logo_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
+            'remove_logo' => ['sometimes', 'boolean'],
+            'footer_gallery_media_ids' => ['nullable', 'array', 'max:7'],
+            'footer_gallery_media_ids.*' => ['integer', 'distinct', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
+            'footer_gallery_media_ids_present' => ['sometimes', 'boolean'],
             'footer_gallery_images' => ['nullable', 'array', 'max:7'],
             'footer_gallery_images.*' => ['image', 'mimes:svg,jpg,jpeg,png,webp,gif', 'max:5120'],
         ]);
@@ -122,6 +128,17 @@ class HomepageController extends Controller
                     if (array_key_exists($key, $data)) {
                         Setting::write($key, $data[$key], $group, 'string');
                     }
+                }
+
+                if (! empty($data['logo_media_id'])) {
+                    $logoMedia = Media::query()->whereKey((int) $data['logo_media_id'])->where('mime_type', 'like', 'image/%')->firstOrFail();
+                    Setting::write('logo', $logoMedia->path, 'branding', 'string');
+                } elseif ($request->boolean('remove_logo')) {
+                    Setting::write('logo', null, 'branding', 'string');
+                }
+
+                if ($request->boolean('footer_gallery_media_ids_present')) {
+                    Setting::write('footer_gallery_images', $data['footer_gallery_media_ids'] ?? [], 'footer', 'json');
                 }
 
                 if ($request->hasFile('logo')) {
@@ -203,6 +220,10 @@ class HomepageController extends Controller
                 'checkbox' => ['sometimes', 'boolean'],
                 'number' => ['nullable', 'numeric', 'min:' . ($field['min'] ?? 0), 'max:' . ($field['max'] ?? 9999999)],
                 'image' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp,gif', 'max:10240'],
+                'config_media_ids' => ['nullable', 'array'],
+                'config_remove_images' => ['nullable', 'array'],
+                'config_media_ids.'.$key => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
+                'config_remove_images.'.$key => ['sometimes', 'boolean'],
                 'url' => array_merge(['nullable', 'string', 'max:' . max(2048, $max), new SafeLink()], $key === 'video_url' ? ['url'] : []),
                 'color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
                 'select' => ['nullable', 'string', 'in:' . implode(',', array_keys($field['options'] ?? []))],
@@ -236,6 +257,20 @@ class HomepageController extends Controller
                     }
 
                     if ($type === 'image') {
+                        $selectedMediaId = $request->input('config_media_ids.'.$key);
+                        if ($selectedMediaId) {
+                            $media = Media::query()->whereKey((int) $selectedMediaId)->where('mime_type', 'like', 'image/%')->firstOrFail();
+                            $section->mediaAttachments()->updateOrCreate(['field_key' => $key], ['media_id' => $media->id]);
+                            $config[$key] = $media->id;
+                            continue;
+                        }
+
+                        if ($request->boolean('config_remove_images.'.$key)) {
+                            $section->mediaAttachments()->where('field_key', $key)->delete();
+                            $config[$key] = null;
+                            continue;
+                        }
+
                         $file = $request->file('config.' . $key);
                         if (! $file) {
                             continue;

@@ -7,8 +7,11 @@ use App\Models\NeighborhoodGuide;
 use Illuminate\Http\Request;
 class LocalContentController extends Controller {
  public function gallery(Request $request){
-  $filters=$request->validate(['q'=>['nullable','string','max:120']]);
-  $items=GalleryItem::published()->when($filters['q']??null,fn($q,$term)=>$q->where(fn($sub)=>$sub->where('title','like','%'.$term.'%')->orWhere('description','like','%'.$term.'%')))->orderBy('sort_order')->latest()->paginate(18)->withQueryString();
+  $filters=$request->validate(['q'=>['nullable','string','max:120'],'category'=>['nullable','in:apartment,commercial,land-or-plot,farm']]);
+  $items=GalleryItem::published()
+   ->when($filters['q']??null,fn($q,$term)=>$q->where(fn($sub)=>$sub->where('title','like','%'.$term.'%')->orWhere('description','like','%'.$term.'%')))
+   ->when($filters['category']??null,fn($q,$category)=>$q->where('category',$category))
+   ->orderBy('sort_order')->latest()->paginate(18)->withQueryString();
   return view('frontend.gallery.index',compact('items'));
  }
  public function faqs(Request $request){

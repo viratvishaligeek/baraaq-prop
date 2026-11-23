@@ -60,6 +60,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/comments', [CommentController::class, 'index'])->name('comments.index');
         Route::patch('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
         Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+        Route::patch('/comments/services/{serviceComment}', [CommentController::class, 'updateService'])->name('service-comments.update');
+        Route::delete('/comments/services/{serviceComment}', [CommentController::class, 'destroyService'])->name('service-comments.destroy');
 
         
 

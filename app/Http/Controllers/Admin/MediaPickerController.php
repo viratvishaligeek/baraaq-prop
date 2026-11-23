@@ -15,7 +15,7 @@ class MediaPickerController extends Controller
         $user = $request->user();
         $modules = [
             'properties', 'pages', 'posts', 'services', 'team',
-            'testimonials', 'categories', 'banners',
+            'testimonials', 'categories', 'banners', 'gallery', 'faqs', 'neighborhood-guides',
         ];
         $actions = $upload ? ['manage', 'create', 'edit'] : ['manage', 'view', 'create', 'edit'];
         $permissions = ['media.manage', 'settings.manage'];

@@ -3,13 +3,13 @@
 @section('content')
     <div class="mb-4">
         <h1 class="page-title">Comment moderation</h1>
-        <p class="text-muted">Review and moderate comments submitted on published blog posts.</p>
+        <p class="text-muted">Review and moderate comments submitted on published blog posts and service detail pages.</p>
     </div>
     <div class="content-card">
         <form method="GET" class="row g-2 mb-3">
             <div class="col-md-6">
                 <input class="form-control" name="search" value="{{ request('search') }}"
-                    placeholder="Search author, email, comment or post">
+                    placeholder="Search author, email, comment, post or service">
             </div>
             <div class="col-md-3">
                 <select class="form-select" name="status">
@@ -84,5 +84,53 @@
                 </tbody>
             </table>
         </div>{{ $comments->links() }}
+    </div>
+
+    <div class="content-card mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 mb-0">Service comments</h2>
+            <span class="small text-muted">{{ $serviceComments->total() }} total</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead><tr><th>Comment</th><th>Service</th><th>Status</th><th>Moderate</th></tr></thead>
+                <tbody>
+                @forelse($serviceComments as $serviceComment)
+                    <tr>
+                        <td><strong>{{ $serviceComment->name }}</strong><div class="small text-muted">{{ $serviceComment->email }}</div><p class="mb-0 mt-2">{{ $serviceComment->body }}</p></td>
+                        <td>
+                            @if($serviceComment->service)
+                                <a href="{{ route('services.show', $serviceComment->service) }}" target="_blank" rel="noopener">{{ $serviceComment->service->title }}</a>
+                            @else
+                                <span class="text-muted">Service deleted</span>
+                            @endif
+                            <div class="small text-muted">{{ $serviceComment->created_at->format('d M Y H:i') }}</div>
+                        </td>
+                        <td><span class="badge text-bg-{{ $serviceComment->status === 'approved' ? 'success' : ($serviceComment->status === 'rejected' ? 'secondary' : 'warning') }}">{{ ucfirst($serviceComment->status) }}</span></td>
+                        <td>
+                            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('comments.manage') || auth()->user()->hasPermission('comments.edit') || auth()->user()->hasPermission('comments.publish'))
+                                <form method="POST" action="{{ route('admin.service-comments.update', $serviceComment) }}" class="d-flex gap-2">@csrf @method('PATCH')
+                                    <select class="form-select form-select-sm" name="status">
+                                        @foreach(['pending','approved','rejected'] as $status)
+                                            <option value="{{ $status }}" @selected($serviceComment->status === $status)>{{ ucfirst($status) }}</option>
+                                        @endforeach
+                                    </select>
+                                    <button class="btn btn-sm btn-primary">Save</button>
+                                </form>
+                            @endif
+                            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('comments.manage') || auth()->user()->hasPermission('comments.delete'))
+                                <form method="POST" action="{{ route('admin.service-comments.destroy', $serviceComment) }}" class="mt-2" onsubmit="return confirm('Delete this service comment?')">@csrf @method('DELETE')
+                                    <button class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            @endif
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="4" class="text-center text-muted py-5">No service comments match these filters.</td></tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
+        {{ $serviceComments->links() }}
     </div>
 @endsection

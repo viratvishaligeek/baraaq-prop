@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateTarget(item) {
         if (!targetInput) return;
         targetInput.value = String(item.id);
+        const removeFlag = targetInput.dataset.removeFlagId ? document.getElementById(targetInput.dataset.removeFlagId) : null;
+        if (removeFlag) { if (removeFlag.type === 'checkbox') removeFlag.checked = false; else removeFlag.value = '0'; }
         if (targetInput.dataset.mediaUploadInput) {
             const upload = document.getElementById(targetInput.dataset.mediaUploadInput);
             if (upload) {
@@ -111,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function () {
             nextPage = payload.next_page_url || null;
             more.hidden = !nextPage;
             status.textContent = payload.data?.length
-                ? 'Select an image to use it in this field.'
+                ? (multipleMode ? 'Select one or more images, then choose Use selected images.' : 'Select an image to use it in this field.')
                 : 'No images found. Upload images in Media Library first.';
         } catch (error) {
             status.textContent = error.message;
@@ -136,6 +138,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!targetInput) return;
             multipleMode = openButton.hasAttribute('data-media-multiple');
             selectedItems.clear();
+            if (multipleMode) {
+                targetInput.querySelectorAll('input[type="hidden"]').forEach(input => {
+                    const id = Number(input.value);
+                    if (Number.isInteger(id) && id > 0) selectedItems.set(id, { id, existing: true });
+                });
+            }
             applyMultiple.hidden = !multipleMode;
             query.value = '';
             modal.show();
@@ -148,6 +156,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = document.getElementById(clearButton.dataset.target);
             if (!input) return;
             input.value = '';
+            const removeFlag = input.dataset.removeFlagId ? document.getElementById(input.dataset.removeFlagId) : null;
+            if (removeFlag) { if (removeFlag.type === 'checkbox') removeFlag.checked = true; else removeFlag.value = '1'; }
             input.dispatchEvent(new Event('input', { bubbles: true }));
             input.dispatchEvent(new Event('change', { bubbles: true }));
             const preview = input.dataset.mediaPreviewId
@@ -163,6 +173,66 @@ document.addEventListener('DOMContentLoaded', function () {
                 : input.parentElement?.querySelector('[data-media-meta]');
             if (meta) meta.textContent = '';
         }
+    });
+
+    applyMultiple?.addEventListener('click', () => {
+        if (!multipleMode || !targetInput) return;
+
+        const inputName = targetInput.dataset.inputName;
+        if (!inputName) {
+            status.textContent = 'This image collection is missing its input name.';
+            return;
+        }
+
+        const existing = new Map();
+        targetInput.querySelectorAll('input[type="hidden"]').forEach(input => {
+            const id = Number(input.value);
+            const wrapper = input.closest('.media-selection-item');
+            if (Number.isInteger(id) && id > 0 && wrapper) existing.set(id, wrapper);
+        });
+
+        existing.forEach((wrapper, id) => {
+            if (!selectedItems.has(id)) wrapper.remove();
+        });
+
+        selectedItems.forEach((item, id) => {
+            if (existing.has(id)) return;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'media-selection-item d-flex flex-wrap align-items-center gap-2 border rounded p-2 mt-2';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = inputName;
+            input.value = String(id);
+
+            const image = document.createElement('img');
+            image.src = item.url;
+            image.alt = item.alt || item.name || 'Selected image';
+            image.className = 'rounded border';
+            image.style.cssText = 'width:76px;height:58px;object-fit:cover';
+
+            const label = document.createElement('span');
+            label.className = 'small text-break flex-grow-1';
+            label.textContent = item.name || 'Selected Media Library image';
+
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'btn btn-sm btn-outline-danger';
+            remove.dataset.removeSelectedMedia = 'true';
+            remove.textContent = 'Remove';
+
+            wrapper.append(input, image, label, remove);
+            targetInput.append(wrapper);
+        });
+
+        targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+        modal.hide();
+    });
+
+    document.addEventListener('click', event => {
+        const removeSelected = event.target.closest('[data-remove-selected-media]');
+        if (!removeSelected) return;
+        removeSelected.closest('.media-selection-item')?.remove();
     });
 
     async function makeMediaVariant(file, maxWidth, maxHeight) {
@@ -288,6 +358,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const existingIds = new Set([...targetInput.querySelectorAll('input[type="hidden"]')].map(input => input.value));
         selectedItems.forEach(item => {
             if (existingIds.has(String(item.id))) return;
+            const selection = document.createElement('div');
+            selection.className = 'd-inline-flex align-items-start gap-1 border rounded p-1';
+            selection.dataset.mediaSelection = String(item.id);
             const hidden = document.createElement('input');
             hidden.type = 'hidden';
             hidden.name = targetInput.dataset.inputName || 'gallery_media_ids[]';
@@ -295,9 +368,16 @@ document.addEventListener('DOMContentLoaded', function () {
             const image = document.createElement('img');
             image.src = item.url;
             image.alt = item.alt || item.name;
-            image.className = 'rounded border me-2 mb-2';
+            image.className = 'rounded';
             image.style.cssText = 'width:76px;height:58px;object-fit:cover';
-            targetInput.append(hidden, image);
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'btn btn-sm btn-outline-danger py-0 px-2';
+            remove.textContent = '×';
+            remove.setAttribute('aria-label', 'Remove ' + (item.alt || item.name));
+            remove.addEventListener('click', () => selection.remove());
+            selection.append(hidden, image, remove);
+            targetInput.append(selection);
         });
         modal.hide();
     });

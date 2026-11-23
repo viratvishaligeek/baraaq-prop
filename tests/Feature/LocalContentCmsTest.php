@@ -189,16 +189,29 @@ class LocalContentCmsTest extends TestCase
         ])->assertRedirect(route('admin.site-content.index', 'faqs'));
         $this->assertDatabaseHas('faq_items', ['id' => $faq->id, 'answer' => 'Updated owner-approved answer.', 'is_active' => false]);
 
+        Storage::disk('public')->put('gallery/property.jpg', 'shared media image bytes');
+        $galleryMedia = Media::create([
+            'uploaded_by' => $admin->id,
+            'disk' => 'public',
+            'path' => 'gallery/property.jpg',
+            'original_name' => 'property.jpg',
+            'mime_type' => 'image/jpeg',
+            'size' => 25,
+            'alt_text' => 'Residential property exterior',
+        ]);
         $this->actingAs($admin)->post(route('admin.site-content.store', 'gallery'), [
             'title' => 'Bareilly property gallery image',
             'description' => 'A published gallery entry.',
-            'image' => UploadedFile::fake()->image('property.jpg', 1200, 800),
+            'image_media_id' => $galleryMedia->id,
+            'category' => 'apartment',
             'alt_text' => 'Residential property exterior',
             'status' => 'published',
             'sort_order' => 1,
         ])->assertRedirect(route('admin.site-content.index', 'gallery'));
 
         $this->assertDatabaseHas('gallery_items', ['title' => 'Bareilly property gallery image', 'status' => 'published']);
+        $this->assertDatabaseHas('gallery_items', ['title' => 'Bareilly property gallery image', 'category' => 'apartment']);
+        $this->get(route('gallery.index', ['category' => 'apartment']))->assertOk()->assertSee('cat1', false);
         $this->assertDatabaseHas('media', ['original_name' => 'property.jpg']);
         $gallery = GalleryItem::query()->where('title', 'Bareilly property gallery image')->firstOrFail();
         $storedPath = $gallery->image;
@@ -214,7 +227,16 @@ class LocalContentCmsTest extends TestCase
         $this->assertDatabaseHas('gallery_items', ['id' => $gallery->id, 'image' => null]);
         Storage::disk('public')->assertExists($storedPath);
 
-        $guideUpload = UploadedFile::fake()->image('neighborhood.jpg', 1000, 700);
+        Storage::disk('public')->put('neighborhood-guides/civil-lines.jpg', 'shared neighborhood image bytes');
+        $guideMedia = Media::create([
+            'uploaded_by' => $admin->id,
+            'disk' => 'public',
+            'path' => 'neighborhood-guides/civil-lines.jpg',
+            'original_name' => 'neighborhood.jpg',
+            'mime_type' => 'image/jpeg',
+            'size' => 30,
+            'alt_text' => 'Bareilly neighborhood street',
+        ]);
         $this->actingAs($admin)->post(route('admin.site-content.store', 'neighborhood-guides'), [
             'title' => 'Bareilly neighborhood guide',
             'slug' => 'bareilly-neighborhood-guide',
@@ -223,7 +245,7 @@ class LocalContentCmsTest extends TestCase
             'state' => 'Uttar Pradesh',
             'excerpt' => 'A practical locality checklist.',
             'content' => '<p>Review current local conditions.</p>',
-            'image' => $guideUpload,
+            'image_media_id' => $guideMedia->id,
             'alt_text' => 'Bareilly neighborhood street',
             'status' => 'published',
             'sort_order' => 1,
@@ -268,4 +290,79 @@ class LocalContentCmsTest extends TestCase
             ->assertRedirect(route('admin.site-content.index', 'faqs'));
         $this->assertSoftDeleted('faq_items', ['id' => $faq->id]);
     }
+
+    public function test_service_featured_image_and_detail_gallery_use_independent_media_references(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+        $admin = User::factory()->create(['is_active' => true]);
+        $admin->roles()->attach(Role::query()->where('slug', 'administrator')->firstOrFail());
+        Storage::fake('public');
+
+        $media = collect([
+            ['path' => 'services/featured.jpg', 'original_name' => 'service-featured.jpg'],
+            ['path' => 'services/detail-one.jpg', 'original_name' => 'service-detail-one.jpg'],
+            ['path' => 'services/detail-two.jpg', 'original_name' => 'service-detail-two.jpg'],
+        ])->map(function (array $item) use ($admin) {
+            Storage::disk('public')->put($item['path'], 'shared media bytes');
+
+            return Media::create($item + [
+                'uploaded_by' => $admin->id,
+                'disk' => 'public',
+                'mime_type' => 'image/jpeg',
+                'size' => 20,
+                'alt_text' => $item['original_name'],
+            ]);
+        });
+
+        $this->actingAs($admin)->post(route('admin.content.store', 'services'), [
+            'title' => 'Independent service imagery',
+            'excerpt' => 'A service with separately managed images.',
+            'content' => '<p>Service content.</p>',
+            'status' => 'draft',
+            'featured_image_media_id' => $media[0]->id,
+            'inside_image_media_ids' => [$media[1]->id, $media[2]->id],
+            'features_json' => '[]',
+        ])->assertRedirect(route('admin.content.index', 'services'));
+
+        $service = Service::query()->where('slug', 'independent-service-imagery')->firstOrFail();
+        $this->assertSame('services/featured.jpg', $service->featured_image);
+        $this->assertSame(
+            ['services/detail-one.jpg', 'services/detail-two.jpg'],
+            $service->images()->orderBy('sort_order')->pluck('path')->all()
+        );
+
+        $firstInsideImage = $service->images()->orderBy('sort_order')->firstOrFail();
+
+        $this->actingAs($admin)->put(route('admin.content.update', ['type' => 'services', 'id' => $service->id]), [
+            'title' => $service->title,
+            'excerpt' => $service->excerpt,
+            'content' => $service->content,
+            'status' => 'draft',
+            'featured_image_media_id' => $media[0]->id,
+            'remove_inside_images' => [$firstInsideImage->id],
+            'features_json' => '[]',
+        ])->assertRedirect(route('admin.content.index', 'services'));
+
+        $service->refresh();
+        $this->assertSame('services/featured.jpg', $service->featured_image);
+        $this->assertSame(['services/detail-two.jpg'], $service->images()->pluck('path')->all());
+        $this->assertDatabaseHas('media', ['id' => $media[1]->id, 'path' => 'services/detail-one.jpg']);
+        Storage::disk('public')->assertExists('services/detail-one.jpg');
+
+        $this->actingAs($admin)->put(route('admin.content.update', ['type' => 'services', 'id' => $service->id]), [
+            'title' => $service->title,
+            'excerpt' => $service->excerpt,
+            'content' => $service->content,
+            'status' => 'draft',
+            'remove_featured_image' => '1',
+            'features_json' => '[]',
+        ])->assertRedirect(route('admin.content.index', 'services'));
+
+        $service->refresh();
+        $this->assertNull($service->featured_image);
+        $this->assertSame(['services/detail-two.jpg'], $service->images()->pluck('path')->all());
+        Storage::disk('public')->assertExists('services/featured.jpg');
+        Storage::disk('public')->assertExists('services/detail-two.jpg');
+    }
+
 }
