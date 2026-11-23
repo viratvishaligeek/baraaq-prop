@@ -79,10 +79,10 @@ class BuraaqhContentSeeder extends Seeder
             'theme-assets/img/gallery/footer-gallery-1-7.jpg',
             'theme-assets/img/gallery/footer-gallery-1-4.jpg',
         ];
-        $defaultOgMedia = $this->themeMedia('theme-assets/img/hero/hero-9-right.png', 'Pillar social sharing image');
+        $defaultOgMedia = $this->themeMedia('theme-assets/img/hero/hero-9-right.png', 'Buraaqh Properties social sharing image');
         $footerGalleryImages = [];
         foreach ($footerGalleryPaths as $galleryPath) {
-            $galleryMedia = $this->themeMedia($galleryPath, 'Pillar Instagram gallery');
+            $galleryMedia = $this->themeMedia($galleryPath, 'Buraaqh Properties gallery');
             $footerGalleryImages[] = $galleryMedia?->id ?? $galleryPath;
         }
 
@@ -93,13 +93,13 @@ class BuraaqhContentSeeder extends Seeder
             'site_email' => ['', 'contact', 'string'],
             'site_phone' => ['', 'contact', 'string'],
             'whatsapp_number' => ['', 'contact', 'string'],
-            'site_address' => ['Bareilly, Uttar Pradesh, India', 'contact', 'string'],
+            'site_address' => ['', 'contact', 'string'],
             'header_cta_label' => ['Add Listing', 'navigation', 'string'],
             'header_cta_url' => ['/contact', 'navigation', 'string'],
             'footer_description' => ['Buraaqh Properties brings local insight, considered advice and a carefully selected collection of homes together. From your first viewing to the final signature, our team makes every move feel simpler.', 'footer', 'string'],
             'footer_copyright' => [$site, 'footer', 'string'],
             'footer_rights_text' => ['All Rights Reserved.', 'footer', 'string'],
-            'footer_map_embed_url' => ['https://www.google.com/maps?q=Civil+Lines,+Bareilly,+Uttar+Pradesh&output=embed', 'footer', 'string'],
+            'footer_map_embed_url' => ['', 'footer', 'string'],
             'footer_gallery_handle' => ['@buraaqhproperties on Instagram', 'footer', 'string'],
             'footer_gallery_title' => ['Bareilly property moments', 'footer', 'string'],
             'footer_gallery_images' => [$footerGalleryImages, 'footer', 'json'],
@@ -119,8 +119,9 @@ class BuraaqhContentSeeder extends Seeder
             $existing = Setting::query()->where('key', $key)->first();
 
             // Fill empty starter defaults, but never replace a value already configured by the site owner.
-            $legacyMapUrl = $key === 'footer_map_embed_url' && $existing?->value === 'https://www.google.com/maps?q=Bareilly';
-            if (! $existing || trim((string) $existing->value) === '' || $legacyMapUrl) {
+            $legacyMapUrl = $key === 'footer_map_embed_url' && str_contains((string) $existing?->value, 'Meerut');
+            $legacyDemoValue = str_contains((string) $existing?->value, 'Pillar') || str_contains((string) $existing?->value, 'Meerut') || in_array($existing?->value, ['hello@pillarrealty.example', '+91 121 456 7800', '919876543210'], true);
+            if (! $existing || trim((string) $existing->value) === '' || $legacyMapUrl || $legacyDemoValue) {
                 Setting::write($key, $stored, $group, $type);
             }
         }
@@ -337,12 +338,12 @@ class BuraaqhContentSeeder extends Seeder
     {
         $rows = [
             ['Julia Era', 'Property owner', 'Residential buyer', 'The team understood what mattered to our family and kept every viewing focused. The process felt organised, transparent and genuinely personal.', 5],
-            ['Carlos Bauch', 'Business owner', 'Commercial client', 'We needed a practical commercial space in a specific location. Pillar helped us compare the options and move forward with confidence.', 5],
+            ['Carlos Bauch', 'Business owner', 'Commercial client', 'We needed a practical commercial space in a specific location. Buraaqh Properties helped us compare the options and move forward with confidence.', 5],
             ['Martha Collins', 'Home buyer', 'First-time buyer', 'Every question was answered clearly, from the first shortlist to the final paperwork. We always knew what the next step would be.', 5],
             ['Daniel Foster', 'Property investor', 'Investment client', 'The local market insight was valuable. The team explained the trade-offs and helped us assess the numbers without pressure.', 4],
             ['Sophia Bennett', 'Home seller', 'Residential seller', 'The listing preparation and viewing coordination were excellent. Communication was consistent throughout the sale.', 5],
             ['Oliver Hayes', 'Tenant', 'Rental client', 'We found a home that suited our commute and budget. The team made the viewing and move-in arrangements straightforward.', 5],
-            ['Aisha Khan', 'Property owner', 'Landlord', 'Pillar has been responsive and thoughtful in helping us manage our rental property and tenant requirements.', 5],
+            ['Aisha Khan', 'Property owner', 'Landlord', 'Buraaqh Properties has been responsive and thoughtful in helping us manage our rental property and tenant requirements.', 5],
             ['Noah Williams', 'Home buyer', 'Residential buyer', 'A patient team with strong neighbourhood knowledge. We appreciated the honest advice and attention to detail.', 5],
         ];
 
@@ -367,8 +368,8 @@ class BuraaqhContentSeeder extends Seeder
         $pages = [
             ['About Us', 'about', '<p>Buraaqh Properties is built around a simple belief: good property advice starts with listening. We combine local knowledge, careful research and a personal approach to help people make confident decisions.</p><h2>Our mission</h2><p>To make every property move clearer, more informed and more rewarding.</p><h2>Our approach</h2><p>We value honest communication, thoughtful recommendations and dependable support from the first conversation through to handover.</p>'],
             ['Contact', 'contact', '<p>Tell us what you are looking for and a member of our property team will get back to you.</p><p>Email  or call . Our office is at Bareilly, Uttar Pradesh, India.</p>'],
-            ['Buy with Pillar', 'buy-with-pillar', '<p>Start with your preferred location, budget and everyday requirements. Our advisors will help you compare suitable homes, arrange viewings and understand the next steps.</p>'],
-            ['Sell with Pillar', 'sell-with-pillar', '<p>We help prepare your property for market with considered pricing, accurate information, quality presentation and coordinated viewings.</p>'],
+            ['Buy with Buraaqh Properties', 'buy-with-pillar', '<p>Start with your preferred location, budget and everyday requirements. Our advisors will help you compare suitable homes, arrange viewings and understand the next steps.</p>'],
+            ['Sell with Buraaqh Properties', 'sell-with-pillar', '<p>We help prepare your property for market with considered pricing, accurate information, quality presentation and coordinated viewings.</p>'],
             ['Privacy Policy', 'privacy-policy', '<p>We use the information you provide to respond to property enquiries and deliver the services you request. We do not publish your contact details. Please contact our team if you would like to review or update information you have submitted.</p>'],
             ['Frequently Asked Questions', 'frequently-asked-questions', '<h2>How do I arrange a viewing?</h2><p>Contact our team with the property you are interested in and your preferred viewing time.</p><h2>Can I list my property?</h2><p>Yes. Share the property details and our team will contact you to discuss the next steps.</p>'],
         ];
@@ -421,7 +422,7 @@ class BuraaqhContentSeeder extends Seeder
             ['Rohan Verma', 'rohan.verma@example.test', '+91 98765 10003', 'Commercial property enquiry', 'Please send the available office specifications and parking details.', 'qualified'],
             ['Ananya Singh', 'ananya.singh@example.test', '+91 98765 10004', 'Rental availability', 'Is the property available from the beginning of next month?', 'new'],
             ['Kabir Malhotra', 'kabir.malhotra@example.test', '+91 98765 10005', 'Property valuation', 'I am considering selling and would like to understand the current market value.', 'contacted'],
-            ['Ishita Jain', 'ishita.jain@example.test', '+91 98765 10006', 'Investment consultation', 'Please arrange a call to discuss rental yield in Noida.', 'qualified'],
+            ['Ishita Jain', 'ishita.jain@example.test', '+91 98765 10006', 'Investment consultation', 'Please arrange a call to discuss rental yield in Bareilly.', 'qualified'],
             ['Dev Mehta', 'dev.mehta@example.test', '+91 98765 10007', 'Independent home enquiry', 'Can we schedule a visit this Saturday afternoon?', 'new'],
             ['Sara Khan', 'sara.khan@example.test', '+91 98765 10008', 'Plot documentation', 'I would like to know more about approvals and available plot sizes.', 'closed'],
         ];
@@ -502,8 +503,8 @@ class BuraaqhContentSeeder extends Seeder
         $footer = Menu::query()->firstOrCreate(['location' => 'footer'], ['name' => 'Footer navigation']);
         $this->insertMenuItems($footer, [
             ['Properties', '/properties', null, 'custom', null],
-            ['Buy with Pillar', '/buy-with-pillar', null, 'custom', null],
-            ['Sell with Pillar', '/sell-with-pillar', null, 'custom', null],
+            ['Buy with Buraaqh Properties', '/buy-with-pillar', null, 'custom', null],
+            ['Sell with Buraaqh Properties', '/sell-with-pillar', null, 'custom', null],
             ['Journal', '/blog', null, 'custom', null],
             ['Contact', '/contact', null, 'custom', null],
             ['Privacy Policy', '/privacy-policy', null, 'custom', null],
@@ -603,9 +604,12 @@ class BuraaqhContentSeeder extends Seeder
         $features = [
             'property-valuation' => ['Comparable market review', 'Property condition considerations', 'Clear valuation discussion'],
             'legal-assistance' => ['Document checklist', 'Title and approval review coordination', 'Independent professional guidance'],
+            'mortgage-services' => ['Finance requirement discussion', 'Lender document checklist', 'Offer comparison support'],
+            'insurance-solutions' => ['Property risk discussion', 'Cover option overview', 'Policy question checklist'],
+            'home-inspection' => ['Visible condition review', 'Fittings and maintenance checklist', 'Inspection summary coordination'],
+            'escrow-transaction-support' => ['Milestone tracking', 'Document exchange coordination', 'Handover checklist'],
             'property-management' => ['Routine property coordination', 'Tenant communication support', 'Maintenance follow-up'],
-            'buying-consultation' => ['Requirement discovery', 'Property shortlist support', 'Offer and negotiation preparation'],
-            'selling-consultation' => ['Property presentation guidance', 'Enquiry coordination', 'Offer comparison support'],
+            'real-estate-consulting' => ['Requirement discovery', 'Location comparison', 'Decision support'],
         ];
         foreach ($features as $slug => $titles) {
             $service = Service::query()->where('slug', $slug)->first();
@@ -699,7 +703,7 @@ class BuraaqhContentSeeder extends Seeder
             ],
             'team.home-2' => [
                 'eyebrow' => 'Team Members',
-                'heading' => 'Meet Our Pillar Agents',
+                'heading' => 'Meet Our Buraaqh Properties Agents',
                 'items_limit' => 6,
                 'chat_text' => 'Explore Property agents are here to help with all your buying, renting and selling goals. Find the home of your dreams with an expert you can trust.',
                 'chat_link_label' => 'Let’s chat',
@@ -707,7 +711,7 @@ class BuraaqhContentSeeder extends Seeder
             ],
             'testimonials.home-3' => [
                 'eyebrow' => 'Testimonials',
-                'heading' => 'What Clients Say About Pillar',
+                'heading' => 'What Clients Say About Buraaqh Properties',
                 'items_limit' => 4,
                 'trust_brand' => 'Trustipilot',
                 'view_all_label' => 'View All Reviews',
@@ -762,7 +766,7 @@ class BuraaqhContentSeeder extends Seeder
         }
 
         $homepage->update([
-            'name' => 'Home 9 — Pillar Single Property',
+            'name' => 'Home 9 — Buraaqh Properties',
             'status' => 'published',
             'published_at' => $homepage->published_at ?: now(),
         ]);
