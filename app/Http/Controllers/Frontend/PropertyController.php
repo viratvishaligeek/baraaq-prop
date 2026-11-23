@@ -29,6 +29,7 @@ class PropertyController extends Controller
             'min_area' => ['nullable', 'numeric', 'min:0'],
             'mini_area' => ['nullable', 'numeric', 'min:0'],
             'max_area' => ['nullable', 'numeric', 'min:0'],
+            'orderby' => ['nullable', 'in:menu_order,popularity,rating,date,price,price-desc'],
         ]);
 
         $query = Property::published()->with(['category:id,name', 'images']);
@@ -91,8 +92,18 @@ class PropertyController extends Controller
             $query->where('area', '<=', $filters['max_area']);
         }
 
+        $orderby = $filters['orderby'] ?? 'date';
+        match ($orderby) {
+            'menu_order' => $query->orderBy('sort_order')->latest('published_at'),
+            'popularity' => $query->orderByDesc('is_featured')->latest('published_at'),
+            'price' => $query->orderByRaw('CASE WHEN price IS NULL THEN 1 ELSE 0 END')->orderBy('price'),
+            'price-desc' => $query->orderByRaw('CASE WHEN price IS NULL THEN 1 ELSE 0 END')->orderByDesc('price'),
+            default => $query->latest('published_at'),
+        };
+
         return view('frontend.properties.index', [
-            'properties' => $query->latest('published_at')->paginate(12)->withQueryString(),
+            'properties' => $query->paginate(12)->withQueryString(),
+            'featuredProperties' => Property::published()->where('is_featured', true)->with('category:id,name')->latest('published_at')->limit(3)->get(),
             'categories' => Category::query()
                 ->where('type', 'property')
                 ->where('is_active', true)
