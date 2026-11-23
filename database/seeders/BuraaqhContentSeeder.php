@@ -113,7 +113,7 @@ class BuraaqhContentSeeder extends Seeder
             'neighborhood_guides_page_intro' => ['Explore localities across Bareilly, Uttar Pradesh.', 'content', 'string'],
             'neighborhood_guides_meta_description' => ['Explore neighborhood guides for Bareilly, Uttar Pradesh, with local area insights to support informed property decisions.', 'seo', 'string'],
             'service_area_city' => ['Bareilly', 'general', 'string'],
-            'default_og_image' => [$defaultOgMedia?->path ?? 'theme-assets/img/hero/hero-9-right.png', 'seo', 'string'],
+            'default_og_image' => [$defaultOgMedia?->path ?? '', 'seo', 'string'],
         ];
 
         foreach ($settings as $key => [$stored, $group, $type]) {
@@ -323,7 +323,7 @@ class BuraaqhContentSeeder extends Seeder
                     'excerpt' => $excerpt,
                     'content' => '<p>'.$body.'</p><p>Contact Buraaqh Properties to discuss your requirements and the most suitable next step.</p>',
                     'content' => '<p>'.$body.'</p><p>Contact Buraaqh Properties to discuss your requirements and the most suitable next step.</p>',
-                    'featured_image' => $this->themeImagePath('img/'.$icon),
+                    'featured_image' => null,
                     'status' => 'draft',
                     'published_at' => null,
                     'meta_title' => $title.' | Buraaqh Properties',
