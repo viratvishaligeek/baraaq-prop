@@ -99,6 +99,10 @@ class DefaultThemeSeeder extends Seeder
                 'meta_keywords',
                 'footer_description',
                 'footer_copyright',
+                'footer_location_heading',
+                'footer_services_heading',
+                'footer_featured_heading',
+                'footer_social_heading',
                 'site_tagline',
             ];
             $legacyTextValue = in_array($key, $legacyTextKeys, true)
