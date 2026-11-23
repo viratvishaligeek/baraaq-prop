@@ -102,7 +102,10 @@ class ContentController extends Controller
             ->where('status', 'published')
             ->first();
 
-        return view('frontend.contact', compact('page'));
+        return view('frontend.contact', [
+            'page' => $page,
+            'propertyCategories' => Category::query()->where('type', 'property')->where('is_active', true)->orderBy('name')->get(['id', 'name', 'slug']),
+        ]);
     }
 
     public function about()
