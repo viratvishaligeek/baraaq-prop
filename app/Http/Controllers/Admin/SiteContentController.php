@@ -73,7 +73,11 @@ class SiteContentController extends Controller
     {
         $model = $this->model($type);
 
-        return view('admin.site-content.form', ['type' => $type, 'item' => new $model()]);
+        return view('admin.site-content.form', [
+            'type' => $type,
+            'item' => new $model(),
+            'mediaItems' => Media::query()->where('mime_type', 'like', 'image/%')->latest()->limit(100)->get(['id', 'path', 'original_name', 'alt_text']),
+        ]);
     }
 
     public function store(Request $request, string $type)
@@ -82,35 +86,23 @@ class SiteContentController extends Controller
         $data = $this->validated($request, $type);
         $this->authorizePublish($type, $data);
 
-        $uploadedPath = null;
-        try {
-            if ($type !== 'faqs' && $request->hasFile('image')) {
-                $uploadedPath = $request->file('image')->store($type, 'public');
-                if (! $uploadedPath) throw new \RuntimeException('Image storage failed.');
-                $data[$type === 'gallery' ? 'image' : 'hero_image'] = $uploadedPath;
+        if ($type !== 'faqs') {
+            $imageField = $type === 'gallery' ? 'image' : 'hero_image';
+            if (! empty($data['image_media_id'])) {
+                $data[$imageField] = Media::query()->whereKey($data['image_media_id'])
+                    ->where('mime_type', 'like', 'image/%')->firstOrFail()->path;
             }
+        }
+        unset($data['image_media_id'], $data['remove_image']);
 
-            if ($type === 'neighborhood-guides') unset($data['image']);
-            unset($data['remove_image']);
-
-            if ($type !== 'faqs') {
+        if ($type !== 'faqs') {
                 $data['slug'] = $this->uniqueSlug($model, $data['slug'] ?? $data['title']);
                 if ($data['status'] === 'published') $data['published_at'] = now();
             } else {
                 $data['is_active'] = $request->boolean('is_active');
             }
 
-            DB::transaction(function () use ($model, $data, $type, $request, $uploadedPath): void {
-                $item = $model::create($data);
-                if ($uploadedPath) {
-                    $file = $request->file('image');
-                    $this->registerMedia($request, $uploadedPath, $file, $data['alt_text'] ?? $data['title']);
-                }
-            });
-        } catch (\Throwable $exception) {
-            if ($uploadedPath) Storage::disk('public')->delete($uploadedPath);
-            throw $exception;
-        }
+        DB::transaction(fn () => $model::create($data));
 
         return redirect()->route('admin.site-content.index', $type)->with('success', 'Content created.');
     }
@@ -122,6 +114,7 @@ class SiteContentController extends Controller
         return view('admin.site-content.form', [
             'type' => $type,
             'item' => $model::findOrFail($id),
+            'mediaItems' => Media::query()->where('mime_type', 'like', 'image/%')->latest()->limit(100)->get(['id', 'path', 'original_name', 'alt_text']),
         ]);
     }
 
@@ -136,35 +129,24 @@ class SiteContentController extends Controller
         $oldPath = $type === 'faqs' ? null : $item->$imageField;
         $newPath = null;
 
-        try {
-            if ($type !== 'faqs' && $request->hasFile('image')) {
-                $newPath = $request->file('image')->store($type, 'public');
-                if (! $newPath) throw new \RuntimeException('Image storage failed.');
-                $data[$imageField] = $newPath;
-            } elseif ($type !== 'faqs' && $request->boolean('remove_image')) {
+        if ($type !== 'faqs') {
+            if (! empty($data['image_media_id'])) {
+                $data[$imageField] = Media::query()->whereKey($data['image_media_id'])
+                    ->where('mime_type', 'like', 'image/%')->firstOrFail()->path;
+            } elseif ($request->boolean('remove_image')) {
                 $data[$imageField] = null;
+            } else {
+                unset($data[$imageField]);
             }
+        }
+        unset($data['image_media_id'], $data['remove_image']);
 
-            if ($type === 'neighborhood-guides') unset($data['image']);
-            if ($type === 'gallery' && ! $request->hasFile('image') && ! $request->boolean('remove_image')) unset($data['image']);
-            unset($data['remove_image']);
-
-            if ($type !== 'faqs' && ($data['status'] ?? null) === 'published' && ! $item->published_at) {
+        if ($type !== 'faqs' && ($data['status'] ?? null) === 'published' && ! $item->published_at) {
                 $data['published_at'] = now();
             }
             if ($type === 'faqs') $data['is_active'] = $request->boolean('is_active');
 
-            DB::transaction(function () use ($item, $data, $type, $request, $newPath): void {
-                $item->update($data);
-                if ($newPath) {
-                    $file = $request->file('image');
-                    $this->registerMedia($request, $newPath, $file, $data['alt_text'] ?? $data['title']);
-                }
-            });
-        } catch (\Throwable $exception) {
-            if ($newPath) Storage::disk('public')->delete($newPath);
-            throw $exception;
-        }
+        DB::transaction(fn () => $item->update($data));
 
         if ($oldPath && $oldPath !== $item->$imageField
             && ! Media::where('path', $oldPath)->exists()
@@ -205,7 +187,7 @@ class SiteContentController extends Controller
         $rules = [
             'title' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', Rule::unique($table)->ignore($id)],
-            'image' => [$type === 'gallery' && ! $id ? 'required' : 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'image_media_id' => [$type === 'gallery' && ! $id ? 'required' : 'nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
             'alt_text' => ['nullable', 'string', 'max:255'],
             'remove_image' => ['sometimes', 'boolean'],
             'status' => ['required', 'in:draft,published,archived'],
