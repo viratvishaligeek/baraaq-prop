@@ -75,7 +75,7 @@ class HomeController extends Controller
             'galleryItems' => GalleryItem::published()->orderBy('sort_order')->latest()->limit(8)->get(),
             'members' => $teamSection ?? TeamMember::query()->where('status', 'published')->where('is_active', true)->orderBy('sort_order')->limit(6)->get(),
             'testimonials' => $testimonialSection ?? Testimonial::query()->where('status', 'published')->where('is_active', true)->orderBy('sort_order')->limit(6)->get(),
-            'posts' => $blogSection ?? Post::published()->with('author')->latest('published_at')->limit(6)->get(),
+            'posts' => $blogSection ?? Post::published()->with('author')->withCount(['comments as approved_comments_count' => fn ($query) => $query->where('status', 'approved')])->latest('published_at')->limit(6)->get(),
             'averageRating' => $sectionData['testimonials.home-3']['averageRating'] ?? null,
             'reviewCount' => $sectionData['testimonials.home-3']['reviewCount'] ?? null,
         ]);
