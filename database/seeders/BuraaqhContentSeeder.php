@@ -172,6 +172,7 @@ class BuraaqhContentSeeder extends Seeder
     private function seedSettings(): void
     {
         $site = trim((string) env('SITE_NAME', 'Buraaqh Properties')) ?: 'Buraaqh Properties';
+        if (stripos($site, 'Pillar') !== false) $site = 'Buraaqh Properties';
         $footerGalleryPaths = [
             'theme-assets/img/gallery/footer-gallery-1-1.jpg',
             'theme-assets/img/gallery/footer-gallery-1-2.jpg',
