@@ -34,7 +34,11 @@
                         <div class="swiper-slide">
                             <div class="team-card style-2{{ ($sectionConfig['animate_cards'] ?? true) ? ' wow fadeinup' : '' }}" @if(!empty($sectionConfig['card_background'])) data-bg-src="{{ $sectionConfig['card_background'] }}" @endif>
                                 <div class="team-img">
-                                    <img src="{{ $member->photo ? Storage::disk('public')->url($member->photo) : asset('theme-assets/img/team/team_2_'.min(6, $loop->iteration).'.png') }}" alt="{{ $member->name }}">
+                                    @if ($member->photo)
+                                        <img src="{{ Storage::disk('public')->url($member->photo) }}" alt="{{ $member->name }}">
+                                    @else
+                                        <div class="bg-light d-flex align-items-center justify-content-center rounded" style="min-height: 240px" aria-label="{{ $member->name }}">{{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($member->name, 0, 1)) }}</div>
+                                    @endif
                                 </div>
                                 <div class="team-content">
                                     <div class="left-contet">
