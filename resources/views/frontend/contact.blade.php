@@ -2,7 +2,7 @@
 
 @section('title', ($page?->meta_title ?: 'Contact Us · '.($siteSettings['site_title'] ?? config('app.name'))))
 @section('meta_description', $page?->meta_description ?: 'Contact Buraaqh Properties in Bareilly, Uttar Pradesh, using the website enquiry form.')
-@section('canonical_url', route('contact'))
+@section('canonical_url', $page?->canonical_url ?: route('contact'))
 
 @section('content')
     <section class="space">
