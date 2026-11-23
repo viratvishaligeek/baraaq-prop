@@ -90,7 +90,7 @@ jobs:
             BuraaqhNavigationSeeder \
             BuraaqhHomepageSeeder; do
             echo "===== Running ${seeder} ====="
-            DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan db:seed --class="Database\\Seeders\\${seeder}" --force
+            DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan db:seed --class="Database\Seeders\${seeder}" --force
           done
 
       - name: Verify a second complete DatabaseSeeder run is safe
