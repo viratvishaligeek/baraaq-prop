@@ -40,8 +40,8 @@ class ThemeMediaImporter
         $target = 'buraaqh/'.sha1($relativePath).'.'.$extension;
         $disk = Storage::disk('public');
 
-        if (! $disk->exists($target)) {
-            $disk->put($target, File::get($source));
+        if (! $disk->exists($target) && ! $disk->put($target, File::get($source))) {
+            return null;
         }
 
         return Media::query()->firstOrCreate(
