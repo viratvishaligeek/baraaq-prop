@@ -249,21 +249,21 @@ class LocalContentCmsTest extends TestCase
         $this->assertDatabaseHas('neighborhood_guides', ['id' => $guide->id, 'hero_image' => null, 'status' => 'draft']);
         Storage::disk('public')->assertExists($guidePath);
 
-        $this->actingAs($admin)->delete(route('admin.site-content.destroy', ['type' => 'neighborhood-guides', 'id' => $guide->id]))
+        $this->actingAs($admin)->from(route('admin.site-content.index', 'neighborhood-guides'))->delete(route('admin.site-content.destroy', ['type' => 'neighborhood-guides', 'id' => $guide->id]))
             ->assertRedirect(route('admin.site-content.index', 'neighborhood-guides'));
         $this->assertSoftDeleted('neighborhood_guides', ['id' => $guide->id]);
 
-        $this->actingAs($admin)->delete(route('admin.site-content.destroy', ['type' => 'gallery', 'id' => $gallery->id]))
+        $this->actingAs($admin)->from(route('admin.site-content.index', 'gallery'))->delete(route('admin.site-content.destroy', ['type' => 'gallery', 'id' => $gallery->id]))
             ->assertRedirect(route('admin.site-content.index', 'gallery'));
         $this->assertSoftDeleted('gallery_items', ['id' => $gallery->id]);
 
         $galleryMedia = \\App\\Models\\Media::query()->where('path', $storedPath)->firstOrFail();
-        $this->actingAs($admin)->delete(route('admin.media.destroy', $galleryMedia))
+        $this->actingAs($admin)->from(route('admin.media.index'))->delete(route('admin.media.destroy', $galleryMedia))
             ->assertRedirect();
         $this->assertDatabaseMissing('media', ['id' => $galleryMedia->id]);
         Storage::disk('public')->assertMissing($storedPath);
 
-        $this->actingAs($admin)->delete(route('admin.site-content.destroy', ['type' => 'faqs', 'id' => $faq->id]))
+        $this->actingAs($admin)->from(route('admin.site-content.index', 'faqs'))->delete(route('admin.site-content.destroy', ['type' => 'faqs', 'id' => $faq->id]))
             ->assertRedirect(route('admin.site-content.index', 'faqs'));
         $this->assertSoftDeleted('faq_items', ['id' => $faq->id]);
     }
