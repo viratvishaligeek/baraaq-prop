@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Media;
 use App\Models\Setting;
 use Illuminate\Database\Seeder;
 
@@ -82,10 +83,62 @@ class DefaultThemeSeeder extends Seeder
         ];
 
         foreach ($settings as $key => [$value, $group, $type]) {
-            Setting::query()->firstOrCreate(
+            $setting = Setting::query()->firstOrCreate(
                 ['key' => $key],
                 ['group' => $group, 'value' => $value, 'type' => $type]
             );
+
+            $existingValue = (string) $setting->value;
+            $legacyMapUrl = $key === 'footer_map_embed_url' && str_contains($existingValue, 'Meerut');
+            $legacyTextKeys = [
+                'site_title',
+                'business_name',
+                'site_address',
+                'meta_title',
+                'meta_description',
+                'meta_keywords',
+                'footer_description',
+                'footer_copyright',
+                'site_tagline',
+            ];
+            $legacyTextValue = in_array($key, $legacyTextKeys, true)
+                && (str_contains($existingValue, 'Pillar') || str_contains($existingValue, 'Meerut'));
+
+            $legacyGalleryImages = false;
+            if ($key === 'footer_gallery_images') {
+                $galleryValues = json_decode($existingValue, true);
+                foreach (is_array($galleryValues) ? $galleryValues : [] as $galleryValue) {
+                    $galleryPath = is_numeric($galleryValue)
+                        ? Media::query()->whereKey((int) $galleryValue)->value('path')
+                        : (is_string($galleryValue) ? $galleryValue : null);
+
+                    if (is_string($galleryPath) && (
+                        str_starts_with($galleryPath, 'piller-demo/')
+                        || str_starts_with($galleryPath, 'gallery/buraaqh-reference-')
+                        || str_starts_with($galleryPath, 'theme-assets/img/gallery/footer-gallery-')
+                    )) {
+                        $legacyGalleryImages = true;
+                        break;
+                    }
+                }
+            }
+
+            $legacyContactOrSocial = in_array($existingValue, [
+                'hello@pillarrealty.example',
+                '+91 121 456 7800',
+                '919876543210',
+                'https://www.facebook.com/',
+                'https://www.instagram.com/',
+                'https://www.linkedin.com/',
+            ], true);
+            $legacyDemoValue = $legacyGalleryImages || $legacyTextValue || $legacyMapUrl || $legacyContactOrSocial;
+
+            // Fill missing defaults and replace only known template/demo values.
+            // Any non-empty administrator-configured value is preserved.
+            if (trim($existingValue) === '' || $legacyDemoValue) {
+                $writeValue = $type === 'json' ? (json_decode($value, true) ?? []) : $value;
+                Setting::write($key, $writeValue, $group, $type);
+            }
         }
     }
 }
