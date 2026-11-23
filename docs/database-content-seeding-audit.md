@@ -136,9 +136,9 @@ Expected starter records on an empty database after `php artisan migrate --seed`
 | Media records | 6 | Existing bundled theme images, labelled illustrative |
 | Media attachments | 6 | Homepage section image fields |
 
-No property inventory, gallery photographs, testimonials, staff profiles, customer comments, enquiries, or newsletter subscribers are fabricated. Contact phone, email, WhatsApp, office address, and social URLs remain blank until supplied and verified by the administrator.
+Production seeding does not fabricate property inventory, staff identities, testimonials, customer comments, enquiries, or newsletter subscribers. Local/testing now has an opt-in-by-environment fixture set of 12 clearly labelled fictional Bareilly properties, 24 property image rows, 36 accommodation/detail rows, 24 property FAQs and six illustrative gallery items. Contact phone, email, WhatsApp, office address, and social URLs remain blank until supplied and verified by the administrator.
 
-The seven editorial articles cover buying residential property in Bareilly, Uttar Pradesh property documents, residential versus commercial property, locality evaluation, registration/due diligence, residential selection factors, and questions to ask a real estate consultant. Each article is written as educational guidance and avoids legal guarantees, invented market statistics, and investment promises. The existing Home 9 section registry has no property-category or neighborhood-guide section/view; categories and guides are available through their existing routes and seeded navigation, while the property section displays only verified inventory. No new homepage widget was introduced because that would change the existing frontend composition.
+The seven editorial articles cover buying residential property in Bareilly, Uttar Pradesh property documents, residential versus commercial property, locality evaluation, registration/due diligence, residential selection factors, and questions to ask a real estate consultant. Each article is written as educational guidance and avoids legal guarantees, invented market statistics, and investment promises. The existing Home 9 section registry has no property-category or neighborhood-guide section/view; categories and guides are available through their existing routes and seeded navigation, while local/testing property pages display the explicitly labelled demo inventory and production displays only verified inventory. No new homepage widget was introduced because that would change the existing frontend composition.
 
 ## 5. Media mapping
 
@@ -162,9 +162,9 @@ No unverified template photography is assigned to property listings, service fea
 - Page, post, service, and neighborhood-guide records receive page-specific SEO titles, descriptions, and focus keywords where supported.
 - Global SEO defaults and Bareilly service-area metadata are seeded without adding fabricated contact details.
 - The default Open Graph image remains empty unless a suitable existing Media Library record is available.
-- Property listings remain empty until genuine inventory is supplied.
+- Production property listings remain empty until genuine inventory is supplied. Local/testing uses `BuraaqhDemoPropertySeeder`; it is disabled in production unless `CMS_DEMO_PROPERTIES=true` is explicitly set.
 - Services remain drafts pending confirmation of the actual offering, scope, fees, and responsible professionals.
-- Team, testimonial, gallery, and statistics sections are withheld rather than populated with invented people, reviews, achievements, or property photographs.
+- Team, testimonial, and statistics sections remain withheld rather than populated with invented people, reviews or achievements. Local/testing gallery entries use generic theme imagery and disclose that they are not property photographs; production gallery content still requires approved source images.
 
 ## 7. Database safety and verification status
 
@@ -232,7 +232,7 @@ The remaining raster candidates are not appropriate for property/service content
 - **Six services:** no featured image and no detail-gallery image is assigned. The existing files do not provide service-specific or verified team/work photography. The service page keeps its existing “image pending” and empty-gallery states. Featured and gallery relationships remain independent.
 - **Seven articles:** no featured image assigned. General house photographs are not sufficiently specific to the seven editorial topics, and repeating one would be misleading.
 - **Seven locality guides:** no hero image assigned. No verified image of the named Bareilly locality exists in the repository.
-- **Gallery:** no gallery items seeded. The existing gallery route is property-inventory driven; no approved, property-specific image set or matching property records are present.
+- **Gallery:** six local/testing demo gallery records are created from the inspected theme assets, with explicit illustrative-only alt text and descriptions. They are disabled in production by the same `CMS_DEMO_PROPERTIES` guard.
 
 Media IDs are deliberately reported as pending. The seeder uses stable path-derived storage keys and `firstOrCreate`, but the numeric primary keys are database-generated and cannot be inferred from source code. They must be collected from the actual post-seed database.
 
