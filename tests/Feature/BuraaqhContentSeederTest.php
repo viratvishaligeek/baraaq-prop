@@ -67,7 +67,9 @@ class BuraaqhContentSeederTest extends TestCase
             ->assertOk()
             ->assertSee('Buraaqh Properties')
             ->assertDontSee('offices worldwide')
-            ->assertDontSee('5,600 sq ft');
+            ->assertDontSee('5,600 sq ft')
+            ->assertDontSee('PILLAR')
+            ->assertDontSee('logo-white.svg');
     }
 
 
