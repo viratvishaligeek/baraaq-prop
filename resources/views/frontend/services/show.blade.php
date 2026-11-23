@@ -10,7 +10,33 @@
     <div class="service-image-placeholder bg-smoke d-flex align-items-center justify-content-center"><p class="text-muted p-5 mb-0">A service image will be published here when approved.</p></div>
 @endif
 <ul class="tag-wrap"><li><span>Service</span></li></ul>
-</div><div class="page-content"><h2 class="sec-title">{{ $service->title }}</h2><p>{{ $service->excerpt }}</p><div class="mb-30">{!! \App\Support\HtmlSanitizer::sanitize($service->content ?? "") !!}</div><h2 class="sec-title mb-3">Highlights</h2><div class="checklist mb-50"><ul>@forelse($service->features as $feature)<li><i class="fa-regular fa-circle-check"></i> <strong>{{ $feature->title }}</strong> @if($feature->description) — {{ $feature->description }} @endif</li>@empty<li>Service features will be published soon.</li>@endforelse</ul></div><div class="row gy-4 mb-80"><div class="col-md-12"><h2 class="sec-title mb-2">From Amazing Gallery</h2></div>@forelse($service->images as $image)<div class="col-xl-6"><div class="property-gallery-card"><div class="property-gallery-card-img"><img class="w-100" src="{{ Storage::disk('public')->url($image->path) }}" alt="{{ $image->alt_text ?: $service->title }}"></div><a class="icon-btn popup-image" href="{{ Storage::disk('public')->url($image->path) }}"><i class="fa-solid fa-eye"></i></a></div></div>@empty<div class="col-12 text-muted">No service detail images have been published.</div>@endforelse</div><div class="row mb-1"><div class="service-contact-panel mb-4"><h3 class="blog-inner-title h4">Discuss this service</h3><p>Talk with our team about scope, timing and availability.</p><a href="{{ route('contact') }}" class="th-btn radius">Enquire about this service</a></div></div><div class="row mt-3"></div></div></div></div><div class="col-xxl-4 col-lg-4"><aside class="sidebar-area"><div class="widget widget_search"><h3 class="widget_title">search</h3><form class="search-form" method="GET" action="{{ route('services.index') }}"><input type="search" name="q" value="{{ request('q') }}" placeholder="Enter Keyword"> <button type="submit"><i class="far fa-search"></i></button></form></div><div class="widget"><h3 class="widget_title">Featured Listings</h3><div class="recent-post-wrap featured-listing">
+</div><div class="page-content"><h2 class="sec-title">{{ $service->title }}</h2><p>{{ $service->excerpt }}</p><div class="mb-30">{!! \App\Support\HtmlSanitizer::sanitize($service->content ?? "") !!}</div><h2 class="sec-title mb-3">Highlights</h2><div class="checklist mb-50"><ul>@forelse($service->features as $feature)<li><i class="fa-regular fa-circle-check"></i> <strong>{{ $feature->title }}</strong> @if($feature->description) — {{ $feature->description }} @endif</li>@empty<li>Service features will be published soon.</li>@endforelse</ul></div><div class="row gy-4 mb-80"><div class="col-md-12"><h2 class="sec-title mb-2">From Amazing Gallery</h2></div>@forelse($service->images as $image)<div class="col-xl-6"><div class="property-gallery-card"><div class="property-gallery-card-img"><img class="w-100" src="{{ Storage::disk('public')->url($image->path) }}" alt="{{ $image->alt_text ?: $service->title }}"></div><a class="icon-btn popup-image" href="{{ Storage::disk('public')->url($image->path) }}"><i class="fa-solid fa-eye"></i></a></div></div>@empty<div class="col-12 text-muted">No service detail images have been published.</div>@endforelse</div><div class="th-comments-wrap mt-5">
+    <h2 class="blog-inner-title h4">Comments ({{ $service->comments->count() }})</h2>
+    <ul class="comment-list">
+        @forelse($service->comments as $comment)
+            <li class="th-comment-item"><div class="th-post-comment"><div class="comment-content">
+                <h3 class="name">{{ $comment->name }}</h3>
+                <span class="commented-on">{{ $comment->created_at?->format('d M Y') }}</span>
+                <p class="text">{{ $comment->body }}</p>
+            </div></div></li>
+        @empty
+            <li class="text-muted">No approved comments yet.</li>
+        @endforelse
+    </ul>
+</div>
+<div class="th-comment-form mb-0 blog-comment-wrap">
+    <div class="form-title mb-25"><h3 class="blog-inner-title h4">Leave a Reply</h3><p class="form-text">Your comment will appear after moderation.</p></div>
+    @if(session('service_comment_submitted'))<div class="alert alert-success">{{ session('service_comment_submitted') }}</div>@endif
+    <form method="POST" action="{{ route('services.comments.store', $service) }}">@csrf
+        <div class="row">
+            <div class="col-md-6 form-group style-border"><i class="fa-regular fa-user"></i><input name="name" type="text" value="{{ old('name') }}" placeholder="Your name*" class="form-control" required maxlength="120"></div>
+            <div class="col-md-6 form-group style-border"><i class="fa-regular fa-envelope"></i><input name="email" type="email" value="{{ old('email') }}" placeholder="Your email*" class="form-control" required maxlength="190"></div>
+            <div class="col-12 form-group style-border"><textarea name="body" rows="4" placeholder="Comment*" class="form-control" required minlength="5" maxlength="5000">{{ old('body') }}</textarea></div>
+            <div class="col-12 form-group"><button type="submit" class="th-btn radius">Submit comment</button></div>
+        </div>
+    </form>
+</div>
+<div class="row mb-1"><div class="service-contact-panel mb-4"><h3 class="blog-inner-title h4">Discuss this service</h3><p>Talk with our team about scope, timing and availability.</p><a href="{{ route('contact') }}" class="th-btn radius">Enquire about this service</a></div></div><div class="row mt-3"></div></div></div></div><div class="col-xxl-4 col-lg-4"><aside class="sidebar-area"><div class="widget widget_search"><h3 class="widget_title">search</h3><form class="search-form" method="GET" action="{{ route('services.index') }}"><input type="search" name="q" value="{{ request('q') }}" placeholder="Enter Keyword"> <button type="submit"><i class="far fa-search"></i></button></form></div><div class="widget"><h3 class="widget_title">Featured Listings</h3><div class="recent-post-wrap featured-listing">
 @forelse($relatedProperties as $relatedProperty)
     <div class="recent-post">
         <div class="media-img"><a href="{{ route('properties.show', $relatedProperty) }}">@if($relatedProperty->featured_image)<img src="{{ Storage::disk('public')->url($relatedProperty->featured_image) }}" alt="{{ $relatedProperty->title }}">@endif</a></div>
