@@ -382,6 +382,12 @@
                                             <ul class="menu">
                                                 @if ($footerQuickLinks && $footerQuickLinks->items->isNotEmpty())
                                                     @include('frontend.partials.menu-items', ['items' => $footerQuickLinks->items])
+                                                @else
+                                                    <li><a href="{{ route('properties.index') }}">Properties</a></li>
+                                                    <li><a href="{{ route('services.index') }}">Services</a></li>
+                                                    <li><a href="{{ route('about') }}">About Us</a></li>
+                                                    <li><a href="{{ route('blog.index') }}">Latest News</a></li>
+                                                    <li><a href="{{ route('contact') }}">Contact Us</a></li>
                                                 @endif
                                             </ul>
                                         </div>
@@ -398,6 +404,12 @@
                                             <ul class="menu">
                                                 @if ($footerSupport && $footerSupport->items->isNotEmpty())
                                                     @include('frontend.partials.menu-items', ['items' => $footerSupport->items])
+                                                @else
+                                                    <li><a href="{{ route('faq.index') }}">FAQs</a></li>
+                                                    <li><a href="{{ route('neighborhood-guides.index') }}">Neighborhood Guide</a></li>
+                                                    <li><a href="{{ route('gallery.index') }}">Gallery</a></li>
+                                                    <li><a href="{{ route('contact') }}">Help Center</a></li>
+                                                    <li><a href="{{ route('contact') }}">Contact Support</a></li>
                                                 @endif
                                             </ul>
                                         </div>
@@ -408,7 +420,7 @@
                                 @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null) || !empty($siteSettings['site_address']))
                                     <div class="footer-item">
                                         <div class="widget widget_banner footer-widget">
-                                            <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? 'Location' }}</h3>
+                                            <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? 'Pillar Location' }}</h3>
                                             <div class="widget-map">
                                                 <iframe src="{{ \App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null) ? \App\Rules\SafeLink::sanitizeHttp($siteSettings['footer_map_embed_url']) : 'https://www.google.com/maps?q=' . urlencode($siteSettings['site_address']) . '&output=embed' }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                                             </div>
@@ -474,14 +486,12 @@
                 <div class="row gy-3 justify-content-lg-between justify-content-center align-items-center">
                     <div class="col-lg-7">
                         <p class="copyright-text">
-                            <i class="fal fa-copyright">
-                            </i> {{ date('Y') }}
-                            {{ $siteSettings['footer_copyright'] ?? '' }} {{ $siteSettings['footer_rights_text'] ?? '' }}
+                            Copyright <i class="fal fa-copyright"></i> {{ date('Y') }} {{ $siteSettings['footer_copyright'] ?? ($siteSettings['site_title'] ?? config('app.name')) }}. {{ $siteSettings['footer_rights_text'] ?? 'All Rights Reserved.' }}
                         </p>
                     </div>
                     <div class="col-auto">
                         <div class="footer-default-copy-right">
-                            <p>{{ $siteSettings['footer_social_heading'] ?? '' }}</p>
+                            <p>{{ $siteSettings['footer_social_heading'] ?? 'Social Media:' }}</p>
                             <div class="th-social">
                                 @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_facebook'] ?? null))
                                     <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_facebook']) }}" target="_blank" rel="noopener noreferrer">
