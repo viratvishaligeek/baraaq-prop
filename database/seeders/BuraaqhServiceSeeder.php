@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Service;
 use App\Models\ServiceFeature;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class BuraaqhServiceSeeder extends Seeder
 {
@@ -110,14 +111,54 @@ class BuraaqhServiceSeeder extends Seeder
         ];
 
         foreach ($services as $index => $data) {
+            $faqs = [
+                'property-search-shortlisting' => [
+                    ['Can a shortlist guarantee that a property is still available?', 'No. Availability can change. Confirm the exact property, current terms and the person authorised to show or offer it before travelling or making a payment.'],
+                    ['Does a comparison replace document checks?', 'No. A shortlist helps organise options; ownership, approvals, land use and transaction documents require independent verification.'],
+                ],
+                'property-sale-preparation' => [
+                    ['Does preparation include a certified valuation?', 'No. A formal valuation should be obtained from a suitably qualified valuer where required. An information sheet is not a valuation certificate.'],
+                    ['Should photographs show the actual property?', 'Yes. Use current photographs that accurately represent the property and disclose material condition issues rather than relying on edited or unrelated images.'],
+                ],
+                'property-documentation-coordination' => [
+                    ['Does this service replace a property lawyer?', 'No. Title opinions, legal drafting and legal advice must come from a qualified lawyer appointed for the transaction.'],
+                    ['Does a document checklist prove ownership?', 'No. It records which documents have been supplied; the originals and relevant authority records must still be independently reviewed.'],
+                ],
+                'residential-property-consultation' => [
+                    ['Can a consultation confirm that a home is suitable?', 'A discussion can organise requirements and questions, but the buyer must inspect the exact property and verify its condition, documents and costs.'],
+                    ['Can future appreciation be predicted with certainty?', 'No. Future prices and rental outcomes are uncertain and should not be guaranteed.'],
+                ],
+                'commercial-property-consultation' => [
+                    ['Does a commercial listing confirm that my business use is permitted?', 'No. Verify the permitted use, licences, building approvals and any restrictions with the competent authority and qualified professionals.'],
+                    ['Should I review a lease before paying a deposit?', 'Yes. Understand the term, deposit, escalation, permitted use, fit-out, repair obligations and exit clauses in writing before paying.'],
+                ],
+                'property-site-visit-planning' => [
+                    ['Is a site visit the same as a technical inspection?', 'No. A viewing can help identify visible questions, but structural, electrical and other technical conclusions require an independent qualified inspector.'],
+                    ['What should I confirm before travelling?', 'Confirm current availability, the exact address, access arrangements and the identity of the person authorised to show the property.'],
+                ],
+            ][$data['slug']] ?? [];
+
             $content = '<p>'.$data['intro'].'</p>'
                 .'<h2>Scope to confirm</h2><p>'.$data['scope'].'</p>'
                 .'<h2>Potential benefits</h2><p>'.$data['benefits'].'</p>'
-                .'<h2>Proposed process</h2><p>'.$data['process'].'</p>'
-                .'<h2>Before proceeding</h2><p>Confirm the actual service availability, responsible person, scope, fees and any third-party involvement directly with Buraaqh Properties. Legal, financial, engineering and authority decisions should be handled by the appropriately qualified professional or competent authority.</p>'
+                .'<h2>Proposed process</h2><p>'.$data['process'].'</p>';
+
+            if ($faqs !== []) {
+                $content .= '<h2>Frequently asked questions</h2>';
+                foreach ($faqs as [$question, $answer]) {
+                    $content .= '<h3>'.$question.'</h3><p>'.$answer.'</p>';
+                }
+            }
+
+            $content .= '<h2>Before proceeding</h2><p>Confirm the actual service availability, responsible person, scope, fees and any third-party involvement directly with Buraaqh Properties. Legal, financial, engineering and authority decisions should be handled by the appropriately qualified professional or competent authority.</p>'
                 .'<h2>Discuss your requirement</h2><p>Use the contact form to describe your requirement and the questions you would like to discuss. Do not send sensitive financial or identity information through the general enquiry form.</p>';
 
-            $service = Service::query()->firstOrCreate(
+            $existing = Service::withTrashed()->where('slug', $data['slug'])->first();
+            if ($existing?->trashed()) {
+                continue;
+            }
+
+            $service = $existing ?? Service::query()->firstOrCreate(
                 ['slug' => $data['slug']],
                 [
                     'title' => $data['title'],
@@ -126,8 +167,8 @@ class BuraaqhServiceSeeder extends Seeder
                     'featured_image' => null,
                     'status' => 'draft',
                     'published_at' => null,
-                    'meta_title' => $data['title'].' | Buraaqh Properties',
-                    'meta_description' => $data['excerpt'],
+                    'meta_title' => Str::limit($data['title'].' | Buraaqh Properties Bareilly', 60, ''),
+                    'meta_description' => Str::limit($data['excerpt'], 155, ''),
                     'focus_keyword' => $data['keyword'],
                 ]
             );
