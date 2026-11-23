@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\GalleryItem;
 use App\Models\Property;
 use App\Models\PropertyAccommodation;
 use App\Models\PropertyFaq;
@@ -112,6 +113,8 @@ class BuraaqhDemoPropertySeeder extends Seeder
             $this->seedAccommodations($property, $listing);
             $this->seedFaqs($property, $listing);
         }
+
+        $this->seedGallery();
     }
 
     private function seedImages(Property $property, array $listing, int $index): void
@@ -177,6 +180,57 @@ class BuraaqhDemoPropertySeeder extends Seeder
             PropertyFaq::query()->firstOrCreate(
                 ['property_id' => $property->id, 'question' => $faq['question']],
                 ['answer' => $faq['answer'], 'sort_order' => $index + 1]
+            );
+        }
+    }
+
+
+    private function seedGallery(): void
+    {
+        $gallery = [
+            ['slug' => 'demo-gallery-apartment-architecture', 'title' => 'Illustrative Apartment Architecture — Demo Image', 'category' => 'apartment', 'image' => self::IMAGE_PATHS[0]],
+            ['slug' => 'demo-gallery-independent-home', 'title' => 'Illustrative Independent Home — Demo Image', 'category' => 'apartment', 'image' => self::IMAGE_PATHS[1]],
+            ['slug' => 'demo-gallery-contemporary-residence', 'title' => 'Illustrative Contemporary Residence — Demo Image', 'category' => 'apartment', 'image' => self::IMAGE_PATHS[2]],
+            ['slug' => 'demo-gallery-residential-interior', 'title' => 'Illustrative Residential Interior — Demo Image', 'category' => 'apartment', 'image' => self::IMAGE_PATHS[4]],
+            ['slug' => 'demo-gallery-commercial-building', 'title' => 'Illustrative Commercial Building — Demo Image', 'category' => 'commercial', 'image' => self::IMAGE_PATHS[5]],
+            ['slug' => 'demo-gallery-landscape-setting', 'title' => 'Illustrative Open-Space Setting — Demo Image', 'category' => 'farm', 'image' => self::IMAGE_PATHS[3]],
+        ];
+
+        $importer = app(ThemeMediaImporter::class);
+
+        foreach ($gallery as $index => $item) {
+            $existing = GalleryItem::withTrashed()->where('slug', $item['slug'])->first();
+
+            // A deleted gallery entry is an editorial decision; do not restore it.
+            if ($existing?->trashed()) {
+                continue;
+            }
+
+            $media = $importer->import(
+                $item['image'],
+                $item['title'].'; illustrative theme asset, not a real property photograph'
+            );
+
+            if (! $media || ! Storage::disk('public')->exists($media->path)) {
+                continue;
+            }
+
+            GalleryItem::query()->firstOrCreate(
+                ['slug' => $item['slug']],
+                [
+                    'title' => $item['title'],
+                    'description' => 'Demonstration gallery entry for local website preview. This is a generic theme image, not a photograph of an available Buraaqh property. Replace it with approved property photography before using the gallery on a live business website.',
+                    'category' => $item['category'],
+                    'image' => $media->path,
+                    'alt_text' => 'Illustrative demo image only; not an actual Buraaqh property photograph',
+                    'sort_order' => $index + 1,
+                    'status' => 'published',
+                    'published_at' => now()->subDays($index + 1),
+                    'meta_title' => $item['title'],
+                    'meta_description' => 'Illustrative real-estate website gallery image for local preview only.',
+                    'canonical_url' => null,
+                    'og_image' => null,
+                ]
             );
         }
     }
