@@ -11,9 +11,13 @@ php artisan migrate --force
 php artisan db:seed --force
 ```
 
+For local preview, confirm `APP_ENV=local` (or `testing`) and leave `CMS_DEMO_PROPERTIES` unset. The fixture seeder uses the repository's existing `ThemeMediaImporter` and public storage disk; it skips missing/invalid source assets rather than writing broken image paths.
+
 `DatabaseSeeder` runs role/permission reference data, optionally bootstraps an administrator only when both `CMS_ADMIN_EMAIL` and `CMS_ADMIN_PASSWORD` are configured, then runs the homepage template, theme defaults and Buraaqh content orchestration. The content orchestration orders legacy demo retirement before categories, pages, articles, locality content, service drafts, navigation and homepage sections.
 
-Do not run individual content seeders out of order. In particular, the homepage seeder expects the Home 9 record and registered section definitions to exist, while editorial content expects its categories and optional administrator author to exist.
+Do not run individual content seeders out of order. In particular, the homepage seeder expects the Home 9 record and registered section definitions to exist, while editorial and property content expect their categories to exist. `BuraaqhDemoPropertySeeder` runs last so the property taxonomy, CMS and theme media are ready first.
+
+On a local/testing environment, the 12 fictional Bareilly property fixtures and six illustrative gallery records are enabled by default. Set `CMS_DEMO_PROPERTIES=false` to suppress them. Production defaults to disabled; only set `CMS_DEMO_PROPERTIES=true` when deliberately preparing a clearly labelled demonstration environment, never a live inventory website.
 
 ## Tables that receive starter records
 
