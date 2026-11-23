@@ -113,7 +113,7 @@ class ContentController extends Controller
 
         return view('frontend.pages.show', [
             'page' => $page,
-            'canonicalUrl' => route('about'),
+            'canonicalUrl' => $page->canonical_url ?: route('about'),
         ]);
     }
 
@@ -121,6 +121,9 @@ class ContentController extends Controller
     {
         abort_unless($page->status === 'published', 404);
 
-        return view('frontend.pages.show', compact('page'));
+        return view('frontend.pages.show', [
+            'page' => $page,
+            'canonicalUrl' => $page->canonical_url ?: route('pages.show', $page),
+        ]);
     }
 }
