@@ -90,7 +90,8 @@ class SiteContentController extends Controller
                 $data[$type === 'gallery' ? 'image' : 'hero_image'] = $uploadedPath;
             }
 
-            unset($data['image'], $data['remove_image']);
+            if ($type === 'neighborhood-guides') unset($data['image']);
+            unset($data['remove_image']);
 
             if ($type !== 'faqs') {
                 $data['slug'] = $this->uniqueSlug($model, $data['slug'] ?? $data['title']);
@@ -144,7 +145,8 @@ class SiteContentController extends Controller
                 $data[$imageField] = null;
             }
 
-            unset($data['image'], $data['remove_image']);
+            if ($type === 'neighborhood-guides') unset($data['image']);
+            unset($data['remove_image']);
 
             if ($type !== 'faqs' && ($data['status'] ?? null) === 'published' && ! $item->published_at) {
                 $data['published_at'] = now();
