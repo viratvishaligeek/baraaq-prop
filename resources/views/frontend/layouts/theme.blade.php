@@ -32,28 +32,10 @@
     <meta name="twitter:description" content="@yield('meta_description', $siteSettings['meta_description'] ?? '')">
     <meta name="twitter:image" content="@yield('og_image', $defaultSocialImage)">
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
-    <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('theme-assets/img/favicons/apple-icon-57x57.png') }}">
-    <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('theme-assets/img/favicons/apple-icon-60x60.png') }}">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('theme-assets/img/favicons/apple-icon-72x72.png') }}">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('theme-assets/img/favicons/apple-icon-76x76.png') }}">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('theme-assets/img/favicons/apple-icon-114x114.png') }}">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('theme-assets/img/favicons/apple-icon-120x120.png') }}">
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('theme-assets/img/favicons/apple-icon-144x144.png') }}">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('theme-assets/img/favicons/apple-icon-152x152.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180"
-        href="{{ asset('theme-assets/img/favicons/apple-icon-180x180.png') }}">
-    <link rel="icon"
-        href="{{ !empty($siteSettings['favicon']) ? asset('storage/' . $siteSettings['favicon']) : asset('theme-assets/img/favicons/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32"
-        href="{{ asset('theme-assets/img/favicons/favicon-32x32.png') }}">
-    <link rel="icon" type="image/png" sizes="96x96"
-        href="{{ asset('theme-assets/img/favicons/favicon-96x96.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16"
-        href="{{ asset('theme-assets/img/favicons/favicon-16x16.png') }}">
-    <link rel="manifest" href="{{ asset('theme-assets/img/favicons/manifest.json') }}">
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="{{ asset('theme-assets/img/favicons/ms-icon-144x144.png') }}">
-    <meta name="theme-color" content="#ffffff">
+    @if (!empty($siteSettings['favicon']))
+        <link rel="icon" href="{{ asset('storage/' . $siteSettings['favicon']) }}">
+        <link rel="apple-touch-icon" href="{{ asset('storage/' . $siteSettings['favicon']) }}">
+    @endif
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -69,6 +51,19 @@
             --theme-color2:
                 {{ $siteSettings['secondary_color'] ?? '#044DBC' }};
         }
+
+        .site-brand-wordmark {
+            display: inline-block;
+            color: var(--title-color, #17202a);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: clamp(18px, 2vw, 24px);
+            font-weight: 800;
+            letter-spacing: -.045em;
+            line-height: 1.05;
+            white-space: nowrap;
+        }
+        .site-brand-wordmark--inverse { color: #fff; }
+        .mobile-logo .site-brand-wordmark { font-size: 20px; }
 
         html, body {
             overflow-x: clip;
@@ -193,9 +188,7 @@
                 <a href="{{ route('home') }}">
                     @if (!empty($siteSettings['logo']))
                         <img src="{{ asset('storage/' . $siteSettings['logo']) }}"
-                        alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">@else<img
-                            src="{{ asset('theme-assets/img/logo.svg') }}"
-                            alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                        alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">@else<span class="site-brand-wordmark">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
                     @endif
                 </a>
             </div>
@@ -215,7 +208,7 @@
                                     @if (!empty($siteSettings['logo']))
                                         <img src="{{ asset('storage/' . $siteSettings['logo']) }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
                                     @else
-                                        <img src="{{ asset('theme-assets/img/logo.svg') }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                        <span class="site-brand-wordmark">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
                                     @endif
                                 </a>
                             </div>
@@ -301,9 +294,7 @@
                                     <a href="{{ route('home') }}">
                                         @if (!empty($siteSettings['logo']))
                                             <img src="{{ asset('storage/' . $siteSettings['logo']) }}"
-                                            alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">@else<img
-                                                src="{{ asset('theme-assets/img/logo-white.svg') }}"
-                                                alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                            alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">@else<span class="site-brand-wordmark site-brand-wordmark--inverse">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
                                         @endif
                                     </a>
                                 </div>
