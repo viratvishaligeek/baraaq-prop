@@ -182,6 +182,10 @@
             </button>
         </form>
     </div>
+    @php
+        // Resolve the configured menu before both mobile and desktop navigation render.
+        $primaryMenu = \App\Models\Menu::cached($siteSettings['header_menu_location'] ?? 'primary');
+    @endphp
     <div class="th-menu-wrapper">
         <div class="th-menu-area text-center">
             <button class="th-menu-toggle">
@@ -203,10 +207,6 @@
             </div>
         </div>
     </div>
-    @php
-        // Resolve the configured menu for both the Home 9 and inner-page headers.
-        $primaryMenu = \\App\\Models\\Menu::cached($siteSettings['header_menu_location'] ?? 'primary');
-    @endphp
     @if (isset($homepage) && $homepage?->slug === 'home-9')
         <header class="th-header header-default header-layout9">
             <div class="sticky-wrapper" data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
@@ -332,20 +332,9 @@
                             </div>
                         </div>
                         <div class="col-auto">
-                            @php
-                                $primaryMenu = \App\Models\Menu::cached(
-                                    $siteSettings['header_menu_location'] ?? 'primary',
-                                );
-                            @endphp
-                            @if ($primaryMenu)
-                                <nav class="main-menu d-none d-lg-inline-block">
-                                    <ul>@include('frontend.partials.navigation')</ul>
-                                </nav>
-                            @else
-                                <nav class="main-menu d-none d-lg-inline-block">
-                                    <ul>@include('frontend.partials.navigation')</ul>
-                                </nav>
-                            @endif
+                            <nav class="main-menu d-none d-lg-inline-block">
+                                <ul>@include('frontend.partials.navigation')</ul>
+                            </nav>
                             <button type="button" class="th-menu-toggle d-block d-lg-none">
                                 <i class="far fa-bars">
                                 </i>
