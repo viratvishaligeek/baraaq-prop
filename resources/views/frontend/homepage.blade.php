@@ -37,22 +37,8 @@
         'farm' => 'cat4',
         default => '',
     };
-@endph
-<div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 filter-item {{ $propertyFilterClass }}"><div class="popular-list-1 style-4"><div class="popular-list-1 style-4">@php
-    $listingImages = collect();
-    if ($property->featured_image) $listingImages->push((object) ['path' => $property->featured_image, 'alt_text' => $property->title]);
-    foreach ($property->images as $listingImage) {
-        if ($listingImage->path !== $property->featured_image) $listingImages->push($listingImage);
-    }
-    $propertyFilterClass = match(\Illuminate\Support\Str::slug($property->category?->name ?? '')) {
-        'apartment' => 'cat1',
-        'commercial' => 'cat2',
-        'land-or-plot' => 'cat3',
-        'farm' => 'cat4',
-        default => '',
-    };
 @endphp
-<div class="thumb-wrapper"><div class="th-slider" data-slider-options='{"loop":false, "autoplay": false,"autoHeight": true, "effect":"fade"}'><div class="swiper-wrapper">
+<div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 filter-item {{ $propertyFilterClass }}"><div class="popular-list-1 style-4"><div class="thumb-wrapper"><div class="th-slider" data-slider-options='{"loop":false, "autoplay": false,"autoHeight": true, "effect":"fade"}'><div class="swiper-wrapper">
 @forelse($listingImages as $listingImage)
     <div class="swiper-slide"><a class="popular-popup-image" href="{{ Storage::disk('public')->url($listingImage->path) }}"><img src="{{ Storage::disk('public')->url($listingImage->path) }}" alt="{{ $listingImage->alt_text ?: $property->title }}"></a></div>
 @empty
