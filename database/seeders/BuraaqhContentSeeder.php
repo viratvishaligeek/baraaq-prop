@@ -86,6 +86,8 @@ class BuraaqhContentSeeder extends Seeder
         ]);
 
         TeamMember::query()->where('email', 'like', '%@pillarrealty.example')->delete();
+        Page::query()->where('slug', 'buy-with-pillar')->update(['slug' => 'buy-with-buraaqh']);
+        Page::query()->where('slug', 'sell-with-pillar')->update(['slug' => 'sell-with-buraaqh']);
 
         Testimonial::query()->whereIn('name', [
             'Julia Era', 'Carlos Bauch', 'Martha Collins', 'Daniel Foster',
@@ -466,9 +468,9 @@ class BuraaqhContentSeeder extends Seeder
     {
         $pages = [
             ['About Us', 'about', '<p>Buraaqh Properties is built around a simple belief: good property advice starts with listening. We combine local knowledge, careful research and a personal approach to help people make confident decisions.</p><h2>Our mission</h2><p>To make every property move clearer, more informed and more rewarding.</p><h2>Our approach</h2><p>We value honest communication, thoughtful recommendations and dependable support from the first conversation through to handover.</p>'],
-            ['Contact', 'contact', '<p>Tell us what you are looking for and a member of our property team will get back to you.</p><p>Email  or call . Our office is at Bareilly, Uttar Pradesh, India.</p>'],
-            ['Buy with Buraaqh Properties', 'buy-with-pillar', '<p>Start with your preferred location, budget and everyday requirements. Our advisors will help you compare suitable homes, arrange viewings and understand the next steps.</p>'],
-            ['Sell with Buraaqh Properties', 'sell-with-pillar', '<p>We help prepare your property for market with considered pricing, accurate information, quality presentation and coordinated viewings.</p>'],
+            ['Contact', 'contact', '<p>Share your property requirements through the website enquiry form. Please provide accurate contact details so the team can respond to your request.</p>'],
+            ['Buy with Buraaqh Properties', 'buy-with-buraaqh', '<p>Start with your preferred location, budget and everyday requirements. Our advisors will help you compare suitable homes, arrange viewings and understand the next steps.</p>'],
+            ['Sell with Buraaqh Properties', 'sell-with-buraaqh', '<p>We help prepare your property for market with considered pricing, accurate information, quality presentation and coordinated viewings.</p>'],
             ['Privacy Policy', 'privacy-policy', '<p>We use the information you provide to respond to property enquiries and deliver the services you request. We do not publish your contact details. Please contact our team if you would like to review or update information you have submitted.</p>'],
             ['Frequently Asked Questions', 'frequently-asked-questions', '<h2>How do I arrange a viewing?</h2><p>Contact our team with the property you are interested in and your preferred viewing time.</p><h2>Can I list my property?</h2><p>Yes. Share the property details and our team will contact you to discuss the next steps.</p>'],
         ];
@@ -593,6 +595,9 @@ class BuraaqhContentSeeder extends Seeder
             ['Villas', null, 'Properties', 'property_category', $propertyCategories['villa']->id],
             ['Independent Houses', null, 'Properties', 'property_category', $propertyCategories['independent-house']->id],
             ['Services', '/services', null, 'custom', null],
+            ['Gallery', '/gallery', null, 'custom', null],
+            ['Neighborhood Guide', '/neighborhood-guide', null, 'custom', null],
+            ['FAQs', '/faq', null, 'custom', null],
             ['About Us', '/about', null, 'page', Page::query()->where('slug', 'about')->value('id')],
             ['Journal', '/blog', null, 'custom', null],
             ['Contact', '/contact', null, 'page', Page::query()->where('slug', 'contact')->value('id')],
@@ -602,9 +607,12 @@ class BuraaqhContentSeeder extends Seeder
         $footer = Menu::query()->firstOrCreate(['location' => 'footer'], ['name' => 'Footer navigation']);
         $this->insertMenuItems($footer, [
             ['Properties', '/properties', null, 'custom', null],
-            ['Buy with Buraaqh Properties', '/buy-with-pillar', null, 'custom', null],
-            ['Sell with Buraaqh Properties', '/sell-with-pillar', null, 'custom', null],
+            ['Buy with Buraaqh Properties', '/pages/buy-with-buraaqh', null, 'custom', null],
+            ['Sell with Buraaqh Properties', '/pages/sell-with-buraaqh', null, 'custom', null],
             ['Journal', '/blog', null, 'custom', null],
+            ['Gallery', '/gallery', null, 'custom', null],
+            ['Neighborhood Guide', '/neighborhood-guide', null, 'custom', null],
+            ['FAQs', '/faq', null, 'custom', null],
             ['Contact', '/contact', null, 'custom', null],
             ['Privacy Policy', '/privacy-policy', null, 'custom', null],
         ]);
