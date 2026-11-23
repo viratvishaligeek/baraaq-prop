@@ -428,13 +428,13 @@
                                 @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['app_store_url'] ?? null))
                                 <div class="footer-right-bottom-item scan">
                                     <div class="footer-right-bottom-item__thumb"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-2.png') }}" alt=""></div>
-                                    <div class="footer-right-bottom-item__content"><p>Download on the</p><h4 class="box-title"><a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['app_store_url']) }}" target="_blank" rel="noopener noreferrer">App Store</a></h4></div>
+                                    <div class="footer-right-bottom-item__content"><p>Download on the</p><h4 class="box-title"><a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['app_store_url']) }}" target="_blank" rel="noopener noreferrer">App Store</a></h4></div><div class="footer-right-bottom-item__right"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-2-scan.png') }}" alt="App Store QR code"></div>
                                 </div>
                                 @endif
                                 @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['play_store_url'] ?? null))
                                 <div class="footer-right-bottom-item scan">
                                     <div class="footer-right-bottom-item__thumb"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-3.png') }}" alt=""></div>
-                                    <div class="footer-right-bottom-item__content"><p>GET IT ON</p><h4 class="box-title"><a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['play_store_url']) }}" target="_blank" rel="noopener noreferrer">Google Play</a></h4></div>
+                                    <div class="footer-right-bottom-item__content"><p>GET IT ON</p><h4 class="box-title"><a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['play_store_url']) }}" target="_blank" rel="noopener noreferrer">Google Play</a></h4></div><div class="footer-right-bottom-item__right"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-2-scan.png') }}" alt="Google Play QR code"></div>
                                 </div>
                                 @endif
                             </div>
