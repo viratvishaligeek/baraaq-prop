@@ -29,6 +29,11 @@ class Service extends Model
         return ['published_at' => 'datetime'];
     }
 
+    public function homepageSections()
+    {
+        return $this->hasMany(HomepageSection::class)->orderBy('sort_order');
+    }
+
     public function features()
     {
         return $this->hasMany(ServiceFeature::class)->orderBy('sort_order');
