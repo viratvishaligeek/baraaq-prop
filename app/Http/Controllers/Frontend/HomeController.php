@@ -62,7 +62,7 @@ class HomeController extends Controller
         $testimonialSection = $sectionData['testimonials.home-3']['testimonials'] ?? null;
         $blogSection = $sectionData['blog.home-2']['posts'] ?? null;
 
-        $featuredProperties = collect($propertySection ?? $featuredPropertySection ?? Property::published()->orderByDesc('is_featured')->latest('published_at')->limit(8)->get());
+        $featuredProperties = $propertySection ?? $featuredPropertySection ?? Property::published()->orderByDesc('is_featured')->latest('published_at')->limit(8)->get();
         $featuredProperties->loadMissing('images');
 
         return view('frontend.homepage', [
