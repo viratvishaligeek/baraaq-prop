@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Str;
 
 class HomepageSection extends Model
 {
@@ -29,6 +30,12 @@ class HomepageSection extends Model
 
     protected static function booted(): void
     {
+        static::creating(function (HomepageSection $section): void {
+            if (blank($section->instance_key)) {
+                $section->instance_key = (string) Str::uuid();
+            }
+        });
+
         static::deleting(function (HomepageSection $section): void {
             $section->mediaAttachments()->delete();
         });
