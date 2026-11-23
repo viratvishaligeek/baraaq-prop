@@ -28,7 +28,7 @@ class DemoPropertySeederTest extends TestCase
 
         $this->assertCount(12, $properties);
         $this->assertSame(4, $properties->where('is_featured', true)->count());
-        $this->assertSame(['sale', 'rent', 'lease'], $properties->pluck('listing_type')->unique()->sort()->values()->all());
+        $this->assertSame(['lease', 'rent', 'sale'], $properties->pluck('listing_type')->unique()->sort()->values()->all());
 
         foreach ($properties as $property) {
             $this->assertNotNull($property->category, $property->slug.' must reference a category.');
