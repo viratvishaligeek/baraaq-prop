@@ -46,23 +46,23 @@ class RolePermissionSeeder extends Seeder
         }
 
         foreach ($permissions as $slug => $name) {
-            Permission::updateOrCreate(['slug' => $slug], [
-                'name' => $name,
-                'group' => strtok($slug, '.'),
-            ]);
+            Permission::query()->firstOrCreate(
+                ['slug' => $slug],
+                ['name' => $name, 'group' => strtok($slug, '.')]
+            );
         }
 
-        $administrator = Role::firstOrCreate(['slug' => 'administrator'], [
+        $administrator = Role::query()->firstOrCreate(['slug' => 'administrator'], [
             'name' => 'Administrator',
             'description' => 'Full CMS access',
         ]);
-        $administrator->permissions()->syncWithoutDetaching(Permission::pluck('id')->all());
+        $administrator->permissions()->syncWithoutDetaching(Permission::query()->pluck('id')->all());
 
-        $editor = Role::firstOrCreate(['slug' => 'editor'], [
+        $editor = Role::query()->firstOrCreate(['slug' => 'editor'], [
             'name' => 'Editor',
             'description' => 'Content editing access',
         ]);
-        $editor->permissions()->syncWithoutDetaching(Permission::whereIn('slug', [
+        $editor->permissions()->syncWithoutDetaching(Permission::query()->whereIn('slug', [
             'dashboard.view',
             'posts.view', 'posts.create', 'posts.edit', 'posts.publish',
             'pages.view', 'pages.create', 'pages.edit', 'pages.publish',
