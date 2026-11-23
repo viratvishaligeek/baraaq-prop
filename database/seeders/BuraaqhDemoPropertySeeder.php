@@ -150,7 +150,7 @@ class BuraaqhDemoPropertySeeder extends Seeder
                 [
                     'category' => $accommodation['category'],
                     'area' => $accommodation['area'],
-                    'area_unit' => $listing['area_unit'] === 'acre' ? 'sqft' : $listing['area_unit'],
+                    'area_unit' => $accommodation['area_unit'] ?? ($listing['area_unit'] === 'acre' ? 'sqft' : $listing['area_unit']),
                     'description' => $accommodation['description'],
                     'is_included' => true,
                     'attributes' => $accommodation['attributes'],
@@ -366,7 +366,7 @@ class BuraaqhDemoPropertySeeder extends Seeder
                 'features' => ['Larger open plot concept', 'Three-bedroom dwelling', 'Outdoor sitting area', 'On-site parking concept'],
                 'accommodations' => [
                     ['name' => 'Main dwelling', 'category' => 'Building', 'area' => 2100, 'description' => 'Sample built-up dwelling area; not a measured building survey.', 'attributes' => ['bedrooms' => 3]],
-                    ['name' => 'Open land parcel', 'category' => 'Land', 'area' => 1.25, 'description' => 'Illustrative land extent in acres; title and classification are unverified.', 'attributes' => ['area_unit' => 'acre']],
+                    ['name' => 'Open land parcel', 'category' => 'Land', 'area' => 1.25, 'area_unit' => 'acre', 'description' => 'Illustrative land extent in acres; title and classification are unverified.', 'attributes' => ['area_unit' => 'acre']],
                     ['name' => 'Outdoor sitting area', 'category' => 'Outdoor', 'area' => 240, 'description' => 'Sample outdoor seating zone.', 'attributes' => ['use' => 'Recreation']],
                 ],
             ],
