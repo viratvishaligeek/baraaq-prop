@@ -39,6 +39,11 @@ class Service extends Model
         return $this->hasMany(ServiceImage::class)->orderBy('sort_order');
     }
 
+    public function comments()
+    {
+        return $this->hasMany(ServiceComment::class);
+    }
+
     public function scopePublished($query)
     {
         return $query->where('status', 'published')
