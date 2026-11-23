@@ -12,7 +12,11 @@
 <div class="col-md-8"><label class="form-label">Title *</label><input class="form-control" name="title" value="{{ old('title',$item->title) }}" required></div><div class="col-md-4"><label class="form-label">Slug</label><input class="form-control" name="slug" value="{{ old('slug',$item->slug) }}"></div>
 @if($type==='neighborhood-guides')
 <div class="col-md-4"><label class="form-label">Locality *</label><input class="form-control" name="locality" value="{{ old('locality',$item->locality) }}" required></div><div class="col-md-4"><label class="form-label">City</label><input class="form-control" name="city" value="{{ old('city',$item->city??'Bareilly') }}"></div><div class="col-md-4"><label class="form-label">State</label><input class="form-control" name="state" value="{{ old('state',$item->state??'Uttar Pradesh') }}"></div><div class="col-12"><label class="form-label">Excerpt</label><textarea class="form-control" name="excerpt" rows="2">{{ old('excerpt',$item->excerpt) }}</textarea></div>
-@else<div class="col-12"><label class="form-label">Description</label><textarea class="form-control" name="description" rows="3">{{ old('description',$item->description) }}</textarea></div>@endif
+@else<div class="col-12"><label class="form-label">Description</label><textarea class="form-control" name="description" rows="3">{{ old('description',$item->description) }}</textarea></div>
+@if($type === 'gallery')
+<div class="col-md-6"><label class="form-label">Gallery category</label><select class="form-select" name="category"><option value="">Uncategorised</option><option value="apartment" @selected(old('category',$item->category)==='apartment')>Apartment</option><option value="commercial" @selected(old('category',$item->category)==='commercial')>Commercial</option><option value="land-or-plot" @selected(old('category',$item->category)==='land-or-plot')>Land or Plot</option><option value="farm" @selected(old('category',$item->category)==='farm')>Farm</option></select></div>
+@endif
+@endif
 <div class="col-12"><label class="form-label">Page content</label><textarea class="form-control" name="content" rows="8">{{ old('content',$item->content) }}</textarea></div>
 @php($currentImage = $item->image ?? $item->hero_image)
 <div class="col-md-7">
