@@ -7,6 +7,6 @@
 <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 fadeinup wow"><div class="gallery-card style-2 style-3"><div class="gallery-img"><img src="{{ $guide->hero_image ? Storage::disk('public')->url($guide->hero_image) : asset('theme-assets/img/gallery/gallery-2-1.jpg') }}" alt="gallery image"><div class="gallery-content"><div class="gallery-content-wrapper"><div class="left-content"><p class="box-text">{{ $guide->locality }}, {{ $guide->city }}</p><h2 class="box-title"><a href="{{ route('neighborhood-guides.show', $guide) }}">{{ $guide->title }}</a></h2></div></div></div></div></div></div>
 @empty
 <div class="col-12 text-center text-muted">Neighborhood guides will be published soon.</div>
-@endforelse</div><div class="row text-center"><div class="th-pagination mt-3"><ul><li><a href="{{ route('properties.index') }}"><i class="far fa-arrow-left"></i></a></li><li><a href="{{ route('properties.index') }}">1</a></li><li><a href="{{ route('properties.index') }}">2</a></li><li><a href="{{ route('properties.index') }}">3</a></li><li><a class="next-page" href="{{ route('properties.index') }}">Next <i class="far fa-arrow-right"></i></a></li></ul></div></div></div></div>
-<div class="container mt-4">{{ $guides->withQueryString()->links() }}</div>
+@endforelse</div></div></div>
+<div class="container mt-4">{{ $guides->withQueryString()->links('vendor.pagination.buraaqh') }}</div>
 @endsection
