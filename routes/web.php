@@ -37,6 +37,7 @@ Route::post('/newsletter', [NewsletterController::class, 'store'])
     ->name('newsletter.store');
 
 Route::get('/blog', [FrontendContentController::class, 'blog'])->name('blog.index');
+Route::get('/pages/{page:slug}', [FrontendContentController::class, 'page'])->name('pages.show');
 Route::get('/blog/{post:slug}', [FrontendContentController::class, 'post'])->name('blog.show');
 Route::get('/services', [FrontendContentController::class, 'services'])->name('services.index');
 Route::get('/team', [FrontendContentController::class, 'team'])->name('team.index');
