@@ -9,6 +9,11 @@ use App\Models\GalleryItem;
 use App\Models\Homepage;
 use App\Models\HomepageSection;
 use App\Models\MediaAttachment;
+use App\Models\Category;
+use App\Models\Menu;
+use App\Models\MenuItem;
+use App\Models\ServiceFeature;
+use App\Models\Tag;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
 use App\Models\NeighborhoodGuide;
@@ -31,6 +36,7 @@ class BuraaqhContentSeederTest extends TestCase
     {
         Storage::fake('public');
 
+        config(['app.env' => 'production']);
         $this->seed();
 
         $this->assertSame(1, Homepage::query()->count());
@@ -63,9 +69,16 @@ class BuraaqhContentSeederTest extends TestCase
             'faqs' => FaqItem::query()->count(),
             'gallery' => GalleryItem::query()->count(),
             'neighborhood_guides' => NeighborhoodGuide::query()->count(),
+            'categories' => Category::query()->count(),
+            'tags' => Tag::query()->count(),
+            'media' => Media::query()->count(),
+            'media_attachments' => MediaAttachment::query()->count(),
+            'menus' => Menu::query()->count(),
+            'menu_items' => MenuItem::query()->count(),
+            'service_features' => ServiceFeature::query()->count(),
         ];
 
-        $this->seed(BuraaqhContentSeeder::class);
+        $this->seed();
 
         $this->assertSame($counts, [
             'homepages' => Homepage::query()->count(),
@@ -75,6 +88,13 @@ class BuraaqhContentSeederTest extends TestCase
             'faqs' => FaqItem::query()->count(),
             'gallery' => GalleryItem::query()->count(),
             'neighborhood_guides' => NeighborhoodGuide::query()->count(),
+            'categories' => Category::query()->count(),
+            'tags' => Tag::query()->count(),
+            'media' => Media::query()->count(),
+            'media_attachments' => MediaAttachment::query()->count(),
+            'menus' => Menu::query()->count(),
+            'menu_items' => MenuItem::query()->count(),
+            'service_features' => ServiceFeature::query()->count(),
         ]);
         $this->assertSame(0, Property::published()->count());
 
