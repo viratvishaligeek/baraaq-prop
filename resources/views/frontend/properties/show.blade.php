@@ -71,7 +71,11 @@
 <div class="row gy-4">
 <div class="col-lg-8">
 <div class="property-details-thumb mb-4">
-<img class="w-100 rounded" src="{{ $property->featured_image?Storage::disk('public')->url($property->featured_image):asset('theme-assets/img/property-details/property-details_1.jpg') }}" alt="{{ $property->title }}">
+@if ($property->featured_image)
+                            <img class="w-100 rounded" src="{{ Storage::disk('public')->url($property->featured_image) }}" alt="{{ $property->title }}">
+                        @else
+                            <div class="bg-light rounded d-flex align-items-center justify-content-center text-muted" style="min-height: 280px">Property images will be added soon</div>
+                        @endif
 </div>
 <h2 class="sec-title">{{ $property->title }}</h2>
 <p class="text-muted">{{ $property->address }} {{ $property->city }} {{ $property->state }} {{ $property->postal_code }}</p>
@@ -122,7 +126,7 @@
     </section>
 @endif
 @if($property->images->isNotEmpty())<div class="row g-3 mt-4">@foreach($property->images as $image)<div class="col-md-4">
-<img class="img-fluid rounded" src="{{ Storage::disk('public')->url($image->path) }}" alt="{{ $image->alt_text }}">
+<a class="popular-popup-image d-block" href="{{ Storage::disk('public')->url($image->path) }}"><img class="img-fluid rounded" loading="lazy" src="{{ Storage::disk('public')->url($image->path) }}" alt="{{ $image->alt_text ?: $property->title }}"></a>
 </div>@endforeach</div>@endif</div>
 <div class="col-lg-4">
 <div class="contact-form p-4">
@@ -181,4 +185,29 @@
 </div>
 </div>
 </section>
+@if ($related->isNotEmpty())
+    <section class="space-top">
+        <div class="container">
+            <h2 class="sec-title mb-4">Related properties</h2>
+            <div class="row gy-4">
+                @foreach ($related as $relatedProperty)
+                    <div class="col-md-6 col-lg-4">
+                        <article class="blog-card h-100">
+                            @if ($relatedProperty->featured_image)
+                                <a href="{{ route('properties.show', $relatedProperty) }}"><img class="w-100" loading="lazy" src="{{ Storage::disk('public')->url($relatedProperty->featured_image) }}" alt="{{ $relatedProperty->title }}"></a>
+                            @endif
+                            <div class="blog-content">
+                                <h3 class="h5"><a href="{{ route('properties.show', $relatedProperty) }}">{{ $relatedProperty->title }}</a></h3>
+                                <p>{{ $relatedProperty->address }}{{ $relatedProperty->city ? ', '.$relatedProperty->city : '' }}</p>
+                                @if ($relatedProperty->price_label || $relatedProperty->price)
+                                    <p class="fw-semibold">{{ $relatedProperty->price_label ?: number_format((float) $relatedProperty->price, 2) }}</p>
+                                @endif
+                            </div>
+                        </article>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+@endif
 @endsection
