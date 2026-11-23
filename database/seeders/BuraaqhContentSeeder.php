@@ -204,6 +204,10 @@ class BuraaqhContentSeeder extends Seeder
             'meta_title' => [$site.' | Discover a better place to call home', 'seo', 'string'],
             'meta_description' => ['Explore carefully selected homes, apartments and investment properties across Bareilly and the Bareilly region with the local property specialists at Buraaqh Properties.', 'seo', 'string'],
             'meta_keywords' => ['real estate Bareilly, homes for sale, apartments, property consultants, Bareilly region', 'seo', 'string'],
+            'gallery_meta_title' => ['Property Gallery in Bareilly | Buraaqh Properties', 'seo', 'string'],
+            'gallery_meta_description' => ['Explore property photography and real estate highlights in Bareilly, Uttar Pradesh.', 'seo', 'string'],
+            'faq_meta_title' => ['Property FAQs in Bareilly | Buraaqh Properties', 'seo', 'string'],
+            'faq_meta_description' => ['Answers to common property buying, selling and real estate questions in Bareilly, Uttar Pradesh.', 'seo', 'string'],
             'default_og_image' => [$defaultOgMedia?->path ?? 'theme-assets/img/hero/hero-9-right.png', 'seo', 'string'],
         ];
 
