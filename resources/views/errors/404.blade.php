@@ -2,6 +2,7 @@
 
 @section('title', 'Page not found · '.($siteSettings['site_title'] ?? config('app.name')))
 @section('meta_description', 'The page you requested could not be found.')
+@section('meta_robots', 'noindex, nofollow')
 
 @section('content')
     <section class="space">
