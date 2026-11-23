@@ -146,7 +146,14 @@ class BuraaqhContentSeeder extends Seeder
 
         foreach (MenuItem::query()->where('label', 'like', '%Pillar%')->get() as $item) {
             $item->label = str_replace('Pillar', 'Buraaqh Properties', $item->label);
-            if (is_string($item->url)) $item->url = str_replace('pillar', 'buraaqh', $item->url);
+            if (is_string($item->url)) {
+                $item->url = str_replace('pillar', 'buraaqh', $item->url);
+                $item->url = match ($item->url) {
+                    '/buy-with-buraaqh' => '/pages/buy-with-buraaqh',
+                    '/sell-with-buraaqh' => '/pages/sell-with-buraaqh',
+                    default => $item->url,
+                };
+            }
             $item->save();
         }
 
