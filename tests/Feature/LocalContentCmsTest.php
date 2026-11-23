@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Models\FaqItem;
 use App\Models\GalleryItem;
 use App\Models\NeighborhoodGuide;
+use App\Models\Property;
+use App\Models\Post;
 use App\Models\Role;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
@@ -99,7 +101,7 @@ class LocalContentCmsTest extends TestCase
             'status' => 'published',
             'published_at' => now(),
         ]);
-        $service = \\App\\Models\\Service::query()->create([
+        $service = \App\Models\Service::query()->create([
             'title' => 'Property consultation',
             'slug' => 'property-consultation',
             'status' => 'published',
