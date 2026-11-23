@@ -291,7 +291,7 @@
 
                         <div class="widget footer-widget">
                             @if (request()->routeIs('home'))
-                                <h3 class="widget_title">{{ $siteSettings['footer_about_heading'] ?? 'About' }} {{ $siteSettings['site_title'] ?? config('app.name') }}</h3>
+                                <h3 class="widget_title">{{ $siteSettings['footer_about_heading'] ?? ('About ' . ($siteSettings['site_title'] ?? config('app.name'))) }}</h3>
                             @endif
                             <div class="th-widget-about">
                                 @unless (request()->routeIs('home'))
