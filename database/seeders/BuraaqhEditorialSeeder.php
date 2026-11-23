@@ -7,6 +7,7 @@ use App\Models\FaqItem;
 use App\Models\NeighborhoodGuide;
 use App\Models\Post;
 use App\Models\Tag;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -21,6 +22,8 @@ class BuraaqhEditorialSeeder extends Seeder
 
     private function seedArticles(): void
     {
+        $authorId = User::query()->orderBy('id')->value('id');
+
         $categories = [
             'buying-guides' => Category::query()->where('slug', 'buying-guides')->first(),
             'market-insights' => Category::query()->where('slug', 'market-insights')->first(),
@@ -263,7 +266,7 @@ HTML,
                 ['slug' => $article['slug']],
                 [
                     'title' => $article['title'],
-                    'author_id' => null,
+                    'author_id' => $authorId,
                     'excerpt' => $article['excerpt'],
                     'content' => $article['content'],
                     'status' => 'published',
