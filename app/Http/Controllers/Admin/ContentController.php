@@ -278,7 +278,7 @@ class ContentController extends Controller
         }
 
         $this->authorizePublish($type, $data['status'] ?? $item->status, $item->status);
-        $serviceFeatures = $type === 'services' ? json_decode($data['features_json'] ?? '[]', true) : [];
+        $serviceFeatures = $type === 'services' ? (json_decode($data['features_json'] ?? '[]', true) ?: []) : [];
         unset($data['features_json'], $data['inside_images']);
         $insideImageFiles = $type === 'services' ? array_filter((array) $request->file('inside_images', [])) : [];
         $removeInsideImageIds = $type === 'services' ? ($data['remove_inside_images'] ?? []) : [];
