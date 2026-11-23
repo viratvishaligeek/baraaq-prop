@@ -78,7 +78,7 @@ The application migrations are sequential feature slices rather than duplicate t
 
 **No historical migration was consolidated, rewritten, or deleted. No new schema migration was added in this pass.** The repository does not provide a connected production database or a representative deployed migration table. It is therefore not possible to establish which historical migrations have already run in production. Editing or squashing those migrations would be unsafe without that evidence.
 
-The current migration sequence is retained as the upgrade path. Any later physical removal of legacy widget/page-builder tables must be a separately reviewed forward migration after a production backup and a verified data-retention decision.
+A `MigrationArchitectureTest` regression test now scans the migration files and fails if the same table is created more than once. The current migration sequence is retained as the upgrade path. Any later physical removal of legacy widget/page-builder tables must be a separately reviewed forward migration after a production backup and a verified data-retention decision.
 
 ## 2. Model and relationship alignment
 
@@ -169,6 +169,6 @@ No unverified template photography is assigned to property listings, service fea
 
 No production database credentials or representative deployed database were available during this repository audit. The deployed `migrations` table, existing row counts, and real production data therefore could not be inspected. No production migration or destructive database command was run.
 
-The repository's GitHub Actions workflow installs Composer dependencies, lints PHP, runs the Laravel test suite, prepares a fresh SQLite database, runs migrations and seeders, and exercises the 13 original HTML reference pages through browser tests. The database/content branch requires that workflow to run before this work can be called verified.
+The repository's GitHub Actions workflow installs Composer dependencies, lints PHP, runs the Laravel test suite, prepares a fresh SQLite database, runs migrations and seeders, and loads all 13 original HTML reference pages at desktop, tablet and mobile viewports. Playwright captures reference and live screenshots, checks response codes, shared layout presence and horizontal overflow. It does not perform a pixel-difference assertion, so screenshot artifacts still require human visual review. The live property-detail and service-detail routes are skipped when no published record exists; the reference files are still captured, while the blog detail route is exercised with the seeded editorial content. The database/content branch requires that workflow to run before this work can be called verified.
 
 **Pending evidence:** fresh migration/seed execution output, repeated-seeder test results, full automated test result, and the PR check conclusion. At the time of this report, GitHub reports no check runs or commit statuses for the PR head, so the workflow has not supplied an execution result. This report must be updated with the actual run URL and commit after CI completes; it is not a claim that those checks have already passed.
