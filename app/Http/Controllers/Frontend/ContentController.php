@@ -73,6 +73,19 @@ class ContentController extends Controller
         return view('frontend.testimonials.index', compact('testimonials'));
     }
 
+    public function about()
+    {
+        $page = Page::query()
+            ->where('slug', 'about')
+            ->where('status', 'published')
+            ->firstOrFail();
+
+        return view('frontend.pages.show', [
+            'page' => $page,
+            'canonicalUrl' => route('about'),
+        ]);
+    }
+
     public function page(Page $page)
     {
         abort_unless($page->status === 'published', 404);
