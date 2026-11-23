@@ -28,6 +28,13 @@ class SettingsController extends Controller
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:1000'],
             'meta_keywords' => ['nullable', 'string', 'max:1000'],
+            'gallery_meta_title' => ['nullable', 'string', 'max:255'],
+            'gallery_meta_description' => ['nullable', 'string', 'max:1000'],
+            'faq_meta_title' => ['nullable', 'string', 'max:255'],
+            'faq_meta_description' => ['nullable', 'string', 'max:1000'],
+            'neighborhood_guides_meta_title' => ['nullable', 'string', 'max:255'],
+            'neighborhood_guides_meta_description' => ['nullable', 'string', 'max:1000'],
+            'service_area_city' => ['nullable', 'string', 'max:100'],
             'meta_robots' => ['required', Rule::in(['index,follow', 'index,nofollow', 'noindex,follow', 'noindex,nofollow'])],
             'robots_rules' => ['nullable', 'string', 'max:10000'],
             'default_og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
@@ -102,7 +109,7 @@ class SettingsController extends Controller
                 }
 
                 foreach ($data as $key => $value) {
-                    $group = in_array($key, ['meta_title', 'meta_description', 'meta_keywords', 'meta_robots', 'robots_rules', 'default_og_image'], true)
+                    $group = in_array($key, ['meta_title', 'meta_description', 'meta_keywords', 'gallery_meta_title', 'gallery_meta_description', 'faq_meta_title', 'faq_meta_description', 'neighborhood_guides_meta_title', 'neighborhood_guides_meta_description', 'meta_robots', 'robots_rules', 'default_og_image'], true)
                         ? 'seo'
                         : 'general';
                     Setting::write($key, $value, $group);
