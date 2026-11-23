@@ -391,7 +391,27 @@
                                     </div>
                                 @endif
                             </div>
-                            @if (!empty($siteSettings['footer_gallery_images']))
+                            @unless (request()->routeIs('home'))
+                            <div class="footer-right-bottom-wrap">
+                                <div class="footer-right-bottom-item help">
+                                    <div class="footer-right-bottom-item__thumb help"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-1.png') }}" alt=""></div>
+                                    <div class="footer-right-bottom-item__content"><h4 class="box-title"><a href="{{ route('contact') }}">{{ $siteSettings['footer_cta_text'] ?? 'Need help buying or selling?' }}</a></h4></div>
+                                </div>
+                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['app_store_url'] ?? null))
+                                <div class="footer-right-bottom-item scan">
+                                    <div class="footer-right-bottom-item__thumb"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-2.png') }}" alt=""></div>
+                                    <div class="footer-right-bottom-item__content"><p>Download on the</p><h4 class="box-title"><a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['app_store_url']) }}" target="_blank" rel="noopener noreferrer">App Store</a></h4></div>
+                                </div>
+                                @endif
+                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['play_store_url'] ?? null))
+                                <div class="footer-right-bottom-item scan">
+                                    <div class="footer-right-bottom-item__thumb"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-3.png') }}" alt=""></div>
+                                    <div class="footer-right-bottom-item__content"><p>GET IT ON</p><h4 class="box-title"><a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['play_store_url']) }}" target="_blank" rel="noopener noreferrer">Google Play</a></h4></div>
+                                </div>
+                                @endif
+                            </div>
+                            @endunless
+                            @if (request()->routeIs('home') && !empty($siteSettings['footer_gallery_images']))
                             <div class="footer-bottom-community">
                                 <div class="content">
                                     <p>{{ $siteSettings['footer_gallery_handle'] ?? '' }}</p>
