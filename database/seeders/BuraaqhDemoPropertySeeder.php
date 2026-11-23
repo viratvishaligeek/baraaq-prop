@@ -69,6 +69,10 @@ class BuraaqhDemoPropertySeeder extends Seeder
                 continue;
             }
 
+            if ($property && ! str_contains((string) $property->description, 'Demo content notice:')) {
+                continue;
+            }
+
             if (! $property) {
                 $property = Property::query()->create([
                     'category_id' => $category->id,
