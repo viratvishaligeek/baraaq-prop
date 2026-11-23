@@ -254,9 +254,9 @@
         <div class="widget-area">
             <div class="container">
                 @php
-                    $footerMenu = \App\Models\Menu::cached($siteSettings['footer_menu_location'] ?? 'footer');
-                    $footerQuickLinks = \App\Models\Menu::cached($siteSettings['footer_quick_links_menu_location'] ?? 'footer-quick-links');
-                    $footerSupport = \App\Models\Menu::cached($siteSettings['footer_support_menu_location'] ?? 'footer-support');
+                    $footerMenu = \App\Models\Menu::cached($siteSettings['footer_menu_location'] ?? '');
+                    $footerQuickLinks = \App\Models\Menu::cached($siteSettings['footer_quick_links_menu_location'] ?? '');
+                    $footerSupport = \App\Models\Menu::cached($siteSettings['footer_support_menu_location'] ?? '');
                 @endphp
                 @if ($footerMenu && $footerMenu->items->isNotEmpty())
                     <nav class="cms-footer-navigation" aria-label="Footer navigation">
@@ -269,11 +269,11 @@
                         
 
                         <div class="widget footer-widget">
-                            <h3 class="widget_title">{{ $siteSettings['footer_about_heading'] ?? 'About' }} {{ $siteSettings['site_title'] ?? config('app.name') }}
+                            <h3 class="widget_title">{{ $siteSettings['footer_about_heading'] ?? '' }} {{ $siteSettings['site_title'] ?? config('app.name') }}
                             </h3>
                             <div class="th-widget-about">
                                 <p class="about-text">
-                                    {{ $siteSettings['footer_description'] ?? ($siteSettings['site_tagline'] ?? '') }}
+                                    {{ $siteSettings['footer_description'] ?? '' }}
                                 </p>
                                 <div class="footer-info-wrap">
                                     <div class="footer-info">
@@ -325,7 +325,7 @@
                                     
 
                                     <div class="widget widget_nav_menu footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_services_heading'] ?? 'Services' }}</h3>
+                                        <h3 class="widget_title">{{ $siteSettings['footer_services_heading'] ?? '' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
                                                 @foreach (\App\Models\Service::published()->orderBy('title')->limit(5)->get() as $footerService)
@@ -344,7 +344,7 @@
                                     
 
                                     <div class="widget widget_nav_menu footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_quick_links_heading'] ?? 'Quick Links' }}</h3>
+                                        <h3 class="widget_title">{{ $siteSettings['footer_quick_links_heading'] ?? '' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
                                                 @if ($footerQuickLinks && $footerQuickLinks->items->isNotEmpty())
@@ -360,7 +360,7 @@
                                     
 
                                     <div class="widget widget_nav_menu footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_support_heading'] ?? 'Support' }}</h3>
+                                        <h3 class="widget_title">{{ $siteSettings['footer_support_heading'] ?? '' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
                                                 @if ($footerSupport && $footerSupport->items->isNotEmpty())
@@ -374,7 +374,7 @@
                                 </div>
                                 <div class="footer-item">
                                     <div class="widget widget_banner footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? 'Pillar Location' }}</h3>
+                                        <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? '' }}</h3>
                                         <div class="widget-map">
                                             @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null))
                                                 <iframe src="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['footer_map_embed_url']) }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
@@ -421,12 +421,12 @@
                         <p class="copyright-text">
                             <i class="fal fa-copyright">
                             </i> {{ date('Y') }}
-                            {{ $siteSettings['footer_copyright'] ?? ($siteSettings['site_title'] ?? config('app.name')) }} {{ $siteSettings['footer_rights_text'] ?? 'All Rights Reserved.' }}
+                            {{ $siteSettings['footer_copyright'] ?? '' }} {{ $siteSettings['footer_rights_text'] ?? '' }}
                         </p>
                     </div>
                     <div class="col-auto">
                         <div class="footer-default-copy-right">
-                            <p>{{ $siteSettings['footer_social_heading'] ?? 'Social Media:' }}</p>
+                            <p>{{ $siteSettings['footer_social_heading'] ?? '' }}</p>
                             <div class="th-social">
                                 @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_facebook'] ?? null))
                                     <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_facebook']) }}" target="_blank" rel="noopener noreferrer">
