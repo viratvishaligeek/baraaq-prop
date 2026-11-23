@@ -13,7 +13,7 @@ class DefaultThemeSeeder extends Seeder
 {
     public function run(): void
     {
-        $siteName = trim((string) env('SITE_NAME', 'Buraaqh Properties Real Estate')) ?: 'Buraaqh Properties Real Estate';
+        $siteName = trim((string) env('SITE_NAME', 'Buraaqh Properties')) ?: 'Buraaqh Properties Real Estate';
 
         $settings = [
             'site_title' => [$siteName, 'general', 'string'],
@@ -110,15 +110,18 @@ class DefaultThemeSeeder extends Seeder
     {
         $categories = [
             ['name' => 'Apartment', 'slug' => 'apartment', 'type' => 'property', 'sort_order' => 1],
-            ['name' => 'House', 'slug' => 'house', 'type' => 'property', 'sort_order' => 2],
+            ['name' => 'Independent House', 'slug' => 'independent-house', 'type' => 'property', 'sort_order' => 2],
             ['name' => 'Villa', 'slug' => 'villa', 'type' => 'property', 'sort_order' => 3],
-            ['name' => 'Office', 'slug' => 'office', 'type' => 'property', 'sort_order' => 4],
-            ['name' => 'Land', 'slug' => 'land', 'type' => 'property', 'sort_order' => 5],
-            ['name' => 'Commercial Property', 'slug' => 'commercial-property', 'type' => 'property', 'sort_order' => 6],
+            ['name' => 'Builder Floor', 'slug' => 'builder-floor', 'type' => 'property', 'sort_order' => 4],
+            ['name' => 'Residential Plot', 'slug' => 'residential-plot', 'type' => 'property', 'sort_order' => 5],
+            ['name' => 'Commercial', 'slug' => 'commercial', 'type' => 'property', 'sort_order' => 6],
+            ['name' => 'Penthouse', 'slug' => 'penthouse', 'type' => 'property', 'sort_order' => 7],
+            ['name' => 'Farmhouse', 'slug' => 'farmhouse', 'type' => 'property', 'sort_order' => 8],
             ['name' => 'Buying Guides', 'slug' => 'buying-guides', 'type' => 'post', 'sort_order' => 1],
             ['name' => 'Selling Guides', 'slug' => 'selling-guides', 'type' => 'post', 'sort_order' => 2],
             ['name' => 'Market Insights', 'slug' => 'market-insights', 'type' => 'post', 'sort_order' => 3],
             ['name' => 'Property Tips', 'slug' => 'property-tips', 'type' => 'post', 'sort_order' => 4],
+            ['name' => 'Home Design', 'slug' => 'home-design', 'type' => 'post', 'sort_order' => 5],
         ];
 
         foreach ($categories as $category) {
