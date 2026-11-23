@@ -17,7 +17,7 @@ return [
             'chat_text' => 'Explore Property agents are here to help with all your buying, renting and selling goals. Find the home of your dreams with an expert you can trust.',
             'chat_link_label' => 'Let’s chat',
             'chat_link_url' => '/contact',
-            'card_background' => '/theme-assets/img/shape/team-2-bg-shape.png',
+            'card_background' => '/theme-assets/img/bg/team6-bg-shape.png',
             'decorative_shape' => '/theme-assets/img/shape/team-2-shape.png',
             'vertical_spacing' => 'space-bottom',
             'animate_cards' => true,
