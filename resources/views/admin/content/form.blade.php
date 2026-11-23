@@ -41,9 +41,9 @@
                     <div class="col-md-6">
                         <label class="form-label">Photo</label>
 <input type="hidden" name="photo_media_id" id="media-testimonial-photo"
-                            value="{{ old('photo_media_id', $mediaItems->firstWhere('path', $item->photo)?->id) }}">
+                            value="{{ old('photo_media_id', $mediaItems- data-remove-flag-id="remove-photo-testimonial">\n                        <input type="hidden" name="remove_photo" id="remove-photo-testimonial" value="0">firstWhere('path', $item->photo)?->id) }}">
                         <button type="button" class="btn btn-sm btn-outline-primary mt-2"
-                            data-open-media-picker data-target="media-testimonial-photo">Choose from Media Library</button>
+                            data-open-media-picker data-target="media-testimonial-photo">Choose from Media Library</button>\n                        <button type="button" class="btn btn-sm btn-outline-danger mt-2" data-clear-media data-target="media-testimonial-photo">Remove selected image</button>
                         <div class="mt-2">
                             <img class="rounded" width="88" data-media-preview
                                 src="{{ $item->photo ? asset('storage/' . $item->photo) : '' }}"
@@ -105,9 +105,9 @@
                     <div class="col-md-6">
                         <label class="form-label">Photo</label>
 <input type="hidden" name="photo_media_id" id="media-team-photo"
-                            value="{{ old('photo_media_id', $mediaItems->firstWhere('path', $item->photo)?->id) }}">
+                            value="{{ old('photo_media_id', $mediaItems- data-remove-flag-id="remove-photo-team">\n                        <input type="hidden" name="remove_photo" id="remove-photo-team" value="0">firstWhere('path', $item->photo)?->id) }}">
                         <button type="button" class="btn btn-sm btn-outline-primary mt-2"
-                            data-open-media-picker data-target="media-team-photo">Choose from Media Library</button>
+                            data-open-media-picker data-target="media-team-photo">Choose from Media Library</button>\n                        <button type="button" class="btn btn-sm btn-outline-danger mt-2" data-clear-media data-target="media-team-photo">Remove selected image</button>
                         <div class="mt-2"><img class="rounded" width="88" data-media-preview
                             src="{{ $item->photo ? asset('storage/' . $item->photo) : '' }}"
                             alt="Team photo preview" @if (!$item->photo) hidden @endif><span class="small text-muted" data-media-meta></span></div>
@@ -148,9 +148,9 @@
                     <div class="col-md-6">
                         <label class="form-label">Category icon</label>
 <input type="hidden" name="icon_media_id" id="media-category-icon"
-                            value="{{ old('icon_media_id', $mediaItems->firstWhere('path', $item->icon_path)?->id) }}">
+                            value="{{ old('icon_media_id', $mediaItems- data-remove-flag-id="remove-category-icon">\n                        <input type="hidden" name="remove_icon_path" id="remove-category-icon" value="0">firstWhere('path', $item->icon_path)?->id) }}">
                         <button type="button" class="btn btn-sm btn-outline-primary mt-2"
-                            data-open-media-picker data-target="media-category-icon">Choose from Media Library</button>
+                            data-open-media-picker data-target="media-category-icon">Choose from Media Library</button>\n                        <button type="button" class="btn btn-sm btn-outline-danger mt-2" data-clear-media data-target="media-category-icon">Remove selected image</button>
                         <div class="mt-2"><img src="{{ $item->icon_path ? asset('storage/' . $item->icon_path) : '' }}"
                             alt="Category icon preview" class="rounded border" style="width:64px;height:64px;object-fit:contain"
                             data-media-preview @if (!$item->icon_path) hidden @endif><span class="small text-muted" data-media-meta></span></div>
@@ -198,9 +198,9 @@
                     <div class="col-md-6">
                         <label class="form-label">Select banner image from Media Library</label>
                         <input type="hidden" name="image_media_id" id="media-banner-image"
-                            value="{{ old('image_media_id', $mediaItems->firstWhere('path', $item->image)?->id) }}">
+                            value="{{ old('image_media_id', $mediaItems- data-remove-flag-id="remove-banner-image">\n                        <input type="hidden" name="remove_image" id="remove-banner-image" value="0">firstWhere('path', $item->image)?->id) }}">
                         <button type="button" class="btn btn-sm btn-outline-primary mt-2"
-                            data-open-media-picker data-target="media-banner-image">Choose from Media Library</button>
+                            data-open-media-picker data-target="media-banner-image">Choose from Media Library</button>\n                        <button type="button" class="btn btn-sm btn-outline-danger mt-2" data-clear-media data-target="media-banner-image">Remove selected image</button>
                         <div class="mt-2"><img src="{{ $item->image ? asset('storage/' . $item->image) : '' }}"
                             alt="Banner image preview" class="rounded" style="max-width:180px;max-height:100px;object-fit:cover"
                             data-media-preview @if (!$item->image) hidden @endif><span class="small text-muted" data-media-meta></span></div>
@@ -353,9 +353,9 @@
                     <div class="col-md-6">
                         <label class="form-label">Select social image from Media Library</label>
                         <input type="hidden" name="og_image_media_id" id="media-og-image"
-                            value="{{ old('og_image_media_id', $mediaItems->firstWhere('path', $item->og_image)?->id) }}">
+                            value="{{ old('og_image_media_id', $mediaItems- data-remove-flag-id="remove-og-image">\n                        <input type="hidden" name="remove_og_image" id="remove-og-image" value="0">firstWhere('path', $item->og_image)?->id) }}">
                         <button type="button" class="btn btn-sm btn-outline-primary mt-2"
-                            data-open-media-picker data-target="media-og-image">Choose from Media Library</button>
+                            data-open-media-picker data-target="media-og-image">Choose from Media Library</button>\n                        <button type="button" class="btn btn-sm btn-outline-danger mt-2" data-clear-media data-target="media-og-image">Remove selected image</button>
                         <div class="mt-2"><img src="{{ $item->og_image ? asset('storage/' . $item->og_image) : '' }}"
                             alt="Social sharing image preview" class="rounded" style="max-width:180px;max-height:100px;object-fit:cover"
                             data-media-preview @if (!$item->og_image) hidden @endif><span class="small text-muted" data-media-meta></span></div>
