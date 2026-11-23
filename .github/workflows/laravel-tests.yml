@@ -7,6 +7,7 @@ on:
       - fix/media-library-pagination-pages
       - feat/piller-elementor-cms-v3
       - feature/complete-cms-admin-overhaul
+      - feat/database-content-seeding
   pull_request:
     branches:
       - main
@@ -72,7 +73,10 @@ jobs:
         run: |
           touch database/database.sqlite
           php artisan storage:link --force
-          SEED_DEMO_CONTENT=true DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan migrate --seed --force
+          DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan migrate --seed --force
+
+      - name: Verify a second full seeder run is safe
+        run: DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan db:seed --force
 
       - name: Prepare original HTML reference pages for visual comparison
         run: |
