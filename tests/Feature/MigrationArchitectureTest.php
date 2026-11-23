@@ -26,11 +26,9 @@ class MigrationArchitectureTest extends TestCase
             );
 
             foreach ($matches[1] as $table) {
-                $this->assertArrayNotHasKey(
-                    $table,
-                    $createdTables,
-                    'Table '.$table.' is created more than once: '.$createdTables[$table].' and '.$migrationFile
-                );
+                if (isset($createdTables[$table])) {
+                    $this->fail('Table '.$table.' is created more than once: '.$createdTables[$table].' and '.$migrationFile);
+                }
 
                 $createdTables[$table] = $migrationFile;
             }
