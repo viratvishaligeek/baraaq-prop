@@ -18,6 +18,7 @@ use App\Models\ServiceFeature;
 use App\Models\Tag;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
+use App\Models\User;
 use App\Models\NeighborhoodGuide;
 use App\Models\Page;
 use App\Models\Post;
@@ -257,6 +258,23 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertStringContainsString($shortExcerpt, $shortLegacyPost->fresh()->content);
         $this->assertDatabaseHas('pages', ['slug' => 'buy-with-buraaqh', 'status' => 'published']);
         $this->assertDatabaseHas('posts', ['slug' => 'complete-guide-buying-residential-property-bareilly', 'status' => 'published']);
+    }
+
+    public function test_optional_admin_bootstrap_assigns_seeded_content_to_the_administrator(): void
+    {
+        config([
+            'cms.admin.name' => 'Buraaqh Site Administrator',
+            'cms.admin.email' => 'admin@example.test',
+            'cms.admin.password' => 'test-only-password',
+        ]);
+
+        $this->seed();
+
+        $admin = User::query()->where('email', 'admin@example.test')->firstOrFail();
+
+        $this->assertTrue($admin->roles()->where('slug', 'administrator')->exists());
+        $this->assertSame($admin->id, Page::query()->where('slug', 'about')->value('author_id'));
+        $this->assertSame($admin->id, Post::query()->where('slug', 'complete-guide-buying-residential-property-bareilly')->value('author_id'));
     }
 
     public function test_known_legacy_settings_are_replaced_without_overwriting_custom_values(): void
