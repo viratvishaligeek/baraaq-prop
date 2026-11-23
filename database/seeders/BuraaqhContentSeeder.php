@@ -124,60 +124,10 @@ class BuraaqhContentSeeder extends Seeder
 
     private function replaceLegacyBrandContent(): void
     {
-        $contentModels = [
-            Post::class => ['excerpt', 'content', 'meta_title', 'meta_description'],
-            Page::class => ['content', 'meta_title', 'meta_description'],
-            Service::class => ['excerpt', 'content', 'meta_title', 'meta_description'],
-            Banner::class => ['title', 'subtitle', 'description', 'button_text'],
-        ];
-
-        foreach ($contentModels as $model => $fields) {
-            $records = $model::query()->where(function ($query) use ($fields): void {
-                foreach ($fields as $index => $field) {
-                    $query->{$index === 0 ? 'where' : 'orWhere'}($field, 'like', '%Pillar%');
-                    $query->orWhere($field, 'like', '%Meerut%');
-                    $query->orWhere($field, 'like', '%Noida%');
-                    $query->orWhere($field, 'like', '%Ghaziabad%');
-                    $query->orWhere($field, 'like', '%Delhi NCR%');
-                }
-            })->get();
-
-            foreach ($records as $record) {
-                foreach ($fields as $field) {
-                    if (! is_string($record->{$field})) continue;
-                    $record->{$field} = str_replace(
-                        ['Pillar Realty', 'Pillar', 'Meerut', 'Noida', 'Ghaziabad', 'Delhi NCR'],
-                        ['Buraaqh Properties', 'Buraaqh Properties', 'Bareilly', 'Bareilly', 'Bareilly', 'Bareilly region'],
-                        $record->{$field}
-                    );
-                }
-                $record->save();
-            }
-        }
-
-        foreach (MenuItem::query()->where('label', 'like', '%Pillar%')->get() as $item) {
-            $item->label = str_replace('Pillar', 'Buraaqh Properties', $item->label);
-            if (is_string($item->url)) {
-                $item->url = str_replace('pillar', 'buraaqh', $item->url);
-                $item->url = match ($item->url) {
-                    '/buy-with-buraaqh' => '/pages/buy-with-buraaqh',
-                    '/sell-with-buraaqh' => '/pages/sell-with-buraaqh',
-                    default => $item->url,
-                };
-            }
-            $item->save();
-        }
-
-        if (class_exists(HomepageSection::class)) {
-            foreach (HomepageSection::query()->get() as $section) {
-                $config = $section->config;
-                $json = is_string($config) ? $config : json_encode($config);
-                if (! is_string($json) || (! str_contains($json, 'Pillar') && ! str_contains($json, 'Meerut') && ! str_contains($json, 'Noida') && ! str_contains($json, 'Ghaziabad') && ! str_contains($json, 'Delhi NCR'))) continue;
-                $json = str_replace(['Pillar Realty', 'Pillar', 'Meerut', 'Noida', 'Ghaziabad', 'Delhi NCR'], ['Buraaqh Properties', 'Buraaqh Properties', 'Bareilly', 'Bareilly', 'Bareilly', 'Bareilly region'], $json);
-                $section->config = is_string($config) ? $json : json_decode($json, true);
-                $section->save();
-            }
-        }
+        // Do not run broad text replacements across owner-managed pages, posts,
+        // services or menu records. The explicit legacy demo records are retired
+        // by exact identifiers in retireLegacyPillarDemoRecords().
+        // New Buraaqh content is inserted separately with firstOrCreate().
     }
 
     private function seedSettings(): void
@@ -658,7 +608,7 @@ class BuraaqhContentSeeder extends Seeder
                 'heading_prefix' => 'Discover',
                 'heading_highlight' => 'Most Suitable',
                 'heading_suffix' => 'Property',
-                'description' => 'Explore top listings and let our expert agents guide you every step of the way to your new home.',
+                'description' => 'Explore property information and contact Buraaqh Properties to discuss your requirements in Bareilly, Uttar Pradesh.',
                 'primary_button_label' => 'Explore Properties',
                 'primary_button_url' => '/properties',
                 'secondary_button_label' => 'Request A Visit',
@@ -674,16 +624,10 @@ class BuraaqhContentSeeder extends Seeder
                 'vision_title' => 'Our Vision',
                 'vision_text' => 'At the heart of our agency is a commitment to honesty, availability, and tailored service. Whether you are searching for your dream home, planning to list your property or exploring investment opportunities, our advice stays personal.',
             ],
-            'statistics.home-9' => [
-                'stat_1_value' => '98', 'stat_1_suffix' => '+', 'stat_1_label' => 'offices worldwide',
-                'stat_2_value' => '162', 'stat_2_suffix' => '+', 'stat_2_label' => 'completed projects',
-                'stat_3_value' => '150', 'stat_3_suffix' => '+', 'stat_3_label' => 'properties available',
-                'stat_4_value' => '2.6', 'stat_4_suffix' => 'M', 'stat_4_label' => 'total project value',
-            ],
             'services.home-9' => [
                 'eyebrow' => 'Our Services',
                 'heading' => 'We’re committed to discovering the perfect property for you',
-                'description' => 'From valuation and legal coordination to financing guidance and property management, our specialists support every step of your real estate journey.',
+                'description' => 'Explore the services currently published by Buraaqh Properties. Contact the team to confirm availability and scope before proceeding.',
                 'items_limit' => 8,
                 'columns' => '4',
             ],
@@ -700,21 +644,9 @@ class BuraaqhContentSeeder extends Seeder
                 'heading' => 'Featured Properties',
                 'items_limit' => 3,
             ],
-            'home-details.home-9' => [
-                'eyebrow' => 'Home Details',
-                'heading' => 'Luxury Real Estate Home Details at a Glance',
-                'location' => 'Ganga Nagar, Bareilly, Uttar Pradesh',
-                'total_area' => '5,600 sq ft',
-                'living_space' => '4,200 sq ft',
-                'bedrooms' => '4',
-                'bathrooms' => '3',
-                'floors' => '2 floors',
-                'button_label' => 'Discover More',
-                'button_url' => '/about',
-            ],
             'team.home-2' => [
                 'eyebrow' => 'Team Members',
-                'heading' => 'Meet Our Buraaqh Properties Agents',
+                'heading' => 'Meet the Team',
                 'items_limit' => 6,
                 'chat_text' => 'Explore Property agents are here to help with all your buying, renting and selling goals. Find the home of your dreams with an expert you can trust.',
                 'chat_link_label' => 'Let’s chat',
@@ -722,7 +654,7 @@ class BuraaqhContentSeeder extends Seeder
             ],
             'testimonials.home-3' => [
                 'eyebrow' => 'Testimonials',
-                'heading' => 'What Clients Say About Buraaqh Properties',
+                'heading' => 'Client Testimonials',
                 'items_limit' => 4,
                 'trust_brand' => 'Trustipilot',
                 'view_all_label' => 'View All Reviews',
@@ -837,7 +769,7 @@ class BuraaqhContentSeeder extends Seeder
         }
 
         $extension = strtolower(pathinfo($source, PATHINFO_EXTENSION));
-        $target = 'piller-demo/'.sha1($themePath).'.'.$extension;
+        $target = 'buraaqh/'.sha1($themePath).'.'.$extension;
         $disk = Storage::disk('public');
 
         if (! $disk->exists($target)) {
