@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\FaqItem;
 use App\Models\GalleryItem;
+use App\Models\Media;
 use App\Models\NeighborhoodGuide;
 use App\Models\Post;
 use App\Models\Property;
@@ -257,7 +258,7 @@ class LocalContentCmsTest extends TestCase
             ->assertRedirect(route('admin.site-content.index', 'gallery'));
         $this->assertSoftDeleted('gallery_items', ['id' => $gallery->id]);
 
-        $galleryMedia = \\App\\Models\\Media::query()->where('path', $storedPath)->firstOrFail();
+        $galleryMedia = Media::query()->where('path', $storedPath)->firstOrFail();
         $this->actingAs($admin)->from(route('admin.media.index'))->delete(route('admin.media.destroy', $galleryMedia))
             ->assertRedirect();
         $this->assertDatabaseMissing('media', ['id' => $galleryMedia->id]);
