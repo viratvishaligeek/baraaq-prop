@@ -23,6 +23,15 @@ class ContentPublishingAndCommentsTest extends TestCase
             'published_at' => now(),
         ]);
 
+        Service::create([
+            'title' => 'Related property support',
+            'slug' => 'related-property-support',
+            'excerpt' => 'Related service excerpt.',
+            'content' => 'Related service content.',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
         $draft = Service::create([
             'title' => 'Draft consultation',
             'slug' => 'draft-consultation',
@@ -30,7 +39,11 @@ class ContentPublishingAndCommentsTest extends TestCase
             'status' => 'draft',
         ]);
 
-        $this->get(route('services.show', $published))->assertOk()->assertSee('Property valuation');
+        $this->get(route('services.show', $published))
+            ->assertOk()
+            ->assertSee('Property valuation')
+            ->assertSee('Related services')
+            ->assertSee('Related property support');
         $this->get(route('services.show', $draft))->assertNotFound();
     }
 
@@ -40,6 +53,14 @@ class ContentPublishingAndCommentsTest extends TestCase
             'title' => 'Buying your first home',
             'slug' => 'buying-your-first-home',
             'content' => 'Article content.',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        Post::create([
+            'title' => 'Related Bareilly property article',
+            'slug' => 'related-bareilly-property-article',
+            'content' => 'Related article content.',
             'status' => 'published',
             'published_at' => now(),
         ]);
@@ -56,7 +77,11 @@ class ContentPublishingAndCommentsTest extends TestCase
             'status' => 'pending',
         ]);
 
-        $this->get(route('blog.show', $post))->assertOk()->assertDontSee('This article was helpful.');
+        $this->get(route('blog.show', $post))
+            ->assertOk()
+            ->assertDontSee('This article was helpful.')
+            ->assertSee('Related articles')
+            ->assertSee('Related Bareilly property article');
     }
     public function test_frontend_service_views_are_recorded_with_a_persistent_visitor_identifier(): void
     {
