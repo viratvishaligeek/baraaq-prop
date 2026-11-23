@@ -28,6 +28,9 @@ class BuraaqhContentSeederTest extends TestCase
 
         $this->assertSame(1, Homepage::query()->count());
         $this->assertSame(0, Property::published()->count());
+        $this->assertSame(0, Service::published()->count());
+        $this->assertSame(0, GalleryItem::query()->where('status', 'published')->count());
+        $this->assertSame([], Setting::read('footer_gallery_images', []));
         $this->assertSame('Buraaqh Properties', Setting::read('site_title'));
         $this->assertSame('Bareilly', Setting::read('service_area_city'));
         $this->assertSame('', Setting::read('site_phone'));
