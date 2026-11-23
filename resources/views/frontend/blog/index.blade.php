@@ -1,6 +1,6 @@
 @extends('frontend.layouts.theme')
-@section('title', \\App\\Models\\Setting::read('blog_meta_title','Blog | '.config('app.name')))
-@section('meta_description', \\App\\Models\\Setting::read('blog_meta_description','Real estate news and guidance.'))
+@section('title', \App\Models\Setting::read('blog_meta_title','Blog | '.config('app.name')))
+@section('meta_description', \App\Models\Setting::read('blog_meta_description','Real estate news and guidance.'))
 @section('canonical_url', route('blog.index'))
 @section('content')
 <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/blog/breadcrumb-bg.jpg') }}"><div class="container"><div class="breadcumb-content"><h1 class="breadcumb-title">Blog Grid</h1><ul class="breadcumb-menu"><li><a href="{{ route('home') }}">Home</a></li><li>Blog Grid</li></ul></div></div></div><section class="th-blog-wrapper space-top space-extra-bottom"><div class="container"><div class="row gy-30 justify-content-center"><div class="col-lg-4 col-md-6">@forelse ($posts as $post)

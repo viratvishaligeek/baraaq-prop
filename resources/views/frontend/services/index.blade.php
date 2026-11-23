@@ -1,6 +1,6 @@
 @extends('frontend.layouts.theme')
-@section('title', \\App\\Models\\Setting::read('services_meta_title','Services | '.config('app.name')))
-@section('meta_description', \\App\\Models\\Setting::read('services_meta_description','Explore our real estate services.'))
+@section('title', \App\Models\Setting::read('services_meta_title','Services | '.config('app.name')))
+@section('meta_description', \App\Models\Setting::read('services_meta_description','Explore our real estate services.'))
 @section('canonical_url', route('services.index'))
 @section('content')
 <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcrumb-bg.jpg') }}"><div class="container"><div class="breadcumb-content"><h1 class="breadcumb-title">Our Services</h1><ul class="breadcumb-menu"><li><a href="{{ route('home') }}">Home</a></li><li>Our Services</li></ul></div></div></div><section class="overflow-hidden space space-extra-bottom" id="service-sec"><div class="container"><div class="row gy-40 justify-content-center"><div class="col-xl-4 col-md-12 fadeinup wow">@forelse ($services as $service)
