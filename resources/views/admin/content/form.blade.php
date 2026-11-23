@@ -411,4 +411,30 @@
             </script>
         @endpush
     @endif
+    @if ($type === 'services')
+        @push('scripts')
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const input = document.querySelector('input[name="inside_images[]"]');
+                    if (!input) return;
+                    const previews = document.createElement('div');
+                    previews.className = 'd-flex flex-wrap gap-2 mt-2';
+                    input.insertAdjacentElement('afterend', previews);
+                    input.addEventListener('change', function () {
+                        previews.innerHTML = '';
+                        Array.from(input.files || []).forEach(function (file) {
+                            const image = document.createElement('img');
+                            image.src = URL.createObjectURL(file);
+                            image.alt = file.name;
+                            image.className = 'rounded';
+                            image.style.width = '120px';
+                            image.style.height = '88px';
+                            image.style.objectFit = 'cover';
+                            previews.appendChild(image);
+                        });
+                    });
+                });
+            </script>
+        @endpush
+    @endif
 @endsection
