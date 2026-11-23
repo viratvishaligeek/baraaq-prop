@@ -146,6 +146,7 @@ class SiteContentController extends Controller
             }
 
             if ($type === 'neighborhood-guides') unset($data['image']);
+            if ($type === 'gallery' && ! $request->hasFile('image') && ! $request->boolean('remove_image')) unset($data['image']);
             unset($data['remove_image']);
 
             if ($type !== 'faqs' && ($data['status'] ?? null) === 'published' && ! $item->published_at) {
