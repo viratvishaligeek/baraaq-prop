@@ -186,7 +186,7 @@ HTML,
 <p>For plots and developments, verify the land classification, layout approval, boundaries, access rights and permitted use. For constructed properties, compare the actual building with applicable sanctioned plans and completion or occupancy records. Review the ownership chain, seller authority, taxes, encumbrances and any restrictions with a qualified professional.</p>
 <h2>Compare total cost, not only the advertised price</h2>
 <p>Include registration and applicable government charges, legal review, repairs, utility connections, maintenance and travel costs in your comparison. Ask for written terms and confirm what is included. If a future road, service lane or development project is mentioned, verify its official status before relying on it.</p>
-<h2>Measure access rather than relying on road proximity</h2>
+<h2>Confirm legal access and site conditions</h2>
 <p>A description such as “near Pilibhit Bypass” does not tell you whether a particular property has a safe or convenient entrance. Check whether the approach uses a service road, an internal street or a direct road connection, and whether the direction of travel requires a long detour or difficult turn. Observe the actual entry and exit at busy and quiet times. Consider pedestrian access, visibility, parking, delivery access and whether a median or divider affects the route you would use.</p>
 <p>For a road-facing property, assess noise, dust, lighting, privacy and the practicality of opening windows or using outdoor space. After rain, inspect the property's entrance and immediate approach for water accumulation. Confirm the legal access shown in the property records; a track used informally by neighbours is not proof of a permanent legal right of way.</p>
 HTML,
@@ -207,7 +207,7 @@ HTML,
 <p>Review registered ownership records, seller authority, prior deeds, property description, applicable building plans, completion records, taxes and encumbrances. Have original documents reviewed by a qualified local property lawyer. If a floor, extension or change of use has been made, ask which permissions apply and verify them with the relevant authority.</p>
 <h2>Make a consistent comparison</h2>
 <p>Use a written checklist for each shortlisted home. Record measured area, visit date, condition, access, utilities, total costs and open document questions. A careful comparison is more useful than a broad claim that one locality or block is always better than another.</p>
-<h2>Compare block-level details</h2>
+<h2>Inspect shared parking and building records</h2>
 <p>Do not compare two homes only because both are advertised as being in DD Puram. Record the exact block, street, building position, floor, orientation and approach. Check whether the entrance, parking and common areas are usable for your household, and whether the property has any access or boundary arrangement shared with another owner. Visit at the time you expect to commute and at a quieter time so that you can compare parking, noise and movement around the building.</p>
 <p>For apartments or multi-owner buildings, ask for the current maintenance statement, rules, meeting or repair records where available, and details of any unpaid contribution or planned major work. For an independent property, verify the approved building plan and whether later additions are reflected in the relevant records.</p>
 HTML,
@@ -228,7 +228,7 @@ HTML,
 <p>Have a qualified local property lawyer examine the registered deeds, title chain, authority documents, land classification, permissions and encumbrance information. Verify original records with the appropriate office. If the seller cannot provide a required document or the authority is unclear, pause the transaction until the issue is resolved in writing.</p>
 <h2>Do not rely on assumptions</h2>
 <p>Do not make a payment based on an assurance that a transfer or construction permission will be granted later. Confirm current requirements directly with the competent authority and include any necessary conditions in the written agreement. This locality guide is a prompt for due diligence, not a legal opinion about any specific property.</p>
-<h2>Confirm the authority responsible for the exact parcel</h2>
+<h2>Verify transfer, renovation and use permissions</h2>
 <p>“Bareilly Cantt” is not a substitute for a legal property description. Before treating a property as freely transferable or assuming that ordinary municipal processes apply, identify its exact location, land category, recorded owner and the authority that controls the land or building permissions. Ask a qualified local property lawyer to determine whether any cantonment, defence-estate, leasehold, transfer, construction or use conditions apply to that particular parcel. Do not assume that every property described by an agent as being in or around the Cantt has the same status.</p>
 <p>Ask for the relevant lease, grant, title or allotment records and verify them with the responsible authority. Confirm whether the proposed transfer, mortgage, renovation or change of use needs consent or a separate approval. Put unresolved permissions and conditions in writing before paying a token amount.</p>
 HTML,
