@@ -206,8 +206,28 @@ Reference SHA: `b0a96aa3173c9830d5587ba729dfc31056bde1b3`
 - [x] Replaced the service inside-image direct upload field with a multi-select Media Library collection; existing image rows retain individual detach checkboxes.
 - [x] Replaced Gallery and Neighborhood Guide direct image uploads with Media Library selection and a remove action.
 - [x] Removed unrelated hardcoded sample article body/tags from the Blog Details view; article content, categories, tags and configured social links now render from CMS/settings.
+- [x] Added a gallery category column and Admin category selector; the original Apartment/Commercial/Land or Plot/Farm filters now filter database records server-side and preserve category through pagination.
+- [x] Added a separate moderated service-comments table, public submission workflow, approved-only rendering and Admin moderation in the existing comments screen.
+- [x] Replaced static property-detail slider photos with the listing's featured image and independent property gallery; removed fabricated property highlight values and template-photo fallbacks.
+- [x] Replaced property listing duplicate stock-photo slides with actual listing gallery images; added price sorting, featured-first sorting and a real featured-listing sidebar.
+- [x] Replaced service listing/detail stock-photo fallbacks; the service featured image is no longer used as a fallback inside the service-detail gallery.
+- [x] Replaced Home 9 property carousel photos with each property's own media collection and connected its original category filter classes; team/testimonial/blog images and ratings now use actual CMS values or neutral empty states.
+- [x] Replaced About page sample service cards, fake statistics, sample listings and placeholder contact details with published services, real record counts, published properties and configured contact settings.
+- [x] Connected FAQ and Neighborhood Guide headings/intros to their seeded Admin settings; removed non-reference search controls and wired the original Neighborhood Guide search form.
+- [x] Connected Contact enquiry subject options to active property categories and hide the map until a verified map URL is configured.
+- [x] Added styled pagination to FAQ and Gallery and server-side gallery category filtering so the selected category remains active across pages.
 
-### Verification still required
+### Execution environment and verification boundary
+
+- Repository writes are available through the GitHub integration; all implementation commits in this session were written to `fix/media-library-pagination-pages`.
+- A local checkout is not available: `git clone` failed with `Could not resolve host: github.com`.
+- Local runtime: PHP 8.4.24, Node v22.16.0 and Chromium 144.
+- Composer is not installed.
+- PHP reports no PDO drivers, and the required SQLite/GD/mbstring/XML/cURL/ZIP extensions are absent.
+- The GitHub integration can read and commit repository files but exposes no workflow-dispatch action. The repository workflow has not produced a run for this branch/PR. No automated test or browser test has been executed in this session.
+- Therefore the tests added or updated below are **not verified as passing**. No screenshots were captured, and no visual comparison was performed.
+
+## Verification still required
 
 - [ ] Run `php artisan test` and the focused new/updated feature tests.
 - [ ] Run PHP lint and Blade compilation.
