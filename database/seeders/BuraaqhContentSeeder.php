@@ -37,6 +37,7 @@ use RuntimeException;
 class BuraaqhContentSeeder extends Seeder
 {
     private ?int $authorId = null;
+    private array $newlySeededServiceIds = [];
 
     /** @var array<string, Media|null> */
     private array $mediaCache = [];
@@ -387,7 +388,7 @@ class BuraaqhContentSeeder extends Seeder
         ];
 
         foreach ($rows as $index => [$title, $slug, $excerpt, $body, $icon]) {
-            Service::query()->firstOrCreate(
+            $service = Service::query()->firstOrCreate(
                 ['slug' => $slug],
                 [
                     'title' => $title,
@@ -400,6 +401,10 @@ class BuraaqhContentSeeder extends Seeder
                     'meta_description' => $excerpt,
                 ]
             );
+
+            if ($service->wasRecentlyCreated) {
+                $this->newlySeededServiceIds[] = $service->id;
+            }
         }
     }
 
@@ -562,10 +567,16 @@ class BuraaqhContentSeeder extends Seeder
             'real-estate-consulting' => ['Requirement discovery', 'Location comparison', 'Decision support'],
         ];
         foreach ($features as $slug => $titles) {
-            $service = Service::query()->where('slug', $slug)->first();
-            if (!$service) continue;
+            $service = Service::query()->whereKey($this->newlySeededServiceIds)->where('slug', $slug)->first();
+            if (! $service) {
+                continue;
+            }
+
             foreach ($titles as $i => $title) {
-                ServiceFeature::firstOrCreate(['service_id' => $service->id, 'title' => $title], ['description' => 'A clearly scoped part of the '.$service->title.' service.', 'sort_order' => $i + 1]);
+                ServiceFeature::firstOrCreate(
+                    ['service_id' => $service->id, 'title' => $title],
+                    ['description' => 'A clearly scoped draft feature for the '.$service->title.' offering.', 'sort_order' => $i + 1]
+                );
             }
             // Service photography is uploaded only after the offering is confirmed.
         }
