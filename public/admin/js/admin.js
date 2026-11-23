@@ -226,12 +226,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+        const changeFlag = targetInput.dataset.changeFlagId ? document.getElementById(targetInput.dataset.changeFlagId) : null;
+        if (changeFlag) changeFlag.value = '1';
         modal.hide();
     });
 
     document.addEventListener('click', event => {
         const removeSelected = event.target.closest('[data-remove-selected-media]');
         if (!removeSelected) return;
+        const container = removeSelected.closest('[data-media-multiple]');
+        const changeFlag = container?.dataset.changeFlagId ? document.getElementById(container.dataset.changeFlagId) : null;
+        if (changeFlag) changeFlag.value = '1';
         removeSelected.closest('.media-selection-item')?.remove();
     });
 
