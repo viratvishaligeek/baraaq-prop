@@ -315,6 +315,8 @@
                     <div class="footer-all-widget-item">
                         <div class="footer-right-wrap">
                             <div class="footer-item-wrap">
+                                @php $footerServices = \App\Models\Service::published()->orderBy('title')->limit(5)->get(); @endphp
+                                @if ($footerServices->isNotEmpty())
                                 <div class="footer-item">
                                     
 
@@ -322,7 +324,7 @@
                                         <h3 class="widget_title">{{ $siteSettings['footer_services_heading'] ?? '' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
-                                                @foreach (\App\Models\Service::published()->orderBy('title')->limit(5)->get() as $footerService)
+                                                @foreach ($footerServices as $footerService)
                                                     <li>
                                                         <a
                                                             href="{{ route('services.show', $footerService) }}">{{ $footerService->title }}</a>
@@ -334,6 +336,8 @@
                                 
                                     
                                 </div>
+                                
+                                @endif
                                 <div class="footer-item">
                                     
 
