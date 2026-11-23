@@ -10,7 +10,7 @@
                 ? asset('storage/' . $siteSettings['default_og_image'])
                 : asset('theme-assets/img/hero/hero-10-1.jpg')));
 @endphp
-@section('canonical_url', route('properties.show', $property))
+@section('canonical_url', $property->canonical_url ?: route('properties.show', $property))
 @section('og_image', $propertyOgImage)
 @section('structured_data')
 @php
