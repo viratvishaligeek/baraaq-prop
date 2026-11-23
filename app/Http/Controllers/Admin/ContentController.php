@@ -278,6 +278,11 @@ class ContentController extends Controller
         }
 
         $this->authorizePublish($type, $data['status'] ?? $item->status, $item->status);
+        $serviceFeatures = $type === 'services' ? json_decode($data['features_json'] ?? '[]', true) : [];
+        unset($data['features_json'], $data['inside_images']);
+        $insideImageFiles = $type === 'services' ? array_filter((array) $request->file('inside_images', [])) : [];
+        $removeInsideImageIds = $type === 'services' ? ($data['remove_inside_images'] ?? []) : [];
+        unset($data['remove_inside_images']);
         $this->applyMediaSelections($data);
         $categoryIds = $data['category_ids'] ?? [];
         $tagIds = $data['tag_ids'] ?? [];
@@ -329,6 +334,15 @@ class ContentController extends Controller
                 $uploadedMedia[] = $this->mediaAttributes($request, $file, $path, $field, $data);
             }
 
+            $insideImageRows = [];
+            foreach ($insideImageFiles as $file) {
+                $path = $file->store('services/inside', 'public');
+                if (! $path) throw new RuntimeException('A service inside image could not be stored.');
+                $uploadedPaths[] = $path;
+                $insideImageRows[] = ['path' => $path, 'alt_text' => $data['title'] ?? $item->title];
+                $uploadedMedia[] = $this->mediaAttributes($request, $file, $path, 'service_inside_image', $data + ['title' => $item->title]);
+            }
+
             if (in_array($type, ['posts', 'services'], true)
                 && ($data['status'] ?? null) === 'published'
                 && ! $item->published_at) {
@@ -339,11 +353,20 @@ class ContentController extends Controller
                 $data['is_active'] = $request->boolean('is_active');
             }
 
-            DB::transaction(function () use ($item, $data, $type, $categoryIds, $tagIds, $uploadedMedia): void {
+            DB::transaction(function () use ($item, $data, $type, $categoryIds, $tagIds, $uploadedMedia, $serviceFeatures, $insideImageRows, $removeInsideImageIds): void {
                 $item->update($data);
 
                 foreach ($uploadedMedia as $attributes) {
                     Media::create($attributes);
+                }
+
+                if ($type === 'services') {
+                    $item->features()->delete();
+                    foreach ($serviceFeatures as $index => $feature) {
+                        if (! empty($feature['title'])) $item->features()->create(['title' => $feature['title'], 'description' => $feature['description'] ?? null, 'icon' => $feature['icon'] ?? null, 'sort_order' => $index + 1]);
+                    }
+                    if ($removeInsideImageIds) $item->images()->whereIn('id', $removeInsideImageIds)->delete();
+                    foreach ($insideImageRows as $index => $image) $item->images()->create($image + ['sort_order' => $item->images()->count() + $index + 1]);
                 }
 
                 if ($type === 'posts') {
