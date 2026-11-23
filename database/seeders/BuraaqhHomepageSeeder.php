@@ -172,6 +172,10 @@ class BuraaqhHomepageSeeder extends Seeder
                 throw new RuntimeException('Home 9 section is not renderable: '.$key);
             }
 
+            $existingSection = HomepageSection::query()
+                ->where('homepage_id', $homepage->id)
+                ->where('section_key', $key)
+                ->first();
             $config = array_merge($schema['defaults'] ?? [], $definition['config'] ?? []);
             $imageFields = [];
 
@@ -184,10 +188,18 @@ class BuraaqhHomepageSeeder extends Seeder
 
                 if (isset($imageMap[$key][$field])) {
                     $image = $imageMap[$key][$field];
-                    $media = $importer->import($image['path'], $image['alt']);
+                    $existingValue = data_get($existingSection?->config, $field);
+                    $defaultValue = $schema['defaults'][$field] ?? null;
 
-                    $config[$field] = $media?->id;
-                    $config[$field.'_alt'] = $image['alt'];
+                    // Import only for a new section or an untouched theme default.
+                    // Administrator-selected media and custom paths remain untouched.
+                    if (! $existingSection || $existingValue === $defaultValue) {
+                        $media = $importer->import($image['path'], $image['alt']);
+                        $config[$field] = $media?->id;
+                        $config[$field.'_alt'] = $image['alt'];
+                    } else {
+                        $config[$field] = $existingValue;
+                    }
                     continue;
                 }
 
@@ -199,7 +211,7 @@ class BuraaqhHomepageSeeder extends Seeder
                 }
             }
 
-            $section = HomepageSection::query()->firstOrCreate(
+            $section = $existingSection ?? HomepageSection::query()->firstOrCreate(
                 ['homepage_id' => $homepage->id, 'section_key' => $key],
                 [
                     'section_type' => $schema['type'],
