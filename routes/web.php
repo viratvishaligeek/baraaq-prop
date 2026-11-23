@@ -50,11 +50,32 @@ Route::get('/testimonials', [FrontendContentController::class, 'testimonials'])-
 Route::get('/services/{service:slug}', [FrontendContentController::class, 'service'])->name('services.show');
 Route::post('/blog/{post:slug}/comments', [FrontendContentController::class, 'storeComment'])->middleware('throttle:3,10')->name('blog.comments.store');
 
-Route::get('/index.html', fn() => redirect()->route('home'));
-Route::get('/property.html', fn() => redirect()->route('properties.index'));
-Route::get('/blog.html', fn() => redirect()->route('blog.index'));
-Route::get('/property-details.html', fn() => redirect()->route('properties.index'));
-Route::get('/blog-details.html', fn() => redirect()->route('blog.index'));
-
+// Preserve the original HTML-template entry points while resolving detail pages
+// against published database records instead of sending every detail URL to an index.
+Route::get('/index.html', fn () => redirect()->route('home'));
 Route::get('/home-9.html', fn () => redirect()->route('home'));
+Route::get('/about.html', fn () => redirect()->route('about'));
+Route::get('/contact.html', fn () => redirect()->route('contact'));
+Route::get('/property.html', fn () => redirect()->route('properties.index'));
+Route::get('/blog.html', fn () => redirect()->route('blog.index'));
+Route::get('/gallery.html', fn () => redirect()->route('gallery.index'));
+Route::get('/service.html', fn () => redirect()->route('services.index'));
+Route::get('/faq.html', fn () => redirect()->route('faq.index'));
+Route::get('/neighborhood-guide.html', fn () => redirect()->route('neighborhood-guides.index'));
+Route::get('/property-details.html', function (Request $request) {
+    $property = Property::query()->where('slug', $request->query('slug'))->firstOrFail();
+
+    return redirect()->route('properties.show', $property);
+});
+Route::get('/blog-details.html', function (Request $request) {
+    $post = Post::query()->where('slug', $request->query('slug'))->firstOrFail();
+
+    return redirect()->route('blog.show', $post);
+});
+Route::get('/service-details.html', function (Request $request) {
+    $service = Service::query()->where('slug', $request->query('slug'))->firstOrFail();
+
+    return redirect()->route('services.show', $service);
+});
+Route::get('/error.html', fn () => response()->view('errors.404', [], 404))->name('error.page');
 
