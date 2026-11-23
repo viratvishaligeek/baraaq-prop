@@ -234,12 +234,14 @@
                                         @endforeach
                                     </select>
                                 @elseif ($type === 'image')
-                                    @php($currentMediaId = $attachment?->media_id ?? (is_numeric($value) ? (int) $value : null))
+                                    @php
+                                        $currentMediaId = old('config_media_ids.'.$key, $attachment?->media_id ?? (is_numeric($value) ? (int) $value : null));
+                                        if ($currentMediaId) $currentImage = \App\Models\\Media::query()->find((int) $currentMediaId)?->url ?? $currentImage;
+                                    @endphp
                                     <input type="hidden" name="config_media_ids[{{ $key }}]" id="media-homepage-section-{{ $section->id }}-{{ $key }}"
-                                        value="{{ old('config_media_ids.'.$key, $currentMediaId) }}"
-                                        data-remove-flag-id="remove-homepage-section-{{ $section->id }}-{{ $key }}">
-                                    <input type="hidden" name="config_remove_images[{{ $key }}]" id="remove-homepage-section-{{ $section->id }}-{{ $key }}" value="0">
-                                    <div class="mb-2"><img src="{{ $currentImage ?? '' }}" alt="" style="max-width:180px;max-height:110px;object-fit:contain" class="rounded border p-1" data-media-preview @if(!$currentImage) hidden @endif><span class="small text-muted" data-media-meta></span></div>
+                                        value="{{ $currentMediaId }}" data-remove-flag-id="remove-homepage-section-{{ $section->id }}-{{ $key }}">
+                                    <input type="hidden" name="config_remove_images[{{ $key }}]" id="remove-homepage-section-{{ $section->id }}-{{ $key }}" value="{{ old('config_remove_images.'.$key, 0) }}">
+                                    <div class="mb-2"><img src="{{ $currentImage ?? '' }}" alt="" style="max-width:180px;max-height:110px;object-fit:contain" class="rounded border p-1" data-media-preview @if(!$currentImage || old('config_remove_images.'.$key)) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                                     <div class="d-flex flex-wrap gap-2">
                                         <button type="button" class="btn btn-sm btn-outline-primary" data-open-media-picker data-target="media-homepage-section-{{ $section->id }}-{{ $key }}">Choose from Media Library</button>
                                         <button type="button" class="btn btn-sm btn-outline-danger" data-clear-media data-target="media-homepage-section-{{ $section->id }}-{{ $key }}">Remove selected image</button>
