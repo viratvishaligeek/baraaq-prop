@@ -83,17 +83,15 @@ class DefaultThemeSeeder extends Seeder
             ['Gallery', '/gallery', null, 3],
             ['Neighborhood Guide', '/neighborhood-guide', null, 4],
             ['FAQs', '/faq', null, 5],
-            ['Our team', '/team', null, 3],
-            ['Testimonials', '/testimonials', null, 4],
-            ['XML sitemap', '/sitemap.xml', null, 5],
+            ['Our team', '/team', null, 6],
+            ['Testimonials', '/testimonials', null, 7],
+            ['XML sitemap', '/sitemap.xml', null, 8],
         ]);
 
         $this->seedMenu('footer-support', 'Footer support', [
             ['Help Center', '/faq', null, 0],
             ['FAQs', '/faq', null, 1],
             ['Contact Us', '/contact', null, 2],
-            ['Ticket Support', '/contact', null, 3],
-            ['Live Chat', '/contact', null, 4],
         ]);
 
         $this->seedMenu('footer', 'Footer navigation', [
@@ -171,6 +169,10 @@ class DefaultThemeSeeder extends Seeder
                 $parents[$label] = $item->id;
             }
         });
+
+        if ($location === 'footer-support') {
+            MenuItem::query()->where('menu_id', $menu->id)->whereIn('label', ['Ticket Support', 'Live Chat'])->update(['is_active' => false]);
+        }
 
         Menu::forgetLocationCache($location);
     }
