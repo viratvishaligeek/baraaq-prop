@@ -50,9 +50,13 @@
 <div class="row gy-4">@forelse($properties as $property)<div class="col-xl-4 col-lg-6 col-md-6">
 <div class="popular-list-1 grid-style">
 <div class="thumb-wrapper">
-<a class="popular-popup-image" href="{{ $property->featured_image?Storage::disk('public')->url($property->featured_image):asset('theme-assets/img/popular/popular-1-1.jpg') }}">
-<img src="{{ $property->featured_image?Storage::disk('public')->url($property->featured_image):asset('theme-assets/img/popular/popular-1-1.jpg') }}" alt="{{ $property->title }}">
+@if ($property->featured_image)
+<a class="popular-popup-image" href="{{ Storage::disk('public')->url($property->featured_image) }}">
+<img src="{{ Storage::disk('public')->url($property->featured_image) }}" alt="{{ $property->title }}">
 </a>
+@else
+<div class="bg-light d-flex align-items-center justify-content-center text-muted" style="min-height: 180px">Image not provided</div>
+@endif
 <div class="popular-badge">
 <img src="{{ asset('theme-assets/img/icon/sell_rent_icon.svg') }}" alt="icon">
 <p>{{ $property->listing_type==='rent'?'For Rent':'For Sale' }}</p>
