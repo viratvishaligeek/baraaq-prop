@@ -41,7 +41,7 @@ class ContentController extends Controller
     {
         abort_unless($post->status === 'published' && $post->published_at && $post->published_at->lte(now()), 404);
 
-        $post->load(['categories', 'tags', 'comments' => fn ($query) => $query->where('status', 'approved')->latest()]);
+        $post->load(['author:id,name', 'categories', 'tags', 'comments' => fn ($query) => $query->where('status', 'approved')->latest()]);
         $relatedPosts = Post::published()
             ->whereKeyNot($post->id)
             ->when($post->categories->isNotEmpty(), fn ($query) => $query->whereHas('categories', fn ($categories) => $categories->whereIn('categories.id', $post->categories->pluck('id'))))
@@ -111,9 +111,11 @@ class ContentController extends Controller
             ->where('status', 'published')
             ->firstOrFail();
 
-        return view('frontend.pages.show', [
+        return view('frontend.about', [
             'page' => $page,
             'canonicalUrl' => $page->canonical_url ?: route('about'),
+            'members' => TeamMember::query()->where('status', 'published')->where('is_active', true)->orderBy('sort_order')->limit(6)->get(),
+            'testimonials' => Testimonial::query()->where('status', 'published')->where('is_active', true)->orderBy('sort_order')->limit(6)->get(),
         ]);
     }
 
