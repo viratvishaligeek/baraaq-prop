@@ -6,6 +6,7 @@ use App\Models\Banner;
 use App\Models\Comment;
 use App\Models\GalleryItem;
 use App\Models\Page;
+use App\Models\MenuItem;
 use App\Models\Post;
 use App\Models\Property;
 use App\Models\Service;
@@ -77,6 +78,13 @@ class BuraaqhLegacyDemoContentRetirementSeeder extends Seeder
 
         Page::query()->whereIn('slug', ['buy-with-pillar', 'sell-with-pillar'])
             ->update(['status' => 'draft']);
+
+        // Migrate only the former template's known buy/sell menu destinations.
+        // Unrelated labels, URLs and administrator-authored navigation stay intact.
+        MenuItem::query()->whereIn('url', ['/pages/buy-with-pillar', '/buy-with-pillar'])
+            ->update(['label' => 'Buy with Buraaqh Properties', 'url' => '/pages/buy-with-buraaqh']);
+        MenuItem::query()->whereIn('url', ['/pages/sell-with-pillar', '/sell-with-pillar'])
+            ->update(['label' => 'Sell with Buraaqh Properties', 'url' => '/pages/sell-with-buraaqh']);
 
         $legacyPostSlugs = [
             'building-gains-housing-stocks',
