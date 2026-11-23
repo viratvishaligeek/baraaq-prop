@@ -49,9 +49,12 @@ class ContentController extends Controller
         return back()->with('comment_submitted', 'Your comment has been received and is awaiting moderation.');
     }
 
-    public function services()
+    public function services(Request $request)
     {
-        $services = Service::published()->latest('published_at')->paginate(12);
+        $filters = $request->validate(['q' => ['nullable', 'string', 'max:120']]);
+        $services = Service::published()
+            ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('title', 'like', '%'.$term.'%')->orWhere('excerpt', 'like', '%'.$term.'%')))
+            ->latest('published_at')->paginate(12)->withQueryString();
         return view('frontend.services.index', compact('services'));
     }
 
