@@ -271,6 +271,8 @@ class BuraaqhContentSeederTest extends TestCase
             'footer_map_embed_url' => ['https://maps.google.com/?q=Meerut', 'footer', 'string'],
             'social_facebook' => ['https://www.facebook.com/', 'social', 'string'],
             'footer_copyright' => ['Pillar Real Estate', 'footer', 'string'],
+            'footer_featured_heading' => ['Featured Houses', 'footer', 'string'],
+            'footer_location_heading' => ['Pillar Location', 'footer', 'string'],
             'site_tagline' => ['Pillar Real Estate in Meerut', 'general', 'string'],
             'footer_gallery_images' => [json_encode(['piller-demo/demo.jpg']), 'footer', 'json'],
             'custom_notice' => ['Administrator-approved wording', 'custom', 'string'],
@@ -291,6 +293,8 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertSame('', Setting::read('footer_map_embed_url'));
         $this->assertSame('', Setting::read('social_facebook'));
         $this->assertSame('Buraaqh Properties', Setting::read('footer_copyright'));
+        $this->assertSame('Explore Property Types', Setting::read('footer_featured_heading'));
+        $this->assertSame('Our Service Area', Setting::read('footer_location_heading'));
         $this->assertSame('Clear information for better property decisions in Bareilly.', Setting::read('site_tagline'));
         $this->assertSame([], Setting::read('footer_gallery_images', []));
         $this->assertSame('Administrator-approved wording', Setting::read('custom_notice'));
