@@ -8,6 +8,10 @@ use App\Http\Controllers\Frontend\SitemapController;
 use App\Http\Controllers\Frontend\LocalContentController;
 use App\Http\Controllers\Frontend\PropertyController as FrontendPropertyController;
 use App\Models\Setting;
+use App\Models\Property;
+use App\Models\Post;
+use App\Models\Service;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
