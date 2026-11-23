@@ -26,7 +26,7 @@ The current branch contains the original Laravel framework migrations and the CM
 
 ## Current implementation boundary
 
-No historical migration was rewritten and no schema was changed in this code pass. The current fixes are application-level: persisted Homepage section configuration now takes precedence over legacy data_source values, and the Home 9 header now resolves the configured menu location. Database runtime status and production row contents remain unverified because no database connection or executable checkout was available through the repository file API.
+No historical migration was rewritten. One additive migration, `2026_11_23_000002_create_local_content_and_service_detail_tables.php`, adds gallery, FAQ, neighborhood-guide, service-feature and service-image tables with explicit foreign keys; it does not drop or rewrite existing tables. The other current fixes are application-level. Database runtime status, production row counts and engine-specific migration behavior remain unverified because no Composer-enabled checkout or database connection was available.
 
 ## Seeder safety
 
