@@ -161,6 +161,9 @@ class ContentController extends Controller
         }
 
         $this->authorizePublish($type, $data['status'] ?? 'draft');
+        $serviceFeatures = $type === 'services' ? json_decode($data['features_json'] ?? '[]', true) : [];
+        unset($data['features_json'], $data['inside_images']);
+        $insideImageFiles = $type === 'services' ? array_filter((array) $request->file('inside_images', [])) : [];
         $this->applyMediaSelections($data);
         $categoryIds = $data['category_ids'] ?? [];
         $tagIds = $data['tag_ids'] ?? [];
@@ -199,6 +202,15 @@ class ContentController extends Controller
                 $uploadedMedia[] = $this->mediaAttributes($request, $file, $path, $field, $data);
             }
 
+            $insideImageRows = [];
+            foreach ($insideImageFiles as $file) {
+                $path = $file->store('services/inside', 'public');
+                if (! $path) throw new RuntimeException('A service inside image could not be stored.');
+                $uploadedPaths[] = $path;
+                $insideImageRows[] = ['path' => $path, 'alt_text' => $data['title']];
+                $uploadedMedia[] = $this->mediaAttributes($request, $file, $path, 'service_inside_image', $data);
+            }
+
             if (in_array($type, ['posts', 'services'], true) && ($data['status'] ?? null) === 'published') {
                 $data['published_at'] = now();
             }
@@ -207,11 +219,18 @@ class ContentController extends Controller
                 $data['is_active'] = $request->boolean('is_active');
             }
 
-            DB::transaction(function () use ($model, $data, $type, $categoryIds, $tagIds, $uploadedMedia): void {
+            DB::transaction(function () use ($model, $data, $type, $categoryIds, $tagIds, $uploadedMedia, $serviceFeatures, $insideImageRows): void {
                 $created = $model::create($data);
 
                 foreach ($uploadedMedia as $attributes) {
                     Media::create($attributes);
+                }
+
+                if ($type === 'services') {
+                    foreach ($serviceFeatures as $index => $feature) {
+                        if (! empty($feature['title'])) $created->features()->create(['title' => $feature['title'], 'description' => $feature['description'] ?? null, 'icon' => $feature['icon'] ?? null, 'sort_order' => $index + 1]);
+                    }
+                    foreach ($insideImageRows as $index => $image) $created->images()->create($image + ['sort_order' => $index + 1]);
                 }
 
                 if ($type === 'posts') {
