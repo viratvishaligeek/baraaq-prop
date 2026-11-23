@@ -63,9 +63,12 @@
                                     @php($spaceMedia = $mediaItems->firstWhere('id', $space['image_media_id'] ?? null))
                                     <div class="col-12">
                                         <label class="form-label">Optional space image</label>
-                                        <input class="form-control" type="file" name="accommodations[{{ $i }}][image]" id="upload-accommodation-{{ $i }}" accept="image/jpeg,image/png,image/webp">
-                                        <input type="hidden" name="accommodations[{{ $i }}][image_media_id]" id="media-accommodation-{{ $i }}" value="{{ $space['image_media_id'] ?? '' }}" data-media-upload-input="upload-accommodation-{{ $i }}">
-                                        <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-accommodation-{{ $i }}">Choose from Media Library</button>
+                                        <input type="hidden" name="accommodations[{{ $i }}][image_media_id]" id="media-accommodation-{{ $i }}" value="{{ $space['image_media_id'] ?? '' }}" data-remove-flag-id="remove-accommodation-image-{{ $i }}">
+                                        <input type="hidden" name="accommodations[{{ $i }}][remove_image]" id="remove-accommodation-image-{{ $i }}" value="0">
+                                        <div class="d-flex flex-wrap gap-2 mt-2">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" data-open-media-picker data-target="media-accommodation-{{ $i }}">Choose from Media Library</button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" data-clear-media data-target="media-accommodation-{{ $i }}">Remove selected image</button>
+                                        </div>
                                         <div class="mt-2"><img class="rounded border" style="width:120px;height:80px;object-fit:cover" data-media-preview src="{{ $spaceMedia?->url ?? '' }}" alt="{{ $spaceMedia?->alt_text ?? 'Space image preview' }}" @if (!$spaceMedia) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                                     </div>
                                 </div>
@@ -258,27 +261,31 @@
                         <div class="small text-muted mt-2"><span id="serp-title-count">0</span> / 60 title characters · <span id="serp-description-count">0</span> / 160 description characters</div>
                     </div>
                     <label class="form-label">Social sharing image</label>
-                    <input class="form-control" type="file" name="og_image" id="upload-property-og-image" accept="image/*">
-                    <input type="hidden" name="og_image_media_id" id="media-property-og-image" data-media-upload-input="upload-property-og-image">
-                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-property-og-image">Choose from Media Library</button>
+                    <input type="hidden" name="og_image_media_id" id="media-property-og-image" value="{{ old('og_image_media_id', $mediaItems->firstWhere('path', $property->og_image)?->id) }}" data-remove-flag-id="remove-property-og-image">
+                    <input type="hidden" name="remove_og_image" id="remove-property-og-image" value="0">
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-open-media-picker data-target="media-property-og-image">Choose from Media Library</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-clear-media data-target="media-property-og-image">Remove selected image</button>
+                    </div>
                     <div class="mt-2"><img src="{{ $property->og_image ? Storage::disk('public')->url($property->og_image) : '' }}"
                         alt="Property social image preview" style="max-width:180px;max-height:100px;object-fit:cover"
                         data-media-preview @if (!$property->og_image) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                 </div>
                 <div class="content-card mt-4">
                     <h2 class="section-title">Featured image</h2>
-                    <input type="file" class="form-control" name="featured_image" id="upload-property-featured-image" accept="image/*">
                     <input type="hidden" name="featured_image_media_id" id="media-property-featured-image"
-                        data-media-upload-input="upload-property-featured-image">
-                    <button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker
-                        data-target="media-property-featured-image">Choose from Media Library</button>
+                        value="{{ old('featured_image_media_id', $mediaItems->firstWhere('path', $property->featured_image)?->id) }}"
+                        data-remove-flag-id="remove-property-featured-image">
+                    <input type="hidden" name="remove_featured_image" id="remove-property-featured-image" value="0">
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-open-media-picker data-target="media-property-featured-image">Choose from Media Library</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-clear-media data-target="media-property-featured-image">Remove selected image</button>
+                    </div>
                     <div class="mt-2"><img class="img-fluid rounded" src="{{ $property->featured_image ? Storage::disk('public')->url($property->featured_image) : '' }}"
                         alt="Property featured image preview" style="max-width:100%;max-height:160px;object-fit:cover"
                         data-media-preview @if (!$property->featured_image) hidden @endif><span class="small text-muted" data-media-meta></span></div>
                     <small class="text-muted">Image up to 5 MB.</small>
                     <label class="form-label mt-3">Gallery images</label>
-                    <input type="file" class="form-control" name="gallery[]" id="upload-property-gallery" accept="image/*" multiple data-preview-container-id="property-gallery-local-previews">
-                    <div id="property-gallery-local-previews" class="d-flex flex-wrap gap-2 mt-2" aria-live="polite"></div>
                     <button type="button" class="btn btn-sm btn-outline-primary mt-2"
                         data-open-media-picker data-media-multiple data-target="property-gallery-media-selection">
                         Add images from Media Library
@@ -376,7 +383,7 @@
             const wrapper = document.createElement('div');
             wrapper.className = 'border rounded p-3 mb-3 accommodation-item';
             wrapper.dataset.spaceIndex = i;
-            wrapper.innerHTML = '<div class="d-flex justify-content-between mb-2"><strong>Space <span class="space-number"></span></strong><div class="d-flex gap-1"><button type="button" class="btn btn-sm btn-light move-repeater-up">↑</button><button type="button" class="btn btn-sm btn-light move-repeater-down">↓</button><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div></div><div class="row g-2"><div class="col-md-5"><label class="form-label">Name *</label><input class="form-control" name="accommodations['+i+'][name]" required></div><div class="col-md-4"><label class="form-label">Category</label><input class="form-control" name="accommodations['+i+'][category]" placeholder="Bedroom, Bathroom, Parking"></div><div class="col-md-3"><label class="form-label">Area</label><input type="number" min="0" step=".01" class="form-control" name="accommodations['+i+'][area]"></div><div class="col-md-3"><label class="form-label">Unit</label><input class="form-control" name="accommodations['+i+'][area_unit]" value="sqft"></div><div class="col-md-9"><label class="form-label">Description</label><input class="form-control" name="accommodations['+i+'][description]"></div><div class="col-12"><label class="form-check"><input class="form-check-input" type="checkbox" value="1" checked name="accommodations['+i+'][is_included]"> <span class="form-check-label">Included with property</span></label></div><div class="col-12"><label class="form-label">Optional space image</label><input class="form-control" type="file" name="accommodations['+i+'][image]" id="upload-accommodation-'+i+'" accept="image/jpeg,image/png,image/webp"><input type="hidden" name="accommodations['+i+'][image_media_id]" id="media-accommodation-'+i+'" data-media-upload-input="upload-accommodation-'+i+'"><button type="button" class="btn btn-sm btn-outline-primary mt-2" data-open-media-picker data-target="media-accommodation-'+i+'">Choose from Media Library</button><div class="mt-2"><img class="rounded border" style="width:120px;height:80px;object-fit:cover" data-media-preview hidden alt="Space image preview"><span class="small text-muted" data-media-meta></span></div></div></div><div class="mt-3"><div class="d-flex justify-content-between align-items-center mb-2"><label class="form-label mb-0">Custom attributes</label><button type="button" class="btn btn-sm btn-outline-secondary add-space-attribute">Add attribute</button></div><div class="space-attributes"></div></div>';
+            wrapper.innerHTML = '<div class="d-flex justify-content-between mb-2"><strong>Space <span class="space-number"></span></strong><div class="d-flex gap-1"><button type="button" class="btn btn-sm btn-light move-repeater-up">↑</button><button type="button" class="btn btn-sm btn-light move-repeater-down">↓</button><button type="button" class="btn btn-sm btn-outline-danger remove-repeater">Remove</button></div></div><div class="row g-2"><div class="col-md-5"><label class="form-label">Name *</label><input class="form-control" name="accommodations['+i+'][name]" required></div><div class="col-md-4"><label class="form-label">Category</label><input class="form-control" name="accommodations['+i+'][category]" placeholder="Bedroom, Bathroom, Parking"></div><div class="col-md-3"><label class="form-label">Area</label><input type="number" min="0" step=".01" class="form-control" name="accommodations['+i+'][area]"></div><div class="col-md-3"><label class="form-label">Unit</label><input class="form-control" name="accommodations['+i+'][area_unit]" value="sqft"></div><div class="col-md-9"><label class="form-label">Description</label><input class="form-control" name="accommodations['+i+'][description]"></div><div class="col-12"><label class="form-check"><input class="form-check-input" type="checkbox" value="1" checked name="accommodations['+i+'][is_included]"> <span class="form-check-label">Included with property</span></label></div><div class="col-12"><label class="form-label">Optional space image</label><input type="hidden" name="accommodations['+i+'][image_media_id]" id="media-accommodation-'+i+'" data-remove-flag-id="remove-accommodation-image-'+i+'"><input type="hidden" name="accommodations['+i+'][remove_image]" id="remove-accommodation-image-'+i+'" value="0"><div class="d-flex flex-wrap gap-2 mt-2"><button type="button" class="btn btn-sm btn-outline-primary" data-open-media-picker data-target="media-accommodation-'+i+'">Choose from Media Library</button><button type="button" class="btn btn-sm btn-outline-danger" data-clear-media data-target="media-accommodation-'+i+'">Remove selected image</button></div><div class="mt-2"><img class="rounded border" style="width:120px;height:80px;object-fit:cover" data-media-preview hidden alt="Space image preview"><span class="small text-muted" data-media-meta></span></div></div></div><div class="mt-3"><div class="d-flex justify-content-between align-items-center mb-2"><label class="form-label mb-0">Custom attributes</label><button type="button" class="btn btn-sm btn-outline-secondary add-space-attribute">Add attribute</button></div><div class="space-attributes"></div></div>';
             accommodationList.append(wrapper); updateNumbers();
         });
         document.getElementById('add-faq')?.addEventListener('click', () => {
