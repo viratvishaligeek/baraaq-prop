@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use RuntimeException;
+
 
 class HomepageController extends Controller
 {
@@ -71,9 +71,9 @@ class HomepageController extends Controller
             'social_linkedin' => ['nullable', 'url', 'max:500', new SafeLink()],
             'social_youtube' => ['nullable', 'url', 'max:500', new SafeLink()],
             'social_x' => ['nullable', 'url', 'max:500', new SafeLink()],
-            'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'logo' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
             'footer_gallery_images' => ['nullable', 'array', 'max:7'],
-            'footer_gallery_images.*' => ['image', 'mimes:jpg,jpeg,png,webp,gif', 'max:5120'],
+            'footer_gallery_images.*' => ['image', 'mimes:svg,jpg,jpeg,png,webp,gif', 'max:5120'],
         ]);
 
         $settingGroups = [
@@ -202,7 +202,7 @@ class HomepageController extends Controller
             $rules['config.' . $key] = match ($type) {
                 'checkbox' => ['sometimes', 'boolean'],
                 'number' => ['nullable', 'numeric', 'min:' . ($field['min'] ?? 0), 'max:' . ($field['max'] ?? 9999999)],
-                'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240'],
+                'image' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp,gif', 'max:10240'],
                 'url' => array_merge(['nullable', 'string', 'max:' . max(2048, $max), new SafeLink()], $key === 'video_url' ? ['url'] : []),
                 'color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
                 'select' => ['nullable', 'string', 'in:' . implode(',', array_keys($field['options'] ?? []))],

@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use RuntimeException;
+
 
 class BuraaqhContentSeeder extends Seeder
 {
@@ -311,6 +311,8 @@ class BuraaqhContentSeeder extends Seeder
                     'description' => '<p>'.$title.' is a thoughtfully planned property in '.$city.', selected for its location, practical layout and everyday convenience.</p><p>Enjoy well-proportioned interiors, quality fittings and easy access to schools, workplaces, shopping and essential services. Our property team can arrange a private viewing and share the complete specifications.</p>',
                     'meta_title' => $title.' | Buraaqh Properties',
                     'meta_description' => 'Explore '.$title.' in '.$city.'. View property details, location, amenities and arrange a private viewing with Buraaqh Properties.',
+                    'meta_title' => $title.' | Buraaqh Properties',
+                    'meta_description' => 'Explore '.$title.' in '.$city.'. View property details, location, amenities and arrange a private viewing with Buraaqh Properties.',
                     'featured_image' => $imagePath,
                     'status' => 'published',
                     'is_featured' => $featured,
@@ -366,6 +368,7 @@ class BuraaqhContentSeeder extends Seeder
                     'status' => 'published',
                     'published_at' => now()->subDays(($index * 3) + 2),
                     'meta_title' => $title.' | Buraaqh Properties Journal',
+                    'meta_title' => $title.' | Buraaqh Properties Journal',
                     'meta_description' => $excerpt,
                 ]
             );
@@ -397,6 +400,7 @@ class BuraaqhContentSeeder extends Seeder
                 [
                     'title' => $title,
                     'excerpt' => $excerpt,
+                    'content' => '<p>'.$body.'</p><p>Contact Buraaqh Properties to discuss your requirements and the most suitable next step.</p>',
                     'content' => '<p>'.$body.'</p><p>Contact Buraaqh Properties to discuss your requirements and the most suitable next step.</p>',
                     'featured_image' => $this->themeImagePath('img/'.$icon),
                     'status' => 'draft',
@@ -432,6 +436,7 @@ class BuraaqhContentSeeder extends Seeder
                     'content' => $html,
                     'template' => 'default',
                     'status' => 'published',
+                    'meta_title' => $title.' | Buraaqh Properties',
                     'meta_title' => $title.' | Buraaqh Properties',
                     'meta_description' => Str::limit(strip_tags($html), 155),
                 ]

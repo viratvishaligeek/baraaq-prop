@@ -36,12 +36,12 @@ class MediaPickerController extends Controller
         $this->authorizePicker($request, true);
         $data = $request->validate([
             'files' => ['required', 'array', 'min:1', 'max:20'],
-            'files.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:10240'],
+            'files.*' => ['required', 'image', 'mimes:svg,jpg,jpeg,png,webp,gif', 'max:10240'],
             'variants' => ['sometimes', 'array'],
             'variants.*' => ['sometimes', 'array'],
-            'variants.*.small' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            'variants.*.medium' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'variants.*.large' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
+            'variants.*.small' => ['sometimes', 'file', 'image', 'mimes:svg,jpg,jpeg,png,webp', 'max:2048'],
+            'variants.*.medium' => ['sometimes', 'file', 'image', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
+            'variants.*.large' => ['sometimes', 'file', 'image', 'mimes:svg,jpg,jpeg,png,webp', 'max:8192'],
         ]);
 
         $uploaded = app(MediaUploadService::class)

@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use RuntimeException;
+
 
 class SettingsController extends Controller
 {
@@ -43,7 +43,7 @@ class SettingsController extends Controller
             'service_area_city' => ['nullable', 'string', 'max:100'],
             'meta_robots' => ['required', Rule::in(['index,follow', 'index,nofollow', 'noindex,follow', 'noindex,nofollow'])],
             'robots_rules' => ['nullable', 'string', 'max:10000'],
-            'default_og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+            'default_og_image' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
             'favicon' => ['nullable', 'file', 'mimes:png,ico', 'max:2048'],
             'default_og_image_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
             'favicon_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'image/png'))],

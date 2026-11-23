@@ -9,13 +9,12 @@ class HomepageTemplateSeeder extends Seeder
 {
     public function run(): void
     {
-        $siteName = trim((string) env('SITE_NAME', 'Buraaqh Properties')) ?: 'Buraaqh Properties';
-        if (stripos($siteName, 'Pillar') !== false) $siteName = 'Buraaqh Properties';
+        $siteName = trim((string) env('SITE_NAME', 'Buraaqh Properties Real Estate')) ?: 'Buraaqh Properties Real Estate';
 
         $homepage = Homepage::query()->firstOrCreate(
             ['slug' => 'home-9'],
             [
-                'name' => 'Home 9 — Buraaqh Properties Home 9',
+                'name' => 'Home 9 — Buraaqh Properties Single Property',
                 'status' => 'published',
                 'published_at' => now(),
                 'meta_title' => 'Discover Most Suitable Property | '.$siteName,

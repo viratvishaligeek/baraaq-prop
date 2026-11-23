@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use RuntimeException;
+
 
 class ContentController extends Controller
 {
@@ -432,12 +432,12 @@ class ContentController extends Controller
                 'category_ids.*' => ['integer', Rule::exists('categories', 'id')->where('type', 'post')],
                 'tag_ids' => ['nullable', 'array'],
                 'tag_ids.*' => ['integer', 'distinct', Rule::exists('tags', 'id')],
-                'featured_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'featured_image' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
                 'status' => ['required', 'in:draft,published,archived'],
                 'meta_title' => ['nullable', 'string', 'max:255'],
                 'meta_description' => ['nullable', 'string', 'max:1000'],
                 'focus_keyword' => ['nullable', 'string', 'max:160'],
-                'og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'og_image' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
             ],
             'pages' => [
                 'title' => ['required', 'string', 'max:255'],
@@ -447,7 +447,7 @@ class ContentController extends Controller
                 'meta_title' => ['nullable', 'string', 'max:255'],
                 'meta_description' => ['nullable', 'string', 'max:1000'],
                 'focus_keyword' => ['nullable', 'string', 'max:160'],
-                'og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'og_image' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
             ],
             'categories' => [
                 'name' => ['required', 'string', 'max:150'],
@@ -463,7 +463,7 @@ class ContentController extends Controller
                 'title' => ['required', 'string', 'max:255'],
                 'subtitle' => ['nullable', 'string', 'max:255'],
                 'description' => ['nullable', 'string'],
-                'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'image' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
                 'button_text' => ['nullable', 'string', 'max:100'],
                 'button_url' => ['nullable', 'string', 'max:2048', new SafeLink()],
                 'placement' => ['required', 'string', 'max:60'],
@@ -476,7 +476,7 @@ class ContentController extends Controller
                 'name' => ['required', 'string', 'max:150'],
                 'designation' => ['nullable', 'string', 'max:150'],
                 'bio' => ['nullable', 'string'],
-                'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'photo' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
                 'email' => ['nullable', 'email'],
                 'phone' => ['nullable', 'string', 'max:30'],
                 'social_links' => ['nullable', 'json'],
@@ -489,7 +489,7 @@ class ContentController extends Controller
                 'slug' => ['nullable', 'string', 'max:255', Rule::unique('services')->ignore($id)],
                 'excerpt' => ['nullable', 'string', 'max:500'],
                 'content' => ['nullable', 'string'],
-                'featured_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'featured_image' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
                 'status' => ['required', 'in:draft,published,archived'],
                 'meta_title' => ['nullable', 'string', 'max:255'],
                 'meta_description' => ['nullable', 'string', 'max:1000'],
@@ -506,7 +506,7 @@ class ContentController extends Controller
                 'designation' => ['nullable', 'string', 'max:150'],
                 'company' => ['nullable', 'string', 'max:150'],
                 'quote' => ['required', 'string'],
-                'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+                'photo' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
                 'rating' => ['nullable', 'integer', 'between:1,5'],
                 'sort_order' => ['nullable', 'integer', 'min:0'],
                 'status' => ['required', 'in:draft,published'],
