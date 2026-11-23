@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - refactor/simple-cms-homepage
+      - fix/media-library-pagination-pages
       - feat/piller-elementor-cms-v3
       - feature/complete-cms-admin-overhaul
   pull_request:
