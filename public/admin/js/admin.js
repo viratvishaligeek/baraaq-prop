@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!targetInput) return;
         targetInput.value = String(item.id);
         const removeFlag = targetInput.dataset.removeFlagId ? document.getElementById(targetInput.dataset.removeFlagId) : null;
-        if (removeFlag) removeFlag.value = '0';
+        if (removeFlag) { if (removeFlag.type === 'checkbox') removeFlag.checked = false; else removeFlag.value = '0'; }
         if (targetInput.dataset.mediaUploadInput) {
             const upload = document.getElementById(targetInput.dataset.mediaUploadInput);
             if (upload) {
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!input) return;
             input.value = '';
             const removeFlag = input.dataset.removeFlagId ? document.getElementById(input.dataset.removeFlagId) : null;
-            if (removeFlag) removeFlag.value = '1';
+            if (removeFlag) { if (removeFlag.type === 'checkbox') removeFlag.checked = true; else removeFlag.value = '1'; }
             input.dispatchEvent(new Event('input', { bubbles: true }));
             input.dispatchEvent(new Event('change', { bubbles: true }));
             const preview = input.dataset.mediaPreviewId
