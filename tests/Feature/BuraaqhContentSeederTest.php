@@ -263,6 +263,17 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertDatabaseHas('posts', ['slug' => 'complete-guide-buying-residential-property-bareilly', 'status' => 'published']);
     }
 
+    public function test_homepage_blog_cards_do_not_reuse_unverified_template_photography(): void
+    {
+        $this->seed();
+
+        $response = $this->get('/');
+
+        $response->assertOk()
+            ->assertSee('Article image pending')
+            ->assertDontSee('theme-assets/img/blog/blog_1_1.jpg');
+    }
+
     public function test_optional_admin_bootstrap_assigns_seeded_content_to_the_administrator(): void
     {
         config([
