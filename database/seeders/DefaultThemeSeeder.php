@@ -13,7 +13,7 @@ class DefaultThemeSeeder extends Seeder
 {
     public function run(): void
     {
-        $siteName = trim((string) env('SITE_NAME', 'Pillar Real Estate')) ?: 'Pillar Real Estate';
+        $siteName = trim((string) env('SITE_NAME', 'Buraaqh Properties')) ?: 'Buraaqh Properties';
 
         $settings = [
             'site_title' => [$siteName, 'general', 'string'],
@@ -35,7 +35,7 @@ class DefaultThemeSeeder extends Seeder
             'footer_services_heading' => ['Services', 'footer', 'string'],
             'footer_quick_links_heading' => ['Quick Links', 'footer', 'string'],
             'footer_support_heading' => ['Support', 'footer', 'string'],
-            'footer_location_heading' => ['Pillar Location', 'footer', 'string'],
+            'footer_location_heading' => ['Bareilly Location', 'footer', 'string'],
             'footer_social_heading' => ['Social Media:', 'footer', 'string'],
             'sticky_header' => ['1', 'appearance', 'boolean'],
             'primary_color' => ['#068FFF', 'appearance', 'string'],
@@ -76,14 +76,17 @@ class DefaultThemeSeeder extends Seeder
             ['Properties', '/properties', null, 0],
             ['Blog', '/blog', null, 1],
             ['Services', '/services', null, 2],
+            ['Gallery', '/gallery', null, 3],
+            ['Neighborhood Guide', '/neighborhood-guide', null, 4],
+            ['FAQs', '/faq', null, 5],
             ['Our team', '/team', null, 3],
             ['Testimonials', '/testimonials', null, 4],
             ['XML sitemap', '/sitemap.xml', null, 5],
         ]);
 
         $this->seedMenu('footer-support', 'Footer support', [
-            ['Help Center', '/contact', null, 0],
-            ['FAQs', '/services', null, 1],
+            ['Help Center', '/faq', null, 0],
+            ['FAQs', '/faq', null, 1],
             ['Contact Us', '/contact', null, 2],
             ['Ticket Support', '/contact', null, 3],
             ['Live Chat', '/contact', null, 4],
