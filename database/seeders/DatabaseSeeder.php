@@ -13,14 +13,14 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RolePermissionSeeder::class);
 
-        $email = env('CMS_ADMIN_EMAIL');
-        $password = env('CMS_ADMIN_PASSWORD');
+        $email = config('cms.admin.email');
+        $password = config('cms.admin.password');
 
         if ($email && $password) {
             $user = User::query()->firstOrCreate(
                 ['email' => $email],
                 [
-                    'name' => env('CMS_ADMIN_NAME', 'Site Administrator'),
+                    'name' => config('cms.admin.name', 'Site Administrator'),
                     'password' => Hash::make($password),
                     'is_active' => true,
                 ]
