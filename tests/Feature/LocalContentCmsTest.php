@@ -348,6 +348,21 @@ class LocalContentCmsTest extends TestCase
         $this->assertSame(['services/detail-two.jpg'], $service->images()->pluck('path')->all());
         $this->assertDatabaseHas('media', ['id' => $media[1]->id, 'path' => 'services/detail-one.jpg']);
         Storage::disk('public')->assertExists('services/detail-one.jpg');
+
+        $this->actingAs($admin)->put(route('admin.content.update', ['type' => 'services', 'id' => $service->id]), [
+            'title' => $service->title,
+            'excerpt' => $service->excerpt,
+            'content' => $service->content,
+            'status' => 'draft',
+            'remove_featured_image' => '1',
+            'features_json' => '[]',
+        ])->assertRedirect(route('admin.content.index', 'services'));
+
+        $service->refresh();
+        $this->assertNull($service->featured_image);
+        $this->assertSame(['services/detail-two.jpg'], $service->images()->pluck('path')->all());
+        Storage::disk('public')->assertExists('services/featured.jpg');
+        Storage::disk('public')->assertExists('services/detail-two.jpg');
     }
 
 }
