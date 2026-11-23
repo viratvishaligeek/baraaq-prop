@@ -144,6 +144,15 @@ class BuraaqhContentSeederTest extends TestCase
             'status' => 'published',
             'published_at' => now(),
         ]);
+        $shortExcerpt = 'A short legacy article created by the previous content seeder.';
+        $shortLegacyPost = Post::query()->create([
+            'title' => 'Legacy short article',
+            'slug' => 'first-time-homebuyer-checklist',
+            'excerpt' => $shortExcerpt,
+            'content' => '<p>'.$shortExcerpt.'</p><p>Property decisions are easier when the information is clear and the next step is practical. Start by understanding your priorities, compare the available options and take time to review the details that matter to your household or investment plan.</p><p>Property conditions, documents and transaction requirements vary. Treat this article as general information only, verify current records and seek independent professional advice before making a decision.</p>',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
 
         $this->seed(BuraaqhContentSeeder::class);
 
@@ -157,8 +166,10 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertFalse((bool) $banner->fresh()->is_active);
         $this->assertSame('draft', $legacyPage->fresh()->status);
         $this->assertSame('<p>Owner-edited legacy page copy.</p>', $legacyPage->fresh()->content);
-        $this->assertSame('draft', $legacyPost->fresh()->status);
+        $this->assertSame('published', $legacyPost->fresh()->status);
         $this->assertSame('<p>Owner-edited legacy article copy.</p>', $legacyPost->fresh()->content);
+        $this->assertSame('draft', $shortLegacyPost->fresh()->status);
+        $this->assertStringContainsString($shortExcerpt, $shortLegacyPost->fresh()->content);
         $this->assertDatabaseHas('pages', ['slug' => 'buy-with-buraaqh', 'status' => 'published']);
         $this->assertDatabaseHas('posts', ['slug' => 'complete-guide-buying-residential-property-bareilly', 'status' => 'published']);
     }
