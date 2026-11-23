@@ -37,6 +37,7 @@ class DatabaseSeeder extends Seeder
             HomepageTemplateSeeder::class,
             DefaultThemeSeeder::class,
             BuraaqhContentSeeder::class,
+            BuraaqhDemoPropertySeeder::class,
         ]);
     }
 }
