@@ -54,7 +54,7 @@ class SiteContentController extends Controller
 
         $items = $model::query()
             ->when($filters['q'] ?? null, function ($query, $term) use ($type): void {
-                $columns = match ($type) { 'faqs' => ['question', 'answer', 'category'], 'gallery' => ['title', 'slug', 'description'], default => ['title', 'slug', 'locality', 'excerpt'] };
+                $columns = match ($type) { 'faqs' => ['question', 'answer', 'category'], 'gallery' => ['title', 'slug', 'description', 'category'], default => ['title', 'slug', 'locality', 'excerpt'] };
                 $query->where(function ($search) use ($columns, $term): void {
                     foreach ($columns as $index => $column) {
                         $search->{$index === 0 ? 'where' : 'orWhere'}($column, 'like', '%'.trim($term).'%');
@@ -200,6 +200,7 @@ class SiteContentController extends Controller
         if ($type === 'gallery') {
             return $request->validate($rules + [
                 'description' => ['nullable', 'string', 'max:3000'],
+                'category' => ['nullable', Rule::in(['apartment', 'commercial', 'land-or-plot', 'farm'])],
                 'sort_order' => ['nullable', 'integer', 'min:0'],
             ]);
         }
