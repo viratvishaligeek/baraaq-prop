@@ -370,8 +370,8 @@ class BuraaqhContentSeeder extends Seeder
                     'excerpt' => $excerpt,
                     'content' => '<p>'.$body.'</p><p>Contact Buraaqh Properties to discuss your requirements and the most suitable next step.</p>',
                     'featured_image' => $this->themeImagePath('img/'.$icon),
-                    'status' => 'published',
-                    'published_at' => now()->subDays($index + 1),
+                    'status' => 'draft',
+                    'published_at' => null,
                     'meta_title' => $title.' | Buraaqh Properties',
                     'meta_description' => $excerpt,
                 ]
@@ -626,7 +626,7 @@ class BuraaqhContentSeeder extends Seeder
             ],
             'services.home-9' => [
                 'eyebrow' => 'Our Services',
-                'heading' => 'We’re committed to discovering the perfect property for you',
+                'heading' => 'Property information and support',
                 'description' => 'Explore the services currently published by Buraaqh Properties. Contact the team to confirm availability and scope before proceeding.',
                 'items_limit' => 8,
                 'columns' => '4',
@@ -648,8 +648,8 @@ class BuraaqhContentSeeder extends Seeder
                 'eyebrow' => 'Team Members',
                 'heading' => 'Meet the Team',
                 'items_limit' => 6,
-                'chat_text' => 'Explore Property agents are here to help with all your buying, renting and selling goals. Find the home of your dreams with an expert you can trust.',
-                'chat_link_label' => 'Let’s chat',
+                'chat_text' => 'Share your property requirements through the contact form and confirm available services directly with the team.',
+                'chat_link_label' => 'Contact us',
                 'chat_link_url' => '/contact',
             ],
             'testimonials.home-3' => [
