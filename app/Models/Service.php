@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\\Database\\Eloquent\\Model;
+use Illuminate\\Database\\Eloquent\\SoftDeletes;
 
 class Service extends Model
 {
@@ -29,7 +29,17 @@ class Service extends Model
         return ['published_at' => 'datetime'];
     }
 
-    public function features()\n    {\n        return $this->hasMany(ServiceFeature::class)->orderBy('sort_order');\n    }\n\n    public function images()\n    {\n        return $this->hasMany(ServiceImage::class)->orderBy('sort_order');\n    }\n\n    public function scopePublished($query)
+    public function features()
+    {
+        return $this->hasMany(ServiceFeature::class)->orderBy('sort_order');
+    }
+
+    public function images()
+    {
+        return $this->hasMany(ServiceImage::class)->orderBy('sort_order');
+    }
+
+    public function scopePublished($query)
     {
         return $query->where('status', 'published')
             ->whereNotNull('published_at')
