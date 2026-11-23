@@ -1,5 +1,7 @@
 @extends('frontend.layouts.theme')
-@section('title', 'Services · '.\App\Models\Setting::read('site_title', config('app.name')))
+@section('title', \App\Models\Setting::read('services_meta_title', 'Property Services | '.\App\Models\Setting::read('site_title', config('app.name'))))
+@section('meta_description', \App\Models\Setting::read('services_meta_description', 'Review the property services currently published by Buraaqh Properties in Bareilly, Uttar Pradesh.'))
+@section('canonical_url', route('services.index'))
 @section('content')
 <div class="breadcumb-wrapper"><div class="container"><div class="breadcumb-content"><h1 class="breadcumb-title">Our Services</h1></div></div></div>
 <section class="space"><div class="container"><form method="GET" class="row g-2 mb-4"><div class="col-md-5"><input class="form-control" type="search" name="q" value="{{ request('q') }}" placeholder="Search services"></div><div class="col-auto"><button class="th-btn">Search</button><a class="btn btn-link" href="{{ route('services.index') }}">Reset</a></div></form><div class="row gy-4">
