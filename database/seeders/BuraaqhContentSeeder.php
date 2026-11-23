@@ -59,7 +59,6 @@ class BuraaqhContentSeeder extends Seeder
             // Do not seed fabricated leads, comments, or subscribers.
             $this->seedMenus($propertyCategories, $postCategories);
             $this->seedHomeNine();
-            $this->seedAnalytics();
         });
 
         Cache::forget('homepage:published-default');
@@ -120,7 +119,7 @@ class BuraaqhContentSeeder extends Seeder
 
             // Fill empty starter defaults, but never replace a value already configured by the site owner.
             $legacyMapUrl = $key === 'footer_map_embed_url' && str_contains((string) ($existing?->value ?? ''), 'Meerut');
-            $legacyDemoValue = str_contains((string) ($existing?->value ?? ''), 'Pillar') || str_contains((string) $existing?->value, 'Meerut') || in_array($existing?->value, ['hello@pillarrealty.example', '+91 121 456 7800', '919876543210'], true);
+            $legacyDemoValue = str_contains((string) ($existing?->value ?? ''), 'Pillar') || str_contains((string) ($existing?->value ?? ''), 'Meerut') || in_array($existing?->value, ['hello@pillarrealty.example', '+91 121 456 7800', '919876543210'], true);
             if (! $existing || trim((string) $existing->value) === '' || $legacyMapUrl || $legacyDemoValue) {
                 Setting::write($key, $stored, $group, $type);
             }
