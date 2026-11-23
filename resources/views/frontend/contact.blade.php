@@ -16,7 +16,7 @@
                     </div>
 
                     @if ($page?->content)
-                        <div class="mb-4">{!! \\App\\Support\\HtmlSanitizer::sanitize($page->content) !!}</div>
+                        <div class="mb-4">{!! \App\Support\HtmlSanitizer::sanitize($page->content) !!}</div>
                     @endif
 
                     <div class="contact-form p-4 p-lg-5">
@@ -68,7 +68,7 @@
 
                     <div class="row g-3 mt-3 text-center">
                         @if (!empty($siteSettings['site_phone']))
-                            <div class="col-md-6"><a href="tel:{{ preg_replace('/\\D+/', '', $siteSettings['site_phone']) }}">{{ $siteSettings['site_phone'] }}</a></div>
+                            <div class="col-md-6"><a href="tel:{{ preg_replace('/\D+/', '', $siteSettings['site_phone']) }}">{{ $siteSettings['site_phone'] }}</a></div>
                         @endif
                         @if (!empty($siteSettings['site_email']))
                             <div class="col-md-6"><a href="mailto:{{ $siteSettings['site_email'] }}">{{ $siteSettings['site_email'] }}</a></div>
