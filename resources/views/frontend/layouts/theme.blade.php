@@ -124,14 +124,10 @@
     <div class="preloader">
         <button class="th-btn preloaderCls">Cancel Preloader</button>
         <div id="preloader" class="preloader-inner">
-            <div class="txt-loading">
-                <span data-text-preloader="P" class="letters-loading">P </span>
-                <span data-text-preloader="I" class="letters-loading">I </span>
-                <span data-text-preloader="L" class="letters-loading">L </span>
-                <span data-text-preloader="L" class="letters-loading">L
-                </span>
-                <span data-text-preloader="E" class="letters-loading">E </span>
-                <span data-text-preloader="R" class="letters-loading">R</span>
+            <div class="txt-loading" aria-label="{{ $siteSettings['site_title'] ?? 'Buraaqh Properties' }}">
+                @foreach (str_split((string) ($siteSettings['site_title'] ?? 'Buraaqh Properties')) as $letter)
+                    <span data-text-preloader="{{ e($letter) }}" class="letters-loading">{{ $letter === ' ' ? '&nbsp;' : $letter }}</span>
+                @endforeach
             </div>
         </div>
     </div>
