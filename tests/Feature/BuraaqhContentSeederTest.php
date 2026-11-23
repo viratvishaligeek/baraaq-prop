@@ -77,9 +77,12 @@ class BuraaqhContentSeederTest extends TestCase
             $this->assertGreaterThan(50, str_word_count(strip_tags($faq->answer)));
         }
 
+        $this->assertSame(6, Page::query()->count());
+        $this->assertSame(10, Tag::query()->count());
+        $this->assertSame(6, Media::query()->count());
         $this->assertSame(13, Category::query()->count());
         $this->assertSame(4, Menu::query()->count());
-        $this->assertGreaterThan(0, MenuItem::query()->count());
+        $this->assertSame(25, MenuItem::query()->count());
         $this->assertSame(0, PropertyImage::query()->count());
         $this->assertSame(0, ServiceImage::query()->count());
         $this->assertSame(0, Enquiry::query()->count());
