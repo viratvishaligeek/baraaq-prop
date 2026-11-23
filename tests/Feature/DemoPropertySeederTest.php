@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\GalleryItem;
 use App\Models\Property;
 use App\Models\PropertyAccommodation;
 use App\Models\PropertyFaq;
@@ -109,7 +110,8 @@ class DemoPropertySeederTest extends TestCase
             'properties' => Property::query()->count(),
             'images' => PropertyImage::query()->count(),
             'accommodations' => PropertyAccommodation::query()->count(),
-            'faqs' => PropertyFaq::query()->count(),\n            'gallery' => GalleryItem::query()->count(),
+            'faqs' => PropertyFaq::query()->count(),
+            'gallery' => GalleryItem::query()->count(),
         ];
 
         $this->seed();
