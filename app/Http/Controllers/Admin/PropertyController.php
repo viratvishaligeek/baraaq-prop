@@ -151,7 +151,8 @@ class PropertyController extends Controller
                 $space['image_media_id'] = $media->id;
             }
 
-            unset($space['image']);
+            if ($request->boolean('accommodations.'.$index.'.remove_image')) unset($space['image_media_id']);
+            unset($space['image'], $space['remove_image']);
             $space['sort_order'] = $index;
         }
         unset($space);
@@ -168,8 +169,10 @@ class PropertyController extends Controller
         foreach (['featured_image_media_id' => 'featured_image', 'og_image_media_id' => 'og_image'] as $mediaField => $field) {
             if (! empty($data[$mediaField]) && ! $request->hasFile($field)) {
                 $data[$field] = Media::query()->whereKey((int) $data[$mediaField])->value('path');
+            } elseif ($request->boolean('remove_'.$field) && ! $request->hasFile($field)) {
+                $data[$field] = null;
             }
-            unset($data[$mediaField]);
+            unset($data[$mediaField], $data['remove_'.$field]);
         }
 
         if (($data['status'] ?? null) === 'published') {
