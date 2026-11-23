@@ -85,6 +85,12 @@ class BuraaqhContentSeeder extends Seeder
             'whatsapp_number' => null,
         ]);
 
+        Banner::query()->whereIn('title', [
+            'Discover a place that feels like home',
+            'Make your next move with confidence',
+            'Find the right space for your business',
+        ])->update(['is_active' => false]);
+
         TeamMember::query()->where('email', 'like', '%@pillarrealty.example')->delete();
         // Keep the legacy demo pages and post in draft for owner review. Fresh
         // Buraaqh equivalents are seeded separately under their own slugs.
@@ -326,7 +332,9 @@ class BuraaqhContentSeeder extends Seeder
                     'meta_description' => $excerpt,
                 ]
             );
-            $post->categories()->syncWithoutDetaching([$categories[$categorySlug]->id]);
+            if ($post->wasRecentlyCreated) {
+                $post->categories()->syncWithoutDetaching([$categories[$categorySlug]->id]);
+            }
             $posts[] = $post;
         }
 
@@ -482,14 +490,14 @@ class BuraaqhContentSeeder extends Seeder
             ['Can Buraaqh Properties confirm legal title or government approvals?', 'A property decision should be supported by independent document verification and relevant authority records. Do not treat marketing information as a legal opinion or an official approval.'],
         ];
         foreach ($faqs as $i => [$question, $answer]) {
-            FaqItem::updateOrCreate(['question' => $question], ['answer' => $answer, 'category' => 'Property guidance', 'sort_order' => $i + 1, 'is_active' => true]);
+            FaqItem::firstOrCreate(['question' => $question], ['answer' => $answer, 'category' => 'Property guidance', 'sort_order' => $i + 1, 'is_active' => true]);
         }
 
         $localities = ['Civil Lines', 'Rajendra Nagar', 'Izatnagar', 'Mahanagar', 'DD Puram', 'Pilibhit Bypass'];
         foreach ($localities as $i => $locality) {
             $title = 'Property considerations in '.$locality.', Bareilly';
             $slug = Str::slug($locality.' Bareilly property guide');
-            NeighborhoodGuide::updateOrCreate(['slug' => $slug], [
+            NeighborhoodGuide::firstOrCreate(['slug' => $slug], [
                 'title' => $title,
                 'locality' => $locality,
                 'city' => 'Bareilly',
