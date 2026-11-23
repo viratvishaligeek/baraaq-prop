@@ -14,6 +14,7 @@ class DefaultThemeSeeder extends Seeder
     public function run(): void
     {
         $siteName = trim((string) env('SITE_NAME', 'Buraaqh Properties')) ?: 'Buraaqh Properties';
+        if (stripos($siteName, 'Pillar') !== false) $siteName = 'Buraaqh Properties';
 
         $settings = [
             'site_title' => [$siteName, 'general', 'string'],
