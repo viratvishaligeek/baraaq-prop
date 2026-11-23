@@ -92,7 +92,7 @@ class PropertyController extends Controller
             $query->where('area', '<=', $filters['max_area']);
         }
 
-        $orderby = $filters['orderby'] ?? 'date';
+        $orderby = $filters['orderby'] ?? 'menu_order';
         match ($orderby) {
             'menu_order' => $query->latest('published_at'),
             'popularity' => $query->orderByDesc('is_featured')->latest('published_at'),
