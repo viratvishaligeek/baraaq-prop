@@ -83,6 +83,53 @@ class ContentPublishingAndCommentsTest extends TestCase
             ->assertSee('Related articles')
             ->assertSee('Related Bareilly property article');
     }
+
+    public function test_blog_and_service_search_filters_published_records(): void
+    {
+        Post::create([
+            'title' => 'Bareilly property checklist',
+            'slug' => 'bareilly-property-checklist',
+            'excerpt' => 'A local property checklist.',
+            'content' => 'Article content.',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        Post::create([
+            'title' => 'Unrelated garden article',
+            'slug' => 'unrelated-garden-article',
+            'excerpt' => 'A garden article.',
+            'content' => 'Article content.',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        Service::create([
+            'title' => 'Bareilly property consultation',
+            'slug' => 'bareilly-property-consultation',
+            'excerpt' => 'A service description.',
+            'content' => 'Service content.',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        Service::create([
+            'title' => 'Unrelated maintenance service',
+            'slug' => 'unrelated-maintenance-service',
+            'excerpt' => 'A service description.',
+            'content' => 'Service content.',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        $this->get(route('blog.index', ['q' => 'Bareilly']))
+            ->assertOk()
+            ->assertSee('Bareilly property checklist')
+            ->assertDontSee('Unrelated garden article');
+
+        $this->get(route('services.index', ['q' => 'Bareilly']))
+            ->assertOk()
+            ->assertSee('Bareilly property consultation')
+            ->assertDontSee('Unrelated maintenance service');
+    }
+
     public function test_frontend_service_views_are_recorded_with_a_persistent_visitor_identifier(): void
     {
         $service = Service::create([
