@@ -203,6 +203,10 @@
             </div>
         </div>
     </div>
+    @php
+        // Resolve the configured menu for both the Home 9 and inner-page headers.
+        $primaryMenu = \\App\\Models\\Menu::cached($siteSettings['header_menu_location'] ?? 'primary');
+    @endphp
     @if (isset($homepage) && $homepage?->slug === 'home-9')
         <header class="th-header header-default header-layout9">
             <div class="sticky-wrapper" data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
