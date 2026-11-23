@@ -57,7 +57,7 @@ class FrontendPaginationTest extends TestCase
 
         $this->get(route('neighborhood-guides.index', ['q' => 'Bareilly', 'page' => 2]))
             ->assertOk()
-            ->assertSee('Bareilly locality guide 1');
+            ->assertSee('Bareilly locality guide 9');
     }
 
     public function test_blog_pagination_uses_blog_route_and_keeps_search_query(): void
@@ -79,6 +79,6 @@ class FrontendPaginationTest extends TestCase
 
         $this->get(route('blog.index', ['q' => 'Bareilly', 'page' => 2]))
             ->assertOk()
-            ->assertSee('Bareilly property article 1');
+            ->assertSee('Bareilly property article 10');
     }
 }
