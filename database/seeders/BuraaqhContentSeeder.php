@@ -208,6 +208,8 @@ class BuraaqhContentSeeder extends Seeder
             'gallery_meta_description' => ['Explore property photography and real estate highlights in Bareilly, Uttar Pradesh.', 'seo', 'string'],
             'faq_meta_title' => ['Property FAQs in Bareilly | Buraaqh Properties', 'seo', 'string'],
             'faq_meta_description' => ['Answers to common property buying, selling and real estate questions in Bareilly, Uttar Pradesh.', 'seo', 'string'],
+            'neighborhood_guides_meta_title' => ['Neighborhood Guides in Bareilly | Buraaqh Properties', 'seo', 'string'],
+            'neighborhood_guides_meta_description' => ['Explore neighborhood guides for Bareilly, Uttar Pradesh, with local area insights to support informed property decisions.', 'seo', 'string'],
             'default_og_image' => [$defaultOgMedia?->path ?? 'theme-assets/img/hero/hero-9-right.png', 'seo', 'string'],
         ];
 
