@@ -47,7 +47,7 @@ The role/permission seeder creates the module permissions. Administrators receiv
 
 ## Buraaqh seed content
 
-\`BuraaqhContentSeeder\` replaces the old Pillar/Meerut demo seeder. It seeds Buraaqh Properties defaults, service copy and features, Bareilly-focused FAQs and cautious neighborhood due-diligence guides. It does not seed fabricated contact details, staff identities, testimonials, customer leads or published sample property listings.
+\`BuraaqhContentSeeder\` replaces the old Pillar/Meerut demo seeder. It seeds Buraaqh Properties defaults, unpublished service drafts and features, Bareilly-focused FAQs and cautious neighborhood due-diligence guides. It does not seed fabricated contact details, staff identities, testimonials, customer leads or published sample property listings. Gallery content and service photography are intentionally left empty until approved business imagery is supplied; stock template photos are not presented as real properties or staff.
 
 Known synthetic records from the former Pillar demo are retired by exact identifiers: legacy sample property slugs are moved to draft, fake team entries are soft-deleted, synthetic testimonials are unpublished, synthetic comments are moved to pending, synthetic enquiries are closed and synthetic newsletter addresses are removed. Other content is not bulk-deleted.
 
