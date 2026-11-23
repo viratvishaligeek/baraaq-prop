@@ -9,6 +9,7 @@ use App\Models\Property;
 use App\Models\Setting;
 use App\Services\Homepage\SectionDataResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class HomepagePersistenceRegressionTest extends TestCase
