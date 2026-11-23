@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\FaqItem;
 use App\Models\Banner;
+use App\Models\Comment;
+use App\Models\Enquiry;
 use App\Models\Media;
 use App\Models\GalleryItem;
 use App\Models\Homepage;
@@ -20,8 +22,10 @@ use App\Models\NeighborhoodGuide;
 use App\Models\Page;
 use App\Models\Post;
 use App\Models\Property;
+use App\Models\PropertyImage;
 use App\Models\Service;
 use App\Models\ServiceImage;
+use App\Models\NewsletterSubscriber;
 use App\Models\Setting;
 use Database\Seeders\BuraaqhContentSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -40,15 +44,6 @@ class BuraaqhContentSeederTest extends TestCase
         $this->seed();
 
         $this->assertSame(1, Homepage::query()->count());
-        $this->assertSame(6, Page::query()->count());
-        $this->assertSame(7, Post::query()->count());
-        $this->assertSame(6, Service::query()->count());
-        $this->assertSame(24, ServiceFeature::query()->count());
-        $this->assertSame(13, Category::query()->count());
-        $this->assertSame(10, Tag::query()->count());
-        $this->assertSame(4, Menu::query()->count());
-        $this->assertSame(25, MenuItem::query()->count());
-        $this->assertSame(0, Property::query()->count());
         $this->assertSame(0, Property::published()->count());
         $this->assertSame(0, Service::published()->count());
         $this->assertSame(0, GalleryItem::query()->where('status', 'published')->count());
@@ -58,10 +53,48 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertSame(6, MediaAttachment::query()->count());
         $this->assertSame(7, NeighborhoodGuide::query()->count());
         $this->assertSame(18, FaqItem::query()->count());
-        $article = Post::query()->where('slug', 'complete-guide-buying-residential-property-bareilly')->firstOrFail();
-        $this->assertGreaterThan(700, str_word_count(strip_tags($article->content)));
-        $this->assertGreaterThan(0, $article->tags()->count());
-        $this->assertSame(6, Media::query()->count());
+        $this->assertSame(7, Post::query()->count());
+        foreach (Post::query()->get() as $post) {
+            $this->assertGreaterThan(700, str_word_count(strip_tags($post->content)), $post->slug.' should be long-form content.');
+            $this->assertGreaterThan(0, $post->tags()->count(), $post->slug.' should have tags.');
+            $this->assertNull($post->featured_image, 'No unreviewed editorial image should be assigned.');
+        }
+
+        $this->assertSame(6, Service::query()->count());
+        $this->assertSame(24, ServiceFeature::query()->count());
+        foreach (Service::query()->get() as $service) {
+            $this->assertSame('draft', $service->status);
+            $this->assertStringContainsString('Frequently asked questions', $service->content);
+            $this->assertNull($service->featured_image);
+        }
+
+        foreach (NeighborhoodGuide::query()->get() as $guide) {
+            $this->assertGreaterThan(250, str_word_count(strip_tags($guide->content)), $guide->slug.' should contain a substantial guide.');
+            $this->assertNull($guide->hero_image, 'No unverified locality photograph should be assigned.');
+        }
+
+        foreach (FaqItem::query()->get() as $faq) {
+            $this->assertGreaterThan(80, str_word_count(strip_tags($faq->answer)));
+        }
+
+        $this->assertSame(13, Category::query()->count());
+        $this->assertSame(4, Menu::query()->count());
+        $this->assertGreaterThan(0, MenuItem::query()->count());
+        $this->assertSame(0, PropertyImage::query()->count());
+        $this->assertSame(0, ServiceImage::query()->count());
+        $this->assertSame(0, Enquiry::query()->count());
+        $this->assertSame(0, NewsletterSubscriber::query()->count());
+        $this->assertSame(0, Comment::query()->count());
+        $this->assertSame(0, Banner::query()->count());
+
+        foreach (Media::query()->get() as $media) {
+            $this->assertNotEmpty($media->alt_text);
+            $this->assertTrue(Storage::disk('public')->exists($media->path), 'Seeded media must exist on the public disk.');
+        }
+        $this->assertSame(6, Media::query()->distinct('path')->count('path'));
+
+        $testimonialSection = HomepageSection::query()->where('section_key', 'testimonials.home-3')->firstOrFail();
+        $this->assertNull(data_get($testimonialSection->config, 'avatar_group_image'));
         $this->assertSame([], Setting::read('footer_gallery_images', []));
         $this->assertSame('Buraaqh Properties', Setting::read('site_title'));
         $this->assertSame('Bareilly', Setting::read('service_area_city'));
@@ -220,6 +253,31 @@ class BuraaqhContentSeederTest extends TestCase
             'status' => 'draft',
         ]);
 
+        Setting::query()->where('key', 'site_title')->update(['value' => 'Owner-approved brand']);
+        $hero = HomepageSection::query()->where('section_key', 'hero.home-9')->firstOrFail();
+        $customMediaPath = 'owner/approved-hero.jpg';
+        Storage::disk('public')->put($customMediaPath, 'owner-selected-image');
+        $customMedia = Media::query()->create([
+            'disk' => 'public',
+            'path' => $customMediaPath,
+            'original_name' => 'approved-hero.jpg',
+            'mime_type' => 'image/jpeg',
+            'size' => 20,
+            'alt_text' => 'Administrator-selected hero image',
+        ]);
+        $heroConfig = $hero->config;
+        $heroConfig['heading_prefix'] = 'Administrator headline';
+        $heroConfig['foreground_image'] = $customMedia->id;
+        $hero->forceFill(['config' => $heroConfig, 'is_enabled' => false])->save();
+        $hero->mediaAttachments()->where('field_key', 'foreground_image')->update(['media_id' => $customMedia->id]);
+
+        $contactItem = MenuItem::query()->where('label', 'Contact')->firstOrFail();
+        $contactItem->update(['url' => '/administrator-contact']);
+        $service = Service::query()->where('slug', 'property-search-shortlisting')->firstOrFail();
+        $removedFeature = $service->features()->firstOrFail();
+        $removedFeature->delete();
+        $remainingFeatureCount = ServiceFeature::query()->where('service_id', $service->id)->count();
+
         $this->seed(BuraaqhContentSeeder::class);
 
         $this->assertSame(
@@ -229,5 +287,12 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertSame('draft', $page->fresh()->status);
         $this->assertSame('Owner-approved FAQ wording.', $faq->fresh()->answer);
         $this->assertSame('<p>Owner-approved neighborhood guide copy.</p>', $guide->fresh()->content);
+        $this->assertSame('Owner-approved brand', Setting::read('site_title'));
+        $this->assertSame('Administrator headline', data_get($hero->fresh()->config, 'heading_prefix'));
+        $this->assertSame($customMedia->id, data_get($hero->fresh()->config, 'foreground_image'));
+        $this->assertFalse((bool) $hero->fresh()->is_enabled);
+        $this->assertSame($customMedia->id, $hero->fresh()->mediaAttachments()->where('field_key', 'foreground_image')->value('media_id'));
+        $this->assertSame('/administrator-contact', $contactItem->fresh()->url);
+        $this->assertSame($remainingFeatureCount, ServiceFeature::query()->where('service_id', $service->id)->count());
     }
 }
