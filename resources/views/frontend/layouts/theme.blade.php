@@ -232,7 +232,7 @@
                         <div class="col-auto d-none d-xl-block">
                             <div class="header-button">
                                 @if (!empty($siteSettings['header_cta_label']) && !empty($siteSettings['header_cta_url']))
-                                    <a href="{{ \\App\\Rules\\SafeLink::sanitize($siteSettings['header_cta_url']) }}" class="th-btn bg-black">
+                                    <a href="{{ \App\Rules\SafeLink::sanitize($siteSettings['header_cta_url']) }}" class="th-btn bg-black">
                                         <i class="fa-regular fa-house-chimney me-2"></i> {{ $siteSettings['header_cta_label'] }}
                                     </a>
                                 @endif
