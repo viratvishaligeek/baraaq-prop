@@ -30,6 +30,7 @@ use App\Models\NewsletterSubscriber;
 use App\Models\Setting;
 use Database\Seeders\BuraaqhContentSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -340,8 +341,35 @@ class BuraaqhContentSeederTest extends TestCase
         Storage::fake('public');
         $this->seed();
 
+        $inventory = fn (): array => [
+            'faqs' => FaqItem::query()->count(),
+            'faq_questions' => FaqItem::query()->distinct('question')->count('question'),
+            'posts' => Post::query()->count(),
+            'post_slugs' => Post::query()->distinct('slug')->count('slug'),
+            'categories' => Category::query()->count(),
+            'category_slugs' => Category::query()->distinct('slug')->count('slug'),
+            'services' => Service::query()->count(),
+            'service_slugs' => Service::query()->distinct('slug')->count('slug'),
+            'menus' => Menu::query()->count(),
+            'menu_locations' => Menu::query()->distinct('location')->count('location'),
+            'menu_items' => MenuItem::query()->count(),
+            'menu_item_keys' => MenuItem::query()->get(['menu_id', 'label'])
+                ->map(fn (MenuItem $item): string => $item->menu_id.'|'.$item->label)
+                ->unique()
+                ->count(),
+            'media' => Media::query()->count(),
+            'media_attachments' => MediaAttachment::query()->count(),
+            'media_attachment_keys' => MediaAttachment::query()->get(['mediable_type', 'mediable_id', 'field_key'])
+                ->map(fn (MediaAttachment $attachment): string => $attachment->mediable_type.'|'.$attachment->mediable_id.'|'.$attachment->field_key)
+                ->unique()
+                ->count(),
+        ];
+        $initialInventory = $inventory();
+
         $faq = FaqItem::query()->firstOrFail();
-        $faq->update(['answer' => 'Owner-approved FAQ wording.']);
+        DB::table('faq_items')->where('id', $faq->id)->update([
+            'answer' => 'Owner-approved FAQ wording written directly through the database.',
+        ]);
         $guide = NeighborhoodGuide::query()->firstOrFail();
         $guide->update(['content' => '<p>Owner-approved neighborhood guide copy.</p>']);
 
@@ -386,7 +414,7 @@ class BuraaqhContentSeederTest extends TestCase
             $page->fresh()->content
         );
         $this->assertSame('draft', $page->fresh()->status);
-        $this->assertSame('Owner-approved FAQ wording.', $faq->fresh()->answer);
+        $this->assertSame('Owner-approved FAQ wording written directly through the database.', $faq->fresh()->answer);
         $this->assertSame('<p>Owner-approved neighborhood guide copy.</p>', $guide->fresh()->content);
         $this->assertSame('Owner-approved brand', Setting::query()->where('key', 'site_title')->value('value'));
         $this->assertSame('', Setting::query()->where('key', 'site_tagline')->value('value'));
@@ -396,5 +424,18 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertSame($customMedia->id, $hero->fresh()->mediaAttachments()->where('field_key', 'foreground_image')->value('media_id'));
         $this->assertSame('/administrator-contact', $contactItem->fresh()->url);
         $this->assertSame($remainingFeatureCount, ServiceFeature::query()->where('service_id', $service->id)->count());
+        $this->assertSame($initialInventory, $inventory(), 'A second complete seed must not duplicate content, navigation or media relations.');
+        $this->assertSame(6, MediaAttachment::query()->count());
+        $this->assertSame(
+            6,
+            MediaAttachment::query()->whereHasMorph('mediable', [HomepageSection::class])->count(),
+            'All six homepage media attachments must remain connected to their original section records.'
+        );
+        $this->assertDatabaseHas('media_attachments', [
+            'mediable_type' => HomepageSection::class,
+            'mediable_id' => $hero->id,
+            'field_key' => 'foreground_image',
+            'media_id' => $customMedia->id,
+        ]);
     }
 }
