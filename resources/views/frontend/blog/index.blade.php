@@ -1,6 +1,6 @@
 @extends('frontend.layouts.theme')
-@section('title', \\App\\Models\\Setting::read('blog_meta_title', 'Journal · '.($siteSettings['site_title'] ?? config('app.name'))))
-@section('meta_description', \\App\\Models\\Setting::read('blog_meta_description', 'Property guidance and practical real estate articles for Bareilly, Uttar Pradesh.'))
+@section('title', \App\Models\Setting::read('blog_meta_title', 'Journal · '.($siteSettings['site_title'] ?? config('app.name'))))
+@section('meta_description', \App\Models\Setting::read('blog_meta_description', 'Property guidance and practical real estate articles for Bareilly, Uttar Pradesh.'))
 @section('canonical_url', route('blog.index'))
 @section('content')<div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcumb-bg.jpg') }}">
 <div class="container">
