@@ -131,7 +131,15 @@ class DefaultThemeSeeder extends Seeder
                 'https://www.instagram.com/',
                 'https://www.linkedin.com/',
             ], true);
-            $legacyDemoValue = $legacyGalleryImages || $legacyTextValue || $legacyMapUrl || $legacyContactOrSocial;
+            $legacyBrandAsset = in_array($key, ['logo', 'favicon', 'default_og_image'], true)
+                && ! is_numeric($existingValue)
+                && (
+                    str_contains($existingValue, 'piller')
+                    || str_contains($existingValue, 'Pillar')
+                    || str_starts_with($existingValue, '/theme-assets/')
+                    || str_starts_with($existingValue, 'theme-assets/')
+                );
+            $legacyDemoValue = $legacyGalleryImages || $legacyTextValue || $legacyMapUrl || $legacyContactOrSocial || $legacyBrandAsset;
 
             // Replace only known template/demo values. An existing blank value may
             // be an intentional administrator choice and is therefore preserved.
