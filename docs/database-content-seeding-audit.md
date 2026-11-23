@@ -154,7 +154,7 @@ The Home 9 seeder reuses bundled images already committed under `public/theme-as
 
 The importer checks that a bundled image exists, is an image MIME type, and is at least 240 × 180 pixels before creating a Media Library record. The six selected raster assets were checked for dimensions and visual role; all pass that threshold. It uses a stable path-derived identifier and `firstOrCreate` so reruns reuse the same record. Existing administrator-selected images or custom paths are preserved.
 
-No unverified template photography is assigned to property listings, service featured/inside images, blog featured images, locality guides, or the public gallery. Those content types remain without images until approved source imagery is available.
+No unverified template photography is assigned to property listings, service featured/inside images, blog featured images, locality guides, or the public gallery. Those content types remain without images until approved source imagery is available. The Home 9 blog cards now retain their image area but display an “Article image pending” state instead of repeating the same unrelated theme stock image.
 
 ## 6. SEO and publication safeguards
 
