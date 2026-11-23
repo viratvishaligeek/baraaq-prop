@@ -119,8 +119,8 @@ class BuraaqhContentSeeder extends Seeder
             $existing = Setting::query()->where('key', $key)->first();
 
             // Fill empty starter defaults, but never replace a value already configured by the site owner.
-            $legacyMapUrl = $key === 'footer_map_embed_url' && str_contains((string) $existing?->value, 'Meerut');
-            $legacyDemoValue = str_contains((string) $existing?->value, 'Pillar') || str_contains((string) $existing?->value, 'Meerut') || in_array($existing?->value, ['hello@pillarrealty.example', '+91 121 456 7800', '919876543210'], true);
+            $legacyMapUrl = $key === 'footer_map_embed_url' && str_contains((string) ($existing?->value ?? ''), 'Meerut');
+            $legacyDemoValue = str_contains((string) ($existing?->value ?? ''), 'Pillar') || str_contains((string) $existing?->value, 'Meerut') || in_array($existing?->value, ['hello@pillarrealty.example', '+91 121 456 7800', '919876543210'], true);
             if (! $existing || trim((string) $existing->value) === '' || $legacyMapUrl || $legacyDemoValue) {
                 Setting::write($key, $stored, $group, $type);
             }
@@ -617,6 +617,14 @@ class BuraaqhContentSeeder extends Seeder
             foreach ($titles as $i => $title) {
                 ServiceFeature::firstOrCreate(['service_id' => $service->id, 'title' => $title], ['description' => 'A clearly scoped part of the '.$service->title.' service.', 'sort_order' => $i + 1]);
             }
+            $asset = 'theme-assets/img/gallery/footer-gallery-1-'.(($service->id % 4) + 1).'.jpg';
+            $source = public_path($asset);
+            if (File::exists($source) && ! $service->images()->exists()) {
+                $path = 'services/inside/seed-'.$service->slug.'.jpg';
+                if (! Storage::disk('public')->exists($path)) Storage::disk('public')->put($path, File::get($source));
+                $service->images()->create(['path' => $path, 'alt_text' => $service->title.' service image', 'sort_order' => 1]);
+                Media::firstOrCreate(['path' => $path], ['uploaded_by' => $this->authorId, 'disk' => 'public', 'original_name' => basename($asset), 'mime_type' => 'image/jpeg', 'size' => Storage::disk('public')->size($path), 'alt_text' => $service->title.' service image']);
+            }
         }
     }
 
@@ -624,7 +632,7 @@ class BuraaqhContentSeeder extends Seeder
     {
         $homepage = Homepage::query()->where('slug', 'home-9')->first();
         if (! $homepage) {
-            throw new RuntimeException('Home 9 template is missing. Run HomepageTemplateSeeder before PillerDemoContentSeeder.');
+            throw new RuntimeException('Home 9 template is missing. Run HomepageTemplateSeeder before BuraaqhContentSeeder.');
         }
 
         $requiredKeys = [
