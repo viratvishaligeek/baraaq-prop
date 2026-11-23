@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Page;
 use App\Models\Post;
+use App\Models\Property;
 use App\Models\Service;
 use App\Models\TeamMember;
 use App\Models\Testimonial;
@@ -116,6 +117,12 @@ class ContentController extends Controller
             'canonicalUrl' => $page->canonical_url ?: route('about'),
             'members' => TeamMember::query()->where('status', 'published')->where('is_active', true)->orderBy('sort_order')->limit(6)->get(),
             'testimonials' => Testimonial::query()->where('status', 'published')->where('is_active', true)->orderBy('sort_order')->limit(6)->get(),
+            'services' => Service::published()->orderBy('published_at')->limit(8)->get(),
+            'properties' => Property::published()->with('category')->latest('published_at')->limit(8)->get(),
+            'propertyCount' => Property::published()->count(),
+            'serviceCount' => Service::published()->count(),
+            'teamCount' => TeamMember::query()->where('status', 'published')->where('is_active', true)->count(),
+            'testimonialCount' => Testimonial::query()->where('status', 'published')->where('is_active', true)->count(),
         ]);
     }
 
