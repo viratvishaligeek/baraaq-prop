@@ -27,6 +27,7 @@ class DefaultThemeSeeder extends Seeder
             'footer_support_menu_location' => ['footer-support', 'navigation', 'string'],
             'footer_about_heading' => ['About Buraaqh Properties', 'footer', 'string'],
             'footer_services_heading' => ['Property Guidance', 'footer', 'string'],
+            'footer_featured_heading' => ['Explore Property Types', 'footer', 'string'],
             'footer_quick_links_heading' => ['Quick Links', 'footer', 'string'],
             'footer_support_heading' => ['Helpful Information', 'footer', 'string'],
             'footer_location_heading' => ['Our Service Area', 'footer', 'string'],
