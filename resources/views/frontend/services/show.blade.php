@@ -42,6 +42,20 @@
         @if ($service->featured_image)<img class="w-100 rounded mb-4" src="{{ Storage::disk('public')->url($service->featured_image) }}" alt="{{ $service->title }}">@endif
         @if ($service->excerpt)<p class="lead">{{ $service->excerpt }}</p>@endif
         <div>{!! \App\Support\HtmlSanitizer::sanitize($service->content) !!}</div>
+        @if ($service->features->isNotEmpty())
+            <section class="space-top"><h2>What this service includes</h2><div class="row gy-3">
+                @foreach ($service->features as $feature)
+                    <div class="col-md-6"><div class="border rounded p-3 h-100"><h3 class="h5">{{ $feature->title }}</h3>@if($feature->description)<p class="mb-0">{{ $feature->description }}</p>@endif</div></div>
+                @endforeach
+            </div></section>
+        @endif
+        @if ($service->images->isNotEmpty())
+            <section class="space-top"><h2>Inside this service</h2><div class="row gy-3">
+                @foreach ($service->images as $image)
+                    <div class="col-6 col-lg-4"><img class="w-100 rounded" loading="lazy" src="{{ Storage::disk('public')->url($image->path) }}" alt="{{ $image->alt_text ?: $service->title }}"></div>
+                @endforeach
+            </div></section>
+        @endif
     </div></div></div></section>
 
 @endsection
