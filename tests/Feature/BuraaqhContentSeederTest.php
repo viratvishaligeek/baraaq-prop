@@ -58,6 +58,19 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertSame(7, Post::query()->count());
         foreach (Post::query()->get() as $post) {
             $this->assertGreaterThan(700, str_word_count(strip_tags($post->content)), $post->slug.' should be long-form content.');
+            $this->assertGreaterThan(5, preg_match_all('/<h2\\b/i', $post->content), $post->slug.' should have a useful heading structure.');
+            $this->assertStringContainsString('Conclusion', $post->content);
+            $this->assertNotEmpty($post->meta_title);
+            $this->assertLessThanOrEqual(60, mb_strlen($post->meta_title), $post->slug.' SEO title should fit the configured limit.');
+            $this->assertNotEmpty($post->meta_description);
+            $this->assertLessThanOrEqual(155, mb_strlen($post->meta_description), $post->slug.' SEO description should fit the configured limit.');
+            $this->assertMatchesRegularExpression('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $post->slug);
+            preg_match_all('/<p>(.*?)<\\/p>/si', $post->content, $paragraphMatches);
+            $paragraphs = array_map(
+                fn (string $paragraph): string => trim(preg_replace('/\\s+/', ' ', strip_tags($paragraph))),
+                $paragraphMatches[1]
+            );
+            $this->assertCount(count(array_unique($paragraphs)), $paragraphs, $post->slug.' should not pad its word count with repeated paragraphs.');
             $this->assertGreaterThan(0, $post->tags()->count(), $post->slug.' should have tags.');
             $this->assertNull($post->featured_image, 'No unreviewed editorial image should be assigned.');
         }
@@ -71,7 +84,8 @@ class BuraaqhContentSeederTest extends TestCase
         }
 
         foreach (NeighborhoodGuide::query()->get() as $guide) {
-            $this->assertGreaterThan(250, str_word_count(strip_tags($guide->content)), $guide->slug.' should contain a substantial guide.');
+            $this->assertGreaterThan(400, str_word_count(strip_tags($guide->content)), $guide->slug.' should contain a locality-specific, practical guide.');
+            $this->assertGreaterThan(3, preg_match_all('/<h2\\b/i', $guide->content));
             $this->assertNull($guide->hero_image, 'No unverified locality photograph should be assigned.');
         }
 
