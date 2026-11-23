@@ -17,7 +17,7 @@ class ContentController extends Controller
     public function blog(Request $request)
     {
         $filters = $request->validate(['q' => ['nullable', 'string', 'max:160'], 'category' => ['nullable', 'string', 'max:120'], 'tag' => ['nullable', 'string', 'max:120']]);
-        $posts = Post::published()->with(['author:id,name', 'categories', 'tags'])
+        $posts = Post::published()->with(['author:id,name', 'categories', 'tags'])->withCount(['comments as approved_comments_count' => fn ($query) => $query->where('status', 'approved')])
             ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('title', 'like', '%'.$term.'%')->orWhere('excerpt', 'like', '%'.$term.'%')))
             ->when($request->filled('category'), function ($query) use ($request) {
                 $query->whereHas('categories', fn ($categories) => $categories->where('slug', $request->string('category')));
