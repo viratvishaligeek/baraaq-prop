@@ -19,7 +19,7 @@ class LocalContentController extends Controller {
  }
  public function neighborhoods(Request $request){
   $filters=$request->validate(['q'=>['nullable','string','max:120']]);
-  $guides=NeighborhoodGuide::published()->when($filters['q']??null,fn($q,$term)=>$q->where(fn($sub)=>$sub->where('title','like','%'.$term.'%')->orWhere('locality','like','%'.$term.'%')->orWhere('excerpt','like','%'.$term.'%')))->orderBy('locality')->paginate(9)->withQueryString();
+  $guides=NeighborhoodGuide::published()->when($filters['q']??null,fn($q,$term)=>$q->where(fn($sub)=>$sub->where('title','like','%'.$term.'%')->orWhere('locality','like','%'.$term.'%')->orWhere('excerpt','like','%'.$term.'%')))->orderBy('sort_order')->orderBy('locality')->paginate(9)->withQueryString();
   return view('frontend.neighborhood-guides.index',compact('guides'));
  }
  public function neighborhood(NeighborhoodGuide $guide){
