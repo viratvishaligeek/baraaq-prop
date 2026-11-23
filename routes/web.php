@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
-Route::view('/contact', 'frontend.contact')->name('contact');
+Route::get('/contact', [FrontendContentController::class, 'contact'])->name('contact');
 Route::get('/about', [FrontendContentController::class, 'about'])->name('about');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('/robots.txt', function () {
