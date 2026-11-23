@@ -81,5 +81,8 @@ Route::get('/service-details.html', function (Request $request) {
 
     return redirect()->route('services.show', $service);
 });
+Route::get('/property-details.html/{property:slug}', fn (Property $property) => redirect()->route('properties.show', $property));
+Route::get('/blog-details.html/{post:slug}', fn (Post $post) => redirect()->route('blog.show', $post));
+Route::get('/service-details.html/{service:slug}', fn (Service $service) => redirect()->route('services.show', $service));
 Route::get('/error.html', fn () => response()->view('errors.404', [], 404))->name('error.page');
 
