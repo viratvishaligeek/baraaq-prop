@@ -15,7 +15,9 @@ class ContentController extends Controller
 {
     public function blog(Request $request)
     {
+        $filters = $request->validate(['q' => ['nullable', 'string', 'max:160'], 'category' => ['nullable', 'string', 'max:120'], 'tag' => ['nullable', 'string', 'max:120']]);
         $posts = Post::published()->with(['author:id,name', 'categories', 'tags'])
+            ->when($filters['q'] ?? null, fn ($query, $term) => $query->where(fn ($search) => $search->where('title', 'like', '%'.$term.'%')->orWhere('excerpt', 'like', '%'.$term.'%')))
             ->when($request->filled('category'), function ($query) use ($request) {
                 $query->whereHas('categories', fn ($categories) => $categories->where('slug', $request->string('category')));
             })
@@ -28,6 +30,7 @@ class ContentController extends Controller
 
         return view('frontend.blog.index', [
             'posts' => $posts,
+            'searchTerm' => $filters['q'] ?? '',
             'activeCategory' => $request->query('category'),
             'activeTag' => $request->query('tag'),
             'categories' => Category::where('type', 'post')->where('is_active', true)->orderBy('name')->get(['id', 'name', 'slug']),
@@ -38,7 +41,15 @@ class ContentController extends Controller
     {
         abort_unless($post->status === 'published' && $post->published_at && $post->published_at->lte(now()), 404);
 
-        return view('frontend.blog.show', ['post' => $post->load(['categories', 'tags', 'comments' => fn ($query) => $query->where('status', 'approved')->latest()])]);
+        $post->load(['categories', 'tags', 'comments' => fn ($query) => $query->where('status', 'approved')->latest()]);
+        $relatedPosts = Post::published()
+            ->whereKeyNot($post->id)
+            ->when($post->categories->isNotEmpty(), fn ($query) => $query->whereHas('categories', fn ($categories) => $categories->whereIn('categories.id', $post->categories->pluck('id'))))
+            ->latest('published_at')
+            ->limit(3)
+            ->get();
+
+        return view('frontend.blog.show', compact('post', 'relatedPosts'));
     }
 
     public function storeComment(Request $request, Post $post)
@@ -61,7 +72,14 @@ class ContentController extends Controller
     public function service(Service $service)
     {
         abort_unless($service->status === 'published' && $service->published_at && $service->published_at->lte(now()), 404);
-        return view('frontend.services.show', ['service' => $service->load(['features', 'images'])]);
+        $service->load(['features', 'images']);
+        $relatedServices = Service::published()
+            ->whereKeyNot($service->id)
+            ->latest('published_at')
+            ->limit(3)
+            ->get();
+
+        return view('frontend.services.show', compact('service', 'relatedServices'));
     }
 
     public function team()
@@ -74,6 +92,16 @@ class ContentController extends Controller
     {
         $testimonials = Testimonial::where('status', 'published')->where('is_active', true)->orderBy('sort_order')->latest()->paginate(12);
         return view('frontend.testimonials.index', compact('testimonials'));
+    }
+
+    public function contact()
+    {
+        $page = Page::query()
+            ->where('slug', 'contact')
+            ->where('status', 'published')
+            ->first();
+
+        return view('frontend.contact', compact('page'));
     }
 
     public function about()
