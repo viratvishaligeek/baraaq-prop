@@ -83,9 +83,10 @@
     @php
         $organization = [
             '@context' => 'https://schema.org',
-            '@type' => 'Organization',
+            '@type' => 'RealEstateAgent',
             'name' => $siteSettings['business_name'] ?? ($siteSettings['site_title'] ?? config('app.name')),
             'url' => url('/'),
+            'areaServed' => ['@type' => 'City', 'name' => $siteSettings['service_area_city'] ?? 'Bareilly'],
             'logo' => !empty($siteSettings['logo']) ? Storage::disk('public')->url($siteSettings['logo']) : null,
             'email' => $siteSettings['site_email'] ?? null,
             'telephone' => $siteSettings['site_phone'] ?? null,
