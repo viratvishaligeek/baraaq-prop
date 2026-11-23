@@ -210,4 +210,14 @@
         </div>
     </section>
 @endif
+@if ($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const modalElement = document.getElementById('propertyEnquiryModal');
+            if (modalElement && window.bootstrap?.Modal) {
+                window.bootstrap.Modal.getOrCreateInstance(modalElement).show();
+            }
+        });
+    </script>
+@endif
 @endsection
