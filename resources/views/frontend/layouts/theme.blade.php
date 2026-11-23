@@ -197,7 +197,26 @@
             </div>
         </div>
     </div>
-    <header class="th-header header-default header-layout9">
+    @unless (request()->routeIs('home'))
+        <div class="header-top">
+            <div class="container">
+                <div class="row justify-content-center justify-content-lg-between align-items-center gy-2">
+                    <div class="col-auto d-none d-lg-block">
+                        <div class="header-links"><ul>
+                            @if (!empty($siteSettings['site_email']))<li><i class="fa-solid fa-envelope"></i> <a href="mailto:{{ $siteSettings['site_email'] }}">{{ $siteSettings['site_email'] }}</a></li>@endif
+                            @if (!empty($siteSettings['site_phone']))<li><i class="fa-solid fa-phone"></i> <a href="tel:{{ preg_replace('/\D+/', '', $siteSettings['site_phone']) }}">{{ $siteSettings['site_phone'] }}</a></li>@endif
+                        </ul></div>
+                    </div>
+                    <div class="col-auto"><div class="header-links"><ul><li><div class="th-social">
+                        @foreach (['facebook'=>'social_facebook','twitter'=>'social_x','linkedin'=>'social_linkedin','instagram'=>'social_instagram','youtube'=>'social_youtube'] as $network=>$setting)
+                            @if (!empty($siteSettings[$setting]))<a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings[$setting]) }}" target="_blank" rel="noopener noreferrer" aria-label="{{ ucfirst($network) }}"><i class="fab fa-{{ $network === 'facebook' ? 'facebook-f' : ($network === 'twitter' ? 'twitter' : $network) }}"></i></a>@endif
+                        @endforeach
+                    </div></li></ul></div></div>
+                </div>
+            </div>
+        </div>
+    @endunless
+    <header class="th-header header-default {{ request()->routeIs('home') ? 'header-layout9' : '' }}">
         <div class="sticky-wrapper" data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
             <div class="menu-area">
                 <div class="container">
@@ -237,7 +256,7 @@
     <main>
         @yield('content')
     </main>
-    <footer class="footer-wrapper footer-layout1">
+    <footer class="footer-wrapper {{ request()->routeIs('home') ? 'footer-layout1' : 'footer-default' }}">
             <div class="widget-area">
             <div class="container">
                 @php
