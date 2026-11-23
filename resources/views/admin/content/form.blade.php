@@ -40,10 +40,8 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Photo</label>
-                        <input class="form-control" type="file" name="photo" id="upload-testimonial-photo" accept="image/*">
-                        <input type="hidden" name="photo_media_id" id="media-testimonial-photo"
-                            value="{{ old('photo_media_id', $mediaItems->firstWhere('path', $item->photo)?->id) }}"
-                            data-media-upload-input="upload-testimonial-photo">
+<input type="hidden" name="photo_media_id" id="media-testimonial-photo"
+                            value="{{ old('photo_media_id', $mediaItems->firstWhere('path', $item->photo)?->id) }}">
                         <button type="button" class="btn btn-sm btn-outline-primary mt-2"
                             data-open-media-picker data-target="media-testimonial-photo">Choose from Media Library</button>
                         <div class="mt-2">
@@ -106,10 +104,8 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Photo</label>
-                        <input class="form-control" type="file" name="photo" id="upload-team-photo" accept="image/*">
-                        <input type="hidden" name="photo_media_id" id="media-team-photo"
-                            value="{{ old('photo_media_id', $mediaItems->firstWhere('path', $item->photo)?->id) }}"
-                            data-media-upload-input="upload-team-photo">
+<input type="hidden" name="photo_media_id" id="media-team-photo"
+                            value="{{ old('photo_media_id', $mediaItems->firstWhere('path', $item->photo)?->id) }}">
                         <button type="button" class="btn btn-sm btn-outline-primary mt-2"
                             data-open-media-picker data-target="media-team-photo">Choose from Media Library</button>
                         <div class="mt-2"><img class="rounded" width="88" data-media-preview
@@ -151,11 +147,8 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Category icon</label>
-                        <input class="form-control" type="file" name="icon_path" id="upload-category-icon"
-                            accept="image/png,image/jpeg,image/webp">
-                        <input type="hidden" name="icon_media_id" id="media-category-icon"
-                            value="{{ old('icon_media_id', $mediaItems->firstWhere('path', $item->icon_path)?->id) }}"
-                            data-media-upload-input="upload-category-icon">
+<input type="hidden" name="icon_media_id" id="media-category-icon"
+                            value="{{ old('icon_media_id', $mediaItems->firstWhere('path', $item->icon_path)?->id) }}">
                         <button type="button" class="btn btn-sm btn-outline-primary mt-2"
                             data-open-media-picker data-target="media-category-icon">Choose from Media Library</button>
                         <div class="mt-2"><img src="{{ $item->icon_path ? asset('storage/' . $item->icon_path) : '' }}"
@@ -201,13 +194,11 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Image</label>
-                        <input class="form-control" type="file" name="image" id="upload-banner-image" accept="image/*">
-                    </div>
+</div>
                     <div class="col-md-6">
                         <label class="form-label">Select banner image from Media Library</label>
                         <input type="hidden" name="image_media_id" id="media-banner-image"
-                            value="{{ old('image_media_id', $mediaItems->firstWhere('path', $item->image)?->id) }}"
-                            data-media-upload-input="upload-banner-image">
+                            value="{{ old('image_media_id', $mediaItems->firstWhere('path', $item->image)?->id) }}">
                         <button type="button" class="btn btn-sm btn-outline-primary mt-2"
                             data-open-media-picker data-target="media-banner-image">Choose from Media Library</button>
                         <div class="mt-2"><img src="{{ $item->image ? asset('storage/' . $item->image) : '' }}"
@@ -266,18 +257,17 @@
                     @if (in_array($type, ['posts', 'services']))
                         <div class="col-md-6">
                             <label class="form-label">Featured image</label>
-                            <input class="form-control" type="file" name="featured_image" id="upload-featured-image" accept="image/*">
-                        </div>
+</div>
                         <div class="col-md-6">
                             <label class="form-label">Select featured image from Media Library</label>
                             <input type="hidden" name="featured_image_media_id" id="media-featured-image"
-                                value="{{ old('featured_image_media_id', $mediaItems->firstWhere('path', $item->featured_image)?->id) }}"
-                                data-media-upload-input="upload-featured-image">
+                                value="{{ old('featured_image_media_id', $mediaItems->firstWhere('path', $item->featured_image)?->id) }}">
                             <button type="button" class="btn btn-sm btn-outline-primary mt-2"
                                 data-open-media-picker data-target="media-featured-image">Choose from Media Library</button>
                             <div class="mt-2"><img src="{{ $item->featured_image ? asset('storage/' . $item->featured_image) : '' }}"
                                 alt="Featured image preview" class="rounded" style="max-width:180px;max-height:100px;object-fit:cover"
                                 data-media-preview @if (!$item->featured_image) hidden @endif><span class="small text-muted" data-media-meta></span></div>
+                            <label class="form-check mt-2"><input class="form-check-input" type="checkbox" name="remove_featured_image" value="1"> Remove selected featured image</label>
                         </div>
                         @if ($type === 'services')
                             <div class="col-12">
@@ -285,9 +275,11 @@
                                 <textarea class="form-control font-monospace" name="features_json" rows="7" placeholder='[{"title":"Property review","description":"Review the requirements","icon":"fa-house"}]'>{{ old('features_json', json_encode(($serviceFeatures ?? collect())->map(fn($feature) => ['title' => $feature->title, 'description' => $feature->description, 'icon' => $feature->icon])->values(), JSON_PRETTY_PRINT)) }}</textarea>
                                 <div class="form-text">Each feature supports title, description and optional icon. Leave empty if no feature list is required.</div>
                             </div>
-                            <div class="col-12">
+                                                        <div class="col-12">
                                 <label class="form-label">Inside images</label>
-                                <input class="form-control" type="file" name="inside_images[]" accept="image/jpeg,image/png,image/webp" multiple>
+                                <p class="form-text">Choose existing images from the Media Library. Each image is attached only to this service's detail gallery.</p>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-open-media-picker data-media-multiple data-target="service-inside-media-selection">Add images from Media Library</button>
+                                <div id="service-inside-media-selection" data-input-name="inside_image_media_ids[]" class="d-flex flex-wrap gap-2 mt-2"></div>
                                 @if (($serviceImages ?? collect())->isNotEmpty())
                                     <div class="row g-3 mt-1">
                                         @foreach ($serviceImages as $serviceImage)
@@ -357,13 +349,11 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Social sharing image</label>
-                        <input class="form-control" type="file" name="og_image" id="upload-og-image" accept="image/*">
-                    </div>
+</div>
                     <div class="col-md-6">
                         <label class="form-label">Select social image from Media Library</label>
                         <input type="hidden" name="og_image_media_id" id="media-og-image"
-                            value="{{ old('og_image_media_id', $mediaItems->firstWhere('path', $item->og_image)?->id) }}"
-                            data-media-upload-input="upload-og-image">
+                            value="{{ old('og_image_media_id', $mediaItems->firstWhere('path', $item->og_image)?->id) }}">
                         <button type="button" class="btn btn-sm btn-outline-primary mt-2"
                             data-open-media-picker data-target="media-og-image">Choose from Media Library</button>
                         <div class="mt-2"><img src="{{ $item->og_image ? asset('storage/' . $item->og_image) : '' }}"
@@ -407,32 +397,6 @@
                     }
                     $('[name="type"]').on('change', filterParentCategories);
                     filterParentCategories();
-                });
-            </script>
-        @endpush
-    @endif
-    @if ($type === 'services')
-        @push('scripts')
-            <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    const input = document.querySelector('input[name="inside_images[]"]');
-                    if (!input) return;
-                    const previews = document.createElement('div');
-                    previews.className = 'd-flex flex-wrap gap-2 mt-2';
-                    input.insertAdjacentElement('afterend', previews);
-                    input.addEventListener('change', function () {
-                        previews.innerHTML = '';
-                        Array.from(input.files || []).forEach(function (file) {
-                            const image = document.createElement('img');
-                            image.src = URL.createObjectURL(file);
-                            image.alt = file.name;
-                            image.className = 'rounded';
-                            image.style.width = '120px';
-                            image.style.height = '88px';
-                            image.style.objectFit = 'cover';
-                            previews.appendChild(image);
-                        });
-                    });
                 });
             </script>
         @endpush
