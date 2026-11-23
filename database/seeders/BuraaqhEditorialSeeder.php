@@ -7,6 +7,7 @@ use App\Models\FaqItem;
 use App\Models\NeighborhoodGuide;
 use App\Models\Page;
 use App\Models\Post;
+use App\Models\Tag;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -136,6 +137,8 @@ HTML,
 <p>The agreement should identify the parties and property accurately and set out the consideration, payment stages, deadlines, conditions precedent, possession date, included fixtures, taxes and charges, default consequences and refund terms. Ensure that every promise material to your decision is recorded. Avoid signing blank pages, incomplete schedules or documents you have not had time to review.</p>
 <h2>Use a transaction-specific checklist</h2>
 <ul><li>Current title deed and relevant prior deeds.</li><li>Identity and authority documents for every seller or signatory.</li><li>Property description, site plan and area measurements.</li><li>Applicable revenue, land-use and layout records.</li><li>Sanctioned building plan and relevant completion or occupancy records.</li><li>Available encumbrance, litigation and dues checks.</li><li>Tax, utility, maintenance and society records where relevant.</li><li>Draft agreement, payment receipts and possession terms.</li></ul>
+<h2>Keep copies and resolve discrepancies before signing</h2>
+<p>Make a simple index of the records received, the date they were obtained and the person or authority that supplied them. Compare names, dates, plot or unit numbers, boundaries and area descriptions across the documents. If two records do not match, ask your lawyer to explain the discrepancy and identify the record that should be corrected or further verified. Avoid relying on a promise that a missing document will be supplied after payment. A written list of unresolved items, with an agreed owner and deadline for each, makes it easier to decide whether the transaction is ready to proceed.</p>
 <h2>Conclusion</h2>
 <p>No single checklist guarantees a clear title or an approved building. The right review depends on the property's history, location, use and ownership structure. Obtain current records from the appropriate authorities and have the originals reviewed by an independent lawyer before making a payment or signing a binding agreement. This article is general information, not legal advice or a certification of any property.</p>
 HTML,
@@ -162,6 +165,8 @@ HTML,
 <p>Neither residential nor commercial property guarantees rental income, resale demand or capital appreciation. Vacancy, repairs, financing costs, local competition, building condition, legal restrictions and changing user needs can affect outcomes. If you are evaluating an investment, test conservative scenarios and calculate net income after recurring expenses, taxes, vacancy and maintenance. Do not base a decision only on a projected rent or an informal promise of future value.</p>
 <h2>A practical comparison checklist</h2>
 <ul><li>What exact use is permitted for the property?</li><li>Does the layout support the intended household or business activity?</li><li>What are the complete acquisition, fit-out and recurring costs?</li><li>Are access, utilities, parking and maintenance arrangements suitable?</li><li>Have title, approvals, restrictions and outstanding dues been reviewed?</li><li>What happens if the property remains vacant or the intended use changes?</li></ul>
+<h2>Financing and ownership responsibilities</h2>
+<p>Residential and commercial buyers should also compare the financing conditions available to them and the obligations that continue after completion. Ask the lender which property records it needs, whether the proposed property and transaction meet its requirements, and which costs fall outside the loan. For a commercial space, consider fit-out ownership, repair obligations, common-area charges and the practical effect of a vacancy. For a home, consider maintenance, association rules, utility deposits and likely repairs. Do not treat a preliminary lender discussion as a sanction or assume that a property will qualify without the lender's own checks.</p>
 <h2>Conclusion</h2>
 <p>The better choice is the one that fits the buyer's purpose, financial capacity and verified property facts. Compare individual properties on a like-for-like basis and obtain legal, technical and financial advice appropriate to the transaction. Buraaqh Properties provides general real estate information for Bareilly; specific commercial or residential availability and permitted use must be independently confirmed.</p>
 HTML,
@@ -188,6 +193,8 @@ HTML,
 <p>When comparing homes, record the exact location, area measurement, construction age and condition, floor, orientation, access, parking, maintenance, included fixtures and total cost. Do not compare a quoted price per square foot unless the area basis is consistent. Ask for evidence supporting any claim about recent transactions or expected demand. Avoid relying on unsupported appreciation estimates.</p>
 <h2>Keep a locality visit sheet</h2>
 <ul><li>Exact address and route tested.</li><li>Visit date and time, traffic and noise observations.</li><li>Water, electricity, drainage and waste arrangements.</li><li>Nearby services actually visited or independently confirmed.</li><li>Street access, lighting, parking and maintenance responsibilities.</li><li>Questions about land use, title, approvals and shared access.</li><li>Unresolved issues that need written clarification.</li></ul>
+<h2>Check the records behind locality claims</h2>
+<p>If a seller or intermediary refers to a planned road, upcoming facility, approved development or future commercial activity, ask for the exact project name, authority, approval status and supporting public record. Distinguish an announced proposal from a funded project, a project under construction and a completed facility. Do not include a future project in your affordability or resale assumptions unless its status and relevance to the property have been independently established. If a locality has shared lanes, private access roads or common services, ask who maintains them and what rights the property owner receives.</p>
 <h2>Conclusion</h2>
 <p>A good locality decision is based on the household's own needs and the verified conditions at the exact property. Use area names as a starting point, then check the street, building, services and records yourself. This guide is a practical checklist, not a ranking of Bareilly neighbourhoods or a claim about infrastructure, prices or future appreciation.</p>
 HTML,
@@ -240,6 +247,8 @@ HTML,
 <p>Even if you plan to stay for many years, consider whether the property can adapt to changing needs. Think about the layout, access, maintenance, legal clarity, building condition and potential restrictions on future alterations or transfer. Do not rely on guaranteed appreciation or an informal prediction of resale value. If investment performance matters, obtain independent financial advice and use conservative assumptions.</p>
 <h2>Compare with a written scorecard</h2>
 <ul><li>Household fit and usable area.</li><li>Construction condition and expected repairs.</li><li>Exact location, access and utilities.</li><li>Title, approvals and legal restrictions.</li><li>Purchase cost and recurring expenses.</li><li>Maintenance arrangements and future flexibility.</li><li>Open questions and documents still required.</li></ul>
+<h2>Consider the household's future use</h2>
+<p>Think about how the home may work if household members change, a family member needs step-free access, work patterns shift or additional storage becomes important. Ask whether the layout can adapt without major structural changes and whether the building rules allow the alterations you may want. If the property is part of a managed development, review the maintenance plan and understand how shared systems are funded. These questions do not predict future value; they help establish whether the property is likely to remain practical for the people who will use it.</p>
 <h2>Conclusion</h2>
 <p>The right home is not necessarily the largest or the newest; it is the property that meets the household's needs, fits the complete budget and stands up to independent verification. Compare facts consistently, inspect carefully and take professional advice before committing.</p>
 HTML,
@@ -266,11 +275,31 @@ HTML,
 <p>A buyer may need help comparing several localities and property types; a seller may need advice on preparing accurate information and arranging viewings; a business may need to confirm permitted use and practical access. Explain your priorities and ask how the consultant would structure the search or marketing process. Be cautious of pressure to pay immediately, promises of guaranteed returns or claims that documents do not need independent review.</p>
 <h2>Questions worth asking</h2>
 <ul><li>What exact service will you provide and what is excluded?</li><li>How are property details and availability confirmed?</li><li>What documents should I obtain independently?</li><li>How are fees, commissions and referral arrangements handled?</li><li>Who coordinates viewings, negotiations and written updates?</li><li>Which questions require a lawyer, engineer, lender or authority?</li><li>Can the scope, fee and responsibilities be recorded in writing?</li></ul>
+<h2>Agree how issues will be escalated</h2>
+<p>Before work begins, agree what happens when a property detail cannot be confirmed, a document is missing, a viewing is cancelled or the parties disagree about a proposed term. Ask whether the consultant will record the issue, who is expected to respond and when you should seek independent advice. Establish whether the consultant represents one party or is coordinating communication between several parties. Clear boundaries reduce confusion and help prevent a coordination role from being mistaken for a legal, financial or technical certification.</p>
 <h2>Conclusion</h2>
 <p>A useful consultant relationship is based on a clear scope, transparent fees, accurate communication and respect for independent verification. Compare the service offered with your actual requirement and do not rely on guarantees about title, approval, availability or investment returns. Ask for written terms before you proceed.</p>
 HTML,
             ],
         ];
+
+        $tagMap = [
+            'complete-guide-buying-residential-property-bareilly' => ['Bareilly Property', 'Property Buying', 'Residential Property', 'Due Diligence'],
+            'documents-check-before-buying-property-uttar-pradesh' => ['Property Documents', 'Uttar Pradesh', 'Due Diligence'],
+            'residential-vs-commercial-property-buyer-guide' => ['Residential Property', 'Commercial Property', 'Property Buying'],
+            'evaluate-locality-before-purchasing-home' => ['Bareilly Property', 'Locality Selection', 'Residential Property'],
+            'property-registration-due-diligence-uttar-pradesh' => ['Property Documents', 'Uttar Pradesh', 'Due Diligence'],
+            'important-factors-choosing-residential-property' => ['Residential Property', 'Property Buying', 'Home Ownership'],
+            'questions-before-selecting-real-estate-consultant' => ['Bareilly Property', 'Property Consultation', 'Due Diligence'],
+        ];
+
+        $tagRecords = [];
+        foreach (array_unique(array_merge(...array_values($tagMap))) as $tagName) {
+            $tagRecords[$tagName] = Tag::query()->firstOrCreate(
+                ['slug' => Str::slug($tagName)],
+                ['name' => $tagName]
+            );
+        }
 
         foreach ($articles as $article) {
             $post = Post::query()->firstOrCreate(
@@ -292,6 +321,10 @@ HTML,
             if ($category) {
                 $post->categories()->syncWithoutDetaching([$category->id]);
             }
+
+            foreach ($tagMap[$article['slug']] ?? [] as $tagName) {
+                $post->tags()->syncWithoutDetaching([$tagRecords[$tagName]->id]);
+            }
         }
     }
 
@@ -310,6 +343,12 @@ HTML,
             ['Does Buraaqh Properties guarantee property appreciation or rental income?', 'No website article or general consultation should be treated as a guarantee of appreciation, rental income, resale value or investment performance. Outcomes depend on the property, market conditions, costs, legal position and many other factors. Obtain independent financial advice and assess conservative scenarios.'],
             ['Can I rely on photographs instead of visiting a property?', 'Photographs can help with an initial review but cannot establish the property's current condition, exact dimensions, surroundings, access, utilities or legal status. Visit the specific property and obtain the relevant documents and independent checks before making a decision.'],
             ['What information should I include in a property enquiry?', 'Share the property type, intended use, preferred areas, broad budget, required size or features, expected timeline and the questions you need answered. Do not include bank credentials, identity document numbers or other sensitive financial information in a general website enquiry.'],
+            ['Does a property consultation include legal advice?', 'A general property consultation should not be treated as legal advice or a title certificate. Ask what the service actually includes and have ownership, land use, approvals and agreement terms reviewed by an independent qualified property lawyer.'],
+            ['Can a property search guarantee that a suitable listing is available?', 'No. Property availability changes and depends on information supplied by owners or authorised representatives. Ask for the date and source of each property detail and confirm current availability before arranging a visit or making a payment.'],
+            ['Is a property site visit the same as a technical inspection?', 'No. A viewing helps you observe the property and prepare questions, but it is not a structural, electrical, plumbing or legal inspection. Arrange an appropriately qualified specialist when technical or legal verification is required.'],
+            ['Can a consultant certify the market value of my property?', 'A discussion of asking prices or comparable information is not automatically a formal valuation. If you need a valuation for lending, taxation, accounting or a legal purpose, confirm the required qualification and appoint an appropriately authorised professional.'],
+            ['How are real estate consultation fees confirmed?', 'Ask for the scope, fee amount, applicable taxes, payment timing, refund terms and any referral or commission arrangement in writing before engaging a service. Do not assume that a general enquiry or initial conversation has a particular fee structure.'],
+            ['Does commercial property guidance confirm that my business can operate at a location?', 'No. Permitted use, licences, safety requirements, building approvals and other conditions depend on the exact premises and activity. Confirm the requirements with the relevant authority and qualified professionals before signing a lease or purchase agreement.'],
         ];
 
         foreach ($faqs as $index => [$question, $answer]) {
