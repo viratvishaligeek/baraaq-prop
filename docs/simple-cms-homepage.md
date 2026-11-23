@@ -22,7 +22,7 @@ Replacing an image does not silently delete an existing Media Library asset. Leg
 
 ## Persistence correctness
 
-Homepage section registry identifiers are literal dotted keys, such as hero.home-9 and properties.index. Admin updates and media rendering resolve these keys from the registry array instead of treating the identifier as a nested config path. Persisted Admin section configuration takes precedence over legacy data_source values during rendering. New HomepageSection records receive an instance UUID when one is not supplied.
+Homepage section registry identifiers are literal dotted keys, such as hero.home-9 and properties.index. Admin updates and media rendering resolve these keys from the registry array instead of treating the identifier as a nested config path. Persisted Admin section configuration takes precedence over legacy data_source values during rendering. New HomepageSection records receive an instance UUID when one is not supplied. Both homepage forms submit PATCH requests: admin.homepages.update handles root-level SEO and site/footer settings, while admin.homepages.sections.update handles config[field] values, uploaded config images and is_enabled. Both routes are inside the authenticated admin.access group and require settings.manage. The field-name audit matched the direct homepage form inputs to update() validation and section inputs to the registry-driven updateSection() rules.
 
 The Home 9 header and inner-page headers now share one responsive header layout. Mobile and desktop navigation use the same Admin-selected menu location; the frontend no longer substitutes a hardcoded navigation list when no menu is configured. Public CMS pages are available through the pages.show route used by dynamic menu links.
 
