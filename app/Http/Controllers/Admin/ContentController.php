@@ -166,6 +166,7 @@ class ContentController extends Controller
         unset($data['features_json'], $data['inside_images'], $data['inside_image_media_ids']);
         $insideImageFiles = $type === 'services' ? array_filter((array) $request->file('inside_images', [])) : [];
         $this->applyMediaSelections($data);
+        foreach (['remove_image', 'remove_featured_image', 'remove_photo', 'remove_icon_path', 'remove_og_image'] as $removeInput) unset($data[$removeInput]);
         $categoryIds = $data['category_ids'] ?? [];
         $tagIds = $data['tag_ids'] ?? [];
         unset($data['category_ids'], $data['tag_ids']);
