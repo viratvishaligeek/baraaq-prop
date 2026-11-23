@@ -203,12 +203,15 @@ class LocalContentCmsTest extends TestCase
             'title' => 'Bareilly property gallery image',
             'description' => 'A published gallery entry.',
             'image_media_id' => $galleryMedia->id,
+            'category' => 'apartment',
             'alt_text' => 'Residential property exterior',
             'status' => 'published',
             'sort_order' => 1,
         ])->assertRedirect(route('admin.site-content.index', 'gallery'));
 
         $this->assertDatabaseHas('gallery_items', ['title' => 'Bareilly property gallery image', 'status' => 'published']);
+        $this->assertDatabaseHas('gallery_items', ['title' => 'Bareilly property gallery image', 'category' => 'apartment']);
+        $this->get(route('gallery.index', ['category' => 'apartment']))->assertOk()->assertSee('cat1', false);
         $this->assertDatabaseHas('media', ['original_name' => 'property.jpg']);
         $gallery = GalleryItem::query()->where('title', 'Bareilly property gallery image')->firstOrFail();
         $storedPath = $gallery->image;
