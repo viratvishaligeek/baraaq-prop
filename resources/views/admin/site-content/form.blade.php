@@ -19,4 +19,32 @@
 <div class="col-md-4"><label class="form-label">Sort order</label><input class="form-control" type="number" min="0" name="sort_order" value="{{ old('sort_order',$item->sort_order??0) }}"></div><div class="col-md-4"><label class="form-label">Status</label><select class="form-select" name="status"><option value="draft" @selected(old('status',$item->status)==='draft')>Draft</option><option value="published" @selected(old('status',$item->status)==='published')>Published</option><option value="archived" @selected(old('status',$item->status)==='archived')>Archived</option></select></div><div class="col-md-4"><label class="form-label">Focus keyword</label><input class="form-control" name="focus_keyword" value="{{ old('focus_keyword',$item->focus_keyword) }}"></div>
 <div class="col-md-6"><label class="form-label">Meta title</label><input class="form-control" name="meta_title" value="{{ old('meta_title',$item->meta_title) }}"></div><div class="col-md-6"><label class="form-label">Meta description</label><textarea class="form-control" name="meta_description" rows="2">{{ old('meta_description',$item->meta_description) }}</textarea></div>
 @endif</div></div><div class="mt-3 d-flex gap-2"><button class="btn btn-primary">Save</button><a class="btn btn-light" href="{{ route('admin.site-content.index',$type) }}">Cancel</a></div></form>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const input = document.querySelector('form input[type="file"][name="image"]');
+    if (!input) return;
+    let preview = document.querySelector('[data-local-content-preview]');
+    if (!preview) {
+        preview = document.createElement('img');
+        preview.setAttribute('data-local-content-preview', '');
+        preview.className = 'img-fluid rounded mt-2';
+        preview.style.maxWidth = '220px';
+        preview.style.maxHeight = '140px';
+        preview.style.objectFit = 'cover';
+        preview.hidden = true;
+        input.insertAdjacentElement('afterend', preview);
+    }
+    input.addEventListener('change', function () {
+        const file = input.files && input.files[0];
+        if (!file) return;
+        preview.src = URL.createObjectURL(file);
+        preview.alt = file.name;
+        preview.hidden = false;
+    });
+});
+</script>
+@endpush
+
 @endsection
