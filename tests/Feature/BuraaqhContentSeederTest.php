@@ -40,6 +40,15 @@ class BuraaqhContentSeederTest extends TestCase
         $this->seed();
 
         $this->assertSame(1, Homepage::query()->count());
+        $this->assertSame(6, Page::query()->count());
+        $this->assertSame(7, Post::query()->count());
+        $this->assertSame(6, Service::query()->count());
+        $this->assertSame(24, ServiceFeature::query()->count());
+        $this->assertSame(13, Category::query()->count());
+        $this->assertSame(10, Tag::query()->count());
+        $this->assertSame(4, Menu::query()->count());
+        $this->assertSame(25, MenuItem::query()->count());
+        $this->assertSame(0, Property::query()->count());
         $this->assertSame(0, Property::published()->count());
         $this->assertSame(0, Service::published()->count());
         $this->assertSame(0, GalleryItem::query()->where('status', 'published')->count());
