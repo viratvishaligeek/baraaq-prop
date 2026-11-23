@@ -58,7 +58,7 @@ class ContentController extends Controller
     public function service(Service $service)
     {
         abort_unless($service->status === 'published' && $service->published_at && $service->published_at->lte(now()), 404);
-        return view('frontend.services.show', compact('service'));
+        return view('frontend.services.show', ['service' => $service->load(['features', 'images'])]);
     }
 
     public function team()
