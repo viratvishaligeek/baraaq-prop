@@ -73,6 +73,14 @@ jobs:
           php artisan storage:link --force
           SEED_DEMO_CONTENT=true DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan migrate --seed --force
 
+      - name: Prepare original HTML reference pages for visual comparison
+        run: |
+          mkdir -p public/reference
+          for file in "html Template"/*.html; do
+            sed -E 's#(src|href|data-bg-src|data-mask-src)="assets/#\1="/theme-assets/#g' "$file" > "public/reference/$(basename "$file")"
+          done
+          test "$(find public/reference -maxdepth 1 -type f -name '*.html' | wc -l)" -eq 13
+
       - name: Start Laravel for browser tests
         run: |
           APP_URL=http://127.0.0.1:8000 DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan serve --host=127.0.0.1 --port=8000 > /tmp/laravel-browser.log 2>&1 &
@@ -85,5 +93,13 @@ jobs:
           cat /tmp/laravel-browser.log
           exit 1
 
-      - name: Test the fixed Home 9 homepage at desktop, tablet and mobile sizes
+      - name: Capture original-versus-Laravel page screenshots at desktop, tablet and mobile sizes
         run: APP_URL=http://127.0.0.1:8000 DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite npm run test:e2e
+
+      - name: Upload original-versus-Laravel screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-reference-screenshots-${{ github.sha }}
+          path: test-results/
+          if-no-files-found: warn

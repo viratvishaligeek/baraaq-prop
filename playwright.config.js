@@ -4,6 +4,7 @@ module.exports = defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
   reporter: 'list',
+  outputDir: 'test-results',
   timeout: 30000,
   expect: { timeout: 5000 },
   use: {
