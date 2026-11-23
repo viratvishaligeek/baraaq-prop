@@ -1,7 +1,8 @@
 @extends('frontend.layouts.theme')
 
-@section('title', 'Contact Us · '.($siteSettings['site_title'] ?? config('app.name')))
-@section('meta_description', 'Contact our property team for viewing requests, property advice and general enquiries.')
+@section('title', ($page?->meta_title ?: 'Contact Us · '.($siteSettings['site_title'] ?? config('app.name'))))
+@section('meta_description', $page?->meta_description ?: 'Contact Buraaqh Properties in Bareilly, Uttar Pradesh, using the website enquiry form.')
+@section('canonical_url', route('contact'))
 
 @section('content')
     <section class="space">
@@ -13,6 +14,10 @@
                         <h1 class="sec-title">How can we help you?</h1>
                         <p>Send our team a message and we will get back to you as soon as possible.</p>
                     </div>
+
+                    @if ($page?->content)
+                        <div class="mb-4">{!! \\App\\Support\\HtmlSanitizer::sanitize($page->content) !!}</div>
+                    @endif
 
                     <div class="contact-form p-4 p-lg-5">
                         @if (session('enquiry_success'))
