@@ -49,12 +49,12 @@ class SiteContentController extends Controller {
    if($type==='faqs')$data['is_active']=$request->boolean('is_active');
    DB::transaction(function()use($item,$data,$type,$request,$newPath){$item->update($data);if($newPath)$this->registerMedia($request,$newPath,$request->file('image'),$data['alt_text']??$data['title']);});
   }catch(\Throwable $e){if($newPath)Storage::disk('public')->delete($newPath);throw $e;}
-  if($oldPath&&$oldPath!==($item->$field)&&!app(MediaReferenceChecker::class)->isPathReferenced($oldPath))Storage::disk('public')->delete($oldPath);
+  if($oldPath&&$oldPath!==($item->$field)&&!Media::where('path',$oldPath)->exists()&&!app(MediaReferenceChecker::class)->isPathReferenced($oldPath))Storage::disk('public')->delete($oldPath);
   return redirect()->route('admin.site-content.index',$type)->with('success','Content updated.');
  }
  public function destroy(string $type,int $id){
   $model=$this->model($type);$item=$model::findOrFail($id);$path=$type==='gallery'?$item->image:($type==='neighborhood-guides'?$item->hero_image:null);$item->delete();
-  if($path&&!app(MediaReferenceChecker::class)->isPathReferenced($path))Storage::disk('public')->delete($path);
+  if($path&&!Media::where('path',$path)->exists()&&!app(MediaReferenceChecker::class)->isPathReferenced($path))Storage::disk('public')->delete($path);
   return back()->with('success','Content deleted.');
  }
  private function validated(Request $request,string $type,?int $id=null):array{
