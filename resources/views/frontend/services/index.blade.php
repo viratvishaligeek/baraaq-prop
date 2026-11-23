@@ -7,6 +7,6 @@
 <div class="col-xl-4 col-md-12 fadeinup wow"><div class="service-card"><div class="box-thumb"><a href="{{ route('services.show', $service) }}"><img src="{{ $service->featured_image ? Storage::disk('public')->url($service->featured_image) : asset('theme-assets/img/service/service_inner_1.jpg') }}" alt="thumb"></a></div><div class="box-content"><div class="icon-wrap"><div class="icon"><img src="{{ asset('theme-assets/img/icon/why-icon-1-1.svg') }}" alt="img"></div><div class="number"><h3>01</h3></div></div><h3 class="box-title"><a href="{{ route('services.show', $service) }}">{{ $service->title }}</a></h3><p class="box-text">{{ $service->excerpt }}</p></div></div></div>
 @empty
 <div class="col-12 text-center text-muted">No services are currently published.</div>
-@endforelse<div class="col-12 text-center mt-50"><div class="th-pagination"><ul><li><a href="{{ route('blog.index') }}"><i class="far fa-arrow-left"></i></a></li><li><a href="{{ route('blog.index') }}">1</a></li><li><a href="{{ route('blog.index') }}">2</a></li><li><a href="{{ route('blog.index') }}">3</a></li><li><a class="next-page" href="{{ route('blog.index') }}">Next <i class="far fa-arrow-right"></i></a></li></ul></div></div></div></div></section>
-<div class="container mt-4">{{ $services->withQueryString()->links() }}</div>
+@endforelse</div></section>
+<div class="container mt-4">{{ $services->withQueryString()->links('vendor.pagination.buraaqh') }}</div>
 @endsection
