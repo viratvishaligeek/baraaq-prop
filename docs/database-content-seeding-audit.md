@@ -6,7 +6,7 @@
 
 ## 1. Migration inventory
 
-The repository contains **39 migration files**:
+The repository contains **39 migration files** and the migration set creates **48 distinct tables** (including Laravel framework tables):
 
 - **3 Laravel framework migrations:** users, cache, and jobs.
 - **36 application migrations:** 4 dated 17 November, 20 dated 18 November, 6 dated 19 November, 2 dated 22 November, 2 dated 23 November, and 2 dated 24 November 2026.
@@ -108,7 +108,7 @@ The Buraaqh seeder orchestration is:
 6. Seed primary and footer navigation menus.
 7. Seed the ten Home 9 section records and safe image relationships.
 
-Seeders use stable slugs/keys and `firstOrCreate` patterns. Exact old default copy is upgraded only when it still matches the known generated text; administrator-edited content is left alone. Existing menu items, section configuration, settings, category activation choices, and service content are not unconditionally replaced. The settings seeder replaces only recognised legacy template values (Pillar/Meerut branding, known fake contact/social placeholders, legacy map URLs, and known demo gallery paths); it preserves other administrator values, including intentionally blank settings. Only the exact old buy/sell menu URLs are migrated to the Buraaqh page destinations.
+Seeders use stable slugs/keys and `firstOrCreate` patterns. Exact old default copy is upgraded only when it still matches the known generated text; administrator-edited content is left alone. Existing menu items, section configuration, settings, category activation choices, and service content are not unconditionally replaced. The settings seeder replaces only recognised legacy template values (Pillar/Meerut branding, known fake contact/social placeholders, legacy map URLs, known demo gallery paths, and bundled Pillar theme logo/favicon/OG paths); it preserves other administrator values, including intentionally blank settings. Only the exact old buy/sell menu URLs are migrated to the Buraaqh page destinations.
 
 The legacy retirement seeder changes publication state only for known legacy template/demo identifiers. It does not delete records, service images, media files, enquiries, or newsletter subscribers. Old short editorial posts are retired only when their body still exactly matches the previous generated template copy.
 
@@ -121,6 +121,8 @@ Expected starter records on an empty database after `php artisan migrate --seed`
 | Homepages | 1 | Home 9, default and published |
 | Homepage sections | 10 | 5 enabled; 5 withheld until verified content exists |
 | Categories | 13 | 8 property + 5 blog categories |
+| Website settings | 57 | Brand, header/footer, contact placeholders, SEO and theme defaults |
+| Roles / permissions | 2 / 116 | Administrator and editor roles; stable permission slugs |
 | Pages | 6 | About, Contact, Buy, Sell, Privacy, FAQ |
 | Editorial posts | 7 | Long-form educational articles |
 | Blog tags | 10 | Linked to relevant articles |
@@ -143,14 +145,14 @@ The Home 9 seeder reuses bundled images already committed under `public/theme-as
 
 | Homepage use | Existing asset |
 |---|---|
-| Hero background | `theme-assets/img/hero/hero-10-2.jpg` |
-| Hero foreground | `theme-assets/img/hero/hero-9-right.png` |
-| About primary | `theme-assets/img/why/why-choose-left-1.jpg` |
-| About secondary | `theme-assets/img/hero/hero-8-left.jpg` |
-| About tertiary | `theme-assets/img/contact/contact-img.jpg` |
-| Home details decorative image | `theme-assets/img/hero/hero-10-3.jpg` |
+| Hero background | `theme-assets/img/hero/hero-10-2.jpg` | 310 × 800 |
+| Hero foreground | `theme-assets/img/hero/hero-9-right.png` | 1079 × 946 |
+| About primary | `theme-assets/img/why/why-choose-left-1.jpg` | 661 × 526 |
+| About secondary | `theme-assets/img/hero/hero-8-left.jpg` | 854 × 854 |
+| About tertiary | `theme-assets/img/contact/contact-img.jpg` | 972 × 893 |
+| Home details decorative image | `theme-assets/img/hero/hero-10-3.jpg` | 270 × 400 |
 
-The importer checks that a bundled image exists, is an image MIME type, and has minimum usable dimensions before creating a Media Library record. It uses a stable path-derived identifier and `firstOrCreate` so reruns reuse the same record. Existing administrator-selected images or custom paths are preserved.
+The importer checks that a bundled image exists, is an image MIME type, and is at least 240 × 180 pixels before creating a Media Library record. The six selected raster assets were checked for dimensions and visual role; all pass that threshold. It uses a stable path-derived identifier and `firstOrCreate` so reruns reuse the same record. Existing administrator-selected images or custom paths are preserved.
 
 No unverified template photography is assigned to property listings, service featured/inside images, blog featured images, locality guides, or the public gallery. Those content types remain without images until approved source imagery is available.
 
