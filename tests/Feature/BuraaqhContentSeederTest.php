@@ -100,6 +100,9 @@ class BuraaqhContentSeederTest extends TestCase
         $testimonialSection = HomepageSection::query()->where('section_key', 'testimonials.home-3')->firstOrFail();
         $this->assertNull(data_get($testimonialSection->config, 'avatar_group_image'));
         $this->assertSame([], Setting::read('footer_gallery_images', []));
+        $this->assertSame('', Setting::read('logo'));
+        $this->assertSame('', Setting::read('favicon'));
+        $this->assertSame('', Setting::read('default_og_image'));
         $this->assertSame('Buraaqh Properties', Setting::read('site_title'));
         $this->assertSame('Bareilly', Setting::read('service_area_city'));
         $this->assertSame('', Setting::read('site_phone'));
@@ -293,6 +296,9 @@ class BuraaqhContentSeederTest extends TestCase
             'footer_location_heading' => ['Pillar Location', 'footer', 'string'],
             'site_tagline' => ['Pillar Real Estate in Meerut', 'general', 'string'],
             'footer_gallery_images' => [json_encode(['piller-demo/demo.jpg']), 'footer', 'json'],
+            'logo' => ['theme-assets/img/logo-white.svg', 'branding', 'image'],
+            'favicon' => ['theme-assets/img/favicons/favicon-32x32.png', 'branding', 'image'],
+            'default_og_image' => ['piller-demo/og-image.jpg', 'seo', 'image'],
             'custom_notice' => ['Administrator-approved wording', 'custom', 'string'],
         ];
 
