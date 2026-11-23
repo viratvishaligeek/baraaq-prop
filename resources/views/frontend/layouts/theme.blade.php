@@ -290,12 +290,22 @@
                         
 
                         <div class="widget footer-widget">
-                            <h3 class="widget_title">{{ $siteSettings['footer_about_heading'] ?? '' }} {{ $siteSettings['site_title'] ?? config('app.name') }}
-                            </h3>
+                            @if (request()->routeIs('home'))
+                                <h3 class="widget_title">{{ $siteSettings['footer_about_heading'] ?? 'About' }} {{ $siteSettings['site_title'] ?? config('app.name') }}</h3>
+                            @endif
                             <div class="th-widget-about">
-                                <p class="about-text">
-                                    {{ $siteSettings['footer_description'] ?? '' }}
-                                </p>
+                                @unless (request()->routeIs('home'))
+                                    <div class="about-logo">
+                                        <a href="{{ route('home') }}">
+                                            @if (!empty($siteSettings['logo']))
+                                                <img src="{{ asset('storage/' . $siteSettings['logo']) }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                            @else
+                                                <span class="site-brand-wordmark site-brand-wordmark--inverse">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
+                                            @endif
+                                        </a>
+                                    </div>
+                                @endunless
+                                <p class="about-text">{{ $siteSettings['footer_description'] ?? '' }}</p>
                                 <div class="footer-info-wrap">
                                     <div class="footer-info">
                                         <i class="fas fa-phone">
@@ -324,14 +334,17 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="about-logo">
-                                    <a href="{{ route('home') }}">
-                                        @if (!empty($siteSettings['logo']))
-                                            <img src="{{ asset('storage/' . $siteSettings['logo']) }}"
-                                            alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">@else<span class="site-brand-wordmark site-brand-wordmark--inverse">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
-                                        @endif
-                                    </a>
-                                </div>
+                                @if (request()->routeIs('home'))
+                                    <div class="about-logo">
+                                        <a href="{{ route('home') }}">
+                                            @if (!empty($siteSettings['logo']))
+                                                <img src="{{ asset('storage/' . $siteSettings['logo']) }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                            @else
+                                                <span class="site-brand-wordmark site-brand-wordmark--inverse">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
+                                            @endif
+                                        </a>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     
