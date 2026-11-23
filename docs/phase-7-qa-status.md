@@ -25,7 +25,7 @@
 
 No Laravel or browser test is reported as passing in this phase.
 
-The available execution container has PHP 8.4.24, Node 22.16.0 and npm 10.9.2, but Composer is not installed and there is no local repository checkout. Therefore the following were not executed here:
+The available execution container reports PHP 8.4.24, Node v22.16.0 and npm 10.9.2. Composer is unavailable and no local repository checkout exists. The repository reports zero GitHub Actions workflow runs for this branch. Therefore the following were not executed here:
 
 - `composer validate --strict`
 - `composer install`
@@ -36,7 +36,7 @@ The available execution container has PHP 8.4.24, Node 22.16.0 and npm 10.9.2, b
 - PHP lint across the repository
 - Playwright desktop/tablet/mobile tests
 
-The GitHub Actions workflow is configured to run these checks and includes `workflow_dispatch`, but the repository currently reports zero workflow runs for this branch.
+The GitHub Actions workflow is configured to run these checks and includes `workflow_dispatch`. It has not produced a run for this branch, so there are no test pass/fail results to report. Current execution count: 0 tests run, 0 passed, 0 failed.
 
 The repository has no Vite/Webpack/Mix build configuration and `package.json` contains only the Playwright test script. Frontend theme assets are committed under `public/theme-assets`; the workflow runs a build only if a build script is later added. No asset compilation was claimed.
 
