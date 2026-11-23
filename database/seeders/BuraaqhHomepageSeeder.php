@@ -252,6 +252,16 @@ class BuraaqhHomepageSeeder extends Seeder
                     $configChanged = true;
                     $currentValue = (int) $existingAttachmentId;
                 } elseif (
+                    $key === 'testimonials.home-3'
+                    && $field === 'avatar_group_image'
+                    && is_string($currentValue)
+                    && $currentValue === $defaultValue
+                ) {
+                    // Never seed the template's unidentified reviewer portraits.
+                    $persistedConfig[$field] = null;
+                    $configChanged = true;
+                    $currentValue = null;
+                } elseif (
                     isset($imageMap[$key][$field])
                     && is_string($currentValue)
                     && $currentValue === $defaultValue
