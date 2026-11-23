@@ -197,26 +197,42 @@
             </div>
         </div>
     </div>
-    @unless (request()->routeIs('home'))
-        <div class="header-top">
-            <div class="container">
-                <div class="row justify-content-center justify-content-lg-between align-items-center gy-2">
-                    <div class="col-auto d-none d-lg-block">
-                        <div class="header-links"><ul>
-                            @if (!empty($siteSettings['site_email']))<li><i class="fa-solid fa-envelope"></i> <a href="mailto:{{ $siteSettings['site_email'] }}">{{ $siteSettings['site_email'] }}</a></li>@endif
-                            @if (!empty($siteSettings['site_phone']))<li><i class="fa-solid fa-phone"></i> <a href="tel:{{ preg_replace('/\D+/', '', $siteSettings['site_phone']) }}">{{ $siteSettings['site_phone'] }}</a></li>@endif
-                        </ul></div>
+    <header class="th-header header-default {{ request()->routeIs('home') ? 'header-layout9' : '' }}">
+        @unless (request()->routeIs('home'))
+            <div class="header-top">
+                <div class="container">
+                    <div class="row justify-content-center justify-content-lg-between align-items-center gy-2">
+                        <div class="col-auto d-none d-lg-block">
+                            <div class="header-links"><ul>
+                                @if (!empty($siteSettings['site_email']))
+                                    <li><i class="fa-solid fa-envelope"></i> <a href="mailto:{{ $siteSettings['site_email'] }}">{{ $siteSettings['site_email'] }}</a></li>
+                                @endif
+                                @if (!empty($siteSettings['site_phone']))
+                                    <li><i class="fa-solid fa-phone"></i> <a href="tel:{{ preg_replace('/\D+/', '', $siteSettings['site_phone']) }}">{{ $siteSettings['site_phone'] }}</a></li>
+                                @endif
+                            </ul></div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="header-links"><ul>
+                                <li><div class="th-social">
+                                    @foreach (['facebook' => 'social_facebook', 'twitter' => 'social_x', 'linkedin' => 'social_linkedin', 'whatsapp' => 'whatsapp_number'] as $network => $setting)
+                                        @if (!empty($siteSettings[$setting]))
+                                            <a href="{{ $network === 'whatsapp' ? 'https://wa.me/' . preg_replace('/\D+/', '', $siteSettings[$setting]) : \App\Rules\SafeLink::sanitizeHttp($siteSettings[$setting]) }}" target="_blank" rel="noopener noreferrer" aria-label="{{ ucfirst($network) }}"><i class="fab fa-{{ $network === 'facebook' ? 'facebook-f' : ($network === 'linkedin' ? 'linkedin-in' : $network) }}"></i></a>
+                                        @endif
+                                    @endforeach
+                                </div></li>
+                                <li class="lang-wrapper"><div class="lang-menu">
+                                    <div class="icon"><img src="{{ asset('theme-assets/img/icon/english.png') }}" alt="Language"></div>
+                                    <select class="form-select nice-select" aria-label="Language">
+                                        <option selected>English</option><option>Spanish</option><option>Hindi</option>
+                                    </select>
+                                </div></li>
+                            </ul></div>
+                        </div>
                     </div>
-                    <div class="col-auto"><div class="header-links"><ul><li><div class="th-social">
-                        @foreach (['facebook'=>'social_facebook','twitter'=>'social_x','linkedin'=>'social_linkedin','instagram'=>'social_instagram','youtube'=>'social_youtube'] as $network=>$setting)
-                            @if (!empty($siteSettings[$setting]))<a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings[$setting]) }}" target="_blank" rel="noopener noreferrer" aria-label="{{ ucfirst($network) }}"><i class="fab fa-{{ $network === 'facebook' ? 'facebook-f' : ($network === 'twitter' ? 'twitter' : $network) }}"></i></a>@endif
-                        @endforeach
-                    </div></li></ul></div></div>
                 </div>
             </div>
-        </div>
-    @endunless
-    <header class="th-header header-default {{ request()->routeIs('home') ? 'header-layout9' : '' }}">
+        @endunless
         <div class="sticky-wrapper" data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
             <div class="menu-area">
                 <div class="container">
@@ -233,19 +249,15 @@
                             </div>
                         </div>
                         <div class="col-auto">
-                            <nav class="main-menu d-none d-lg-inline-block">
-                                <ul>@include('frontend.partials.navigation')</ul>
-                            </nav>
+                            <nav class="main-menu d-none d-lg-inline-block"><ul>@include('frontend.partials.navigation')</ul></nav>
                             <button type="button" class="th-menu-toggle d-block d-lg-none" aria-label="Open navigation"><i class="far fa-bars"></i></button>
                         </div>
                         <div class="col-auto d-none d-xl-block">
                             <div class="header-button">
-                                @if (!empty($siteSettings['header_cta_label']) && !empty($siteSettings['header_cta_url']))
-                                    <a href="{{ \App\Rules\SafeLink::sanitize($siteSettings['header_cta_url']) }}" class="th-btn bg-black">
-                                        <i class="fa-regular fa-house-chimney me-2"></i> {{ $siteSettings['header_cta_label'] }}
-                                    </a>
-                                @endif
-                                <button type="button" class="icon-btn searchBoxToggler" aria-label="Search properties"><i class="far fa-search"></i></button>
+                                <a href="{{ !empty($siteSettings['header_cta_url']) ? \App\Rules\SafeLink::sanitize($siteSettings['header_cta_url']) : route('contact') }}" class="th-btn bg-black {{ request()->routeIs('home') ? '' : 'radius' }}">
+                                    <i class="fa-regular fa-house-chimney me-2"></i> {{ $siteSettings['header_cta_label'] ?? 'Add Listing' }}
+                                </a>
+                                <button type="button" class="sidemenu-bar sideMenuInfo {{ request()->routeIs('home') ? 'pill' : '' }}" aria-label="Open information panel"><span></span><span></span><span></span></button>
                             </div>
                         </div>
                     </div>
@@ -257,6 +269,9 @@
         @yield('content')
     </main>
     <footer class="footer-wrapper {{ request()->routeIs('home') ? 'footer-layout1' : 'footer-default' }}">
+        @if (request()->routeIs('home'))
+            <div class="footer-top-shape animation-infinite" data-bg-src="{{ asset('theme-assets/img/icon/footer-top-shape.png') }}"></div>
+        @endif
             <div class="widget-area">
             <div class="container">
                 @php
@@ -435,12 +450,12 @@
                     @endforeach
                 </div>
                             </div>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-                            @endif
         <div class="copyright-wrap">
             <div class="footer-bottom-top-shape animation-infinite"
                 data-bg-src="{{ asset('theme-assets/img/icon/footer-bottom-top-shape.png') }}">
