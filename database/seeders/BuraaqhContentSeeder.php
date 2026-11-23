@@ -411,67 +411,6 @@ class BuraaqhContentSeeder extends Seeder
         }
     }
 
-    private function seedTeam(): void
-    {
-        $rows = [
-            ['Vickie Wisozk', 'Real Estate Manager', 'Vickie helps clients define their priorities and navigate each stage of a property search with calm, practical advice.', 'vickie@buraaqhproperties.example'],
-            ['Renee Strosin', 'Property Developer', 'Renee works with owners and development partners to bring thoughtful residential projects to market.', 'renee@buraaqhproperties.example'],
-            ['Zulia Era', 'Listing Coordinator', 'Zulia coordinates listing preparation, property information and viewing schedules for buyers and sellers.', 'zulia@buraaqhproperties.example'],
-            ['Bernice Roberts', 'Leasing Consultant', 'Bernice helps tenants and landlords find suitable rental arrangements with clear communication.', 'bernice@buraaqhproperties.example'],
-            ['Martha Leffler', 'Senior Property Advisor', 'Martha brings a detail-led approach to residential sales and neighbourhood research.', 'martha@buraaqhproperties.example'],
-            ['Thomas Kirlin', 'Investment Consultant', 'Thomas supports investors with property comparisons, location research and rental considerations.', 'thomas@buraaqhproperties.example'],
-            ['Avery Mitchell', 'Client Relationship Manager', 'Avery keeps client communication moving and makes sure every enquiry reaches the right specialist.', 'avery@buraaqhproperties.example'],
-            ['Jordan Bennett', 'Commercial Property Advisor', 'Jordan advises business owners on office, retail and mixed-use property requirements.', 'jordan@buraaqhproperties.example'],
-        ];
-
-        foreach ($rows as $index => [$name, $designation, $bio, $email]) {
-            TeamMember::query()->firstOrCreate(
-                ['email' => $email],
-                [
-                    'name' => $name,
-                    'designation' => $designation,
-                    'bio' => $bio,
-                    'photo' => $this->themeImagePath('img/team/team_2_'.(($index % 8) + 1).'.png'),
-                    'email' => $email,
-                    'phone' => '+91 98'.str_pad((string) (76543210 + $index * 137), 8, '0', STR_PAD_LEFT),
-                    'social_links' => ['linkedin' => 'https://www.linkedin.com/', 'instagram' => 'https://www.instagram.com/'],
-                    'sort_order' => $index + 1,
-                    'is_active' => true,
-                    'status' => 'published',
-                ]
-            );
-        }
-    }
-
-    private function seedTestimonials(): void
-    {
-        $rows = [
-            ['Julia Era', 'Property owner', 'Residential buyer', 'The team understood what mattered to our family and kept every viewing focused. The process felt organised, transparent and genuinely personal.', 5],
-            ['Carlos Bauch', 'Business owner', 'Commercial client', 'We needed a practical commercial space in a specific location. Buraaqh Properties helped us compare the options and move forward with confidence.', 5],
-            ['Martha Collins', 'Home buyer', 'First-time buyer', 'Every question was answered clearly, from the first shortlist to the final paperwork. We always knew what the next step would be.', 5],
-            ['Daniel Foster', 'Property investor', 'Investment client', 'The local market insight was valuable. The team explained the trade-offs and helped us assess the numbers without pressure.', 4],
-            ['Sophia Bennett', 'Home seller', 'Residential seller', 'The listing preparation and viewing coordination were excellent. Communication was consistent throughout the sale.', 5],
-            ['Oliver Hayes', 'Tenant', 'Rental client', 'We found a home that suited our commute and budget. The team made the viewing and move-in arrangements straightforward.', 5],
-            ['Aisha Khan', 'Property owner', 'Landlord', 'Buraaqh Properties has been responsive and thoughtful in helping us manage our rental property and tenant requirements.', 5],
-            ['Noah Williams', 'Home buyer', 'Residential buyer', 'A patient team with strong neighbourhood knowledge. We appreciated the honest advice and attention to detail.', 5],
-        ];
-
-        foreach ($rows as $index => [$name, $designation, $company, $quote, $rating]) {
-            Testimonial::query()->firstOrCreate(
-                ['name' => $name, 'quote' => $quote],
-                [
-                    'designation' => $designation,
-                    'company' => $company,
-                    'photo' => $this->themeImagePath('img/testimonial/testi_1_'.(($index % 3) + 1).'.jpg'),
-                    'rating' => $rating,
-                    'sort_order' => $index + 1,
-                    'is_active' => true,
-                    'status' => 'published',
-                ]
-            );
-        }
-    }
-
     private function seedPages(): void
     {
         $pages = [
@@ -519,76 +458,6 @@ class BuraaqhContentSeeder extends Seeder
                     'sort_order' => $index + 1,
                     'is_active' => true,
                 ]
-            );
-        }
-    }
-
-    private function seedEnquiries(array $properties): void
-    {
-        $rows = [
-            ['Aarav Sharma', 'aarav.sharma@example.test', '+91 98765 10001', 'Interested in a family apartment', 'Could you share the floor plan and arrange a weekend viewing?', 'contacted'],
-            ['Meera Kapoor', 'meera.kapoor@example.test', '+91 98765 10002', 'Villa viewing request', 'We would like to understand the possession timeline and nearby schools.', 'new'],
-            ['Rohan Verma', 'rohan.verma@example.test', '+91 98765 10003', 'Commercial property enquiry', 'Please send the available office specifications and parking details.', 'qualified'],
-            ['Ananya Singh', 'ananya.singh@example.test', '+91 98765 10004', 'Rental availability', 'Is the property available from the beginning of next month?', 'new'],
-            ['Kabir Malhotra', 'kabir.malhotra@example.test', '+91 98765 10005', 'Property valuation', 'I am considering selling and would like to understand the current market value.', 'contacted'],
-            ['Ishita Jain', 'ishita.jain@example.test', '+91 98765 10006', 'Investment consultation', 'Please arrange a call to discuss rental yield in Bareilly.', 'qualified'],
-            ['Dev Mehta', 'dev.mehta@example.test', '+91 98765 10007', 'Independent home enquiry', 'Can we schedule a visit this Saturday afternoon?', 'new'],
-            ['Sara Khan', 'sara.khan@example.test', '+91 98765 10008', 'Plot documentation', 'I would like to know more about approvals and available plot sizes.', 'closed'],
-        ];
-
-        foreach ($rows as $index => [$name, $email, $phone, $subject, $message, $status]) {
-            Enquiry::query()->firstOrCreate(
-                ['email' => $email, 'subject' => $subject],
-                [
-                    'property_id' => $properties[$index % count($properties)]->id,
-                    'name' => $name,
-                    'phone' => $phone,
-                    'preferred_date' => now()->addDays(($index % 10) + 1)->toDateString(),
-                    'preferred_time' => $index % 2 ? 'Afternoon' : '11:00 AM – 1:00 PM',
-                    'message' => $message,
-                    'source' => $index % 2 ? 'property' : 'website',
-                    'status' => $status,
-                    'admin_notes' => $status === 'new' ? null : 'Demo enquiry seeded for CMS preview.',
-                    'contacted_at' => in_array($status, ['contacted', 'qualified', 'closed'], true) ? now()->subDays($index + 1) : null,
-                ]
-            );
-        }
-    }
-
-    private function seedComments(array $posts): void
-    {
-        $rows = [
-            ['Nisha Gupta', 'nisha@example.test', 'A very useful checklist. The document review points are especially helpful.', 'approved'],
-            ['Rahul Arora', 'rahul@example.test', 'Could you publish a follow-up about home loan pre-approval?', 'approved'],
-            ['Priya Sethi', 'priya@example.test', 'The neighbourhood comparison made our shortlist much easier.', 'approved'],
-            ['Arjun Bansal', 'arjun@example.test', 'Would love to know more about maintenance costs for apartments.', 'pending'],
-            ['Kavya Rao', 'kavya@example.test', 'Clear and practical advice. Thank you for sharing.', 'approved'],
-            ['Manav Khanna', 'manav@example.test', 'Please include more information about commercial leases.', 'pending'],
-            ['Tara Malhotra', 'tara@example.test', 'The selling preparation tips are easy to follow.', 'approved'],
-            ['Neil Thomas', 'neil@example.test', 'A good overview for first-time buyers.', 'approved'],
-            ['Ritika Jain', 'ritika@example.test', 'Can you explain how to compare two similar projects?', 'pending'],
-            ['Aditya Nair', 'aditya@example.test', 'Helpful read. I have shared this with my family.', 'approved'],
-        ];
-
-        foreach ($rows as $index => [$name, $email, $body, $status]) {
-            Comment::query()->firstOrCreate(
-                ['post_id' => $posts[$index % count($posts)]->id, 'email' => $email, 'body' => $body],
-                ['name' => $name, 'status' => $status, 'created_at' => now()->subDays($index + 1), 'updated_at' => now()->subDays($index + 1)]
-            );
-        }
-    }
-
-    private function seedNewsletterSubscribers(): void
-    {
-        foreach ([
-            'riya.shah@example.test', 'aditya.malhotra@example.test', 'neha.verma@example.test',
-            'ishaan.kapoor@example.test', 'simran.kaur@example.test', 'arjun.mehta@example.test',
-            'tanvi.joshi@example.test', 'rohit.singh@example.test', 'anika.bose@example.test',
-            'vivaan.gupta@example.test', 'sana.ali@example.test', 'karan.bhatia@example.test',
-        ] as $index => $email) {
-            NewsletterSubscriber::query()->firstOrCreate(
-                ['email' => $email],
-                ['subscribed_at' => now()->subDays(($index * 4) + 1)]
             );
         }
     }
@@ -928,26 +797,6 @@ class BuraaqhContentSeeder extends Seeder
         }
 
         return $config;
-    }
-
-    private function seedAnalytics(): void
-    {
-        for ($i = 0; $i < 48; $i++) {
-            $path = $i % 4 === 0 ? '/' : (['/properties', '/services', '/blog', '/about'][$i % 4]);
-            $visitor = hash('sha256', 'piller-demo-visitor-'.($i % 19));
-            $visit = hash('sha256', 'piller-demo-session-'.($i % 27));
-            DB::table('page_views')->updateOrInsert(
-                ['visitor_hash' => $visitor, 'visit_hash' => $visit, 'path' => $path, 'created_at' => now()->startOfDay()->subHours($i * 3)->toDateTimeString()],
-                ['route_name' => $path === '/' ? 'home' : null, 'content_type' => 'page', 'content_id' => null]
-            );
-        }
-
-        for ($i = 0; $i < 12; $i++) {
-            DB::table('activity_logs')->updateOrInsert(
-                ['subject_type' => 'demo', 'subject_id' => $i + 1, 'event' => 'seeded', 'description' => 'Demo CMS activity record '.($i + 1)],
-                ['causer_id' => $this->authorId, 'properties' => json_encode(['source' => 'PillerDemoContentSeeder']), 'created_at' => now()->subDays($i)->toDateTimeString()]
-            );
-        }
     }
 
     private function themeImagePath(string $relativePath): ?string
