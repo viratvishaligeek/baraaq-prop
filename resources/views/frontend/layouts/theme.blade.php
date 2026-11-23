@@ -125,8 +125,8 @@
         <button class="th-btn preloaderCls">Cancel Preloader</button>
         <div id="preloader" class="preloader-inner">
             <div class="txt-loading" aria-label="{{ $siteSettings['site_title'] ?? 'Buraaqh Properties' }}">
-                @foreach (str_split((string) ($siteSettings['site_title'] ?? 'Buraaqh Properties')) as $letter)
-                    <span data-text-preloader="{{ e($letter) }}" class="letters-loading">{{ $letter === ' ' ? '&nbsp;' : $letter }}</span>
+                @foreach (mb_str_split((string) ($siteSettings['site_title'] ?? 'Buraaqh Properties')) as $letter)
+                    <span data-text-preloader="{{ e($letter) }}" class="letters-loading">{{ $letter }}</span>
                 @endforeach
             </div>
         </div>
