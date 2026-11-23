@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             HomepageTemplateSeeder::class,
             DefaultThemeSeeder::class,
+            BuraaqhContentSeeder::class,
         ]);
 
         $email = env('CMS_ADMIN_EMAIL');
