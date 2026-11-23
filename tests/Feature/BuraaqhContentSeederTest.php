@@ -67,6 +67,82 @@ class BuraaqhContentSeederTest extends TestCase
             ->assertDontSee('5,600 sq ft');
     }
 
+
+    public function test_legacy_demo_records_are_retired_without_deleting_or_rewriting_owner_data(): void
+    {
+        Storage::fake('public');
+
+        $property = Property::query()->create([
+            'title' => 'Legacy sample property',
+            'slug' => 'the-oakwood-residences',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        $service = Service::query()->create([
+            'title' => 'Owner-reviewed valuation service',
+            'slug' => 'property-valuation',
+            'content' => '<p>Owner-reviewed service wording.</p>',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        $serviceImage = ServiceImage::query()->create([
+            'service_id' => $service->id,
+            'path' => 'services/inside/seed-property-valuation.jpg',
+            'alt_text' => 'Template photo',
+            'sort_order' => 1,
+        ]);
+        $media = Media::query()->create([
+            'disk' => 'public',
+            'path' => $serviceImage->path,
+            'original_name' => 'template-photo.jpg',
+            'mime_type' => 'image/jpeg',
+            'size' => 0,
+            'alt_text' => 'Template photo',
+        ]);
+        $gallery = GalleryItem::query()->create([
+            'title' => 'Legacy template gallery image',
+            'slug' => 'bareilly-property-gallery-1',
+            'image' => 'gallery/buraaqh-reference-1.jpg',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        $banner = Banner::query()->create([
+            'title' => 'Discover a place that feels like home',
+            'placement' => 'home',
+            'is_active' => true,
+        ]);
+        $legacyPage = Page::query()->create([
+            'title' => 'Legacy buy page',
+            'slug' => 'buy-with-pillar',
+            'content' => '<p>Owner-edited legacy page copy.</p>',
+            'status' => 'published',
+        ]);
+        $legacyPost = Post::query()->create([
+            'title' => 'Legacy moving article',
+            'slug' => 'planning-a-delhi-ncr-move',
+            'content' => '<p>Owner-edited legacy article copy.</p>',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        $this->seed(BuraaqhContentSeeder::class);
+
+        $this->assertSame('draft', $property->fresh()->status);
+        $this->assertSame('draft', $service->fresh()->status);
+        $this->assertSame('Owner-reviewed valuation service', $service->fresh()->title);
+        $this->assertSame('<p>Owner-reviewed service wording.</p>', $service->fresh()->content);
+        $this->assertSame(0, ServiceImage::query()->whereKey($serviceImage->id)->count());
+        $this->assertDatabaseHas('media', ['id' => $media->id, 'path' => $media->path]);
+        $this->assertSame('draft', $gallery->fresh()->status);
+        $this->assertFalse((bool) $banner->fresh()->is_active);
+        $this->assertSame('draft', $legacyPage->fresh()->status);
+        $this->assertSame('<p>Owner-edited legacy page copy.</p>', $legacyPage->fresh()->content);
+        $this->assertSame('draft', $legacyPost->fresh()->status);
+        $this->assertSame('<p>Owner-edited legacy article copy.</p>', $legacyPost->fresh()->content);
+        $this->assertDatabaseHas('pages', ['slug' => 'buy-with-buraaqh', 'status' => 'published']);
+        $this->assertDatabaseHas('posts', ['slug' => 'planning-a-bareilly-move', 'status' => 'published']);
+    }
+
     public function test_seeder_preserves_owner_managed_content_when_rerun(): void
     {
         Storage::fake('public');
