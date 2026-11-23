@@ -84,6 +84,40 @@ class LocalContentCmsTest extends TestCase
         $this->get(route('neighborhood-guides.show', $draft))->assertNotFound();
     }
 
+
+    public function test_legacy_detail_template_urls_resolve_to_database_slugs_and_error_page_returns_404(): void
+    {
+        $property = Property::query()->create([
+            'title' => 'Verified Bareilly property',
+            'slug' => 'verified-bareilly-property',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        $post = Post::query()->create([
+            'title' => 'Bareilly property article',
+            'slug' => 'bareilly-property-article',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        $service = \\App\\Models\\Service::query()->create([
+            'title' => 'Property consultation',
+            'slug' => 'property-consultation',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+
+        $this->get('/property-details.html?slug='.$property->slug)
+            ->assertRedirect(route('properties.show', $property));
+        $this->get('/blog-details.html?slug='.$post->slug)
+            ->assertRedirect(route('blog.show', $post));
+        $this->get('/service-details.html?slug='.$service->slug)
+            ->assertRedirect(route('services.show', $service));
+
+        $this->get('/error.html')
+            ->assertNotFound()
+            ->assertSee('We couldn’t find that page.');
+    }
+
     public function test_admin_can_manage_service_features_and_remove_one_inside_image(): void
     {
         $this->seed(RolePermissionSeeder::class);
