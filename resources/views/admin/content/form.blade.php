@@ -260,14 +260,14 @@
 </div>
                         <div class="col-md-6">
                             <label class="form-label">Select featured image from Media Library</label>
-                            <input type="hidden" name="featured_image_media_id" id="media-featured-image"
+                            <input type="hidden" name="featured_image_media_id" id="media-featured-image" data-remove-flag-id="remove-featured-image"
                                 value="{{ old('featured_image_media_id', $mediaItems->firstWhere('path', $item->featured_image)?->id) }}">
                             <button type="button" class="btn btn-sm btn-outline-primary mt-2"
                                 data-open-media-picker data-target="media-featured-image">Choose from Media Library</button>
                             <div class="mt-2"><img src="{{ $item->featured_image ? asset('storage/' . $item->featured_image) : '' }}"
                                 alt="Featured image preview" class="rounded" style="max-width:180px;max-height:100px;object-fit:cover"
                                 data-media-preview @if (!$item->featured_image) hidden @endif><span class="small text-muted" data-media-meta></span></div>
-                            <label class="form-check mt-2"><input class="form-check-input" type="checkbox" name="remove_featured_image" value="1"> Remove selected featured image</label>
+                            <label class="form-check mt-2"><input class="form-check-input" type="checkbox" name="remove_featured_image" id="remove-featured-image" value="1"> Remove selected featured image</label>
                         </div>
                         @if ($type === 'services')
                             <div class="col-12">
