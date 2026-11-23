@@ -88,6 +88,14 @@ class BuraaqhContentSeeder extends Seeder
         TeamMember::query()->where('email', 'like', '%@pillarrealty.example')->delete();
         Page::query()->where('slug', 'buy-with-pillar')->update(['slug' => 'buy-with-buraaqh']);
         Page::query()->where('slug', 'sell-with-pillar')->update(['slug' => 'sell-with-buraaqh']);
+        Post::query()->where('slug', 'planning-a-delhi-ncr-move')->update([
+            'slug' => 'planning-a-bareilly-move',
+            'title' => 'Planning a move in Bareilly and nearby areas',
+            'excerpt' => 'A practical moving plan covering commute, locality needs and a smooth handover.',
+            'content' => '<p>Plan a move by checking the specific address, daily travel needs, utility arrangements, building rules and handover conditions. Visit the area at different times and confirm current services directly before committing.</p><p>Local conditions vary from one street and property to another. Verify the details that matter to your household and keep written records of agreed dates, payments and responsibilities.</p>',
+            'meta_title' => 'Planning a Move in Bareilly | Buraaqh Properties Journal',
+            'meta_description' => 'A practical moving checklist for Bareilly, Uttar Pradesh, focused on locality needs and a smooth handover.',
+        ]);
 
         Testimonial::query()->whereIn('name', [
             'Julia Era', 'Carlos Bauch', 'Martha Collins', 'Daniel Foster',
@@ -358,7 +366,7 @@ class BuraaqhContentSeeder extends Seeder
             ['Understanding the documents involved in a property purchase', 'property-purchase-documents-guide', 'Learn which ownership, approval and payment records to review with a qualified professional.', 'buying-guides'],
             ['Rental yield: the numbers every investor should understand', 'rental-yield-investor-guide', 'A straightforward guide to gross yield, recurring costs and realistic rental assumptions.', 'market-insights'],
             ['Five maintenance habits that protect your home', 'home-maintenance-habits', 'A seasonal routine for keeping fixtures, finishes and essential systems in good condition.', 'property-tips'],
-            ['Planning a move across the Bareilly region region', 'planning-a-delhi-ncr-move', 'A practical moving plan covering commute, neighbourhood needs and a smooth handover.', 'property-tips'],
+            ['Planning a move in Bareilly and nearby areas', 'planning-a-bareilly-move', 'A practical moving plan covering commute, locality needs and a smooth handover.', 'property-tips'],
         ];
 
         $posts = [];
