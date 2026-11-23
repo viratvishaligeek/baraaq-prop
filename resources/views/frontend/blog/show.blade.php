@@ -52,6 +52,29 @@
         </div>
     </section>
 
+    @if ($relatedPosts->isNotEmpty())
+        <section class="space-top">
+            <div class="container">
+                <h2 class="sec-title mb-4">Related articles</h2>
+                <div class="row gy-4">
+                    @foreach ($relatedPosts as $relatedPost)
+                        <div class="col-md-6 col-lg-4">
+                            <article class="blog-card h-100">
+                                @if ($relatedPost->featured_image)
+                                    <a href="{{ route('blog.show', $relatedPost) }}"><img class="w-100" loading="lazy" src="{{ Storage::disk('public')->url($relatedPost->featured_image) }}" alt="{{ $relatedPost->title }}"></a>
+                                @endif
+                                <div class="blog-content">
+                                    <h3 class="h5"><a href="{{ route('blog.show', $relatedPost) }}">{{ $relatedPost->title }}</a></h3>
+                                    <p>{{ $relatedPost->excerpt }}</p>
+                                </div>
+                            </article>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
     <section class="space-top">
         <div class="container">
             <div class="row justify-content-center">
