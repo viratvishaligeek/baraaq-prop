@@ -204,3 +204,50 @@ Existing administrator-edited guide bodies remain protected. The revised copy is
 All six seeded service records remain `draft`, with 24 linked features (four per service). They have no featured image and no `service_images` rows because no approved service-specific assets exist. The existing service detail Blade view reads the card/hero image from `services.featured_image` and the inside gallery from the separate `service_images` relation; it renders features from `service_features`. A new feature test exercises a published sample service with two different image paths and asserts both render independently. The six seeded drafts are therefore not public service-detail pages yet; publishing them and assigning imagery requires business approval.
 
 The blog detail view renders sanitized article HTML, title, metadata, tags and category links. The existing Home 9 blog section retains its original Blade structure/classes and uses the image-pending placeholder. Page detail rendering also sanitizes CMS HTML. The feature suite now requests the seeded blog index/detail, FAQ index, locality-guide index/detail, seeded CMS page and services index, and verifies that draft services are not publicly routable. A separate service-detail test supplies distinct featured and gallery image paths and checks both are rendered independently. These are regression-test definitions; runtime route and responsive rendering remain pending the Actions/browser run.
+
+
+## 9. Media inventory and About-page integration follow-up
+
+### Repository media inventory
+
+The current branch contains 66 raster image files and 96 SVG files under the theme image assets. The raster inventory is concentrated in these folders: bg (1), contact (2), error (2), favicons (13), hero (12), icon (16), shape (18), and why (2). The SVG files are primarily interface icons, feature symbols and decorative illustrations; they are not property photography. The raster candidates were visually reviewed rather than assigned based on filename alone.
+
+The six imported, usable illustrative property/lifestyle assets are:
+
+| Filename | Existing Media row | Content relationships / intended use | Dimensions | Suitability |
+|---|---|---|---:|---|
+| `hero-10-2.jpg` | ID pending actual database run | Home 9 hero background; About page left-secondary image | 310 × 800 | Architectural building image; decorative only |
+| `hero-9-right.png` | ID pending actual database run | Home 9 hero foreground | 1079 × 946 | Detached-house illustration; not a listing |
+| `why-choose-left-1.jpg` | ID pending actual database run | Home 9 About primary; About page left-primary image | 661 × 526 | Contemporary residential architecture |
+| `hero-8-left.jpg` | ID pending actual database run | Home 9 About secondary; About page middle image | 854 × 854 | Modern residential homes |
+| `contact-img.jpg` | ID pending actual database run | Home 9 About tertiary; About page right-primary image | 972 × 893 | Residential living-space interior |
+| `hero-10-3.jpg` | ID pending actual database run | Home Details image; About page right-secondary image | 270 × 400 | Modern house exterior |
+
+The remaining raster candidates are not appropriate for property/service content: `contact-page-thumb.jpg` depicts an unverified stock person and building; `hero-3-right.jpg` is a map graphic of Ukraine; `error-bg.png` and `error-bottom.png` belong to the 404 illustration; favicons, icon assets and shape assets are UI elements. No source file is a verified Buraaqh listing photograph, service-team photograph, or Bareilly neighbourhood photograph.
+
+### Content mapping decision
+
+- **Home 9:** all six Media records are attached to their corresponding existing hero/about/home-details fields.
+- **About page:** the five image positions now resolve from those existing Home 9 Media Library attachments (hero background, three About fields and Home Details field). The five existing CSS image wrappers and responsive classes are retained; only the image source and alt text were corrected. This removes references to five absent `theme-assets/img/about/about-1-*.jpg` files.
+- **Six services:** no featured image and no detail-gallery image is assigned. The existing files do not provide service-specific or verified team/work photography. The service page keeps its existing “image pending” and empty-gallery states. Featured and gallery relationships remain independent.
+- **Seven articles:** no featured image assigned. General house photographs are not sufficiently specific to the seven editorial topics, and repeating one would be misleading.
+- **Seven locality guides:** no hero image assigned. No verified image of the named Bareilly locality exists in the repository.
+- **Gallery:** no gallery items seeded. The existing gallery route is property-inventory driven; no approved, property-specific image set or matching property records are present.
+
+Media IDs are deliberately reported as pending. The seeder uses stable path-derived storage keys and `firstOrCreate`, but the numeric primary keys are database-generated and cannot be inferred from source code. They must be collected from the actual post-seed database.
+
+### Service draft content upgrade
+
+Each of the six service drafts now contains a service-specific preparation brief, four concrete process steps, the four linked feature records, four relevant FAQs (two existing plus two additional), clear limits on what the service does not certify, and SEO title/description/focus keyword values. The service descriptions remain drafts and explicitly require business confirmation of actual availability, responsible staff, scope, fees and timing. A prior generated draft is upgraded only if its content exactly matches the previous seed-generated HTML; an administrator-edited service body is left unchanged. A preservation test now edits service content and removes a feature before rerunning the full seed chain.
+
+### Editorial heading review
+
+The seven article bodies were rechecked. Repeated paragraph count remains zero in every article. The two near-duplicate locality-evidence headings in the locality-evaluation article were renamed to distinguish a visit evidence log from verification of time-sensitive claims. The residential selection article now uses a more precise heading for shared-facility and management records. Three locality-guide headings were also clarified to distinguish road access from legal access, block comparison from shared-parking records, and jurisdiction identification from parcel-specific permission checks.
+
+### About-page regression coverage
+
+A new feature test seeds the existing Home 9 attachments, requests the About route, checks that all five Media Library URLs render, asserts that the missing legacy image paths are absent, and verifies that the original `about-1`, `about-left`, `about-middle` and `about-right` layout classes remain present. The test is committed but has not yet run.
+
+## 10. CI trigger status
+
+The workflow file contains a `workflow_dispatch` trigger and a `push` trigger for `feat/database-content-seeding`. The connected GitHub tool set exposes repository reads, commit/file writes, workflow-run/job-log reads and retry operations for failed jobs; it does not expose a `workflow_dispatch` action or arbitrary Actions API POST. Multiple branch commits have advanced the branch head, but the GitHub Actions run list still returns zero runs. The connected read interface also rejects the repository Actions-permissions endpoint, so it cannot establish whether Actions are disabled or restricted in repository settings. The user can start the configured workflow from GitHub Actions UI; until a run is visible, no execution result is claimed.
