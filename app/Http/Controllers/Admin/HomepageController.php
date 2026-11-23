@@ -185,7 +185,11 @@ class HomepageController extends Controller
         $this->ensureFixedHomepage($homepage);
         abort_unless((int) $section->homepage_id === (int) $homepage->id, 404);
 
-        $definition = config('cms-sections.sections.' . $section->section_key);
+        // Section registry keys are literal dotted identifiers (for example,
+        // "hero.home-9"), not nested config paths. Resolve them from the registry
+        // array so Laravel's dot notation does not split the section key.
+        $definitions = config('cms-sections.sections', []);
+        $definition = $definitions[$section->section_key] ?? null;
         abort_unless(is_array($definition), 404, 'Homepage section definition was not found.');
 
         $fields = $definition['fields'] ?? [];
