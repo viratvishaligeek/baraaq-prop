@@ -86,16 +86,10 @@ class BuraaqhContentSeeder extends Seeder
         ]);
 
         TeamMember::query()->where('email', 'like', '%@pillarrealty.example')->delete();
-        Page::query()->where('slug', 'buy-with-pillar')->update(['slug' => 'buy-with-buraaqh']);
-        Page::query()->where('slug', 'sell-with-pillar')->update(['slug' => 'sell-with-buraaqh']);
-        Post::query()->where('slug', 'planning-a-delhi-ncr-move')->update([
-            'slug' => 'planning-a-bareilly-move',
-            'title' => 'Planning a move in Bareilly and nearby areas',
-            'excerpt' => 'A practical moving plan covering commute, locality needs and a smooth handover.',
-            'content' => '<p>Plan a move by checking the specific address, daily travel needs, utility arrangements, building rules and handover conditions. Visit the area at different times and confirm current services directly before committing.</p><p>Local conditions vary from one street and property to another. Verify the details that matter to your household and keep written records of agreed dates, payments and responsibilities.</p>',
-            'meta_title' => 'Planning a Move in Bareilly | Buraaqh Properties Journal',
-            'meta_description' => 'A practical moving checklist for Bareilly, Uttar Pradesh, focused on locality needs and a smooth handover.',
-        ]);
+        // Keep the legacy demo pages and post in draft for owner review. Fresh
+        // Buraaqh equivalents are seeded separately under their own slugs.
+        Page::query()->whereIn('slug', ['buy-with-pillar', 'sell-with-pillar'])->update(['status' => 'draft']);
+        Post::query()->where('slug', 'planning-a-delhi-ncr-move')->update(['status' => 'draft', 'published_at' => null]);
 
         Testimonial::query()->whereIn('name', [
             'Julia Era', 'Carlos Bauch', 'Martha Collins', 'Daniel Foster',
@@ -124,10 +118,12 @@ class BuraaqhContentSeeder extends Seeder
 
     private function replaceLegacyBrandContent(): void
     {
-        // Do not run broad text replacements across owner-managed pages, posts,
-        // services or menu records. The explicit legacy demo records are retired
-        // by exact identifiers in retireLegacyPillarDemoRecords().
-        // New Buraaqh content is inserted separately with firstOrCreate().
+        // Update only the known legacy navigation destinations. Do not rewrite
+        // arbitrary labels, URLs or owner-authored page/post/service content.
+        MenuItem::query()->whereIn('url', ['/pages/buy-with-pillar', '/buy-with-pillar'])
+            ->update(['label' => 'Buy with Buraaqh Properties', 'url' => '/pages/buy-with-buraaqh']);
+        MenuItem::query()->whereIn('url', ['/pages/sell-with-pillar', '/sell-with-pillar'])
+            ->update(['label' => 'Sell with Buraaqh Properties', 'url' => '/pages/sell-with-buraaqh']);
     }
 
     private function seedSettings(): void
