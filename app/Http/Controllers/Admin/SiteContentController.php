@@ -248,9 +248,18 @@ class SiteContentController extends Controller
 
     private function authorizePublish(string $type, array $data, $item = null): void
     {
-        if ($type !== 'faqs' && ($data['status'] ?? null) === 'published' && $item?->status !== 'published') {
+        $isPublishing = $type === 'faqs'
+            ? (bool) ($data['is_active'] ?? false) && ! (bool) ($item?->is_active ?? false)
+            : ($data['status'] ?? null) === 'published' && $item?->status !== 'published';
+
+        if ($isPublishing) {
             $user = request()->user();
-            abort_unless($user->isAdministrator() || $user->hasPermission($type.'.manage') || $user->hasPermission($type.'.publish'), 403);
+            abort_unless(
+                $user->isAdministrator()
+                    || $user->hasPermission($type.'.manage')
+                    || $user->hasPermission($type.'.publish'),
+                403
+            );
         }
     }
 
