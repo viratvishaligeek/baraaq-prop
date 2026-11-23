@@ -100,17 +100,18 @@ The existing `BuraaqhBlogSeeder` and `BuraaqhLocalContentSeeder` modules are ret
 
 The Buraaqh seeder orchestration is:
 
-1. Retire known legacy template/demo records from public visibility without deleting their rows or media.
-2. Seed missing property and blog categories.
-3. Seed the six core website pages.
-4. Seed editorial articles, FAQs, locality guides, and supported blog tags.
-5. Seed service drafts and their feature details.
-6. Seed primary and footer navigation menus.
-7. Seed the ten Home 9 section records and safe image relationships.
+1. `BuraaqhLegacyDemoContentRetirementSeeder` retires known legacy template/demo records from public visibility without deleting their rows or media.
+2. `BuraaqhCategorySeeder` seeds missing property and blog categories.
+3. `BuraaqhPageSeeder` seeds the six core website pages.
+4. `BuraaqhBlogSeeder` seeds seven articles and their category/tag links.
+5. `BuraaqhLocalContentSeeder` seeds additional FAQs and seven locality guides, and upgrades only exact recognised legacy FAQ/guide copy.
+6. `BuraaqhServiceSeeder` seeds six draft services and their feature details.
+7. `BuraaqhNavigationSeeder` seeds primary and footer navigation menus.
+8. `BuraaqhHomepageSeeder` seeds ten Home 9 section records and safe image relationships.
 
-Seeders use stable slugs/keys and `firstOrCreate` patterns. Exact old default copy is upgraded only when it still matches the known generated text; administrator-edited content is left alone. Existing menu items, section configuration, settings, category activation choices, and service content are not unconditionally replaced. The settings seeder replaces only recognised legacy template values (Pillar/Meerut branding, known fake contact/social placeholders, legacy map URLs, known demo gallery paths, and the exact bundled legacy logo/favicon paths); it preserves other administrator values, including intentionally blank settings. Only the exact old buy/sell menu URLs are migrated to the Buraaqh page destinations.
+Seeders use stable slugs/keys and `firstOrCreate` patterns. Existing content is generally left unchanged; the explicit FAQ and locality-guide upgrades compare current content to a known legacy body before changing it. The settings seeder replaces only recognised legacy template values (Pillar/Meerut branding, known fake contact/social placeholders, legacy map URLs, known demo gallery paths, and exact bundled legacy logo/favicon paths); it preserves other administrator values, including intentionally blank settings. Only the exact old buy/sell menu URLs are migrated to the Buraaqh page destinations.
 
-The legacy retirement seeder changes publication state only for known legacy template/demo identifiers. It does not delete records, service images, media files, enquiries, or newsletter subscribers. Old short editorial posts are retired only when their body still exactly matches the previous generated template copy.
+The legacy retirement seeder uses narrowly scoped updates against known legacy template/demo identifiers. Static inspection of all 13 seeder classes found no `delete()`, `truncate()`, `forceDelete()` or `updateOrCreate()` calls. It does issue scoped `update()` statements for those known legacy rows, and the editorial/locality seeders update only recognised legacy copy. The regression test now writes an administrator-edited FAQ answer directly through the database, reruns the full seeder chain, and compares before/after counts and uniqueness for FAQs, articles, categories, services, menus, menu items, media and media-attachment keys.
 
 ## 4. Fresh-install content inventory
 
@@ -169,6 +170,6 @@ No unverified template photography is assigned to property listings, service fea
 
 No production database credentials or representative deployed database were available during this repository audit. The deployed `migrations` table, existing row counts, and real production data therefore could not be inspected. No production migration or destructive database command was run.
 
-The repository's GitHub Actions workflow installs Composer dependencies, lints PHP, runs the Laravel test suite, prepares a fresh SQLite database, runs migrations and seeders, and loads all 13 original HTML reference pages at desktop, tablet and mobile viewports. Playwright captures reference and live screenshots, checks response codes, shared layout presence and horizontal overflow. It does not perform a pixel-difference assertion, so screenshot artifacts still require human visual review. The live property-detail and service-detail routes are skipped when no published record exists; the reference files are still captured, while the blog detail route is exercised with the seeded editorial content. The database/content branch requires that workflow to run before this work can be called verified.
+The repository's GitHub Actions workflow installs Composer dependencies, lints PHP, runs the Laravel test suite, prepares an empty SQLite database with `php artisan migrate:fresh --force`, runs the complete `DatabaseSeeder`, runs each of the eight content seeders individually in orchestration order, runs the complete seeder a second time, and loads all 13 original HTML reference pages at desktop, tablet and mobile viewports. Playwright captures reference and live screenshots, checks response codes, shared layout presence and horizontal overflow. It does not perform a pixel-difference assertion, so screenshot artifacts still require human visual review. The live property-detail and service-detail routes are skipped when no published record exists; the reference files are still captured, while the blog detail route is exercised with the seeded editorial content. The database/content branch requires that workflow to run before this work can be called verified.
 
 **Pending evidence:** fresh migration/seed execution output, repeated-seeder test results, full automated test result, and the PR check conclusion. At the time of this report, GitHub reports no check runs or commit statuses for the PR head, so the workflow has not supplied an execution result. This report must be updated with the actual run URL and commit after CI completes; it is not a claim that those checks have already passed.
