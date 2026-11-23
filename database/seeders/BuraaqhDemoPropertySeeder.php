@@ -240,7 +240,7 @@ class BuraaqhDemoPropertySeeder extends Seeder
         $paragraphs = [
             '<p>'.$listing['description'].'</p>',
             '<p><strong>Location note:</strong> The locality and map coordinates are approximate Bareilly-area examples, not a surveyed property address or exact site pin.</p>',
-            '<p><strong>Demo content notice:</strong> This fictional listing exists only for local website preview and testing. The price, availability, address, ownership, specifications and imagery are illustrative, not a real offer or verified inventory.</p>',
+            '<p><strong>Demo content notice:</strong> This fictional demonstration listing exists only for local website preview and testing. The price, availability, address, ownership, specifications and imagery are illustrative, not a real offer or verified inventory.</p>',
         ];
 
         return implode('', $paragraphs);
