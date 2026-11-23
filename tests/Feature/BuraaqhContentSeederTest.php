@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\FaqItem;
+use App\Models\Banner;
+use App\Models\Media;
 use App\Models\GalleryItem;
 use App\Models\Homepage;
 use App\Models\NeighborhoodGuide;
@@ -10,6 +12,7 @@ use App\Models\Page;
 use App\Models\Post;
 use App\Models\Property;
 use App\Models\Service;
+use App\Models\ServiceImage;
 use App\Models\Setting;
 use Database\Seeders\BuraaqhContentSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
