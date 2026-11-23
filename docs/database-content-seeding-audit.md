@@ -59,7 +59,7 @@ The Buraaqh seeder orchestration is:
 6. Seed primary and footer navigation menus.
 7. Seed the ten Home 9 section records and safe image relationships.
 
-Seeders use stable slugs/keys and `firstOrCreate` patterns. Exact old default copy is upgraded only when it still matches the known generated text; administrator-edited content is left alone. Existing menu items, section configuration, settings, category activation choices, and service content are not unconditionally replaced.
+Seeders use stable slugs/keys and `firstOrCreate` patterns. Exact old default copy is upgraded only when it still matches the known generated text; administrator-edited content is left alone. Existing menu items, section configuration, settings, category activation choices, and service content are not unconditionally replaced. The settings seeder replaces only recognised legacy template values (Pillar/Meerut branding, known fake contact/social placeholders, legacy map URLs, and known demo gallery paths); it preserves other administrator values, including intentionally blank settings. Only the exact old buy/sell menu URLs are migrated to the Buraaqh page destinations.
 
 The legacy retirement seeder changes publication state only for known legacy template/demo identifiers. It does not delete records, service images, media files, enquiries, or newsletter subscribers. Old short editorial posts are retired only when their body still exactly matches the previous generated template copy.
 
