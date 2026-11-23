@@ -152,5 +152,18 @@ class LocalContentCmsTest extends TestCase
 
         $this->assertDatabaseHas('gallery_items', ['title' => 'Bareilly property gallery image', 'status' => 'published']);
         $this->assertDatabaseHas('media', ['original_name' => 'property.jpg']);
+        $gallery = GalleryItem::query()->where('title', 'Bareilly property gallery image')->firstOrFail();
+        $storedPath = $gallery->image;
+
+        $this->actingAs($admin)->put(route('admin.site-content.update', ['type' => 'gallery', 'id' => $gallery->id]), [
+            'title' => $gallery->title,
+            'description' => $gallery->description,
+            'alt_text' => $gallery->alt_text,
+            'status' => 'draft',
+            'remove_image' => '1',
+        ])->assertRedirect(route('admin.site-content.index', 'gallery'));
+
+        $this->assertDatabaseHas('gallery_items', ['id' => $gallery->id, 'image' => null]);
+        Storage::disk('public')->assertExists($storedPath);
     }
 }
