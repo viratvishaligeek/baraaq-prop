@@ -82,11 +82,14 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Header / footer logo</label>
-                    @if (!empty($siteSettings['logo']))
-                        <div class="mb-2"><img src="{{ asset('storage/' . $siteSettings['logo']) }}" alt="" style="max-width:180px;max-height:70px;object-fit:contain"></div>
-                    @endif
-                    <input class="form-control" type="file" name="logo" accept="image/jpeg,image/png,image/webp">
-                    <div class="form-text">Upload a replacement logo (up to 5 MB).</div>
+                    @php($logoMediaId = !empty($siteSettings['logo']) ? AppModelsMedia::query()->where('path', $siteSettings['logo'])->value('id') : null)
+                    <input type="hidden" name="logo_media_id" id="media-homepage-logo" value="{{ old('logo_media_id', $logoMediaId) }}" data-remove-flag-id="remove-homepage-logo">
+                    <input type="hidden" name="remove_logo" id="remove-homepage-logo" value="0">
+                    <div class="mb-2"><img src="{{ !empty($siteSettings['logo']) ? asset('storage/' . $siteSettings['logo']) : '' }}" alt="Website logo preview" style="max-width:180px;max-height:70px;object-fit:contain" data-media-preview @if(empty($siteSettings['logo'])) hidden @endif><span class="small text-muted" data-media-meta></span></div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-open-media-picker data-target="media-homepage-logo">Choose logo from Media Library</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-clear-media data-target="media-homepage-logo">Remove selected logo</button>
+                    </div>
                 </div>
             </div>
             <div class="d-flex justify-content-end mt-3"><button class="btn btn-primary" type="submit">Save header and contact details</button></div>
@@ -133,19 +136,29 @@
                 </div>
                 <div class="col-12">
                     <label class="form-label">Footer gallery images</label>
-                    @if (!empty($siteSettings['footer_gallery_images']))
-                        <div class="d-flex flex-wrap gap-2 mb-2">
-                            @foreach ($siteSettings['footer_gallery_images'] as $galleryImage)
-                                @php
-                                    $galleryMedia = is_numeric($galleryImage) ? \App\Models\Media::query()->find((int) $galleryImage) : null;
-                                    $galleryUrl = $galleryMedia?->url ?? (\Illuminate\Support\Str::startsWith((string) $galleryImage, ['http://', 'https://']) ? $galleryImage : asset(ltrim((string) $galleryImage, '/')));
-                                @endphp
-                                <img src="{{ $galleryUrl }}" alt="" style="width:76px;height:58px;object-fit:cover" class="rounded border">
-                            @endforeach
-                        </div>
-                    @endif
-                    <input class="form-control" type="file" name="footer_gallery_images[]" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
-                    <div class="form-text">Uploading images replaces the current footer gallery (up to 7 images, 5 MB each).</div>
+                    <input type="hidden" name="footer_gallery_media_ids_present" id="footer-gallery-media-changed" value="0">
+                    <div id="homepage-footer-gallery-media" data-input-name="footer_gallery_media_ids[]" data-media-multiple data-change-flag-id="footer-gallery-media-changed" class="d-flex flex-wrap gap-2 mb-2">
+                        @foreach (($siteSettings['footer_gallery_images'] ?? []) as $galleryImage)
+                            @php
+                                $galleryMedia = is_numeric($galleryImage)
+                                    ? AppModelsMedia::query()->find((int) $galleryImage)
+                                    : AppModelsMedia::query()->where('path', (string) $galleryImage)->first();
+                                $galleryUrl = $galleryMedia?->url ?? (IlluminateSupportStr::startsWith((string) $galleryImage, ['http://', 'https://']) ? $galleryImage : asset(ltrim((string) $galleryImage, '/')));
+                            @endphp
+                            @if($galleryMedia)
+                                <div class="media-selection-item d-flex flex-wrap align-items-center gap-2 border rounded p-2">
+                                    <input type="hidden" name="footer_gallery_media_ids[]" value="{{ $galleryMedia->id }}">
+                                    <img src="{{ $galleryUrl }}" alt="{{ $galleryMedia->alt_text }}" style="width:76px;height:58px;object-fit:cover" class="rounded border">
+                                    <span class="small text-break">{{ $galleryMedia->original_name }}</span>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-remove-selected-media>Remove</button>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-open-media-picker data-media-multiple data-target="homepage-footer-gallery-media">Choose footer images from Media Library</button>
+                    </div>
+                    <div class="form-text">Select up to 7 images. Remove each selected image independently; shared Media Library files are retained.</div>
                 </div>
                 @foreach ([
                     'social_facebook' => 'Facebook URL',
@@ -220,6 +233,18 @@
                                             <option value="{{ $option }}" @selected((string) $value === (string) $option)>{{ $label }}</option>
                                         @endforeach
                                     </select>
+                                @elseif ($type === 'image')
+                                    @php($currentMediaId = $attachment?->media_id ?? (is_numeric($value) ? (int) $value : null))
+                                    <input type="hidden" name="config_media_ids[{{ $key }}]" id="media-homepage-section-{{ $section->id }}-{{ $key }}"
+                                        value="{{ old('config_media_ids.'.$key, $currentMediaId) }}"
+                                        data-remove-flag-id="remove-homepage-section-{{ $section->id }}-{{ $key }}">
+                                    <input type="hidden" name="config_remove_images[{{ $key }}]" id="remove-homepage-section-{{ $section->id }}-{{ $key }}" value="0">
+                                    <div class="mb-2"><img src="{{ $currentImage ?? '' }}" alt="" style="max-width:180px;max-height:110px;object-fit:contain" class="rounded border p-1" data-media-preview @if(!$currentImage) hidden @endif><span class="small text-muted" data-media-meta></span></div>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <button type="button" class="btn btn-sm btn-outline-primary" data-open-media-picker data-target="media-homepage-section-{{ $section->id }}-{{ $key }}">Choose from Media Library</button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" data-clear-media data-target="media-homepage-section-{{ $section->id }}-{{ $key }}">Remove selected image</button>
+                                    </div>
+                                    <div class="form-text">Select an existing image from the shared Media Library or remove this section's reference without deleting the file.</div>
                                 @elseif ($type === 'image')
                                     @if ($currentImage)
                                         <div class="mb-2"><img src="{{ $currentImage }}" alt="" style="max-width:180px;max-height:110px;object-fit:contain" class="rounded border p-1"></div>
