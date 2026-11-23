@@ -161,7 +161,7 @@ class BuraaqhContentSeeder extends Seeder
             foreach (HomepageSection::query()->get() as $section) {
                 $config = $section->config;
                 $json = is_string($config) ? $config : json_encode($config);
-                if (! is_string($json) || ! str_contains($json, 'Pillar')) continue;
+                if (! is_string($json) || (! str_contains($json, 'Pillar') && ! str_contains($json, 'Meerut'))) continue;
                 $json = str_replace(['Pillar Realty', 'Pillar', 'Meerut', 'Noida', 'Ghaziabad', 'Delhi NCR'], ['Buraaqh Properties', 'Buraaqh Properties', 'Bareilly', 'Bareilly', 'Bareilly', 'Bareilly region'], $json);
                 $section->config = is_string($config) ? $json : json_decode($json, true);
                 $section->save();
