@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Service;
 use App\Models\ServiceComment;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Role;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
@@ -42,6 +43,44 @@ class FrontendServiceCommentsTest extends TestCase
         $this->get(route('services.show', $service))
             ->assertOk()
             ->assertSee('Please share more details about this service.');
+    }
+
+    public function test_service_featured_image_and_detail_gallery_render_independently(): void
+    {
+        Storage::fake('public');
+
+        $featuredPath = 'services/featured/property-search.jpg';
+        $detailPath = 'services/detail/site-visit.jpg';
+        Storage::disk('public')->put($featuredPath, 'featured image bytes');
+        Storage::disk('public')->put($detailPath, 'detail image bytes');
+
+        $service = Service::query()->create([
+            'title' => 'Property search and shortlisting',
+            'slug' => 'property-search-shortlisting',
+            'excerpt' => 'A structured property search service.',
+            'content' => '<h2>How the service works</h2><p>Compare verified information.</p>',
+            'featured_image' => $featuredPath,
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        $service->features()->create([
+            'title' => 'Requirement brief',
+            'description' => 'Record intended use and essential needs.',
+            'sort_order' => 1,
+        ]);
+        $service->images()->create([
+            'path' => $detailPath,
+            'alt_text' => 'A separate illustrative site-visit detail image',
+            'sort_order' => 1,
+        ]);
+
+        $this->get(route('services.show', $service))
+            ->assertOk()
+            ->assertSee(Storage::disk('public')->url($featuredPath))
+            ->assertSee(Storage::disk('public')->url($detailPath))
+            ->assertSee('Requirement brief')
+            ->assertSee('A separate illustrative site-visit detail image')
+            ->assertSee('How the service works');
     }
 
     public function test_admin_can_moderate_service_comments_from_existing_comment_admin(): void
