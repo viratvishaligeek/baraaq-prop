@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Models\\NeighborhoodGuide;
-use App\\Models\\Post;
-use App\\Models\\Service;
-use Illuminate\\Foundation\\Testing\\RefreshDatabase;
-use Tests\\TestCase;
+use App\Models\NeighborhoodGuide;
+use App\Models\Post;
+use App\Models\Service;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class FrontendPaginationTest extends TestCase
 {
