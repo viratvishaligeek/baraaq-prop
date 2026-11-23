@@ -245,13 +245,6 @@
                                         <button type="button" class="btn btn-sm btn-outline-danger" data-clear-media data-target="media-homepage-section-{{ $section->id }}-{{ $key }}">Remove selected image</button>
                                     </div>
                                     <div class="form-text">Select an existing image from the shared Media Library or remove this section's reference without deleting the file.</div>
-                                @elseif ($type === 'image')
-                                    @if ($currentImage)
-                                        <div class="mb-2"><img src="{{ $currentImage }}" alt="" style="max-width:180px;max-height:110px;object-fit:contain" class="rounded border p-1"></div>
-                                    @endif
-                                    <input class="form-control" type="file" accept="image/jpeg,image/png,image/webp,image/gif"
-                                        id="section-{{ $section->id }}-{{ $key }}" name="config[{{ $key }}]">
-                                    <div class="form-text">Upload a replacement image (JPG, PNG, WebP or GIF; up to 10 MB). Leave empty to keep the current image.</div>
                                 @else
                                     <input class="form-control" type="{{ $type === 'number' ? 'number' : ($type === 'color' ? 'color' : 'text') }}"
                                         id="section-{{ $section->id }}-{{ $key }}" name="config[{{ $key }}]"
