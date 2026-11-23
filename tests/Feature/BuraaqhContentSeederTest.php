@@ -278,6 +278,45 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertDatabaseHas('posts', ['slug' => 'complete-guide-buying-residential-property-bareilly', 'status' => 'published']);
     }
 
+    public function test_seeded_editorial_pages_and_locality_guides_render_on_existing_frontend_routes(): void
+    {
+        $this->seed();
+
+        $post = Post::query()->where('slug', 'complete-guide-buying-residential-property-bareilly')->firstOrFail();
+        $guide = NeighborhoodGuide::query()->where('slug', 'civil-lines-bareilly-property-guide')->firstOrFail();
+        $page = Page::query()->where('slug', 'buy-with-buraaqh')->firstOrFail();
+        $service = Service::query()->where('slug', 'property-search-shortlisting')->firstOrFail();
+
+        $this->get(route('blog.index'))
+            ->assertOk()
+            ->assertSee($post->title);
+
+        $this->get(route('blog.show', $post))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertSee('Define the purpose and the non-negotiables');
+
+        $this->get(route('faq.index'))
+            ->assertOk()
+            ->assertSee('How should I decide between a ready-to-move home and an under-construction property?');
+
+        $this->get(route('neighborhood-guides.index'))
+            ->assertOk()
+            ->assertSee($guide->title);
+
+        $this->get(route('neighborhood-guides.show', $guide))
+            ->assertOk()
+            ->assertSee($guide->title)
+            ->assertSee('Questions that matter for a mixed-use street');
+
+        $this->get(route('pages.show', $page))
+            ->assertOk()
+            ->assertSee($page->title);
+
+        $this->get(route('services.index'))->assertOk();
+        $this->get(route('services.show', $service))->assertNotFound();
+    }
+
     public function test_homepage_blog_cards_do_not_reuse_unverified_template_photography(): void
     {
         $this->seed();
