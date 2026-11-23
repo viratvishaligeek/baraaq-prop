@@ -167,7 +167,7 @@
                         info: table.dataset.datatablePaging !== 'false',
                         lengthChange: table.dataset.datatablePaging !== 'false',
                         lengthMenu: [10, 25, 50, 100],
-                        searching: true,
+                        searching: table.dataset.datatableSearching !== 'false',
                         ordering: true,
                         responsive: true,
                         autoWidth: false,

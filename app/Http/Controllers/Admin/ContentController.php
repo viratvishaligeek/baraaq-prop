@@ -90,17 +90,46 @@ class ContentController extends Controller
     public function index(string $type)
     {
         $model = $this->model($type);
+        $filters = request()->validate([
+            'q' => ['nullable', 'string', 'max:160'],
+            'status' => ['nullable', Rule::in(['draft', 'published', 'archived'])],
+            'category_type' => ['nullable', Rule::in(['property', 'post'])],
+        ]);
+
+        $searchColumns = match ($type) {
+            'posts', 'services' => ['title', 'slug', 'excerpt'],
+            'pages' => ['title', 'slug'],
+            'categories' => ['name', 'slug', 'description'],
+            'banners' => ['title', 'subtitle', 'placement'],
+            'team' => ['name', 'designation', 'email'],
+            'testimonials' => ['name', 'designation', 'company', 'quote'],
+            default => [],
+        };
+
         $items = $model::query()
             ->when(
-                request()->filled('status') && in_array($type, ['posts', 'pages', 'services', 'team', 'testimonials'], true),
-                fn ($query) => $query->where('status', request('status'))
+                ! empty($filters['q']),
+                function ($query) use ($filters, $searchColumns): void {
+                    $term = '%'.trim($filters['q']).'%';
+                    $query->where(function ($search) use ($searchColumns, $term): void {
+                        foreach ($searchColumns as $index => $column) {
+                            $method = $index === 0 ? 'where' : 'orWhere';
+                            $search->{$method}($column, 'like', $term);
+                        }
+                    });
+                }
             )
             ->when(
-                $type === 'categories' && request()->filled('category_type'),
-                fn ($query) => $query->where('type', request('category_type'))
+                ! empty($filters['status']) && in_array($type, ['posts', 'pages', 'services', 'team', 'testimonials'], true),
+                fn ($query) => $query->where('status', $filters['status'])
+            )
+            ->when(
+                $type === 'categories' && ! empty($filters['category_type']),
+                fn ($query) => $query->where('type', $filters['category_type'])
             )
             ->latest()
-            ->get();
+            ->paginate(25)
+            ->withQueryString();
 
         return view('admin.content.index', compact('type', 'items'));
     }

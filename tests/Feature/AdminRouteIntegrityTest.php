@@ -88,7 +88,7 @@ class AdminRouteIntegrityTest extends TestCase
             ['admin.users.index', []],
         ];
 
-        $serverPaginated = ['admin.comments.index', 'admin.enquiries.index', 'admin.menus.index', 'admin.newsletters.index', 'admin.properties.index', 'admin.tags.index', 'admin.users.index'];
+        $serverPaginated = ['admin.comments.index', 'admin.content.index', 'admin.enquiries.index', 'admin.menus.index', 'admin.newsletters.index', 'admin.properties.index', 'admin.tags.index', 'admin.users.index'];
 
         foreach ($screens as [$name, $parameters]) {
             $response = $this->actingAs($admin)->get(route($name, $parameters));
