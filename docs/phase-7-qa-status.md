@@ -25,7 +25,7 @@
 
 No Laravel or browser test is reported as passing in this phase.
 
-The available execution container reports PHP 8.4.24, Node v22.16.0 and npm 10.9.2. Composer is unavailable and no local repository checkout exists. The repository reports zero GitHub Actions workflow runs for this branch. Therefore the following were not executed here:
+The available execution container reports PHP 8.4.24, Node v22.16.0 and npm 10.9.2. Composer is unavailable, no local repository checkout exists, and the local PHP runtime does not have the required `pdo_sqlite`, GD, mbstring, XML, cURL and ZIP extensions (the CI workflow installs these). The repository reports zero GitHub Actions workflow runs for this branch. Therefore the following were not executed here:
 
 - `composer validate --strict`
 - `composer install`
