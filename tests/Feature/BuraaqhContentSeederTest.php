@@ -72,6 +72,11 @@ class BuraaqhContentSeederTest extends TestCase
         Storage::fake('public');
         $this->seed();
 
+        $faq = FaqItem::query()->firstOrFail();
+        $faq->update(['answer' => 'Owner-approved FAQ wording.']);
+        $guide = NeighborhoodGuide::query()->firstOrFail();
+        $guide->update(['content' => '<p>Owner-approved neighborhood guide copy.</p>']);
+
         $page = Page::query()->create([
             'title' => 'Owner-managed page',
             'slug' => 'owner-managed-page',
@@ -87,5 +92,7 @@ class BuraaqhContentSeederTest extends TestCase
             $page->fresh()->content
         );
         $this->assertSame('draft', $page->fresh()->status);
+        $this->assertSame('Owner-approved FAQ wording.', $faq->fresh()->answer);
+        $this->assertSame('<p>Owner-approved neighborhood guide copy.</p>', $guide->fresh()->content);
     }
 }
