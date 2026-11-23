@@ -58,4 +58,27 @@
         @endif
     </div></div></div></section>
 
+    @if ($relatedServices->isNotEmpty())
+        <section class="space-top">
+            <div class="container">
+                <h2 class="sec-title mb-4">Related services</h2>
+                <div class="row gy-4">
+                    @foreach ($relatedServices as $relatedService)
+                        <div class="col-md-6 col-lg-4">
+                            <article class="blog-card h-100">
+                                @if ($relatedService->featured_image)
+                                    <a href="{{ route('services.show', $relatedService) }}"><img class="w-100" loading="lazy" src="{{ Storage::disk('public')->url($relatedService->featured_image) }}" alt="{{ $relatedService->title }}"></a>
+                                @endif
+                                <div class="blog-content">
+                                    <h3 class="h5"><a href="{{ route('services.show', $relatedService) }}">{{ $relatedService->title }}</a></h3>
+                                    <p>{{ $relatedService->excerpt }}</p>
+                                </div>
+                            </article>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
 @endsection
