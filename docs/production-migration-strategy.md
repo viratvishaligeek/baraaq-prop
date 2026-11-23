@@ -30,4 +30,4 @@ No historical migration was rewritten and no schema was changed in this code pas
 
 ## Seeder safety
 
-The default DatabaseSeeder now runs PillerDemoContentSeeder automatically only in local/testing environments. On other environments, demo records require an explicit SEED_DEMO_CONTENT=true opt-in. Keep production owner data out of ordinary database seeding; the role/permission, homepage-template, and default-theme seeders remain the baseline setup seeders.
+The default DatabaseSeeder now runs BuraaqhContentSeeder automatically only in local/testing environments. On other environments, demo records require an explicit SEED_DEMO_CONTENT=true opt-in. Keep production owner data out of ordinary database seeding; the role/permission, homepage-template, and default-theme seeders remain the baseline setup seeders.
