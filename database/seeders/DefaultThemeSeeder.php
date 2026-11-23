@@ -101,7 +101,10 @@ class DefaultThemeSeeder extends Seeder
             ['About Us', '/about', null, 2],
             ['Blog', '/blog', null, 3],
             ['Testimonials', '/testimonials', null, 4],
-            ['Contact', '/contact', null, 5],
+            ['Gallery', '/gallery', null, 5],
+            ['Neighborhood Guide', '/neighborhood-guide', null, 6],
+            ['FAQs', '/faq', null, 7],
+            ['Contact', '/contact', null, 8],
         ]);
     }
 
@@ -157,7 +160,7 @@ class DefaultThemeSeeder extends Seeder
                 $legacyUrl = match ($url) {
                     '/about' => '/about.html',
                     '/contact' => '/contact.html',
-                    '/services' => '/services',
+                    '/faq' => '/services',
                     default => null,
                 };
                 if ($legacyUrl && $item->url === $legacyUrl) {
