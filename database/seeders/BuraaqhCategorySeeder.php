@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 
 class BuraaqhCategorySeeder extends Seeder
 {
@@ -21,24 +22,26 @@ class BuraaqhCategorySeeder extends Seeder
         ];
 
         foreach ($propertyCategories as $index => [$name, $slug, $description, $icon]) {
-            $category = Category::query()->firstOrCreate(
-                ['slug' => $slug],
-                [
-                    'name' => $name,
-                    'description' => $description,
-                    'type' => 'property',
-                    'icon_path' => '/theme-assets/img/icon/'.$icon,
-                    'sort_order' => $index + 1,
-                    'is_active' => true,
-                ]
-            );
+            $iconPath = '/theme-assets/img/icon/'.$icon;
+            $category = $this->findOrCreate($slug, [
+                'name' => $name,
+                'description' => $description,
+                'type' => 'property',
+                'icon_path' => File::isFile(public_path(ltrim($iconPath, '/'))) ? $iconPath : null,
+                'sort_order' => $index + 1,
+                'is_active' => true,
+            ]);
+
+            if (! $category) {
+                continue;
+            }
 
             $missingDefaults = [];
             if (blank($category->description)) {
                 $missingDefaults['description'] = $description;
             }
-            if (blank($category->icon_path)) {
-                $missingDefaults['icon_path'] = '/theme-assets/img/icon/'.$icon;
+            if (blank($category->icon_path) && File::isFile(public_path(ltrim($iconPath, '/')))) {
+                $missingDefaults['icon_path'] = $iconPath;
             }
 
             if ($missingDefaults !== []) {
@@ -55,20 +58,30 @@ class BuraaqhCategorySeeder extends Seeder
         ];
 
         foreach ($postCategories as $index => [$name, $slug, $description]) {
-            $category = Category::query()->firstOrCreate(
-                ['slug' => $slug],
-                [
-                    'name' => $name,
-                    'description' => $description,
-                    'type' => 'post',
-                    'sort_order' => $index + 1,
-                    'is_active' => true,
-                ]
-            );
+            $category = $this->findOrCreate($slug, [
+                'name' => $name,
+                'description' => $description,
+                'type' => 'post',
+                'sort_order' => $index + 1,
+                'is_active' => true,
+            ]);
 
-            if (blank($category->description)) {
+            if ($category && blank($category->description)) {
                 $category->forceFill(['description' => $description])->save();
             }
         }
+    }
+
+    private function findOrCreate(string $slug, array $attributes): ?Category
+    {
+        $existing = Category::withTrashed()->where('slug', $slug)->first();
+
+        // A soft-deleted category is an administrator decision. Do not restore
+        // it or attempt a duplicate insert against its unique slug.
+        if ($existing?->trashed()) {
+            return null;
+        }
+
+        return $existing ?? Category::query()->firstOrCreate(['slug' => $slug], $attributes);
     }
 }
