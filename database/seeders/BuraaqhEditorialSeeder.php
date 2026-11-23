@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\FaqItem;
 use App\Models\NeighborhoodGuide;
-use App\Models\Page;
 use App\Models\Post;
 use App\Models\Tag;
 use Illuminate\Database\Seeder;
@@ -15,63 +14,9 @@ class BuraaqhEditorialSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->seedAboutPage();
         $this->seedArticles();
         $this->seedAdditionalFaqs();
         $this->upgradeUneditedLocalityGuides();
-    }
-
-    private function seedAboutPage(): void
-    {
-        $html = <<<'HTML'
-<p>Buraaqh Properties is a Bareilly-focused real estate information and enquiry platform. The website is intended to help people organise their property requirements, understand the questions that matter before a transaction and make a more considered start to conversations about residential and commercial real estate in Bareilly, Uttar Pradesh.</p>
-<h2>A practical approach to property decisions</h2>
-<p>A property decision involves more than choosing a floor plan or comparing a quoted price. Buyers and sellers need clear information about the property itself, the surrounding locality, the documents available for review, the costs involved and the responsibilities that continue after a transaction. Our website brings these considerations into one place so visitors can prepare better questions and share a clear enquiry.</p>
-<h2>Our mission</h2>
-<p>Our mission is to make property information easier to understand and property enquiries easier to organise. We aim to encourage careful comparison, transparent communication and independent verification at every important stage.</p>
-<h2>Our vision</h2>
-<p>Our vision is to become a useful local starting point for people exploring residential and commercial real estate in Bareilly: a place where property requirements can be explained clearly and the next steps can be discussed without pressure or unsupported promises.</p>
-<h2>How we approach a property enquiry</h2>
-<p>Every requirement is different. A family looking for a home may prioritise room layout, daily travel, utilities and long-term suitability. A business considering a commercial space may focus on permitted use, customer access, visibility, services and operating costs. We encourage visitors to describe their purpose, preferred areas, essential requirements and questions before beginning a property discussion.</p>
-<ul>
-<li><strong>Understand the requirement:</strong> clarify the intended use, preferred property type, broad budget and practical priorities.</li>
-<li><strong>Compare the details:</strong> review the specific location, measurements, condition, access, utilities and total costs rather than relying on a headline description.</li>
-<li><strong>Ask for supporting information:</strong> request the records and approvals relevant to the particular property and transaction.</li>
-<li><strong>Verify independently:</strong> have ownership, land use, approvals, encumbrances and contractual terms checked by qualified professionals and the appropriate authorities.</li>
-<li><strong>Keep decisions documented:</strong> make sure important representations, payments, timelines and responsibilities are recorded in writing.</li>
-</ul>
-<h2>Residential and commercial property guidance</h2>
-<p>Residential property decisions often involve household needs, usable space, construction quality, maintenance, neighbourhood conditions and future flexibility. Commercial property decisions add questions about permitted activity, access, fit-out requirements, utilities, lease or purchase obligations and the practical needs of customers or staff. The right choice depends on the individual property and the purpose for which it is being considered.</p>
-<h2>Why a careful process matters</h2>
-<p>Property information can change, and conditions can differ from one street, building or unit to another. Photographs and summaries cannot replace a site visit or a review of original records. Buraaqh Properties encourages visitors to confirm availability, ownership, approvals, measurements, charges and transaction terms before making a commitment. Website content is general information, not a legal opinion, valuation certificate, loan approval or guarantee of investment performance.</p>
-<h2>Local focus: Bareilly, Uttar Pradesh</h2>
-<p>Our content is centred on property questions relevant to people exploring Bareilly. Locality guides are designed as due-diligence checklists, not rankings or claims about facilities, infrastructure, current prices or future appreciation. Visitors should verify the exact address, approach, utilities, services and applicable land or building records for the property they are considering.</p>
-<h2>Start with a clear enquiry</h2>
-<p>If you are exploring a home, plot or commercial space, use the contact form to share your requirements and the questions you would like to discuss. Please do not send sensitive financial information through the website form. Any specific property details, service availability and next steps should be confirmed directly before you rely on them.</p>
-HTML;
-
-        $page = Page::query()->firstOrCreate(
-            ['slug' => 'about'],
-            [
-                'title' => 'About Buraaqh Properties',
-                'content' => $html,
-                'template' => 'default',
-                'status' => 'published',
-                'meta_title' => 'About Buraaqh Properties | Real Estate in Bareilly',
-                'meta_description' => 'Learn about Buraaqh Properties, our practical approach to residential and commercial property enquiries in Bareilly, and the checks that support informed decisions.',
-            ]
-        );
-
-        $legacy = '<p>Buraaqh Properties is a Bareilly-focused property information and enquiry website. Published listings and service pages are managed through the website CMS. Availability, ownership, approvals and transaction details should be independently verified before a decision is made.</p><h2>Our purpose</h2><p>To make property information easier to review and property enquiries easier to submit.</p><h2>Using this website</h2><p>Review the details shown on each published listing, ask questions through the contact form and confirm all material facts directly before making payments or commitments.</p>';
-
-        if ($page->wasRecentlyCreated === false && trim((string) $page->content) === $legacy) {
-            $page->update([
-                'title' => 'About Buraaqh Properties',
-                'content' => $html,
-                'meta_title' => 'About Buraaqh Properties | Real Estate in Bareilly',
-                'meta_description' => 'Learn about Buraaqh Properties, our practical approach to residential and commercial property enquiries in Bareilly, and the checks that support informed decisions.',
-            ]);
-        }
     }
 
     private function seedArticles(): void
