@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
         // inserted into a production database by an ordinary db:seed invocation.
         // Production/staging operators can opt in explicitly with SEED_DEMO_CONTENT=true.
         if (app()->environment(['local', 'testing']) || filter_var(env('SEED_DEMO_CONTENT', false), FILTER_VALIDATE_BOOLEAN)) {
-            $this->call([PillerDemoContentSeeder::class]);
+            $this->call([BuraaqhContentSeeder::class]);
         }
     }
 }
