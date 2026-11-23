@@ -7,6 +7,6 @@
 <div class="col-lg-4 col-md-6"><div class="blog-card"><div class="blog-img"><a href="{{ route('blog.show', $post) }}"><img src="{{ $post->featured_image ? Storage::disk('public')->url($post->featured_image) : asset('theme-assets/img/blog/blog_1_1.jpg') }}" alt="{{ $post->title }}"></a><div class="date"><a href="{{ route('blog.show', $post) }}">{{ $post->published_at?->format("d M") }}</a></div></div><div class="blog-content"><div class="blog-meta"><a href="{{ route('blog.show', $post) }}"><i class="fa-solid fa-user"></i> {{ $post->author?->name ?? 'Buraaqh Properties' }}</a> <a href="{{ route('blog.show', $post) }}"><i class="fa-solid fa-comments"></i> No Comments</a></div><h3 class="box-title"><a href="{{ route('blog.show', $post) }}">{{ $post->title }}</a></h3><a href="{{ route('blog.show', $post) }}" class="th-btn pill style3">Read More</a></div></div></div>
 @empty
 <div class="col-12 text-center text-muted">No articles have been published yet.</div>
-@endforelse<div class="th-pagination text-center pt-4"><ul><li><a href="{{ route('blog.index') }}"><i class="far fa-arrow-left"></i></a></li><li><a href="{{ route('blog.index') }}">1</a></li><li><a href="{{ route('blog.index') }}">2</a></li><li><a href="{{ route('blog.index') }}">3</a></li><li><a class="next-page" href="{{ route('blog.index') }}">Next <i class="far fa-arrow-right"></i></a></li></ul></div></div></div></section>
-<div class="container mt-4">{{ $posts->withQueryString()->links() }}</div>
+@endforelse</div></div></section>
+<div class="container mt-4">{{ $posts->withQueryString()->links('vendor.pagination.buraaqh') }}</div>
 @endsection
