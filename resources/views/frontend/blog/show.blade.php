@@ -9,7 +9,7 @@
 @foreach($post->categories as $category)<a href="{{ route('blog.index', ['category' => $category->slug]) }}"><i class="fa-regular fa-tag"></i> {{ $category->name }}</a>@endforeach
 </div>
 <h2 class="blog-title">{{ $post->title }}</h2>
-<div class="cms-post-content">{!! \\App\\Support\\HtmlSanitizer::sanitize($post->content ?? '') !!}</div>
+<div class="cms-post-content">{!! \App\Support\\HtmlSanitizer::sanitize($post->content ?? '') !!}</div>
 <div class="share-links clearfix">
     <div class="row justify-content-between">
         <div class="col-sm-auto">
@@ -25,9 +25,9 @@
         <div class="col-sm-auto text-xl-end">
             <span class="share-links-title">Share this article:</span>
             <div class="th-social">
-                @php($facebook = \\App\\Models\\Setting::read('social_facebook', ''))
-                @php($instagram = \\App\\Models\\Setting::read('social_instagram', ''))
-                @php($linkedin = \\App\\Models\\Setting::read('social_linkedin', ''))
+                @php($facebook = \App\Models\\Setting::read('social_facebook', ''))
+                @php($instagram = \App\Models\\Setting::read('social_instagram', ''))
+                @php($linkedin = \App\Models\\Setting::read('social_linkedin', ''))
                 @if($facebook)<a href="{{ $facebook }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>@endif
                 @if($linkedin)<a href="{{ $linkedin }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>@endif
                 @if($instagram)<a href="{{ $instagram }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>@endif
