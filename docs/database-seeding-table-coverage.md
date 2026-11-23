@@ -26,7 +26,7 @@ Do not run individual content seeders out of order. In particular, the homepage 
 | Local information | `faq_items`, `neighborhood_guides` | Seed practical FAQs and seven locality-specific guides; avoid unsupported price, appreciation or safety claims. |
 | Services | `services`, `service_features` | Seed six clearly marked draft service descriptions and their scoped feature records. Do not publish unconfirmed service offerings. |
 | Homepage | `homepages`, `homepage_sections` | Seed the fixed Home 9 composition and registered section configurations. Keep sections that require unverified business facts disabled. |
-| Media | `media`, `media_attachments` | Import only inspected, existing theme assets for approved decorative homepage fields. Keep alt text explicit that these are illustrative assets, not property listings. |
+| Media | `media`, `media_attachments` | Import inspected theme assets once and reuse their public-disk paths for homepage decoration and local demo property/gallery images. Demo property/gallery alt text identifies the imagery as illustrative, not real inventory. |
 | Navigation | `menus`, `menu_items` | Seed primary and footer navigation with stable locations and destinations. |
 | Configuration | `settings` | Seed brand-neutral defaults and Bareilly context; leave business contact details and social links blank until supplied and verified. |
 
@@ -36,10 +36,11 @@ Expected clean-install starter inventory is documented in the main audit. The ad
 
 | Tables / data | Reason |
 |---|---|
-| `properties`, `property_images`, `property_accommodations`, `property_faqs` | No verified Buraaqh property inventory or property-specific photography is present in the repository. Publishing invented addresses, prices, ownership or availability would mislead visitors. |
-| `gallery_items` | No verified property gallery photography is available. A theme photograph must not be presented as an actual listing. |
+| Production `properties`, `property_images`, `property_accommodations`, `property_faqs` | These remain empty unless `CMS_DEMO_PROPERTIES=true` is explicitly configured. Fictional listing prices, addresses, availability and ownership must never be published as genuine production inventory. |
+| Local/testing `properties`, `property_images`, `property_accommodations`, `property_faqs` | `BuraaqhDemoPropertySeeder` creates 12 clearly labelled fictional Bareilly preview listings, 24 gallery images, 36 room/detail rows and 24 property FAQs. The property descriptions and image alt text disclose the demo status. |
+| Local/testing `gallery_items` | Six published preview gallery records reuse inspected theme assets and explicitly state that they are illustrative, not actual Buraaqh property photographs. Production remains empty unless demo seeding is explicitly enabled. |
 | `service_images` | No verified service-specific image mapping is available; unrelated theme stock imagery is not suitable evidence. |
-| `team_members`, `testimonials` | Real staff identities and authentic customer feedback must come from the business, not generated identities or reviews. |
+| `team_members`, `testimonials` | Real staff/agent identities and authentic customer feedback must come from the business. The current schema has no property-agent pivot or agent/location master tables, so the seeder does not invent those relationships. |
 | `comments`, `service_comments` | These are visitor-generated feedback records and should be created through the moderated application workflow, not impersonated by a seeder. |
 | `enquiries` | Enquiries represent real prospective customers and must not be fabricated as leads. |
 | `newsletter_subscribers` | Subscription requires an actual person's consent. Never seed synthetic subscribers. |
