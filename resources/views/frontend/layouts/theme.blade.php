@@ -377,6 +377,7 @@
                                     </div>
                                 </div>
                             </div>
+                            @if (!empty($siteSettings['footer_gallery_images']))
                             <div class="footer-bottom-community">
                                 <div class="content">
                                     <p>{{ $siteSettings['footer_gallery_handle'] ?? '' }}</p>
@@ -405,6 +406,7 @@
                 </div>
             </div>
         </div>
+                            @endif
         <div class="copyright-wrap">
             <div class="footer-bottom-top-shape animation-infinite"
                 data-bg-src="{{ asset('theme-assets/img/icon/footer-bottom-top-shape.png') }}">
