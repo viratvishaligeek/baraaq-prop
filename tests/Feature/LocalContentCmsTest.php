@@ -112,13 +112,16 @@ class LocalContentCmsTest extends TestCase
             'title' => 'Property advisory',
             'excerpt' => 'Updated guidance.',
             'content' => '<p>Updated service overview.</p>',
-            'status' => 'draft',
+            'status' => 'published',
             'features_json' => json_encode([['title' => 'Updated document checklist']]),
             'remove_inside_images' => [$imageId],
         ])->assertRedirect(route('admin.content.index', 'services'));
 
         $this->assertDatabaseCount('service_features', 1);
         $this->assertDatabaseCount('service_images', 1);
+        $this->get(route('services.show', $service->fresh()))
+            ->assertOk()
+            ->assertSee('Updated document checklist');
     }
 
     public function test_admin_can_create_faq_and_gallery_content_with_media_records(): void
