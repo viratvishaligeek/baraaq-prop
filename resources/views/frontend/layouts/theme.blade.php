@@ -207,115 +207,8 @@
             </div>
         </div>
     </div>
-    @if (isset($homepage) && $homepage?->slug === 'home-9')
-        <header class="th-header header-default header-layout9">
-            <div class="sticky-wrapper" data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
-                <div class="menu-area">
-                    <div class="container">
-                        <div class="row align-items-center justify-content-between">
-                            <div class="col-auto">
-                                <div class="header-logo">
-                                    <a href="{{ route('home') }}">
-                                        @if (!empty($siteSettings['logo']))
-                                            <img src="{{ asset('storage/'.$siteSettings['logo']) }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
-                                        @else
-                                            <img src="{{ asset('theme-assets/img/logo.svg') }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
-                                        @endif
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <nav class="main-menu d-none d-lg-inline-block">
-                                    <ul>@include('frontend.partials.navigation')</ul>
-                                </nav>
-                                <button type="button" class="th-menu-toggle d-block d-lg-none"><i class="far fa-bars"></i></button>
-                            </div>
-                            <div class="col-auto d-none d-xl-block">
-                                <div class="header-button">
-                                    <a href="{{ \App\Rules\SafeLink::sanitize($siteSettings['header_cta_url'] ?? route('properties.index')) }}" class="th-btn bg-black">
-                                        <i class="fa-regular fa-house-chimney me-2"></i> {{ $siteSettings['header_cta_label'] ?? 'Add Listing' }}
-                                    </a>
-                                    <button type="button" class="icon-btn searchBoxToggler"><i class="far fa-search"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-    @else
-    <header class="th-header header-default header-layout1">
-        <div class="header-top">
-            <div class="container">
-                <div class="row justify-content-center justify-content-lg-between align-items-center gy-2">
-                    <div class="col-auto d-none d-lg-block">
-                        <div class="header-links">
-                            <ul>
-                                <li>
-                                    <i class="fa-solid fa-envelope">
-                                    </i> <a
-                                        href="mailto:{{ $siteSettings['site_email'] ?? '' }}">{{ \App\Models\Setting::read('site_email', '') }}</a>
-                                </li>
-                                <li>
-                                    <i class="fa-solid fa-phone">
-                                    </i> <a
-                                        href="tel:{{ preg_replace('/\D+/', '', \App\Models\Setting::read('site_phone', '')) }}">{{ $siteSettings['site_phone'] ?? '' }}</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <div class="header-links">
-                            <ul>
-                                <li>
-                                    <div class="th-social">
-                                        @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_facebook'] ?? null))
-                                            <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_facebook']) }}" target="_blank"
-                                                rel="noopener noreferrer">
-                                                <i class="fab fa-facebook-f">
-                                                </i>
-                                            </a>
-                                            @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_instagram'] ?? null))
-                                                <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_instagram']) }}" target="_blank"
-                                                    rel="noopener noreferrer">
-                                                    <i class="fab fa-instagram">
-                                                    </i>
-                                                </a>
-                                                @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_linkedin'] ?? null))
-                                                    <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_linkedin']) }}" target="_blank"
-                                                        rel="noopener noreferrer">
-                                                        <i class="fab fa-linkedin-in">
-                                                        </i>
-                                                    </a>
-                                                    @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_youtube'] ?? null))
-                                                        <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_youtube']) }}"
-                                                            target="_blank" rel="noopener noreferrer">
-                                                            <i class="fab fa-youtube">
-                                                            </i>
-                                                        </a>
-                                                        @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_x'] ?? null))
-                                                            <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_x']) }}" target="_blank"
-                                                                rel="noopener noreferrer">
-                                                                <i class="fab fa-x-twitter">
-                                                                </i>
-                                                            </a>
-                                                            @endif @if (!empty($siteSettings['whatsapp_number']))
-                                                                <a href="https://wa.me/{{ preg_replace('/\D+/', '', $siteSettings['whatsapp_number']) }}"
-                                                                    target="_blank" rel="noopener noreferrer">
-                                                                    <i class="fab fa-whatsapp">
-                                                                    </i>
-                                                                </a>
-                                                            @endif
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="sticky-wrapper"
-            data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
+    <header class="th-header header-default header-layout9">
+        <div class="sticky-wrapper" data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
             <div class="menu-area">
                 <div class="container">
                     <div class="row align-items-center justify-content-between">
@@ -323,10 +216,9 @@
                             <div class="header-logo">
                                 <a href="{{ route('home') }}">
                                     @if (!empty($siteSettings['logo']))
-                                        <img src="{{ asset('storage/' . $siteSettings['logo']) }}"
-                                        alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">@else<img
-                                            src="{{ asset('theme-assets/img/logo-white.svg') }}"
-                                            alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                        <img src="{{ asset('storage/' . $siteSettings['logo']) }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                    @else
+                                        <img src="{{ asset('theme-assets/img/logo.svg') }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
                                     @endif
                                 </a>
                             </div>
@@ -335,20 +227,16 @@
                             <nav class="main-menu d-none d-lg-inline-block">
                                 <ul>@include('frontend.partials.navigation')</ul>
                             </nav>
-                            <button type="button" class="th-menu-toggle d-block d-lg-none">
-                                <i class="far fa-bars">
-                                </i>
-                            </button>
+                            <button type="button" class="th-menu-toggle d-block d-lg-none" aria-label="Open navigation"><i class="far fa-bars"></i></button>
                         </div>
                         <div class="col-auto d-none d-xl-block">
                             <div class="header-button">
-                                <a href="{{ \App\Rules\SafeLink::sanitize($siteSettings['header_cta_url'] ?? route('properties.index')) }}" class="th-btn outline pill text-white">
-                                    <i class="fa-regular fa-house-chimney me-2">
-                                    </i> {{ $siteSettings['header_cta_label'] ?? 'Browse Properties' }} </a>
-                                <button type="button" class="icon-btn searchBoxToggler text-white">
-                                    <i class="far fa-search">
-                                    </i>
-                                </button>
+                                @if (!empty($siteSettings['header_cta_label']) && !empty($siteSettings['header_cta_url']))
+                                    <a href="{{ \\App\\Rules\\SafeLink::sanitize($siteSettings['header_cta_url']) }}" class="th-btn bg-black">
+                                        <i class="fa-regular fa-house-chimney me-2"></i> {{ $siteSettings['header_cta_label'] }}
+                                    </a>
+                                @endif
+                                <button type="button" class="icon-btn searchBoxToggler" aria-label="Search properties"><i class="far fa-search"></i></button>
                             </div>
                         </div>
                     </div>
@@ -356,8 +244,6 @@
             </div>
         </div>
     </header>
- 
-    @endif
     <main>
         @yield('content')
     </main>
