@@ -13,7 +13,7 @@ class DefaultThemeSeeder extends Seeder
 {
     public function run(): void
     {
-        $siteName = trim((string) env('SITE_NAME', 'Pillar Real Estate')) ?: 'Pillar Real Estate';
+        $siteName = trim((string) env('SITE_NAME', 'Buraaqh Properties Real Estate')) ?: 'Buraaqh Properties Real Estate';
 
         $settings = [
             'site_title' => [$siteName, 'general', 'string'],
@@ -35,7 +35,7 @@ class DefaultThemeSeeder extends Seeder
             'footer_services_heading' => ['Services', 'footer', 'string'],
             'footer_quick_links_heading' => ['Quick Links', 'footer', 'string'],
             'footer_support_heading' => ['Support', 'footer', 'string'],
-            'footer_location_heading' => ['Pillar Location', 'footer', 'string'],
+            'footer_location_heading' => ['Buraaqh Properties Location', 'footer', 'string'],
             'footer_social_heading' => ['Social Media:', 'footer', 'string'],
             'sticky_header' => ['1', 'appearance', 'boolean'],
             'primary_color' => ['#068FFF', 'appearance', 'string'],

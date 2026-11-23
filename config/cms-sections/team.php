@@ -8,7 +8,7 @@ return [
         'view' => 'frontend.sections.team.home-2',
         'defaults' => [
             'eyebrow' => 'Team Members',
-            'heading' => 'Meet Our Pillar Agents',
+            'heading' => 'Meet Our Buraaqh Properties Agents',
             'items_limit' => 6,
             'columns' => 4,
             'show_email' => true,

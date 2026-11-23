@@ -28,12 +28,12 @@ class MediaController extends Controller
     {
         $data = $request->validate([
             'files' => ['required', 'array', 'min:1', 'max:20'],
-            'files.*' => ['required', 'file', 'mimes:jpg,jpeg,png,webp,gif,pdf,mp4', 'max:10240'],
+            'files.*' => ['required', 'file', 'mimes:svg,jpg,jpeg,png,webp,gif,pdf,mp4', 'max:10240'],
             'variants' => ['sometimes', 'array'],
             'variants.*' => ['sometimes', 'array'],
-            'variants.*.small' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            'variants.*.medium' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'variants.*.large' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
+            'variants.*.small' => ['sometimes', 'file', 'image', 'mimes:svg,jpg,jpeg,png,webp', 'max:2048'],
+            'variants.*.medium' => ['sometimes', 'file', 'image', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
+            'variants.*.large' => ['sometimes', 'file', 'image', 'mimes:svg,jpg,jpeg,png,webp', 'max:8192'],
         ]);
 
         app(MediaUploadService::class)->store($request, $data['files'], $data['variants'] ?? []);
@@ -80,12 +80,12 @@ class MediaController extends Controller
     public function editedCopy(Request $request, Media $media)
     {
         $data = $request->validate([
-            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+            'image' => ['required', 'image', 'mimes:svg,jpg,jpeg,png,webp', 'max:10240'],
             'alt_text' => ['nullable', 'string', 'max:255'],
             'variants' => ['sometimes', 'array'],
-            'variants.small' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            'variants.medium' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'variants.large' => ['sometimes', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
+            'variants.small' => ['sometimes', 'file', 'image', 'mimes:svg,jpg,jpeg,png,webp', 'max:2048'],
+            'variants.medium' => ['sometimes', 'file', 'image', 'mimes:svg,jpg,jpeg,png,webp', 'max:5120'],
+            'variants.large' => ['sometimes', 'file', 'image', 'mimes:svg,jpg,jpeg,png,webp', 'max:8192'],
         ]);
 
         $uploadedPaths = [];
