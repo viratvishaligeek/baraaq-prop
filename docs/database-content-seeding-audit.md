@@ -13,6 +13,53 @@ The repository contains **39 migration files**:
 
 The application migrations are sequential feature slices rather than duplicate table-creation migrations. The first CMS migration creates the foundational content, taxonomy, access-control, menu, media, settings, enquiry, and property tables. Later migrations add homepage/page-builder structures, services, SEO fields, media variants, local content, tags, and service comments.
 
+### Complete migration file inventory
+
+**Laravel framework (3):**
+
+- `0001_01_01_000000_create_users_table.php`
+- `0001_01_01_000001_create_cache_table.php`
+- `0001_01_01_000002_create_jobs_table.php`
+
+**Application migrations (36), in execution order:**
+
+- `2026_11_17_000000_create_cms_tables.php`
+- `2026_11_17_000001_add_subject_to_enquiries.php`
+- `2026_11_17_000002_add_preferred_contact_time_to_enquiries.php`
+- `2026_11_17_000003_create_newsletter_subscribers_table.php`
+- `2026_11_18_000001_create_homepages_table.php`
+- `2026_11_18_000002_create_reusable_sections_table.php`
+- `2026_11_18_000003_create_homepage_sections_table.php`
+- `2026_11_18_000004_create_widgets_table.php`
+- `2026_11_18_000005_create_widget_areas_table.php`
+- `2026_11_18_000006_create_widget_area_items_table.php`
+- `2026_11_18_000007_add_cta_configuration_to_properties_table.php`
+- `2026_11_18_000008_add_section_identity_to_reusable_sections_table.php`
+- `2026_11_18_000009_add_homepage_composition_completion_flag.php`
+- `2026_11_18_000010_add_display_fields_to_categories_table.php`
+- `2026_11_18_000011_create_media_attachments_table.php`
+- `2026_11_18_000012_add_dynamic_links_to_menu_items.php`
+- `2026_11_18_000013_create_services_testimonials_comments_and_seo_fields.php`
+- `2026_11_18_000014_create_page_views_table.php`
+- `2026_11_18_000015_rename_category_pivot_table.php`
+- `2026_11_18_000016_add_publish_states_to_team_and_testimonials.php`
+- `2026_11_18_000017_add_visit_sessions_and_activity_logs.php`
+- `2026_11_18_000018_add_homepage_key_to_pages_table.php`
+- `2026_11_18_000019_generalize_homepage_sections_for_pages.php`
+- `2026_11_18_000020_create_four_footer_widget_areas.php`
+- `2026_11_19_000001_add_dynamic_property_details.php`
+- `2026_11_19_000002_add_focus_keyword_to_content.php`
+- `2026_11_19_000003_add_media_image_variants.php`
+- `2026_11_19_000004_add_service_page_builder_sections.php`
+- `2026_11_19_000005_add_images_to_property_accommodations.php`
+- `2026_11_19_000006_create_post_tags.php`
+- `2026_11_22_000001_remove_legacy_page_builder_and_widget_schema.php`
+- `2026_11_22_000002_simplify_fixed_homepage_schema.php`
+- `2026_11_23_000001_make_enquiry_phone_optional.php`
+- `2026_11_23_000002_create_local_content_and_service_detail_tables.php`
+- `2026_11_24_000001_add_category_to_gallery_items.php`
+- `2026_11_24_000002_create_service_comments_table.php`
+
 ### Findings
 
 - No duplicate `Schema::create()` for the same application table was identified in the 36 application migrations.
