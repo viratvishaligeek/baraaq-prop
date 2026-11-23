@@ -128,6 +128,7 @@ class DemoPropertySeederTest extends TestCase
             'images' => PropertyImage::query()->count(),
             'accommodations' => PropertyAccommodation::query()->count(),
             'faqs' => PropertyFaq::query()->count(),
+            'gallery' => GalleryItem::query()->count(),
         ]);
     }
 }
