@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateTarget(item) {
         if (!targetInput) return;
         targetInput.value = String(item.id);
+        const removeFlag = targetInput.dataset.removeFlagId ? document.getElementById(targetInput.dataset.removeFlagId) : null;
+        if (removeFlag) removeFlag.value = '0';
         if (targetInput.dataset.mediaUploadInput) {
             const upload = document.getElementById(targetInput.dataset.mediaUploadInput);
             if (upload) {
@@ -148,6 +150,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = document.getElementById(clearButton.dataset.target);
             if (!input) return;
             input.value = '';
+            const removeFlag = input.dataset.removeFlagId ? document.getElementById(input.dataset.removeFlagId) : null;
+            if (removeFlag) removeFlag.value = '1';
             input.dispatchEvent(new Event('input', { bubbles: true }));
             input.dispatchEvent(new Event('change', { bubbles: true }));
             const preview = input.dataset.mediaPreviewId
@@ -288,6 +292,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const existingIds = new Set([...targetInput.querySelectorAll('input[type="hidden"]')].map(input => input.value));
         selectedItems.forEach(item => {
             if (existingIds.has(String(item.id))) return;
+            const selection = document.createElement('div');
+            selection.className = 'd-inline-flex align-items-start gap-1 border rounded p-1';
+            selection.dataset.mediaSelection = String(item.id);
             const hidden = document.createElement('input');
             hidden.type = 'hidden';
             hidden.name = targetInput.dataset.inputName || 'gallery_media_ids[]';
@@ -295,9 +302,16 @@ document.addEventListener('DOMContentLoaded', function () {
             const image = document.createElement('img');
             image.src = item.url;
             image.alt = item.alt || item.name;
-            image.className = 'rounded border me-2 mb-2';
+            image.className = 'rounded';
             image.style.cssText = 'width:76px;height:58px;object-fit:cover';
-            targetInput.append(hidden, image);
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'btn btn-sm btn-outline-danger py-0 px-2';
+            remove.textContent = '×';
+            remove.setAttribute('aria-label', 'Remove ' + (item.alt || item.name));
+            remove.addEventListener('click', () => selection.remove());
+            selection.append(hidden, image, remove);
+            targetInput.append(selection);
         });
         modal.hide();
     });
