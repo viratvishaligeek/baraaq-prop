@@ -1,15 +1,15 @@
 <?php
 
-namespace Tests\\Feature;
+namespace Tests\Feature;
 
-use App\\Models\\Homepage;
-use App\\Models\\Menu;
-use App\\Models\\MenuItem;
-use App\\Models\\Property;
-use App\\Models\\Setting;
-use App\\Services\\Homepage\\SectionDataResolver;
-use Illuminate\\Foundation\\Testing\\RefreshDatabase;
-use Tests\\TestCase;
+use App\Models\Homepage;
+use App\Models\Menu;
+use App\Models\MenuItem;
+use App\Models\Property;
+use App\Models\Setting;
+use App\Services\Homepage\SectionDataResolver;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class HomepagePersistenceRegressionTest extends TestCase
 {
