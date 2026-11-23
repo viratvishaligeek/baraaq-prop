@@ -364,8 +364,6 @@ class BuraaqhContentSeederTest extends TestCase
                 ->unique()
                 ->count(),
         ];
-        $initialInventory = $inventory();
-
         $faq = FaqItem::query()->firstOrFail();
         DB::table('faq_items')->where('id', $faq->id)->update([
             'answer' => 'Owner-approved FAQ wording written directly through the database.',
@@ -406,6 +404,7 @@ class BuraaqhContentSeederTest extends TestCase
         $removedFeature = $service->features()->firstOrFail();
         $removedFeature->delete();
         $remainingFeatureCount = ServiceFeature::query()->where('service_id', $service->id)->count();
+        $initialInventory = $inventory();
 
         $this->seed();
 
