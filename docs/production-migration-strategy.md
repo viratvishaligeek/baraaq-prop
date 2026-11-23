@@ -27,3 +27,7 @@ The current branch contains the original Laravel framework migrations and the CM
 ## Current implementation boundary
 
 No historical migration was rewritten and no schema was changed in this code pass. The current fixes are application-level: persisted Homepage section configuration now takes precedence over legacy data_source values, and the Home 9 header now resolves the configured menu location. Database runtime status and production row contents remain unverified because no database connection or executable checkout was available through the repository file API.
+
+## Seeder safety
+
+The default DatabaseSeeder now runs PillerDemoContentSeeder automatically only in local/testing environments. On other environments, demo records require an explicit SEED_DEMO_CONTENT=true opt-in. Keep production owner data out of ordinary database seeding; the role/permission, homepage-template, and default-theme seeders remain the baseline setup seeders.
