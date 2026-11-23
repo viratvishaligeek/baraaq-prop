@@ -123,7 +123,8 @@ class BuraaqhHomepageSeeder extends Seeder
             ],
         ];
 
-        foreach ($sections as $position => $key => $definition) {
+        $position = 0;
+        foreach ($sections as $key => $definition) {
             $schema = $definitions[$key] ?? null;
 
             if (! $schema || ! view()->exists($schema['view'] ?? '')) {
@@ -141,6 +142,7 @@ class BuraaqhHomepageSeeder extends Seeder
                     'data_source' => $this->dataSourceFor($schema['type']),
                 ]
             );
+            $position++;
         }
     }
 
