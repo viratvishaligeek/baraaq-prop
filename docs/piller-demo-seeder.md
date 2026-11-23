@@ -1,37 +1,44 @@
-# Piller demo content seeder
+# Buraaqh Properties content seeder
 
-The default database seed now builds a realistic Pillar Realty demo site and selects the original Piller **Home 9** composition for the root URL.
+The fixed Home 9 homepage is the root page. The current seeders create Buraaqh Properties site defaults and Bareilly-focused editorial content without inventing property inventory, contact details, staff identities, testimonials or customer leads.
 
 ## Commands
 
-For a new, empty development database:
+For a new local or test database:
 
 ```bash
 php artisan migrate:fresh --seed
 php artisan storage:link
 ```
 
-For an existing database, preserve its schema and records and add any missing demo content:
+For an existing database, use the reviewed migration process and then:
 
 ```bash
 php artisan db:seed
 php artisan storage:link
 ```
 
-**Warning:** `migrate:fresh` drops every table. Use it only when you intentionally want to reset a local/development database. On an existing installation, use `php artisan db:seed`.
+**Warning:** `migrate:fresh` drops every table. Use it only for a database that is intentionally being reset. Never run it against a shared or production database.
 
-## What is populated
+## Seeded content
 
-The seeders populate the existing CMS schema: property and post categories, properties and property galleries, posts and category pivots, pages, services, team members, testimonials, comments, enquiries, newsletter subscribers, banners, settings, menus and menu items, media records and section media attachments, reusable sections, all ten homepage template records, Home 9 homepage sections, widget areas, footer widgets and their assignments, page-view analytics, activity-log demo entries, roles and permissions.
+- Fixed Home 9 homepage and its ten section records.
+- Buraaqh Properties settings and Bareilly service-area defaults.
+- Property and editorial categories.
+- General property education articles, FAQs and cautious neighborhood due-diligence guides.
+- Service records and relational feature drafts, unpublished until the business confirms the actual offerings.
+- Navigation menus and footer defaults.
+- Theme design assets where used as general UI decoration, registered in the Media Library.
 
-The Home 9 composition follows the original HTML order: hero, About / mission and vision, statistics, services, filtered property grid, featured-property image slider, home details, team, testimonials and latest articles. It reuses the Piller theme assets and section views rather than replacing the design with generic placeholder blocks.
+The seeder does not publish fabricated property listings. It does not seed stock template photographs as real property/gallery/team/service images. The Gallery remains empty until approved business imagery is uploaded. Phone, email, WhatsApp and office address remain blank until supplied by the business owner.
 
-## Safety and repeatability
+## Repeatability and data safety
 
-- The content seeder is idempotent: it uses stable slugs/keys and preserves existing matching content on reruns.
-- It fills blank starter settings but does not overwrite non-empty settings configured by the site owner.
-- It does not delete existing records or disable additional homepage sections.
-- It selects Home 9 as the only default published homepage and clears a previously selected Page-as-homepage so the root URL displays Home 9.
-- Theme images are copied into the existing public storage disk and registered in the Media Library. Ensure the public storage symlink exists.
-- It does not create a fake administrator login. To create the real administrator through `DatabaseSeeder`, set `CMS_ADMIN_EMAIL` and `CMS_ADMIN_PASSWORD` in the environment before seeding.
-- Demo enquiry emails and newsletter addresses use the reserved `.example` / `.test` domains and are not real contacts.
+- Stable slugs and keys use `firstOrCreate` / `updateOrCreate` so reruns do not create duplicate starter records.
+- Existing non-empty owner settings are preserved; blank starter values can be filled.
+- The seeder does not bulk-rewrite arbitrary pages, posts, services or menu labels. Legacy synthetic data is retired only by exact identifiers.
+- Known legacy sample properties are moved to draft rather than deleted. Synthetic team, testimonial, enquiry, comment and newsletter records are handled only through their known demo identifiers.
+- Owner-managed content is not globally searched and rewritten for words such as “Pillar” or “Meerut”.
+- The default `DatabaseSeeder` invokes `BuraaqhContentSeeder` only in local/testing environments or when `SEED_DEMO_CONTENT=true` is explicitly set.
+
+Before production use, review the published status and content of every seeded page/service, add verified inventory and approved images, configure contact information, and execute the full test suite on the target database engine.
