@@ -45,6 +45,14 @@
                     @endif
                 </details>
             @endif
+            <details class="sidebar-group" @if (request()->routeIs('admin.site-content.*')) open @endif>
+                <summary><i class="fa-regular fa-images"></i> Local content</summary>
+                @foreach (['gallery' => 'Gallery', 'faqs' => 'FAQs', 'neighborhood-guides' => 'Neighborhood guides'] as $contentType => $label)
+                    @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission($contentType.'.manage') || auth()->user()->hasPermission($contentType.'.view'))
+                        <a class="sidebar-link {{ request()->route('type') === $contentType ? 'active' : '' }}" href="{{ route('admin.site-content.index', $contentType) }}">{{ $label }}</a>
+                    @endif
+                @endforeach
+            </details>
             <details class="sidebar-group" @if (request()->routeIs('admin.content.*') || request()->routeIs('admin.comments.*') || request()->routeIs('admin.tags.*')) open @endif>
                 <summary><i class="fa-regular fa-file-lines"></i> Content management</summary>
                 @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('posts.manage') || auth()->user()->hasPermission('posts.view') || auth()->user()->hasPermission('posts.create') || auth()->user()->hasPermission('posts.edit'))
