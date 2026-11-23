@@ -248,10 +248,7 @@
         @yield('content')
     </main>
     <footer class="footer-wrapper footer-layout1">
-        <div class="footer-top-shape animation-infinite"
-            data-bg-src="{{ asset('theme-assets/img/icon/footer-top-shape.png') }}">
-        </div>
-        <div class="widget-area">
+            <div class="widget-area">
             <div class="container">
                 @php
                     $footerMenu = \App\Models\Menu::cached($siteSettings['footer_menu_location'] ?? '');
