@@ -77,7 +77,7 @@ class DemoPropertySeederTest extends TestCase
 
         $this->get(route('gallery.index'))
             ->assertOk()
-            ->assertSee('Illustrative Apartment Architecture — Demo Image');
+            ->assertSee('not an actual Buraaqh property photograph');
 
         $this->get(route('properties.show', $property))
             ->assertOk()
@@ -98,6 +98,7 @@ class DemoPropertySeederTest extends TestCase
         $this->assertDatabaseCount('property_images', 0);
         $this->assertDatabaseCount('property_accommodations', 0);
         $this->assertDatabaseCount('property_faqs', 0);
+        $this->assertDatabaseCount('gallery_items', 0);
     }
 
     public function test_demo_property_seed_is_repeatable_and_preserves_existing_owner_content(): void
