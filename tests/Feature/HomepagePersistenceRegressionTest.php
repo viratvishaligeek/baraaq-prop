@@ -49,6 +49,12 @@ class HomepagePersistenceRegressionTest extends TestCase
 
         $this->get('/')
             ->assertOk()
+            ->assertSee('header-layout9')
+            ->assertSee('Admin-managed navigation item');
+
+        $this->get('/contact')
+            ->assertOk()
+            ->assertSee('header-layout9')
             ->assertSee('Admin-managed navigation item');
     }
 
