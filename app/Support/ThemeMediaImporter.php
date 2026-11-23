@@ -29,6 +29,13 @@ class ThemeMediaImporter
             return null;
         }
 
+        $dimensions = @getimagesize($source);
+
+        // Reject broken or tiny assets rather than registering unusable media.
+        if (! is_array($dimensions) || ($dimensions[0] ?? 0) < 320 || ($dimensions[1] ?? 0) < 180) {
+            return null;
+        }
+
         $extension = strtolower(pathinfo($source, PATHINFO_EXTENSION));
         $target = 'buraaqh/'.sha1($relativePath).'.'.$extension;
         $disk = Storage::disk('public');
