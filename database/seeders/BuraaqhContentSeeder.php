@@ -567,6 +567,7 @@ class BuraaqhContentSeeder extends Seeder
                 'meta_title' => $title.' | Buraaqh Properties',
                 'meta_description' => 'Practical residential property due-diligence considerations for '.$locality.', Bareilly, Uttar Pradesh.',
                 'focus_keyword' => $locality.' Bareilly property',
+                'sort_order' => $i + 1,
             ]);
         }
 
