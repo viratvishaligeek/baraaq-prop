@@ -32,7 +32,7 @@ class ThemeMediaImporter
         $dimensions = @getimagesize($source);
 
         // Reject broken or tiny assets rather than registering unusable media.
-        if (! is_array($dimensions) || ($dimensions[0] ?? 0) < 320 || ($dimensions[1] ?? 0) < 180) {
+        if (! is_array($dimensions) || ($dimensions[0] ?? 0) < 240 || ($dimensions[1] ?? 0) < 180) {
             return null;
         }
 
