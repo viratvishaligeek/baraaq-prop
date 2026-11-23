@@ -21,6 +21,11 @@ use App\Models\TeamMember;
 use App\Models\Testimonial;
 use App\Models\User;
 use App\Models\HomepageSection;
+use App\Models\GalleryItem;
+use App\Models\FaqItem;
+use App\Models\NeighborhoodGuide;
+use App\Models\ServiceFeature;
+use App\Models\ServiceImage;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +34,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use RuntimeException;
 
-class PillerDemoContentSeeder extends Seeder
+class BuraaqhContentSeeder extends Seeder
 {
     private ?int $authorId = null;
 
@@ -46,13 +51,12 @@ class PillerDemoContentSeeder extends Seeder
             $properties = $this->seedProperties($propertyCategories);
             $posts = $this->seedPosts($postCategories);
             $this->seedServices();
-            $this->seedTeam();
-            $this->seedTestimonials();
+            // Team and testimonials require real, approved client/staff information.
             $this->seedPages();
+            $this->seedLocalContent();
+            $this->seedServiceDetails();
             $this->seedBanners();
-            $this->seedEnquiries($properties);
-            $this->seedComments($posts);
-            $this->seedNewsletterSubscribers();
+            // Do not seed fabricated leads, comments, or subscribers.
             $this->seedMenus($propertyCategories, $postCategories);
             $this->seedHomeNine();
             $this->seedAnalytics();
@@ -65,7 +69,7 @@ class PillerDemoContentSeeder extends Seeder
 
     private function seedSettings(): void
     {
-        $site = trim((string) env('SITE_NAME', 'Pillar Real Estate')) ?: 'Pillar Real Estate';
+        $site = trim((string) env('SITE_NAME', 'Buraaqh Properties')) ?: 'Buraaqh Properties';
         $footerGalleryPaths = [
             'theme-assets/img/gallery/footer-gallery-1-1.jpg',
             'theme-assets/img/gallery/footer-gallery-1-2.jpg',
@@ -86,18 +90,18 @@ class PillerDemoContentSeeder extends Seeder
             'site_title' => [$site, 'general', 'string'],
             'site_tagline' => ['Thoughtful real estate. Better living.', 'general', 'string'],
             'business_name' => [$site, 'business', 'string'],
-            'site_email' => ['hello@pillarrealty.example', 'contact', 'string'],
-            'site_phone' => ['+91 121 456 7800', 'contact', 'string'],
-            'whatsapp_number' => ['919876543210', 'contact', 'string'],
-            'site_address' => ['Pillar House, Civil Lines, Meerut, Uttar Pradesh 250001', 'contact', 'string'],
+            'site_email' => ['', 'contact', 'string'],
+            'site_phone' => ['', 'contact', 'string'],
+            'whatsapp_number' => ['', 'contact', 'string'],
+            'site_address' => ['Bareilly, Uttar Pradesh, India', 'contact', 'string'],
             'header_cta_label' => ['Add Listing', 'navigation', 'string'],
             'header_cta_url' => ['/contact', 'navigation', 'string'],
-            'footer_description' => ['Pillar Realty brings local insight, considered advice and a carefully selected collection of homes together. From your first viewing to the final signature, our team makes every move feel simpler.', 'footer', 'string'],
+            'footer_description' => ['Buraaqh Properties brings local insight, considered advice and a carefully selected collection of homes together. From your first viewing to the final signature, our team makes every move feel simpler.', 'footer', 'string'],
             'footer_copyright' => [$site, 'footer', 'string'],
             'footer_rights_text' => ['All Rights Reserved.', 'footer', 'string'],
-            'footer_map_embed_url' => ['https://www.google.com/maps?q=Civil+Lines,+Meerut,+Uttar+Pradesh&output=embed', 'footer', 'string'],
-            'footer_gallery_handle' => ['@pillarrealty on Instagram', 'footer', 'string'],
-            'footer_gallery_title' => ['Pillar moments', 'footer', 'string'],
+            'footer_map_embed_url' => ['https://www.google.com/maps?q=Civil+Lines,+Bareilly,+Uttar+Pradesh&output=embed', 'footer', 'string'],
+            'footer_gallery_handle' => ['@buraaqhproperties on Instagram', 'footer', 'string'],
+            'footer_gallery_title' => ['Bareilly property moments', 'footer', 'string'],
             'footer_gallery_images' => [$footerGalleryImages, 'footer', 'json'],
             'social_facebook' => ['https://www.facebook.com/', 'social', 'string'],
             'social_instagram' => ['https://www.instagram.com/', 'social', 'string'],
@@ -105,8 +109,8 @@ class PillerDemoContentSeeder extends Seeder
             'primary_color' => ['#068FFF', 'appearance', 'string'],
             'secondary_color' => ['#044DBC', 'appearance', 'string'],
             'meta_title' => [$site.' | Discover a better place to call home', 'seo', 'string'],
-            'meta_description' => ['Explore carefully selected homes, apartments and investment properties across Meerut and the Delhi NCR with the local property specialists at Pillar Realty.', 'seo', 'string'],
-            'meta_keywords' => ['real estate Meerut, homes for sale, apartments, property consultants, Delhi NCR', 'seo', 'string'],
+            'meta_description' => ['Explore carefully selected homes, apartments and investment properties across Bareilly and the Bareilly region with the local property specialists at Buraaqh Properties.', 'seo', 'string'],
+            'meta_keywords' => ['real estate Bareilly, homes for sale, apartments, property consultants, Bareilly region', 'seo', 'string'],
             'default_og_image' => [$defaultOgMedia?->path ?? 'theme-assets/img/hero/hero-9-right.png', 'seo', 'string'],
         ];
 
@@ -115,7 +119,7 @@ class PillerDemoContentSeeder extends Seeder
             $existing = Setting::query()->where('key', $key)->first();
 
             // Fill empty starter defaults, but never replace a value already configured by the site owner.
-            $legacyMapUrl = $key === 'footer_map_embed_url' && $existing?->value === 'https://www.google.com/maps?q=Meerut';
+            $legacyMapUrl = $key === 'footer_map_embed_url' && $existing?->value === 'https://www.google.com/maps?q=Bareilly';
             if (! $existing || trim((string) $existing->value) === '' || $legacyMapUrl) {
                 Setting::write($key, $stored, $group, $type);
             }
@@ -171,24 +175,8 @@ class PillerDemoContentSeeder extends Seeder
 
     private function seedProperties(array $categories): array
     {
-        $rows = [
-            ['The Oakwood Residences', 'the-oakwood-residences', 'apartment', 'sale', 8750000, 3, 2, 1680, 'Sector 78, Noida', 'Noida', 'UP', '201301', 28.5672, 77.3670, 'popular/popular-1-1.jpg', true],
-            ['Cedar Grove Villa', 'cedar-grove-villa', 'villa', 'sale', 24500000, 4, 4, 3250, 'Ganga Nagar Extension', 'Meerut', 'UP', '250001', 28.9845, 77.7064, 'popular/popular-1-2.jpg', true],
-            ['The Aranya Apartments', 'the-aranya-apartments', 'apartment', 'sale', 6950000, 2, 2, 1240, 'Raj Nagar Extension', 'Ghaziabad', 'UP', '201017', 28.6924, 77.4478, 'popular/popular-1-3.jpg', true],
-            ['Palm Court Independent Home', 'palm-court-independent-home', 'independent-house', 'sale', 13800000, 4, 3, 2480, 'Shastri Nagar', 'Meerut', 'UP', '250004', 28.9811, 77.7142, 'popular/popular-1-4.jpg', true],
-            ['The Skyline Penthouse', 'the-skyline-penthouse', 'penthouse', 'sale', 31200000, 4, 4, 3600, 'Sector 50', 'Noida', 'UP', '201303', 28.5687, 77.3621, 'popular/popular-1-5.jpg', true],
-            ['Maple Leaf Builder Floor', 'maple-leaf-builder-floor', 'builder-floor', 'rent', 42000, 3, 2, 1550, 'Indirapuram', 'Ghaziabad', 'UP', '201014', 28.6412, 77.3705, 'popular/popular-1-6.jpg', false],
-            ['The Courtyard House', 'the-courtyard-house', 'independent-house', 'sale', 11200000, 3, 3, 2180, 'Pallavpuram Phase 2', 'Meerut', 'UP', '250110', 28.9670, 77.6810, 'popular/popular-1-7.jpg', true],
-            ['Riverside Commercial Suites', 'riverside-commercial-suites', 'commercial', 'rent', 95000, 0, 2, 2100, 'Sector 132', 'Noida', 'UP', '201304', 28.5044, 77.3651, 'popular/popular-1-8.jpg', false],
-            ['Meadow View Farmhouse', 'meadow-view-farmhouse', 'farmhouse', 'sale', 18500000, 3, 3, 4800, 'Daurala Road', 'Meerut', 'UP', '250221', 29.0010, 77.8400, 'popular/popular-1-9.jpg', true],
-            ['The Meridian Apartments', 'the-meridian-apartments', 'apartment', 'rent', 28500, 2, 2, 1120, 'Crossings Republik', 'Ghaziabad', 'UP', '201016', 28.6262, 77.4302, 'popular/popular-1-10.jpg', false],
-            ['Willow Creek Residence', 'willow-creek-residence', 'villa', 'sale', 19800000, 4, 3, 2920, 'Modipuram', 'Meerut', 'UP', '250110', 28.9971, 77.6712, 'popular/popular-1-11.jpg', true],
-            ['Orchid Business Plaza', 'orchid-business-plaza', 'commercial', 'sale', 16500000, 0, 2, 1850, 'Sector 62', 'Noida', 'UP', '201309', 28.6271, 77.3649, 'popular/popular-1-12.jpg', true],
-            ['Silver Oak Residential Plot', 'silver-oak-residential-plot', 'residential-plot', 'sale', 5600000, 0, 0, 1800, 'Meerut Bypass', 'Meerut', 'UP', '250002', 28.9700, 77.7300, 'popular/popular-1-1.jpg', false],
-            ['Lakeview Family Apartment', 'lakeview-family-apartment', 'apartment', 'sale', 9200000, 3, 2, 1740, 'Sector 137', 'Noida', 'UP', '201305', 28.5092, 77.4070, 'popular/popular-1-2.jpg', true],
-            ['The Heritage Bungalow', 'the-heritage-bungalow', 'independent-house', 'sale', 22500000, 5, 4, 4100, 'Begum Bagh', 'Meerut', 'UP', '250001', 28.9905, 77.7044, 'popular/popular-1-3.jpg', false],
-            ['Studio One Business Loft', 'studio-one-business-loft', 'commercial', 'rent', 38000, 0, 1, 980, 'Sector 18', 'Noida', 'UP', '201301', 28.5708, 77.3261, 'popular/popular-1-4.jpg', false],
-        ];
+        $rows = []; // Real listings are entered only after the owner verifies their details.
+
 
         $properties = [];
         foreach ($rows as $index => $row) {
@@ -216,13 +204,13 @@ class PillerDemoContentSeeder extends Seeder
                     'latitude' => $lat,
                     'longitude' => $lng,
                     'description' => '<p>'.$title.' is a thoughtfully planned property in '.$city.', selected for its location, practical layout and everyday convenience.</p><p>Enjoy well-proportioned interiors, quality fittings and easy access to schools, workplaces, shopping and essential services. Our property team can arrange a private viewing and share the complete specifications.</p>',
-                    'meta_title' => $title.' | Pillar Realty',
-                    'meta_description' => 'Explore '.$title.' in '.$city.'. View property details, location, amenities and arrange a private viewing with Pillar Realty.',
+                    'meta_title' => $title.' | Buraaqh Properties',
+                    'meta_description' => 'Explore '.$title.' in '.$city.'. View property details, location, amenities and arrange a private viewing with Buraaqh Properties.',
                     'featured_image' => $imagePath,
                     'status' => 'published',
                     'is_featured' => $featured,
                     'cta_mode' => 'both',
-                    'whatsapp_number' => '919876543210',
+                    'whatsapp_number' => '',
                     'whatsapp_message' => 'Hello, I would like to know more about '.$title.'.',
                     'published_at' => now()->subDays(($index % 20) + 1),
                     'features' => ['Covered parking', 'Power backup', '24-hour security', 'Landscaped common areas', 'Nearby schools and retail'],
@@ -256,7 +244,7 @@ class PillerDemoContentSeeder extends Seeder
             ['Understanding the documents involved in a property purchase', 'property-purchase-documents-guide', 'Learn which ownership, approval and payment records to review with a qualified professional.', 'buying-guides'],
             ['Rental yield: the numbers every investor should understand', 'rental-yield-investor-guide', 'A straightforward guide to gross yield, recurring costs and realistic rental assumptions.', 'market-insights'],
             ['Five maintenance habits that protect your home', 'home-maintenance-habits', 'A seasonal routine for keeping fixtures, finishes and essential systems in good condition.', 'property-tips'],
-            ['Planning a move across the Delhi NCR region', 'planning-a-delhi-ncr-move', 'A practical moving plan covering commute, neighbourhood needs and a smooth handover.', 'property-tips'],
+            ['Planning a move across the Bareilly region region', 'planning-a-delhi-ncr-move', 'A practical moving plan covering commute, neighbourhood needs and a smooth handover.', 'property-tips'],
         ];
 
         $posts = [];
@@ -272,7 +260,7 @@ class PillerDemoContentSeeder extends Seeder
                     'featured_image' => $image,
                     'status' => 'published',
                     'published_at' => now()->subDays(($index * 3) + 2),
-                    'meta_title' => $title.' | Pillar Realty Journal',
+                    'meta_title' => $title.' | Buraaqh Properties Journal',
                     'meta_description' => $excerpt,
                 ]
             );
@@ -302,11 +290,11 @@ class PillerDemoContentSeeder extends Seeder
                 [
                     'title' => $title,
                     'excerpt' => $excerpt,
-                    'content' => '<p>'.$body.'</p><p>Contact Pillar Realty to discuss your requirements and the most suitable next step.</p>',
+                    'content' => '<p>'.$body.'</p><p>Contact Buraaqh Properties to discuss your requirements and the most suitable next step.</p>',
                     'featured_image' => $this->themeImagePath('img/'.$icon),
                     'status' => 'published',
                     'published_at' => now()->subDays($index + 1),
-                    'meta_title' => $title.' | Pillar Realty',
+                    'meta_title' => $title.' | Buraaqh Properties',
                     'meta_description' => $excerpt,
                 ]
             );
@@ -316,14 +304,14 @@ class PillerDemoContentSeeder extends Seeder
     private function seedTeam(): void
     {
         $rows = [
-            ['Vickie Wisozk', 'Real Estate Manager', 'Vickie helps clients define their priorities and navigate each stage of a property search with calm, practical advice.', 'vickie@pillarrealty.example'],
-            ['Renee Strosin', 'Property Developer', 'Renee works with owners and development partners to bring thoughtful residential projects to market.', 'renee@pillarrealty.example'],
-            ['Zulia Era', 'Listing Coordinator', 'Zulia coordinates listing preparation, property information and viewing schedules for buyers and sellers.', 'zulia@pillarrealty.example'],
-            ['Bernice Roberts', 'Leasing Consultant', 'Bernice helps tenants and landlords find suitable rental arrangements with clear communication.', 'bernice@pillarrealty.example'],
-            ['Martha Leffler', 'Senior Property Advisor', 'Martha brings a detail-led approach to residential sales and neighbourhood research.', 'martha@pillarrealty.example'],
-            ['Thomas Kirlin', 'Investment Consultant', 'Thomas supports investors with property comparisons, location research and rental considerations.', 'thomas@pillarrealty.example'],
-            ['Avery Mitchell', 'Client Relationship Manager', 'Avery keeps client communication moving and makes sure every enquiry reaches the right specialist.', 'avery@pillarrealty.example'],
-            ['Jordan Bennett', 'Commercial Property Advisor', 'Jordan advises business owners on office, retail and mixed-use property requirements.', 'jordan@pillarrealty.example'],
+            ['Vickie Wisozk', 'Real Estate Manager', 'Vickie helps clients define their priorities and navigate each stage of a property search with calm, practical advice.', 'vickie@buraaqhproperties.example'],
+            ['Renee Strosin', 'Property Developer', 'Renee works with owners and development partners to bring thoughtful residential projects to market.', 'renee@buraaqhproperties.example'],
+            ['Zulia Era', 'Listing Coordinator', 'Zulia coordinates listing preparation, property information and viewing schedules for buyers and sellers.', 'zulia@buraaqhproperties.example'],
+            ['Bernice Roberts', 'Leasing Consultant', 'Bernice helps tenants and landlords find suitable rental arrangements with clear communication.', 'bernice@buraaqhproperties.example'],
+            ['Martha Leffler', 'Senior Property Advisor', 'Martha brings a detail-led approach to residential sales and neighbourhood research.', 'martha@buraaqhproperties.example'],
+            ['Thomas Kirlin', 'Investment Consultant', 'Thomas supports investors with property comparisons, location research and rental considerations.', 'thomas@buraaqhproperties.example'],
+            ['Avery Mitchell', 'Client Relationship Manager', 'Avery keeps client communication moving and makes sure every enquiry reaches the right specialist.', 'avery@buraaqhproperties.example'],
+            ['Jordan Bennett', 'Commercial Property Advisor', 'Jordan advises business owners on office, retail and mixed-use property requirements.', 'jordan@buraaqhproperties.example'],
         ];
 
         foreach ($rows as $index => [$name, $designation, $bio, $email]) {
@@ -377,8 +365,8 @@ class PillerDemoContentSeeder extends Seeder
     private function seedPages(): void
     {
         $pages = [
-            ['About Us', 'about', '<p>Pillar Realty is built around a simple belief: good property advice starts with listening. We combine local knowledge, careful research and a personal approach to help people make confident decisions.</p><h2>Our mission</h2><p>To make every property move clearer, more informed and more rewarding.</p><h2>Our approach</h2><p>We value honest communication, thoughtful recommendations and dependable support from the first conversation through to handover.</p>'],
-            ['Contact', 'contact', '<p>Tell us what you are looking for and a member of our property team will get back to you.</p><p>Email hello@pillarrealty.example or call +91 121 456 7800. Our office is at Pillar House, Civil Lines, Meerut, Uttar Pradesh 250001.</p>'],
+            ['About Us', 'about', '<p>Buraaqh Properties is built around a simple belief: good property advice starts with listening. We combine local knowledge, careful research and a personal approach to help people make confident decisions.</p><h2>Our mission</h2><p>To make every property move clearer, more informed and more rewarding.</p><h2>Our approach</h2><p>We value honest communication, thoughtful recommendations and dependable support from the first conversation through to handover.</p>'],
+            ['Contact', 'contact', '<p>Tell us what you are looking for and a member of our property team will get back to you.</p><p>Email  or call . Our office is at Bareilly, Uttar Pradesh, India.</p>'],
             ['Buy with Pillar', 'buy-with-pillar', '<p>Start with your preferred location, budget and everyday requirements. Our advisors will help you compare suitable homes, arrange viewings and understand the next steps.</p>'],
             ['Sell with Pillar', 'sell-with-pillar', '<p>We help prepare your property for market with considered pricing, accurate information, quality presentation and coordinated viewings.</p>'],
             ['Privacy Policy', 'privacy-policy', '<p>We use the information you provide to respond to property enquiries and deliver the services you request. We do not publish your contact details. Please contact our team if you would like to review or update information you have submitted.</p>'],
@@ -394,7 +382,7 @@ class PillerDemoContentSeeder extends Seeder
                     'content' => $html,
                     'template' => 'default',
                     'status' => 'published',
-                    'meta_title' => $title.' | Pillar Realty',
+                    'meta_title' => $title.' | Buraaqh Properties',
                     'meta_description' => Str::limit(strip_tags($html), 155),
                 ]
             );
@@ -404,7 +392,7 @@ class PillerDemoContentSeeder extends Seeder
     private function seedBanners(): void
     {
         $rows = [
-            ['Discover a place that feels like home', 'Thoughtful homes. Local expertise.', 'Explore a considered collection of properties across Meerut and the Delhi NCR.', 'popular/popular-1-1.jpg', 'Explore Properties', '/properties'],
+            ['Discover a place that feels like home', 'Thoughtful homes. Local expertise.', 'Explore a considered collection of properties across Bareilly and the Bareilly region.', 'popular/popular-1-1.jpg', 'Explore Properties', '/properties'],
             ['Make your next move with confidence', 'Advice that puts you first', 'Speak with a property specialist about buying, selling or renting.', 'popular/popular-1-4.jpg', 'Talk to our team', '/contact'],
             ['Find the right space for your business', 'Commercial property, made simpler', 'Explore office and retail opportunities in well-connected locations.', 'popular/popular-1-8.jpg', 'View Commercial', '/properties?property_type=Commercial'],
         ];
@@ -545,6 +533,89 @@ class PillerDemoContentSeeder extends Seeder
     }
 
 
+
+    private function seedLocalContent(): void
+    {
+        $faqs = [
+            ['What should I check before buying a property in Bareilly?', 'Review the ownership chain, approved plans where applicable, land-use status, encumbrances, taxes and the terms of the sale agreement. Have the documents independently checked by a qualified local professional.'],
+            ['How can I compare two residential properties?', 'Compare the exact location, usable area, construction condition, access, utilities, title documents, total transaction cost and resale considerations. Visit each property and verify all seller-provided information.'],
+            ['What documents are commonly reviewed during a property purchase?', 'Depending on the property and transaction, buyers commonly review title documents, prior sale deeds, sanctioned plans where applicable, tax receipts, identity documents and applicable project or authority approvals. Requirements vary; obtain professional advice.'],
+            ['Should I pay a booking amount before document verification?', 'Do not rely on verbal assurances. Understand the written booking terms, refund conditions, seller authority and relevant documents before making a payment. Seek independent legal advice when needed.'],
+            ['What affects residential property value in Bareilly?', 'Value can depend on micro-location, road access, plot or built-up area, construction quality, legal status, available infrastructure and comparable transactions. Verify current market evidence rather than relying on general estimates.'],
+            ['Can Buraaqh Properties confirm legal title or government approvals?', 'A property decision should be supported by independent document verification and relevant authority records. Do not treat marketing information as a legal opinion or an official approval.'],
+        ];
+        foreach ($faqs as $i => [$question, $answer]) {
+            FaqItem::updateOrCreate(['question' => $question], ['answer' => $answer, 'category' => 'Property guidance', 'sort_order' => $i + 1, 'is_active' => true]);
+        }
+
+        $localities = ['Civil Lines', 'Rajendra Nagar', 'Izatnagar', 'Mahanagar', 'DD Puram', 'Pilibhit Bypass'];
+        foreach ($localities as $i => $locality) {
+            $title = 'Property considerations in '.$locality.', Bareilly';
+            $slug = Str::slug($locality.' Bareilly property guide');
+            NeighborhoodGuide::updateOrCreate(['slug' => $slug], [
+                'title' => $title,
+                'locality' => $locality,
+                'city' => 'Bareilly',
+                'state' => 'Uttar Pradesh',
+                'excerpt' => 'A practical checklist for evaluating residential property options in '.$locality.'.',
+                'content' => '<p>Use this guide as a starting point when assessing a property in '.$locality.'. It is not a rating of the locality or a statement that any particular facility, road, school or project is nearby.</p><h2>What to verify on a visit</h2><ul><li>Check the exact street, approach road and access at different times of day.</li><li>Confirm water, electricity, drainage and other utility arrangements for the specific property.</li><li>Verify land use, title chain, sanctioned plans and applicable approvals independently.</li><li>Compare recent transactions for genuinely comparable properties in the immediate area.</li><li>Check the written terms, total charges and any society or maintenance obligations.</li></ul><p>Local conditions can vary street by street. Confirm current details with relevant authorities and qualified local professionals before making a decision.</p>',
+                'status' => 'published',
+                'published_at' => now()->subDays($i),
+                'meta_title' => $title.' | Buraaqh Properties',
+                'meta_description' => 'Practical residential property due-diligence considerations for '.$locality.', Bareilly, Uttar Pradesh.',
+                'focus_keyword' => $locality.' Bareilly property',
+            ]);
+        }
+
+        $galleryAssets = [
+            'theme-assets/img/gallery/footer-gallery-1-1.jpg',
+            'theme-assets/img/gallery/footer-gallery-1-2.jpg',
+            'theme-assets/img/gallery/footer-gallery-1-3.jpg',
+            'theme-assets/img/gallery/footer-gallery-1-4.jpg',
+        ];
+        foreach ($galleryAssets as $i => $asset) {
+            $source = public_path($asset);
+            if (! File::exists($source)) continue;
+            $path = 'gallery/buraaqh-reference-'.($i + 1).'.jpg';
+            if (! Storage::disk('public')->exists($path)) Storage::disk('public')->put($path, File::get($source));
+            $item = GalleryItem::updateOrCreate(['slug' => 'bareilly-property-gallery-'.($i + 1)], [
+                'title' => 'Property and lifestyle image '.($i + 1),
+                'description' => 'Visual inspiration from the Buraaqh Properties website gallery.',
+                'image' => $path,
+                'alt_text' => 'Property and real estate gallery image',
+                'sort_order' => $i + 1,
+                'status' => 'published',
+                'published_at' => now(),
+            ]);
+            Media::firstOrCreate(['path' => $path], [
+                'uploaded_by' => $this->authorId,
+                'disk' => 'public',
+                'original_name' => basename($asset),
+                'mime_type' => 'image/jpeg',
+                'size' => Storage::disk('public')->size($path),
+                'alt_text' => $item->alt_text,
+            ]);
+        }
+    }
+
+    private function seedServiceDetails(): void
+    {
+        $features = [
+            'property-valuation' => ['Comparable market review', 'Property condition considerations', 'Clear valuation discussion'],
+            'legal-assistance' => ['Document checklist', 'Title and approval review coordination', 'Independent professional guidance'],
+            'property-management' => ['Routine property coordination', 'Tenant communication support', 'Maintenance follow-up'],
+            'buying-consultation' => ['Requirement discovery', 'Property shortlist support', 'Offer and negotiation preparation'],
+            'selling-consultation' => ['Property presentation guidance', 'Enquiry coordination', 'Offer comparison support'],
+        ];
+        foreach ($features as $slug => $titles) {
+            $service = Service::query()->where('slug', $slug)->first();
+            if (!$service) continue;
+            foreach ($titles as $i => $title) {
+                ServiceFeature::firstOrCreate(['service_id' => $service->id, 'title' => $title], ['description' => 'A clearly scoped part of the '.$service->title.' service.', 'sort_order' => $i + 1]);
+            }
+        }
+    }
+
     private function seedHomeNine(): void
     {
         $homepage = Homepage::query()->where('slug', 'home-9')->first();
@@ -617,7 +688,7 @@ class PillerDemoContentSeeder extends Seeder
             'home-details.home-9' => [
                 'eyebrow' => 'Home Details',
                 'heading' => 'Luxury Real Estate Home Details at a Glance',
-                'location' => 'Ganga Nagar, Meerut, Uttar Pradesh',
+                'location' => 'Ganga Nagar, Bareilly, Uttar Pradesh',
                 'total_area' => '5,600 sq ft',
                 'living_space' => '4,200 sq ft',
                 'bedrooms' => '4',
