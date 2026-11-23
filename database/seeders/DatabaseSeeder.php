@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         $password = env('CMS_ADMIN_PASSWORD');
 
         if ($email && $password) {
-            $user = User::updateOrCreate(
+            $user = User::firstOrCreate(
                 ['email' => $email],
                 [
                     'name' => env('CMS_ADMIN_NAME', 'Site Administrator'),
