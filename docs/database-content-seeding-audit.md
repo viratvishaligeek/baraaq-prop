@@ -86,7 +86,7 @@ Expected starter records on an empty database after `php artisan migrate --seed`
 
 No property inventory, gallery photographs, testimonials, staff profiles, customer comments, enquiries, or newsletter subscribers are fabricated. Contact phone, email, WhatsApp, office address, and social URLs remain blank until supplied and verified by the administrator.
 
-The seven editorial articles cover buying residential property in Bareilly, Uttar Pradesh property documents, residential versus commercial property, locality evaluation, registration/due diligence, residential selection factors, and questions to ask a real estate consultant. Each article is written as educational guidance and avoids legal guarantees, invented market statistics, and investment promises.
+The seven editorial articles cover buying residential property in Bareilly, Uttar Pradesh property documents, residential versus commercial property, locality evaluation, registration/due diligence, residential selection factors, and questions to ask a real estate consultant. Each article is written as educational guidance and avoids legal guarantees, invented market statistics, and investment promises. The existing Home 9 section registry has no neighborhood-guide section/view; the seven guides are available through the seeded neighborhood-guide page and navigation. No new homepage widget was introduced because that would change the existing frontend composition.
 
 ## 5. Media mapping
 
@@ -120,4 +120,4 @@ No production database credentials or representative deployed database were avai
 
 The repository's GitHub Actions workflow installs Composer dependencies, lints PHP, runs the Laravel test suite, prepares a fresh SQLite database, runs migrations and seeders, and exercises the 13 original HTML reference pages through browser tests. The database/content branch requires that workflow to run before this work can be called verified.
 
-**Pending evidence:** fresh migration/seed execution output, repeated-seeder test results, full automated test result, and the PR check conclusion. This report must be updated with the actual run URL and commit after CI completes; it is not a claim that those checks have already passed.
+**Pending evidence:** fresh migration/seed execution output, repeated-seeder test results, full automated test result, and the PR check conclusion. At the time of this report, GitHub reports no check runs or commit statuses for the PR head, so the workflow has not supplied an execution result. This report must be updated with the actual run URL and commit after CI completes; it is not a claim that those checks have already passed.
