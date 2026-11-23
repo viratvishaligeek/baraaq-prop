@@ -495,6 +495,7 @@ class BuraaqhContentSeederTest extends TestCase
         $contactItem = MenuItem::query()->where('label', 'Contact')->firstOrFail();
         $contactItem->update(['url' => '/administrator-contact']);
         $service = Service::query()->where('slug', 'property-search-shortlisting')->firstOrFail();
+        $service->update(['content' => '<h2>Administrator-approved service scope</h2><p>Keep this approved service copy unchanged.</p>']);
         $removedFeature = $service->features()->firstOrFail();
         $removedFeature->delete();
         $remainingFeatureCount = ServiceFeature::query()->where('service_id', $service->id)->count();
@@ -517,6 +518,7 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertSame($customMedia->id, $hero->fresh()->mediaAttachments()->where('field_key', 'foreground_image')->value('media_id'));
         $this->assertSame('/administrator-contact', $contactItem->fresh()->url);
         $this->assertSame($remainingFeatureCount, ServiceFeature::query()->where('service_id', $service->id)->count());
+        $this->assertSame('<h2>Administrator-approved service scope</h2><p>Keep this approved service copy unchanged.</p>', $service->fresh()->content);
         $this->assertSame($initialInventory, $inventory(), 'A second complete seed must not duplicate content, navigation or media relations.');
         $this->assertSame(6, MediaAttachment::query()->count());
         $this->assertSame(
