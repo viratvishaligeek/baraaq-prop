@@ -1,6 +1,6 @@
 @extends('frontend.layouts.theme')
-@section('title', \\App\\Models\\Setting::read('neighborhood_guides_meta_title', 'Neighborhood Guides in Bareilly | '.config('app.name')))
-@section('meta_description', \\App\\Models\\Setting::read('neighborhood_guides_meta_description', 'Explore neighborhood guides for Bareilly, Uttar Pradesh, with local area insights to support informed property decisions.'))
+@section('title', \App\Models\Setting::read('neighborhood_guides_meta_title', 'Neighborhood Guides in Bareilly | '.config('app.name')))
+@section('meta_description', \App\Models\Setting::read('neighborhood_guides_meta_description', 'Explore neighborhood guides for Bareilly, Uttar Pradesh, with local area insights to support informed property decisions.'))
 @section('canonical_url',route('neighborhood-guides.index'))
 @section('content')
 <div class="breadcumb-wrapper"><div class="container"><div class="breadcumb-content"><h1 class="breadcumb-title">Neighborhood Guides</h1><p>Explore localities across Bareilly, Uttar Pradesh.</p></div></div></div>
