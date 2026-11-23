@@ -220,17 +220,20 @@ class HomepageController extends Controller
                 'checkbox' => ['sometimes', 'boolean'],
                 'number' => ['nullable', 'numeric', 'min:' . ($field['min'] ?? 0), 'max:' . ($field['max'] ?? 9999999)],
                 'image' => ['nullable', 'mimes:svg,jpg,jpeg,png,webp,gif', 'max:10240'],
-                'config_media_ids' => ['nullable', 'array'],
-                'config_remove_images' => ['nullable', 'array'],
-                'config_media_ids.'.$key => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
-                'config_remove_images.'.$key => ['sometimes', 'boolean'],
                 'url' => array_merge(['nullable', 'string', 'max:' . max(2048, $max), new SafeLink()], $key === 'video_url' ? ['url'] : []),
                 'color' => ['nullable', 'regex:/^#[0-9a-fA-F]{6}$/'],
                 'select' => ['nullable', 'string', 'in:' . implode(',', array_keys($field['options'] ?? []))],
                 default => ['nullable', 'string', 'max:' . $max],
             };
+
+            if ($type === 'image') {
+                $rules['config_media_ids.'.$key] = ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))];
+                $rules['config_remove_images.'.$key] = ['sometimes', 'boolean'];
+            }
         }
 
+        $rules['config_media_ids'] = ['nullable', 'array'];
+        $rules['config_remove_images'] = ['nullable', 'array'];
         $rules['is_enabled'] = ['sometimes', 'boolean'];
         $validated = $request->validate($rules);
         $submitted = $validated['config'] ?? [];
