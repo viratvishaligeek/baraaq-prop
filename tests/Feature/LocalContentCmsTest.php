@@ -84,6 +84,43 @@ class LocalContentCmsTest extends TestCase
         $this->get(route('neighborhood-guides.show', $draft))->assertNotFound();
     }
 
+    public function test_admin_can_manage_service_features_and_remove_one_inside_image(): void
+    {
+        $this->seed(RolePermissionSeeder::class);
+        $admin = User::factory()->create(['is_active' => true]);
+        $admin->roles()->attach(Role::query()->where('slug', 'administrator')->firstOrFail());
+        Storage::fake('public');
+
+        $this->actingAs($admin)->post(route('admin.content.store', 'services'), [
+            'title' => 'Property advisory',
+            'excerpt' => 'Guidance for informed decisions.',
+            'content' => '<p>Service overview.</p>',
+            'status' => 'draft',
+            'features_json' => json_encode([
+                ['title' => 'Document checklist', 'description' => 'Review required records.'],
+                ['title' => 'Location comparison', 'description' => 'Compare suitable areas.'],
+            ]),
+            'inside_images' => [UploadedFile::fake()->image('inside-one.jpg'), UploadedFile::fake()->image('inside-two.jpg')],
+        ])->assertRedirect(route('admin.content.index', 'services'));
+
+        $service = \App\Models\Service::query()->where('slug', 'property-advisory')->firstOrFail();
+        $this->assertDatabaseCount('service_features', 2);
+        $this->assertDatabaseCount('service_images', 2);
+        $imageId = $service->images()->firstOrFail()->id;
+
+        $this->actingAs($admin)->put(route('admin.content.update', ['type' => 'services', 'id' => $service->id]), [
+            'title' => 'Property advisory',
+            'excerpt' => 'Updated guidance.',
+            'content' => '<p>Updated service overview.</p>',
+            'status' => 'draft',
+            'features_json' => json_encode([['title' => 'Updated document checklist']]),
+            'remove_inside_images' => [$imageId],
+        ])->assertRedirect(route('admin.content.index', 'services'));
+
+        $this->assertDatabaseCount('service_features', 1);
+        $this->assertDatabaseCount('service_images', 1);
+    }
+
     public function test_admin_can_create_faq_and_gallery_content_with_media_records(): void
     {
         $this->seed(RolePermissionSeeder::class);
