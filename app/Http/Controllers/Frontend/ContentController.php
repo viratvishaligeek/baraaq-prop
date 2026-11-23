@@ -74,13 +74,13 @@ class ContentController extends Controller
     {
         abort_unless($service->status === 'published' && $service->published_at && $service->published_at->lte(now()), 404);
         $service->load(['features', 'images']);
-        $relatedServices = Service::published()
-            ->whereKeyNot($service->id)
+        $relatedProperties = Property::published()
+            ->with('category:id,name')
             ->latest('published_at')
-            ->limit(3)
+            ->limit(4)
             ->get();
 
-        return view('frontend.services.show', compact('service', 'relatedServices'));
+        return view('frontend.services.show', compact('service', 'relatedProperties'));
     }
 
     public function team()
