@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\GalleryItem;
 use App\Models\NeighborhoodGuide;
 use App\Models\Post;
+use App\Models\Property;
 use App\Models\Service;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -114,6 +115,29 @@ class FrontendPaginationTest extends TestCase
             ->assertOk()
             ->assertSee('Apartment gallery image 19')
             ->assertDontSee('Commercial gallery image');
+    }
+
+    public function test_property_price_sorting_and_pagination_keep_active_filters(): void
+    {
+        foreach (range(1, 13) as $number) {
+            Property::query()->create([
+                'title' => 'Bareilly listing '.$number,
+                'slug' => 'bareilly-listing-'.$number,
+                'listing_type' => 'sale',
+                'price' => $number * 100000,
+                'status' => 'published',
+                'published_at' => now()->subMinutes($number),
+            ]);
+        }
+
+        $this->get(route('properties.index', ['q' => 'Bareilly', 'orderby' => 'price']))
+            ->assertOk()
+            ->assertSee(e(route('properties.index', ['q' => 'Bareilly', 'orderby' => 'price', 'page' => 2])), false)
+            ->assertSee('Bareilly listing 1');
+
+        $this->get(route('properties.index', ['q' => 'Bareilly', 'orderby' => 'price-desc']))
+            ->assertOk()
+            ->assertSeeInOrder(['Bareilly listing 13', 'Bareilly listing 12']);
     }
 
 }
