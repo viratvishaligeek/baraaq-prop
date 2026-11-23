@@ -5,6 +5,7 @@ use App\Http\Controllers\Frontend\EnquiryController as FrontendEnquiryController
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\NewsletterController;
 use App\Http\Controllers\Frontend\SitemapController;
+use App\Http\Controllers\Frontend\LocalContentController;
 use App\Http\Controllers\Frontend\PropertyController as FrontendPropertyController;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,10 @@ Route::post('/newsletter', [NewsletterController::class, 'store'])
     ->middleware('throttle:5,1')
     ->name('newsletter.store');
 
+Route::get('/gallery', [LocalContentController::class, 'gallery'])->name('gallery.index');
+Route::get('/faq', [LocalContentController::class, 'faqs'])->name('faq.index');
+Route::get('/neighborhood-guide', [LocalContentController::class, 'neighborhoods'])->name('neighborhood-guides.index');
+Route::get('/neighborhood-guide/{guide:slug}', [LocalContentController::class, 'neighborhood'])->name('neighborhood-guides.show');
 Route::get('/blog', [FrontendContentController::class, 'blog'])->name('blog.index');
 Route::get('/pages/{page:slug}', [FrontendContentController::class, 'page'])->name('pages.show');
 Route::get('/blog/{post:slug}', [FrontendContentController::class, 'post'])->name('blog.show');
