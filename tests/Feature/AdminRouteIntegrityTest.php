@@ -26,7 +26,7 @@ class AdminRouteIntegrityTest extends TestCase
     {
         $names = [
             'home', 'contact', 'about', 'sitemap', 'robots', 'blog.index', 'blog.show', 'properties.index', 'properties.show',
-            'services.index', 'services.show', 'team.index', 'testimonials.index', 'enquiries.store', 'newsletter.store',
+            'services.index', 'services.show', 'pages.show', 'team.index', 'testimonials.index', 'enquiries.store', 'newsletter.store',
             'admin.login.store', 'admin.logout', 'admin.dashboard', 'admin.analytics.index',
             'admin.properties.index', 'admin.properties.create', 'admin.properties.types', 'admin.properties.amenities',
             'admin.properties.store', 'admin.properties.update', 'admin.properties.edit', 'admin.properties.destroy',
