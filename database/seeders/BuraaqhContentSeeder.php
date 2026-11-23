@@ -199,7 +199,27 @@ class BuraaqhContentSeeder extends Seeder
 
             // Fill empty starter defaults, but never replace a value already configured by the site owner.
             $legacyMapUrl = $key === 'footer_map_embed_url' && str_contains((string) ($existing?->value ?? ''), 'Meerut');
-            $legacyDemoValue = str_contains((string) ($existing?->value ?? ''), 'Pillar') || str_contains((string) ($existing?->value ?? ''), 'Meerut') || in_array($existing?->value, ['hello@pillarrealty.example', '+91 121 456 7800', '919876543210', 'https://www.facebook.com/', 'https://www.instagram.com/', 'https://www.linkedin.com/'], true);
+            $legacyGalleryImages = false;
+            if ($key === 'footer_gallery_images' && $existing) {
+                $galleryValues = json_decode((string) $existing->value, true);
+                foreach (is_array($galleryValues) ? $galleryValues : [] as $galleryValue) {
+                    $galleryPath = is_numeric($galleryValue)
+                        ? Media::query()->whereKey((int) $galleryValue)->value('path')
+                        : (is_string($galleryValue) ? $galleryValue : null);
+                    if (is_string($galleryPath) && (
+                        str_starts_with($galleryPath, 'piller-demo/')
+                        || str_starts_with($galleryPath, 'gallery/buraaqh-reference-')
+                        || str_starts_with($galleryPath, 'theme-assets/img/gallery/footer-gallery-')
+                    )) {
+                        $legacyGalleryImages = true;
+                        break;
+                    }
+                }
+            }
+            $legacyDemoValue = $legacyGalleryImages
+                || str_contains((string) ($existing?->value ?? ''), 'Pillar')
+                || str_contains((string) ($existing?->value ?? ''), 'Meerut')
+                || in_array($existing?->value, ['hello@pillarrealty.example', '+91 121 456 7800', '919876543210', 'https://www.facebook.com/', 'https://www.instagram.com/', 'https://www.linkedin.com/'], true);
             if (! $existing || trim((string) $existing->value) === '' || $legacyMapUrl || $legacyDemoValue) {
                 Setting::write($key, $stored, $group, $type);
             }
