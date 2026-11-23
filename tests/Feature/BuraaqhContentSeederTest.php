@@ -7,6 +7,9 @@ use App\Models\Banner;
 use App\Models\Media;
 use App\Models\GalleryItem;
 use App\Models\Homepage;
+use App\Models\HomepageSection;
+use App\Models\TeamMember;
+use App\Models\Testimonial;
 use App\Models\NeighborhoodGuide;
 use App\Models\Page;
 use App\Models\Post;
@@ -33,6 +36,13 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertSame(0, Property::published()->count());
         $this->assertSame(0, Service::published()->count());
         $this->assertSame(0, GalleryItem::query()->where('status', 'published')->count());
+        $this->assertSame(0, Testimonial::query()->count());
+        $this->assertSame(0, TeamMember::query()->count());
+        $this->assertSame(10, HomepageSection::query()->count());
+        $this->assertSame(7, NeighborhoodGuide::query()->count());
+        $this->assertSame(12, FaqItem::query()->count());
+        $article = Post::query()->where('slug', 'complete-guide-buying-residential-property-bareilly')->firstOrFail();
+        $this->assertGreaterThan(350, str_word_count(strip_tags($article->content)));
         $this->assertSame([], Setting::read('footer_gallery_images', []));
         $this->assertSame('Buraaqh Properties', Setting::read('site_title'));
         $this->assertSame('Bareilly', Setting::read('service_area_city'));
@@ -136,7 +146,7 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertSame('draft', $service->fresh()->status);
         $this->assertSame('Owner-reviewed valuation service', $service->fresh()->title);
         $this->assertSame('<p>Owner-reviewed service wording.</p>', $service->fresh()->content);
-        $this->assertSame(0, ServiceImage::query()->whereKey($serviceImage->id)->count());
+        $this->assertDatabaseHas('service_images', ['id' => $serviceImage->id, 'path' => $serviceImage->path]);
         $this->assertDatabaseHas('media', ['id' => $media->id, 'path' => $media->path]);
         $this->assertSame('draft', $gallery->fresh()->status);
         $this->assertFalse((bool) $banner->fresh()->is_active);
@@ -145,7 +155,7 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertSame('draft', $legacyPost->fresh()->status);
         $this->assertSame('<p>Owner-edited legacy article copy.</p>', $legacyPost->fresh()->content);
         $this->assertDatabaseHas('pages', ['slug' => 'buy-with-buraaqh', 'status' => 'published']);
-        $this->assertDatabaseHas('posts', ['slug' => 'planning-a-bareilly-move', 'status' => 'published']);
+        $this->assertDatabaseHas('posts', ['slug' => 'complete-guide-buying-residential-property-bareilly', 'status' => 'published']);
     }
 
     public function test_seeder_preserves_owner_managed_content_when_rerun(): void
