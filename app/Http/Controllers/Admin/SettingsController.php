@@ -47,6 +47,8 @@ class SettingsController extends Controller
             'favicon' => ['nullable', 'file', 'mimes:png,ico', 'max:2048'],
             'default_og_image_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
             'favicon_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'image/png'))],
+            'remove_favicon' => ['sometimes', 'boolean'],
+            'remove_default_og_image' => ['sometimes', 'boolean'],
             'primary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'secondary_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'head_scripts' => ['nullable', 'string', 'max:20000'],
@@ -62,8 +64,10 @@ class SettingsController extends Controller
                 $selectedMediaPaths[$field] = Media::query()
                     ->whereKey((int) $data[$mediaField])
                     ->value('path');
+            } elseif ($request->boolean('remove_'.$field)) {
+                $selectedMediaPaths[$field] = null;
             }
-            unset($data[$mediaField]);
+            unset($data[$mediaField], $data['remove_'.$field]);
         }
 
         $uploads = [];
