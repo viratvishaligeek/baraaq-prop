@@ -199,7 +199,11 @@ class BuraaqhContentSeeder extends Seeder
             $existing = Setting::query()->where('key', $key)->first();
 
             // Fill empty starter defaults, but never replace a value already configured by the site owner.
-            $legacyMapUrl = $key === 'footer_map_embed_url' && str_contains((string) ($existing?->value ?? ''), 'Meerut');
+            $existingValue = (string) ($existing?->value ?? '');
+            $legacyMapUrl = $key === 'footer_map_embed_url' && str_contains($existingValue, 'Meerut');
+            $legacyTextKeys = ['site_title', 'business_name', 'meta_title', 'meta_description', 'meta_keywords', 'footer_description', 'footer_copyright', 'site_tagline'];
+            $legacyTextValue = in_array($key, $legacyTextKeys, true)
+                && (str_contains($existingValue, 'Pillar') || str_contains($existingValue, 'Meerut'));
             $legacyGalleryImages = false;
             if ($key === 'footer_gallery_images' && $existing) {
                 $galleryValues = json_decode((string) $existing->value, true);
@@ -218,8 +222,8 @@ class BuraaqhContentSeeder extends Seeder
                 }
             }
             $legacyDemoValue = $legacyGalleryImages
-                || str_contains((string) ($existing?->value ?? ''), 'Pillar')
-                || str_contains((string) ($existing?->value ?? ''), 'Meerut')
+                || $legacyTextValue
+                || $legacyMapUrl
                 || in_array($existing?->value, ['hello@pillarrealty.example', '+91 121 456 7800', '919876543210', 'https://www.facebook.com/', 'https://www.instagram.com/', 'https://www.linkedin.com/'], true);
             if (! $existing || trim((string) $existing->value) === '' || $legacyMapUrl || $legacyDemoValue) {
                 Setting::write($key, $stored, $group, $type);
