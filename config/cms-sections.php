@@ -14,7 +14,7 @@ $sections = [
             'description' => 'Explore property information and share your requirements with Buraaqh Properties in Bareilly, Uttar Pradesh.',
             'primary_button_label' => 'Explore Properties',
             'primary_button_url' => '/properties',
-            'secondary_button_label' => 'Request A Visit',
+            'secondary_button_label' => 'Contact Us',
             'secondary_button_url' => '/contact',
             'background_image' => '/theme-assets/img/hero/hero-10-2.jpg',
             'foreground_image' => '/theme-assets/img/hero/hero-9-right.png',
@@ -46,7 +46,7 @@ $sections['properties.index'] = [
     'view' => 'frontend.sections.properties.index',
     'defaults' => [
         'eyebrow' => 'Popular Properties',
-        'heading' => 'Best Properties Sale',
+        'heading' => 'Property Listings',
         'items_limit' => 8,
         'listing_filter' => 'all',
         'button_label' => 'View All Properties',
@@ -56,7 +56,7 @@ $sections['properties.index'] = [
         'rent_label' => 'For Rent',
         'bed_label' => 'Bed',
         'bath_label' => 'Bath',
-        'empty_state_text' => 'Featured properties will appear here once published.',
+        'empty_state_text' => 'No verified property listings are currently published. Please contact us with your requirements.',
     ],
     'fields' => [
         'eyebrow' => ['label' => 'Section eyebrow', 'type' => 'text', 'max' => 120],
