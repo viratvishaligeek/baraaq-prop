@@ -146,6 +146,8 @@ class ContentController extends Controller
             'selectedTagIds' => [],
             'parentCategories' => $type === 'categories' ? Category::orderBy('name')->get() : collect(),
             'mediaItems' => Media::where('mime_type', 'like', 'image/%')->latest()->limit(100)->get(['id', 'path', 'original_name']),
+            'serviceFeatures' => collect(),
+            'serviceImages' => collect(),
         ]);
     }
 
@@ -241,6 +243,8 @@ class ContentController extends Controller
                 ? Category::where('type', $item->type)->where('id', '!=', $item->id)->orderBy('name')->get()
                 : collect(),
             'mediaItems' => Media::where('mime_type', 'like', 'image/%')->latest()->limit(100)->get(['id', 'path', 'original_name']),
+            'serviceFeatures' => $type === 'services' ? $item->features()->get() : collect(),
+            'serviceImages' => $type === 'services' ? $item->images()->get() : collect(),
         ]);
     }
 
