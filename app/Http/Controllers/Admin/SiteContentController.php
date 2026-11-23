@@ -54,7 +54,7 @@ class SiteContentController extends Controller
 
         $items = $model::query()
             ->when($filters['q'] ?? null, function ($query, $term) use ($type): void {
-                $columns = $type === 'faqs' ? ['question', 'answer', 'category'] : ['title', 'slug'];
+                $columns = match ($type) { 'faqs' => ['question', 'answer', 'category'], 'gallery' => ['title', 'slug', 'description'], default => ['title', 'slug', 'locality', 'excerpt'] };
                 $query->where(function ($search) use ($columns, $term): void {
                     foreach ($columns as $index => $column) {
                         $search->{$index === 0 ? 'where' : 'orWhere'}($column, 'like', '%'.trim($term).'%');
