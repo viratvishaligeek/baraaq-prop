@@ -13,9 +13,8 @@ class BuraaqhContentSeeder extends Seeder
             BuraaqhLegacyDemoContentRetirementSeeder::class,
             BuraaqhCategorySeeder::class,
             BuraaqhPageSeeder::class,
-            BuraaqhBlogSeeder::class,
+            BuraaqhEditorialSeeder::class,
             BuraaqhServiceSeeder::class,
-            BuraaqhLocalContentSeeder::class,
             BuraaqhNavigationSeeder::class,
             BuraaqhHomepageSeeder::class,
         ]);
