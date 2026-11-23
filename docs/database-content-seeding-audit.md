@@ -144,14 +144,14 @@ The seven editorial articles cover buying residential property in Bareilly, Utta
 
 The Home 9 seeder reuses bundled images already committed under `public/theme-assets`, imports them through the existing Media Library model, and creates `media_attachments` for the matching homepage fields. Alt text explicitly identifies the images as illustrative rather than actual Buraaqh listings.
 
-| Homepage use | Existing asset |
-|---|---|
-| Hero background | `theme-assets/img/hero/hero-10-2.jpg` | 310 × 800 |
-| Hero foreground | `theme-assets/img/hero/hero-9-right.png` | 1079 × 946 |
-| About primary | `theme-assets/img/why/why-choose-left-1.jpg` | 661 × 526 |
-| About secondary | `theme-assets/img/hero/hero-8-left.jpg` | 854 × 854 |
-| About tertiary | `theme-assets/img/contact/contact-img.jpg` | 972 × 893 |
-| Home details decorative image | `theme-assets/img/hero/hero-10-3.jpg` | 270 × 400 |
+| Existing media filename | Media record ID | Assigned content record / field | Intended visual purpose | Dimensions | Relationship status |
+|---|---|---|---|---|---|
+| `theme-assets/img/hero/hero-10-2.jpg` | Pending database execution | Home 9 `hero.home-9.background_image` | Decorative hero background; illustrative architecture | 310 × 800 | Seeder maps field through Media Library attachment; runtime ID/link check pending |
+| `theme-assets/img/hero/hero-9-right.png` | Pending database execution | Home 9 `hero.home-9.foreground_image` | Decorative foreground home image; not a listing | 1079 × 946 | Seeder maps field through Media Library attachment; runtime ID/link check pending |
+| `theme-assets/img/why/why-choose-left-1.jpg` | Pending database execution | Home 9 `about.home-9.image_primary` | About section supporting architecture image | 661 × 526 | Seeder maps field through Media Library attachment; runtime ID/link check pending |
+| `theme-assets/img/hero/hero-8-left.jpg` | Pending database execution | Home 9 `about.home-9.image_secondary` | About section secondary residential image | 854 × 854 | Seeder maps field through Media Library attachment; runtime ID/link check pending |
+| `theme-assets/img/contact/contact-img.jpg` | Pending database execution | Home 9 `about.home-9.image_tertiary` | About section supporting interior/lifestyle image | 972 × 893 | Seeder maps field through Media Library attachment; runtime ID/link check pending |
+| `theme-assets/img/hero/hero-10-3.jpg` | Pending database execution | Home 9 `home-details.home-9.image` | Decorative Home Details image; not a listing | 270 × 400 | Seeder maps field through Media Library attachment; runtime ID/link check pending |
 
 The importer checks that a bundled image exists, is an image MIME type, and is at least 240 × 180 pixels before creating a Media Library record. The six selected raster assets were checked for dimensions and visual role; all pass that threshold. It uses a stable path-derived identifier and `firstOrCreate` so reruns reuse the same record. Existing administrator-selected images or custom paths are preserved.
 
@@ -173,3 +173,34 @@ No production database credentials or representative deployed database were avai
 The repository's GitHub Actions workflow installs Composer dependencies, lints PHP, runs the Laravel test suite, prepares an empty SQLite database with `php artisan migrate:fresh --force`, runs the complete `DatabaseSeeder`, runs each of the eight content seeders individually in orchestration order, runs the complete seeder a second time, and loads all 13 original HTML reference pages at desktop, tablet and mobile viewports. Playwright captures reference and live screenshots, checks response codes, shared layout presence and horizontal overflow. It does not perform a pixel-difference assertion, so screenshot artifacts still require human visual review. The live property-detail and service-detail routes are skipped when no published record exists; the reference files are still captured, while the blog detail route is exercised with the seeded editorial content. The database/content branch requires that workflow to run before this work can be called verified.
 
 **Pending evidence:** fresh migration/seed execution output, repeated-seeder test results, full automated test result, and the PR check conclusion. At the time of this report, GitHub reports no check runs or commit statuses for the PR head, so the workflow has not supplied an execution result. This report must be updated with the actual run URL and commit after CI completes; it is not a claim that those checks have already passed.
+
+
+## 8. Editorial and service frontend inspection
+
+### Seven articles
+
+Static source inspection of each seeded article found the following body lengths and H2 section counts. Each has a specific introduction, practical buyer/seller guidance and a conclusion; all paragraphs within each article are distinct rather than repeated to pad word count.
+
+| Article | Words | H2 sections | Editorial focus |
+|---|---:|---:|---|
+| A Complete Guide to Buying Residential Property in Bareilly | 778 | 10 | Buyer brief, total budget, site inspection, locality checks and title review |
+| Important Documents to Check Before Buying Property in Uttar Pradesh | 816 | 10 | Title chain, land/revenue records, approvals, dues and agreement review |
+| Residential vs Commercial Property: What Buyers Should Understand | 716 | 9 | Permitted use, ownership cost, financing and purpose-led comparison |
+| How to Evaluate a Locality Before Purchasing a Home | 865 | 11 | Street-level visits, access, utilities and separating observation from assumptions |
+| Property Registration and Due Diligence in Uttar Pradesh | 961 | 12 | Authority, title, agreement, registration preparation and handover |
+| Important Factors When Choosing a Residential Property | 957 | 13 | Household fit, condition, ongoing costs and comparison scorecard |
+| Questions to Ask Before Selecting a Real Estate Consultant | 866 | 11 | Scope, fees, verification, conflicts and written service terms |
+
+The seeder sets a per-article SEO title (maximum 60 characters), meta description (maximum 155 characters) and focus keyword, and uses explicit lower-case hyphenated slugs. Regression assertions now check these limits, heading structure, conclusion presence and paragraph uniqueness. No editorial featured image is assigned: the available theme blog images are generic template photography, not verified article-specific Bareilly imagery. The existing blog card and detail templates show a neutral “Article image pending” placeholder instead of a misleading repeated photo.
+
+### Seven locality guides
+
+The guides were expanded with distinct conditional site-check sections rather than unsupported claims about prices, infrastructure, transport or investment. Current fresh-seed source lengths are: Civil Lines 462 words; Rajendra Nagar 446; Izatnagar 461; Pilibhit Bypass 458; DD Puram 442; Bareilly Cantt 484; Mahanagar 431. Their additional checklists cover mixed-use permissions, weekday household routines, conditional noise/vibration checks, bypass entry/exit and service-road access, block-level comparison, exact Cantt jurisdiction/land status, and renovation/maintenance permissions respectively. These are questions to verify at the exact property, not assertions that a particular facility or condition exists. The fresh-install regression threshold is now greater than 400 words per guide.
+
+Existing administrator-edited guide bodies remain protected. The revised copy is used for fresh records; existing records are only upgraded when their body matches a known legacy seed body. If a database already contains the prior generated guide copy rather than the older legacy placeholder, the seeder intentionally will not overwrite it automatically; that copy needs an explicit reviewed CMS edit or a separately versioned content upgrade.
+
+### Six service records and existing frontend
+
+All six seeded service records remain `draft`, with 24 linked features (four per service). They have no featured image and no `service_images` rows because no approved service-specific assets exist. The existing service detail Blade view reads the card/hero image from `services.featured_image` and the inside gallery from the separate `service_images` relation; it renders features from `service_features`. A new feature test exercises a published sample service with two different image paths and asserts both render independently. The six seeded drafts are therefore not public service-detail pages yet; publishing them and assigning imagery requires business approval.
+
+The blog detail view renders sanitized article HTML, title, metadata, tags and category links. The existing Home 9 blog section retains its original Blade structure/classes and uses the image-pending placeholder. Page detail rendering also sanitizes CMS HTML. These are source-level integrations and regression-test definitions; runtime route and responsive rendering remain pending the Actions/browser run.
