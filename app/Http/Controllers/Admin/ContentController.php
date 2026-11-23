@@ -161,7 +161,7 @@ class ContentController extends Controller
         }
 
         $this->authorizePublish($type, $data['status'] ?? 'draft');
-        $serviceFeatures = $type === 'services' ? (json_decode($data['features_json'] ?? '[]', true) ?: []) : [];
+        $serviceFeatures = $type === 'services' ? $this->decodeServiceFeatures($data['features_json'] ?? null) : [];
         unset($data['features_json'], $data['inside_images']);
         $insideImageFiles = $type === 'services' ? array_filter((array) $request->file('inside_images', [])) : [];
         $this->applyMediaSelections($data);
@@ -398,6 +398,28 @@ class ContentController extends Controller
         return back()->with('success', 'Item moved to trash.');
     }
 
+    private function decodeServiceFeatures(?string $json): array
+    {
+        if ($json === null || trim($json) === '') return [];
+        $features = json_decode($json, true);
+        if (! is_array($features) || ! array_is_list($features)) {
+            throw ValidationException::withMessages(['features_json' => 'Service features must be a JSON array.']);
+        }
+
+        foreach ($features as $feature) {
+            if (! is_array($feature)
+                || ! is_string($feature['title'] ?? null)
+                || trim($feature['title']) === ''
+                || mb_strlen($feature['title']) > 180
+                || (isset($feature['description']) && ! is_string($feature['description']))
+                || (isset($feature['icon']) && ! is_string($feature['icon']))) {
+                throw ValidationException::withMessages(['features_json' => 'Each service feature needs a title and may include a description and icon name.']);
+            }
+        }
+
+        return $features;
+    }
+
     private function validated(Request $request, string $type, ?int $id = null): array
     {
         $rules = match ($type) {
@@ -473,7 +495,7 @@ class ContentController extends Controller
                 'meta_description' => ['nullable', 'string', 'max:1000'],
                 'focus_keyword' => ['nullable', 'string', 'max:160'],
                 'og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-                'features_json' => ['nullable', 'json'],
+                'features_json' => ['nullable', 'json', 'max:12000'],
                 'inside_images' => ['nullable', 'array', 'max:20'],
                 'inside_images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
                 'remove_inside_images' => ['nullable', 'array'],
