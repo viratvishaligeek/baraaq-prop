@@ -279,12 +279,7 @@
                     $footerQuickLinks = \App\Models\Menu::cached($siteSettings['footer_quick_links_menu_location'] ?? '');
                     $footerSupport = \App\Models\Menu::cached($siteSettings['footer_support_menu_location'] ?? '');
                 @endphp
-                @if ($footerMenu && $footerMenu->items->isNotEmpty())
-                    <nav class="cms-footer-navigation" aria-label="Footer navigation">
-                        <ul class="list-inline">@include('frontend.partials.menu-items', ['items' => $footerMenu->items])
-                        </ul>
-                    </nav>
-                @endif
+
                 <div class="footer-all-widget-wrapper">
                     <div class="footer-all-widget-item">
                         
@@ -353,29 +348,31 @@
                     <div class="footer-all-widget-item">
                         <div class="footer-right-wrap">
                             <div class="footer-item-wrap">
-                                @php $footerServices = \App\Models\Service::published()->orderBy('title')->limit(5)->get(); @endphp
-                                @if ($footerServices->isNotEmpty())
+                                @php
+                                    $footerFeaturedCategories = \App\Models\Category::query()
+                                        ->where('type', 'property')->where('is_active', true)->orderBy('name')->limit(5)->get();
+                                    $footerFeaturedProperties = \App\Models\Property::published()->where('is_featured', true)->latest()->limit(5)->get();
+                                @endphp
                                 <div class="footer-item">
-                                    
-
                                     <div class="widget widget_nav_menu footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_services_heading'] ?? '' }}</h3>
+                                        <h3 class="widget_title">{{ $siteSettings['footer_featured_heading'] ?? 'Featured Houses' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
-                                                @foreach ($footerServices as $footerService)
-                                                    <li>
-                                                        <a
-                                                            href="{{ route('services.show', $footerService) }}">{{ $footerService->title }}</a>
-                                                    </li>
-                                                @endforeach
+                                                @if ($footerMenu && $footerMenu->items->isNotEmpty())
+                                                    @include('frontend.partials.menu-items', ['items' => $footerMenu->items])
+                                                @elseif ($footerFeaturedCategories->isNotEmpty())
+                                                    @foreach ($footerFeaturedCategories as $footerCategory)
+                                                        <li><a href="{{ route('properties.index', ['category' => $footerCategory->slug]) }}">#{{ $footerCategory->name }}</a></li>
+                                                    @endforeach
+                                                @else
+                                                    @foreach ($footerFeaturedProperties as $footerProperty)
+                                                        <li><a href="{{ route('properties.show', $footerProperty) }}">{{ $footerProperty->title }}</a></li>
+                                                    @endforeach
+                                                @endif
                                             </ul>
                                         </div>
                                     </div>
-                                
-                                    
                                 </div>
-                                
-                                @endif
                                 <div class="footer-item">
                                     
 
@@ -408,12 +405,12 @@
                                 
                                     
                                 </div>
-                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null))
+                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null) || !empty($siteSettings['site_address']))
                                     <div class="footer-item">
                                         <div class="widget widget_banner footer-widget">
-                                            <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? '' }}</h3>
+                                            <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? 'Location' }}</h3>
                                             <div class="widget-map">
-                                                <iframe src="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['footer_map_embed_url']) }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                                <iframe src="{{ \App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null) ? \App\Rules\SafeLink::sanitizeHttp($siteSettings['footer_map_embed_url']) : 'https://www.google.com/maps?q=' . urlencode($siteSettings['site_address']) . '&output=embed' }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                                             </div>
                                         </div>
                                     </div>
