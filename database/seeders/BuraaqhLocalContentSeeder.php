@@ -123,6 +123,9 @@ class BuraaqhLocalContentSeeder extends Seeder
 <p>Review the ownership chain, seller authority, applicable plans and approvals, tax records, encumbrances and written transaction terms. Ask a qualified local lawyer to review original records and verify details with the appropriate authority. Compare the property with genuinely similar options using measured area, condition, access and legal status.</p>
 <h2>Questions to take on a visit</h2>
 <ul><li>What is the exact boundary and measured area?</li><li>Which parking or common areas are included in the transaction?</li><li>What are the current utility and maintenance arrangements?</li><li>Are there any building-use restrictions, dues, disputes or pending repairs?</li><li>Which documents remain to be independently verified?</li></ul>
+<h2>Questions that matter for a mixed-use street</h2>
+<p>If a property is on or near a street with shops, offices or other commercial activity, assess the effect on the exact building rather than assuming the entire locality has one character. Visit during the hours when the neighbouring premises operate and again when they are closed. Ask about customer parking, deliveries, signage, noise, waste handling and access to the entrance. If you plan to use the premises for business, verify the permitted use and any building or local permissions with the competent authority before signing.</p>
+<p>For a residential purchase, ask whether the building rules restrict commercial activity, short-term use, alterations or external signage. Record the answers and the documents that support them. A nearby business does not establish that the same activity is permitted in the property you are considering.</p>
 HTML,
             ],
             'Rajendra Nagar' => [
@@ -141,6 +144,9 @@ HTML,
 <p>Check the seller's authority, registered ownership records, property description, boundaries, applicable building permissions, taxes, dues and any mortgage or dispute. Ask about society or maintenance rules, parking rights and any outstanding repair obligations. A qualified local lawyer should review original documents and confirm which authority records apply.</p>
 <h2>Compare options consistently</h2>
 <p>Use the same checklist for each property and record the visit date, exact address, area, condition, recurring costs and unresolved questions. Compare evidence rather than relying on a general impression or an advertised price. If a future facility or development is mentioned, verify it through an official source before treating it as part of the decision.</p>
+<h2>Test the home against an ordinary weekday</h2>
+<p>Make one visit that reflects the routine you expect after moving in. Check the route from the entrance to the street, the time needed to leave and return, parking availability at the hours you need it, and whether deliveries or visitors can reach the property without blocking access. If the home is in a shared building, inspect stairways, lifts if present, roof and terrace access, water storage, drainage points and the condition of common areas. Ask who is responsible for each shared system and how maintenance decisions are recorded.</p>
+<p>For an independent house, ask about boundary maintenance, rainwater flow, utility connections and any shared access arrangement. Confirm every verbal statement against the sale documents, approved plan or written maintenance rules where relevant.</p>
 HTML,
             ],
             'Izatnagar' => [
@@ -159,6 +165,9 @@ HTML,
 <p>Ask for the registered ownership documents, prior deeds relevant to the title chain, land-use information, sanctioned plans where applicable, tax records and details of any loan, charge or dispute. Have a qualified property lawyer review original documents and verify information with the appropriate authority. Do not rely only on a mutation entry, brochure or seller statement.</p>
 <h2>Keep a comparison record</h2>
 <p>Record the exact address, date of visit, access observations, utility arrangements, property condition, asking terms and outstanding documents. Compare the same factors across each shortlisted property. Treat any statement about future development or appreciation as unverified until supported by a current official source and independent analysis.</p>
+<h2>Check site conditions at different times</h2>
+<p>Do not assume that every address in Izatnagar has the same surroundings. If the particular property is close to a railway line, workshop, warehouse, industrial activity or a busy route, visit at more than one time and assess the actual noise, vibration, vehicle movement, dust, lighting and pedestrian conditions. These are site-specific checks, not claims that any of those activities are present at every address in the locality.</p>
+<p>Ask whether the property has any use restrictions, access easements or boundary issues. For land or a plot, compare the on-site boundary with the relevant survey and revenue records. For a built home, inspect cracks, dampness, roof condition and utility connections; obtain a specialist inspection if the surrounding activity or visible condition raises technical questions.</p>
 HTML,
             ],
             'Pilibhit Bypass' => [
@@ -177,6 +186,9 @@ HTML,
 <p>For plots and developments, verify the land classification, layout approval, boundaries, access rights and permitted use. For constructed properties, compare the actual building with applicable sanctioned plans and completion or occupancy records. Review the ownership chain, seller authority, taxes, encumbrances and any restrictions with a qualified professional.</p>
 <h2>Compare total cost, not only the advertised price</h2>
 <p>Include registration and applicable government charges, legal review, repairs, utility connections, maintenance and travel costs in your comparison. Ask for written terms and confirm what is included. If a future road, service lane or development project is mentioned, verify its official status before relying on it.</p>
+<h2>Measure access rather than relying on road proximity</h2>
+<p>A description such as “near Pilibhit Bypass” does not tell you whether a particular property has a safe or convenient entrance. Check whether the approach uses a service road, an internal street or a direct road connection, and whether the direction of travel requires a long detour or difficult turn. Observe the actual entry and exit at busy and quiet times. Consider pedestrian access, visibility, parking, delivery access and whether a median or divider affects the route you would use.</p>
+<p>For a road-facing property, assess noise, dust, lighting, privacy and the practicality of opening windows or using outdoor space. After rain, inspect the property's entrance and immediate approach for water accumulation. Confirm the legal access shown in the property records; a track used informally by neighbours is not proof of a permanent legal right of way.</p>
 HTML,
             ],
             'DD Puram' => [
@@ -195,6 +207,9 @@ HTML,
 <p>Review registered ownership records, seller authority, prior deeds, property description, applicable building plans, completion records, taxes and encumbrances. Have original documents reviewed by a qualified local property lawyer. If a floor, extension or change of use has been made, ask which permissions apply and verify them with the relevant authority.</p>
 <h2>Make a consistent comparison</h2>
 <p>Use a written checklist for each shortlisted home. Record measured area, visit date, condition, access, utilities, total costs and open document questions. A careful comparison is more useful than a broad claim that one locality or block is always better than another.</p>
+<h2>Compare block-level details</h2>
+<p>Do not compare two homes only because both are advertised as being in DD Puram. Record the exact block, street, building position, floor, orientation and approach. Check whether the entrance, parking and common areas are usable for your household, and whether the property has any access or boundary arrangement shared with another owner. Visit at the time you expect to commute and at a quieter time so that you can compare parking, noise and movement around the building.</p>
+<p>For apartments or multi-owner buildings, ask for the current maintenance statement, rules, meeting or repair records where available, and details of any unpaid contribution or planned major work. For an independent property, verify the approved building plan and whether later additions are reflected in the relevant records.</p>
 HTML,
             ],
             'Bareilly Cantt' => [
@@ -213,6 +228,9 @@ HTML,
 <p>Have a qualified local property lawyer examine the registered deeds, title chain, authority documents, land classification, permissions and encumbrance information. Verify original records with the appropriate office. If the seller cannot provide a required document or the authority is unclear, pause the transaction until the issue is resolved in writing.</p>
 <h2>Do not rely on assumptions</h2>
 <p>Do not make a payment based on an assurance that a transfer or construction permission will be granted later. Confirm current requirements directly with the competent authority and include any necessary conditions in the written agreement. This locality guide is a prompt for due diligence, not a legal opinion about any specific property.</p>
+<h2>Confirm the authority responsible for the exact parcel</h2>
+<p>“Bareilly Cantt” is not a substitute for a legal property description. Before treating a property as freely transferable or assuming that ordinary municipal processes apply, identify its exact location, land category, recorded owner and the authority that controls the land or building permissions. Ask a qualified local property lawyer to determine whether any cantonment, defence-estate, leasehold, transfer, construction or use conditions apply to that particular parcel. Do not assume that every property described by an agent as being in or around the Cantt has the same status.</p>
+<p>Ask for the relevant lease, grant, title or allotment records and verify them with the responsible authority. Confirm whether the proposed transfer, mortgage, renovation or change of use needs consent or a separate approval. Put unresolved permissions and conditions in writing before paying a token amount.</p>
 HTML,
             ],
             'Mahanagar' => [
@@ -231,6 +249,9 @@ HTML,
 <p>Prepare a full cost estimate that includes applicable registration charges, legal review, repairs, maintenance, taxes and utility costs. Review the sale or lease terms, payment schedule, possession, inclusions and responsibilities. Ask for outstanding dues and disputes to be disclosed and addressed in writing.</p>
 <h2>Keep a record of what remains unverified</h2>
 <p>For each option, write down the documents received, authority checks completed, technical questions referred to a specialist and information still awaiting confirmation. Compare alternatives on the same basis. Do not treat a general neighbourhood description or an advertised price as proof of the property's condition or value.</p>
+<h2>Check expansion, access and recurring upkeep</h2>
+<p>If you may extend, renovate or change the use of a home, ask which permissions are required and whether the existing building matches its sanctioned plan. Do not treat a neighbouring extension as evidence that the same work is permitted on your property. Check the available access for construction or repair work, the position of shared walls and drains, and whether any common passage or utility line crosses the site.</p>
+<p>Ask the seller for recent utility and maintenance information, details of known repairs and any recurring issue with water, drainage or the building envelope. If the property is part of a shared development, request the written rules and a statement of outstanding dues. Compare the total cost of ownership, not only the asking price.</p>
 HTML,
             ],
         ];
