@@ -43,7 +43,13 @@
                             <div class="blog-card">
                                 <div class="blog-img">
                                     <a href="{{ route('blog.show', $post) }}">
-<img src="{{ $post->featured_image ? Storage::disk('public')->url($post->featured_image) : asset('theme-assets/img/blog/blog_1_1.jpg') }}" alt="{{ $post->title }}">
+@if($post->featured_image)
+    <img src="{{ Storage::disk('public')->url($post->featured_image) }}" alt="{{ $post->title }}">
+@else
+    <div class="blog-image-placeholder bg-smoke d-flex align-items-center justify-content-center">
+        <span class="text-muted">Article image pending</span>
+    </div>
+@endif
 </a>
                                     @if($sectionConfig['show_date'] ?? true)
                                         <div class="date">
