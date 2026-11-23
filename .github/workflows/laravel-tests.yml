@@ -29,14 +29,21 @@ jobs:
           extensions: bcmath, ctype, curl, dom, fileinfo, gd, mbstring, openssl, pdo_sqlite, sqlite3, tokenizer, xml, zip
           coverage: none
 
+      - name: Validate Composer manifest and lock file
+        run: composer validate --strict
+
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Lint PHP source files
+        run: find app bootstrap config database routes tests -type f -name '*.php' -print0 | xargs -0 -n1 php -l
 
       - name: Prepare application
         run: |
           cp .env.example .env
           php artisan key:generate
           php artisan config:clear
+          php artisan route:list --except-vendor
 
       - name: Run Laravel feature and unit tests
         run: php artisan test
