@@ -77,10 +77,20 @@ class BuraaqhContentSeederTest extends TestCase
 
         $this->assertSame(6, Service::query()->count());
         $this->assertSame(24, ServiceFeature::query()->count());
-        foreach (Service::query()->get() as $service) {
+        foreach (Service::query()->with('features')->get() as $service) {
             $this->assertSame('draft', $service->status);
-            $this->assertStringContainsString('Frequently asked questions', $service->content);
+            $this->assertStringContainsString('Service scope', $service->content);
+            $this->assertStringContainsString('Potential benefits', $service->content);
+            $this->assertStringContainsString('What to prepare', $service->content);
+            $this->assertStringContainsString('<ol>', $service->content);
+            $this->assertGreaterThanOrEqual(4, preg_match_all('/<h3>/i', $service->content), $service->slug.' should include relevant FAQs.');
+            $this->assertSame(4, $service->features->count());
+            $this->assertNotEmpty($service->meta_title);
+            $this->assertLessThanOrEqual(60, mb_strlen($service->meta_title));
+            $this->assertNotEmpty($service->meta_description);
+            $this->assertLessThanOrEqual(155, mb_strlen($service->meta_description));
             $this->assertNull($service->featured_image);
+            $this->assertSame(0, $service->images()->count(), 'No unrelated service gallery images should be attached.');
         }
 
         foreach (NeighborhoodGuide::query()->get() as $guide) {
@@ -276,6 +286,37 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertStringContainsString($shortExcerpt, $shortLegacyPost->fresh()->content);
         $this->assertDatabaseHas('pages', ['slug' => 'buy-with-buraaqh', 'status' => 'published']);
         $this->assertDatabaseHas('posts', ['slug' => 'complete-guide-buying-residential-property-bareilly', 'status' => 'published']);
+    }
+
+    public function test_about_page_uses_existing_media_library_attachments_in_original_image_layout(): void
+    {
+        Storage::fake('public');
+        $this->seed();
+
+        $homepage = Homepage::query()->where('slug', 'home-9')->firstOrFail();
+        $about = $homepage->sections()->where('section_key', 'about.home-9')->firstOrFail();
+        $hero = $homepage->sections()->where('section_key', 'hero.home-9')->firstOrFail();
+        $details = $homepage->sections()->where('section_key', 'home-details.home-9')->firstOrFail();
+
+        $expectedMedia = [
+            $about->mediaAttachments()->where('field_key', 'image_primary')->firstOrFail()->media,
+            $hero->mediaAttachments()->where('field_key', 'background_image')->firstOrFail()->media,
+            $about->mediaAttachments()->where('field_key', 'image_secondary')->firstOrFail()->media,
+            $details->mediaAttachments()->where('field_key', 'image')->firstOrFail()->media,
+            $about->mediaAttachments()->where('field_key', 'image_tertiary')->firstOrFail()->media,
+        ];
+
+        $response = $this->get(route('about'))->assertOk();
+        foreach ($expectedMedia as $media) {
+            $response->assertSee(Storage::disk('public')->url($media->path));
+        }
+
+        $response->assertDontSee('theme-assets/img/about/about-1-left-1.jpg');
+        $response->assertDontSee('theme-assets/img/about/about-1-left-2.jpg');
+        $response->assertSee('img-box1 about-1');
+        $response->assertSee('about-left');
+        $response->assertSee('about-middle');
+        $response->assertSee('about-right');
     }
 
     public function test_seeded_editorial_pages_and_locality_guides_render_on_existing_frontend_routes(): void
