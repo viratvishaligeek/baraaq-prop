@@ -201,6 +201,23 @@ class BuraaqhContentSeederTest extends TestCase
             'content' => '<p>Owner-edited legacy page copy.</p>',
             'status' => 'published',
         ]);
+        $primaryMenu = Menu::query()->create(['name' => 'Legacy primary', 'location' => 'primary']);
+        $legacyBuyMenuItem = MenuItem::query()->create([
+            'menu_id' => $primaryMenu->id,
+            'label' => 'Buy with Pillar',
+            'url' => '/pages/buy-with-pillar',
+            'link_type' => 'custom',
+            'sort_order' => 1,
+            'is_active' => true,
+        ]);
+        $legacySellMenuItem = MenuItem::query()->create([
+            'menu_id' => $primaryMenu->id,
+            'label' => 'Sell with Pillar',
+            'url' => '/sell-with-pillar',
+            'link_type' => 'custom',
+            'sort_order' => 2,
+            'is_active' => true,
+        ]);
         $legacyPost = Post::query()->create([
             'title' => 'Legacy moving article',
             'slug' => 'planning-a-delhi-ncr-move',
@@ -230,12 +247,53 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertFalse((bool) $banner->fresh()->is_active);
         $this->assertSame('draft', $legacyPage->fresh()->status);
         $this->assertSame('<p>Owner-edited legacy page copy.</p>', $legacyPage->fresh()->content);
+        $this->assertSame('Buy with Buraaqh Properties', $legacyBuyMenuItem->fresh()->label);
+        $this->assertSame('/pages/buy-with-buraaqh', $legacyBuyMenuItem->fresh()->url);
+        $this->assertSame('Sell with Buraaqh Properties', $legacySellMenuItem->fresh()->label);
+        $this->assertSame('/pages/sell-with-buraaqh', $legacySellMenuItem->fresh()->url);
         $this->assertSame('published', $legacyPost->fresh()->status);
         $this->assertSame('<p>Owner-edited legacy article copy.</p>', $legacyPost->fresh()->content);
         $this->assertSame('draft', $shortLegacyPost->fresh()->status);
         $this->assertStringContainsString($shortExcerpt, $shortLegacyPost->fresh()->content);
         $this->assertDatabaseHas('pages', ['slug' => 'buy-with-buraaqh', 'status' => 'published']);
         $this->assertDatabaseHas('posts', ['slug' => 'complete-guide-buying-residential-property-bareilly', 'status' => 'published']);
+    }
+
+    public function test_known_legacy_settings_are_replaced_without_overwriting_custom_values(): void
+    {
+        $legacySettings = [
+            'site_title' => ['Pillar Real Estate', 'general', 'string'],
+            'business_name' => ['Pillar Realty', 'business', 'string'],
+            'site_email' => ['hello@pillarrealty.example', 'contact', 'string'],
+            'site_phone' => ['+91 121 456 7800', 'contact', 'string'],
+            'whatsapp_number' => ['919876543210', 'contact', 'string'],
+            'site_address' => ['Pillar Realty, Meerut', 'contact', 'string'],
+            'footer_map_embed_url' => ['https://maps.google.com/?q=Meerut', 'footer', 'string'],
+            'social_facebook' => ['https://www.facebook.com/', 'social', 'string'],
+            'footer_copyright' => ['Pillar Real Estate', 'footer', 'string'],
+            'site_tagline' => ['Pillar Real Estate in Meerut', 'general', 'string'],
+            'footer_gallery_images' => [json_encode(['piller-demo/demo.jpg']), 'footer', 'json'],
+            'custom_notice' => ['Administrator-approved wording', 'custom', 'string'],
+        ];
+
+        foreach ($legacySettings as $key => [$value, $group, $type]) {
+            Setting::query()->create(compact('key', 'group', 'value', 'type'));
+        }
+
+        $this->seed();
+
+        $this->assertSame('Buraaqh Properties', Setting::read('site_title'));
+        $this->assertSame('Buraaqh Properties', Setting::read('business_name'));
+        $this->assertSame('', Setting::read('site_email'));
+        $this->assertSame('', Setting::read('site_phone'));
+        $this->assertSame('', Setting::read('whatsapp_number'));
+        $this->assertSame('', Setting::read('site_address'));
+        $this->assertSame('', Setting::read('footer_map_embed_url'));
+        $this->assertSame('', Setting::read('social_facebook'));
+        $this->assertSame('Buraaqh Properties', Setting::read('footer_copyright'));
+        $this->assertSame('Clear information for better property decisions in Bareilly.', Setting::read('site_tagline'));
+        $this->assertSame([], Setting::read('footer_gallery_images', []));
+        $this->assertSame('Administrator-approved wording', Setting::read('custom_notice'));
     }
 
     public function test_seeder_preserves_owner_managed_content_when_rerun(): void
@@ -281,7 +339,7 @@ class BuraaqhContentSeederTest extends TestCase
         $removedFeature->delete();
         $remainingFeatureCount = ServiceFeature::query()->where('service_id', $service->id)->count();
 
-        $this->seed(BuraaqhContentSeeder::class);
+        $this->seed();
 
         $this->assertSame(
             '<p>Pillar is a proper noun in this owner-managed content and must not be rewritten.</p>',
