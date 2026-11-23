@@ -94,7 +94,7 @@ class PropertyController extends Controller
 
         $orderby = $filters['orderby'] ?? 'date';
         match ($orderby) {
-            'menu_order' => $query->orderBy('sort_order')->latest('published_at'),
+            'menu_order' => $query->latest('published_at'),
             'popularity' => $query->orderByDesc('is_featured')->latest('published_at'),
             'price' => $query->orderByRaw('CASE WHEN price IS NULL THEN 1 ELSE 0 END')->orderBy('price'),
             'price-desc' => $query->orderByRaw('CASE WHEN price IS NULL THEN 1 ELSE 0 END')->orderByDesc('price'),
