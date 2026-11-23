@@ -38,11 +38,11 @@ for (const viewport of viewports) {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
 
     for (const item of pages) {
-      const referenceResponse = await page.goto('/reference/' + item.reference, { waitUntil: 'networkidle' });
+      const referenceResponse = await page.goto('/reference/' + item.reference, { waitUntil: 'domcontentloaded' });
       expect(referenceResponse?.status(), item.name + ' original reference must load').toBe(200);
       await saveScreenshot(page, testInfo, item.name + '-reference-' + viewport.name);
 
-      const liveResponse = await page.goto(item.route, { waitUntil: 'networkidle' });
+      const liveResponse = await page.goto(item.route, { waitUntil: 'domcontentloaded' });
       expect(liveResponse?.status(), item.name + ' Laravel page must load').toBe(200);
       if (item.name === 'home') {
         await expect(page.locator('.th-hero-wrapper.hero-9')).toBeVisible();
@@ -66,20 +66,20 @@ for (const viewport of viewports) {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
 
     for (const item of detailPages) {
-      const sourceResponse = await page.goto(item.source, { waitUntil: 'networkidle' });
+      const sourceResponse = await page.goto(item.source, { waitUntil: 'domcontentloaded' });
       expect(sourceResponse?.status()).toBe(200);
       const detailLink = page.locator(item.selector).first();
       const href = await detailLink.getAttribute('href').catch(() => null);
       if (!href) {
-        testInfo.annotations.push({ type: 'not-compared', description: item.name + ' has no published CMS record in this test database.' });
+        await testInfo.attach(item.name + '-not-compared', { body: Buffer.from(item.name + ' has no published CMS record in this test database.'), contentType: 'text/plain' });
         continue;
       }
 
-      const referenceResponse = await page.goto('/reference/' + item.reference, { waitUntil: 'networkidle' });
+      const referenceResponse = await page.goto('/reference/' + item.reference, { waitUntil: 'domcontentloaded' });
       expect(referenceResponse?.status()).toBe(200);
       await saveScreenshot(page, testInfo, item.name + '-reference-' + viewport.name);
 
-      const liveResponse = await page.goto(href, { waitUntil: 'networkidle' });
+      const liveResponse = await page.goto(href, { waitUntil: 'domcontentloaded' });
       expect(liveResponse?.status()).toBe(200);
       await saveScreenshot(page, testInfo, item.name + '-laravel-' + viewport.name);
     }
@@ -87,11 +87,11 @@ for (const viewport of viewports) {
 
   test('capture the branded 404 reference and Laravel response at ' + viewport.name, async ({ page }, testInfo) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    const referenceResponse = await page.goto('/reference/error.html', { waitUntil: 'networkidle' });
+    const referenceResponse = await page.goto('/reference/error.html', { waitUntil: 'domcontentloaded' });
     expect(referenceResponse?.status()).toBe(200);
     await saveScreenshot(page, testInfo, 'error-reference-' + viewport.name);
 
-    const liveResponse = await page.goto('/error.html', { waitUntil: 'networkidle' });
+    const liveResponse = await page.goto('/error.html', { waitUntil: 'domcontentloaded' });
     expect(liveResponse?.status()).toBe(404);
     await saveScreenshot(page, testInfo, 'error-laravel-' + viewport.name);
   });
