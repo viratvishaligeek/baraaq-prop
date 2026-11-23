@@ -1,0 +1,8 @@
+@extends('frontend.layouts.theme')
+@section('title',\App\Models\Setting::read('gallery_meta_title','Property Gallery | '.config('app.name')))
+@section('meta_description',\App\Models\Setting::read('gallery_meta_description','Explore property photography and real estate highlights in Bareilly, Uttar Pradesh.'))
+@section('canonical_url',route('gallery.index'))
+@section('content')
+<div class="breadcumb-wrapper"><div class="container"><div class="breadcumb-content"><h1 class="breadcumb-title">Property Gallery</h1><p>Explore homes, spaces and real estate highlights around Bareilly.</p></div></div></div>
+<section class="space"><div class="container"><div class="row gy-4">@forelse($items as $item)<div class="col-sm-6 col-lg-4"><article class="blog-card"><img class="w-100" loading="lazy" src="{{ Storage::disk('public')->url($item->image) }}" alt="{{ $item->alt_text?:$item->title }}"><div class="blog-content"><h2 class="h4">{{ $item->title }}</h2>@if($item->description)<p>{{ $item->description }}</p>@endif</div></article></div>@empty<div class="col-12 text-center text-muted">No gallery photographs have been published yet.</div>@endforelse</div>{{ $items->links() }}</div></section>
+@endsection
