@@ -1,6 +1,7 @@
 @extends('frontend.layouts.theme')
-@section('title','Properties · '.config('app.name'))
-@section('meta_description',\App\Models\Setting::read('meta_description','Browse available properties'))
+@section('title', \App\Models\Setting::read('properties_meta_title', 'Properties in Bareilly | '.\App\Models\Setting::read('site_title', config('app.name'))))
+@section('meta_description', \App\Models\Setting::read('properties_meta_description', 'Browse published property listings and enquire about verified availability in Bareilly, Uttar Pradesh.'))
+@section('canonical_url', route('properties.index'))
 @section('content')
 <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcumb-bg.jpg') }}">
 <div class="container">
