@@ -4,18 +4,33 @@ namespace Tests\Feature;
 
 use App\Models\FaqItem;
 use App\Models\Banner;
+use App\Models\Comment;
+use App\Models\Enquiry;
 use App\Models\Media;
 use App\Models\GalleryItem;
 use App\Models\Homepage;
+use App\Models\HomepageSection;
+use App\Models\MediaAttachment;
+use App\Models\Category;
+use App\Models\Menu;
+use App\Models\MenuItem;
+use App\Models\ServiceFeature;
+use App\Models\Tag;
+use App\Models\TeamMember;
+use App\Models\Testimonial;
+use App\Models\User;
 use App\Models\NeighborhoodGuide;
 use App\Models\Page;
 use App\Models\Post;
 use App\Models\Property;
+use App\Models\PropertyImage;
 use App\Models\Service;
 use App\Models\ServiceImage;
+use App\Models\NewsletterSubscriber;
 use App\Models\Setting;
 use Database\Seeders\BuraaqhContentSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -27,13 +42,92 @@ class BuraaqhContentSeederTest extends TestCase
     {
         Storage::fake('public');
 
+        config(['app.env' => 'production']);
         $this->seed();
 
         $this->assertSame(1, Homepage::query()->count());
         $this->assertSame(0, Property::published()->count());
         $this->assertSame(0, Service::published()->count());
         $this->assertSame(0, GalleryItem::query()->where('status', 'published')->count());
+        $this->assertSame(0, Testimonial::query()->count());
+        $this->assertSame(0, TeamMember::query()->count());
+        $this->assertSame(10, HomepageSection::query()->count());
+        $this->assertSame(6, MediaAttachment::query()->count());
+        $this->assertSame(7, NeighborhoodGuide::query()->count());
+        $this->assertSame(18, FaqItem::query()->count());
+        $this->assertSame(7, Post::query()->count());
+        foreach (Post::query()->get() as $post) {
+            $this->assertGreaterThan(700, str_word_count(strip_tags($post->content)), $post->slug.' should be long-form content.');
+            $this->assertGreaterThan(5, preg_match_all('/<h2\\b/i', $post->content), $post->slug.' should have a useful heading structure.');
+            $this->assertStringContainsString('Conclusion', $post->content);
+            $this->assertNotEmpty($post->meta_title);
+            $this->assertLessThanOrEqual(60, mb_strlen($post->meta_title), $post->slug.' SEO title should fit the configured limit.');
+            $this->assertNotEmpty($post->meta_description);
+            $this->assertLessThanOrEqual(155, mb_strlen($post->meta_description), $post->slug.' SEO description should fit the configured limit.');
+            $this->assertMatchesRegularExpression('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $post->slug);
+            preg_match_all('/<p>(.*?)<\\/p>/si', $post->content, $paragraphMatches);
+            $paragraphs = array_map(
+                fn (string $paragraph): string => trim(preg_replace('/\\s+/', ' ', strip_tags($paragraph))),
+                $paragraphMatches[1]
+            );
+            $this->assertCount(count(array_unique($paragraphs)), $paragraphs, $post->slug.' should not pad its word count with repeated paragraphs.');
+            $this->assertGreaterThan(0, $post->tags()->count(), $post->slug.' should have tags.');
+            $this->assertNull($post->featured_image, 'No unreviewed editorial image should be assigned.');
+        }
+
+        $this->assertSame(6, Service::query()->count());
+        $this->assertSame(24, ServiceFeature::query()->count());
+        foreach (Service::query()->with('features')->get() as $service) {
+            $this->assertSame('draft', $service->status);
+            $this->assertStringContainsString('Service scope', $service->content);
+            $this->assertStringContainsString('Potential benefits', $service->content);
+            $this->assertStringContainsString('What to prepare', $service->content);
+            $this->assertStringContainsString('<ol>', $service->content);
+            $this->assertGreaterThanOrEqual(4, preg_match_all('/<h3>/i', $service->content), $service->slug.' should include relevant FAQs.');
+            $this->assertSame(4, $service->features->count());
+            $this->assertNotEmpty($service->meta_title);
+            $this->assertLessThanOrEqual(60, mb_strlen($service->meta_title));
+            $this->assertNotEmpty($service->meta_description);
+            $this->assertLessThanOrEqual(155, mb_strlen($service->meta_description));
+            $this->assertNull($service->featured_image);
+            $this->assertSame(0, $service->images()->count(), 'No unrelated service gallery images should be attached.');
+        }
+
+        foreach (NeighborhoodGuide::query()->get() as $guide) {
+            $this->assertGreaterThan(400, str_word_count(strip_tags($guide->content)), $guide->slug.' should contain a locality-specific, practical guide.');
+            $this->assertGreaterThan(3, preg_match_all('/<h2\\b/i', $guide->content));
+            $this->assertNull($guide->hero_image, 'No unverified locality photograph should be assigned.');
+        }
+
+        foreach (FaqItem::query()->get() as $faq) {
+            $this->assertGreaterThan(50, str_word_count(strip_tags($faq->answer)));
+        }
+
+        $this->assertSame(6, Page::query()->count());
+        $this->assertSame(10, Tag::query()->count());
+        $this->assertSame(6, Media::query()->count());
+        $this->assertSame(13, Category::query()->count());
+        $this->assertSame(4, Menu::query()->count());
+        $this->assertSame(27, MenuItem::query()->count());
+        $this->assertSame(0, PropertyImage::query()->count());
+        $this->assertSame(0, ServiceImage::query()->count());
+        $this->assertSame(0, Enquiry::query()->count());
+        $this->assertSame(0, NewsletterSubscriber::query()->count());
+        $this->assertSame(0, Comment::query()->count());
+        $this->assertSame(0, Banner::query()->count());
+
+        foreach (Media::query()->get() as $media) {
+            $this->assertNotEmpty($media->alt_text);
+            $this->assertTrue(Storage::disk('public')->exists($media->path), 'Seeded media must exist on the public disk.');
+        }
+        $this->assertSame(6, Media::query()->distinct('path')->count('path'));
+
+        $testimonialSection = HomepageSection::query()->where('section_key', 'testimonials.home-3')->firstOrFail();
+        $this->assertNull(data_get($testimonialSection->config, 'avatar_group_image'));
         $this->assertSame([], Setting::read('footer_gallery_images', []));
+        $this->assertSame('', Setting::read('logo'));
+        $this->assertSame('', Setting::read('favicon'));
+        $this->assertSame('', Setting::read('default_og_image'));
         $this->assertSame('Buraaqh Properties', Setting::read('site_title'));
         $this->assertSame('Bareilly', Setting::read('service_area_city'));
         $this->assertSame('', Setting::read('site_phone'));
@@ -48,9 +142,16 @@ class BuraaqhContentSeederTest extends TestCase
             'faqs' => FaqItem::query()->count(),
             'gallery' => GalleryItem::query()->count(),
             'neighborhood_guides' => NeighborhoodGuide::query()->count(),
+            'categories' => Category::query()->count(),
+            'tags' => Tag::query()->count(),
+            'media' => Media::query()->count(),
+            'media_attachments' => MediaAttachment::query()->count(),
+            'menus' => Menu::query()->count(),
+            'menu_items' => MenuItem::query()->count(),
+            'service_features' => ServiceFeature::query()->count(),
         ];
 
-        $this->seed(BuraaqhContentSeeder::class);
+        $this->seed();
 
         $this->assertSame($counts, [
             'homepages' => Homepage::query()->count(),
@@ -60,6 +161,13 @@ class BuraaqhContentSeederTest extends TestCase
             'faqs' => FaqItem::query()->count(),
             'gallery' => GalleryItem::query()->count(),
             'neighborhood_guides' => NeighborhoodGuide::query()->count(),
+            'categories' => Category::query()->count(),
+            'tags' => Tag::query()->count(),
+            'media' => Media::query()->count(),
+            'media_attachments' => MediaAttachment::query()->count(),
+            'menus' => Menu::query()->count(),
+            'menu_items' => MenuItem::query()->count(),
+            'service_features' => ServiceFeature::query()->count(),
         ]);
         $this->assertSame(0, Property::published()->count());
 
@@ -122,10 +230,36 @@ class BuraaqhContentSeederTest extends TestCase
             'content' => '<p>Owner-edited legacy page copy.</p>',
             'status' => 'published',
         ]);
+        $primaryMenu = Menu::query()->create(['name' => 'Legacy primary', 'location' => 'primary']);
+        $legacyBuyMenuItem = MenuItem::query()->create([
+            'menu_id' => $primaryMenu->id,
+            'label' => 'Buy with Pillar',
+            'url' => '/pages/buy-with-pillar',
+            'link_type' => 'custom',
+            'sort_order' => 1,
+            'is_active' => true,
+        ]);
+        $legacySellMenuItem = MenuItem::query()->create([
+            'menu_id' => $primaryMenu->id,
+            'label' => 'Sell with Pillar',
+            'url' => '/sell-with-pillar',
+            'link_type' => 'custom',
+            'sort_order' => 2,
+            'is_active' => true,
+        ]);
         $legacyPost = Post::query()->create([
             'title' => 'Legacy moving article',
             'slug' => 'planning-a-delhi-ncr-move',
             'content' => '<p>Owner-edited legacy article copy.</p>',
+            'status' => 'published',
+            'published_at' => now(),
+        ]);
+        $shortExcerpt = 'A short legacy article created by the previous content seeder.';
+        $shortLegacyPost = Post::query()->create([
+            'title' => 'Legacy short article',
+            'slug' => 'first-time-homebuyer-checklist',
+            'excerpt' => $shortExcerpt,
+            'content' => '<p>'.$shortExcerpt.'</p><p>Property decisions are easier when the information is clear and the next step is practical. Start by understanding your priorities, compare the available options and take time to review the details that matter to your household or investment plan.</p><p>Property conditions, documents and transaction requirements vary. Treat this article as general information only, verify current records and seek independent professional advice before making a decision.</p>',
             'status' => 'published',
             'published_at' => now(),
         ]);
@@ -136,16 +270,164 @@ class BuraaqhContentSeederTest extends TestCase
         $this->assertSame('draft', $service->fresh()->status);
         $this->assertSame('Owner-reviewed valuation service', $service->fresh()->title);
         $this->assertSame('<p>Owner-reviewed service wording.</p>', $service->fresh()->content);
-        $this->assertSame(0, ServiceImage::query()->whereKey($serviceImage->id)->count());
+        $this->assertDatabaseHas('service_images', ['id' => $serviceImage->id, 'path' => $serviceImage->path]);
         $this->assertDatabaseHas('media', ['id' => $media->id, 'path' => $media->path]);
         $this->assertSame('draft', $gallery->fresh()->status);
         $this->assertFalse((bool) $banner->fresh()->is_active);
         $this->assertSame('draft', $legacyPage->fresh()->status);
         $this->assertSame('<p>Owner-edited legacy page copy.</p>', $legacyPage->fresh()->content);
-        $this->assertSame('draft', $legacyPost->fresh()->status);
+        $this->assertSame('Buy with Buraaqh Properties', $legacyBuyMenuItem->fresh()->label);
+        $this->assertSame('/pages/buy-with-buraaqh', $legacyBuyMenuItem->fresh()->url);
+        $this->assertSame('Sell with Buraaqh Properties', $legacySellMenuItem->fresh()->label);
+        $this->assertSame('/pages/sell-with-buraaqh', $legacySellMenuItem->fresh()->url);
+        $this->assertSame('published', $legacyPost->fresh()->status);
         $this->assertSame('<p>Owner-edited legacy article copy.</p>', $legacyPost->fresh()->content);
+        $this->assertSame('draft', $shortLegacyPost->fresh()->status);
+        $this->assertStringContainsString($shortExcerpt, $shortLegacyPost->fresh()->content);
         $this->assertDatabaseHas('pages', ['slug' => 'buy-with-buraaqh', 'status' => 'published']);
-        $this->assertDatabaseHas('posts', ['slug' => 'planning-a-bareilly-move', 'status' => 'published']);
+        $this->assertDatabaseHas('posts', ['slug' => 'complete-guide-buying-residential-property-bareilly', 'status' => 'published']);
+    }
+
+    public function test_about_page_uses_existing_media_library_attachments_in_original_image_layout(): void
+    {
+        Storage::fake('public');
+        $this->seed();
+
+        $homepage = Homepage::query()->where('slug', 'home-9')->firstOrFail();
+        $about = $homepage->sections()->where('section_key', 'about.home-9')->firstOrFail();
+        $hero = $homepage->sections()->where('section_key', 'hero.home-9')->firstOrFail();
+        $details = $homepage->sections()->where('section_key', 'home-details.home-9')->firstOrFail();
+
+        $expectedMedia = [
+            $about->mediaAttachments()->where('field_key', 'image_primary')->firstOrFail()->media,
+            $hero->mediaAttachments()->where('field_key', 'background_image')->firstOrFail()->media,
+            $about->mediaAttachments()->where('field_key', 'image_secondary')->firstOrFail()->media,
+            $details->mediaAttachments()->where('field_key', 'image')->firstOrFail()->media,
+            $about->mediaAttachments()->where('field_key', 'image_tertiary')->firstOrFail()->media,
+        ];
+
+        $response = $this->get(route('about'))->assertOk();
+        foreach ($expectedMedia as $media) {
+            $response->assertSee(Storage::disk('public')->url($media->path));
+        }
+
+        $response->assertDontSee('theme-assets/img/about/about-1-left-1.jpg');
+        $response->assertDontSee('theme-assets/img/about/about-1-left-2.jpg');
+        $response->assertSee('img-box1 about-1');
+        $response->assertSee('about-left');
+        $response->assertSee('about-middle');
+        $response->assertSee('about-right');
+    }
+
+    public function test_seeded_editorial_pages_and_locality_guides_render_on_existing_frontend_routes(): void
+    {
+        $this->seed();
+
+        $post = Post::query()->where('slug', 'complete-guide-buying-residential-property-bareilly')->firstOrFail();
+        $guide = NeighborhoodGuide::query()->where('slug', 'civil-lines-bareilly-property-guide')->firstOrFail();
+        $page = Page::query()->where('slug', 'buy-with-buraaqh')->firstOrFail();
+        $service = Service::query()->where('slug', 'property-search-shortlisting')->firstOrFail();
+
+        $this->get(route('blog.index'))
+            ->assertOk()
+            ->assertSee($post->title);
+
+        $this->get(route('blog.show', $post))
+            ->assertOk()
+            ->assertSee($post->title)
+            ->assertSee('Define the purpose and the non-negotiables');
+
+        $this->get(route('faq.index'))
+            ->assertOk()
+            ->assertSee('How should I decide between a ready-to-move home and an under-construction property?');
+
+        $this->get(route('neighborhood-guides.index'))
+            ->assertOk()
+            ->assertSee($guide->title);
+
+        $this->get(route('neighborhood-guides.show', $guide))
+            ->assertOk()
+            ->assertSee($guide->title)
+            ->assertSee('Questions that matter for a mixed-use street');
+
+        $this->get(route('pages.show', $page))
+            ->assertOk()
+            ->assertSee($page->title);
+
+        $this->get(route('services.index'))->assertOk();
+        $this->get(route('services.show', $service))->assertNotFound();
+    }
+
+    public function test_homepage_blog_cards_do_not_reuse_unverified_template_photography(): void
+    {
+        $this->seed();
+
+        $response = $this->get('/');
+
+        $response->assertOk()
+            ->assertSee('Article image pending')
+            ->assertDontSee('theme-assets/img/blog/blog_1_1.jpg');
+    }
+
+    public function test_optional_admin_bootstrap_assigns_seeded_content_to_the_administrator(): void
+    {
+        config([
+            'cms.admin.name' => 'Buraaqh Site Administrator',
+            'cms.admin.email' => 'admin@example.test',
+            'cms.admin.password' => 'test-only-password',
+        ]);
+
+        $this->seed();
+
+        $admin = User::query()->where('email', 'admin@example.test')->firstOrFail();
+
+        $this->assertTrue($admin->roles()->where('slug', 'administrator')->exists());
+        $this->assertSame($admin->id, Page::query()->where('slug', 'about')->value('author_id'));
+        $this->assertSame($admin->id, Post::query()->where('slug', 'complete-guide-buying-residential-property-bareilly')->value('author_id'));
+    }
+
+    public function test_known_legacy_settings_are_replaced_without_overwriting_custom_values(): void
+    {
+        $legacySettings = [
+            'site_title' => ['Pillar Real Estate', 'general', 'string'],
+            'business_name' => ['Pillar Realty', 'business', 'string'],
+            'site_email' => ['hello@pillarrealty.example', 'contact', 'string'],
+            'site_phone' => ['+91 121 456 7800', 'contact', 'string'],
+            'whatsapp_number' => ['919876543210', 'contact', 'string'],
+            'site_address' => ['Pillar Realty, Meerut', 'contact', 'string'],
+            'footer_map_embed_url' => ['https://maps.google.com/?q=Meerut', 'footer', 'string'],
+            'social_facebook' => ['https://www.facebook.com/', 'social', 'string'],
+            'footer_copyright' => ['Pillar Real Estate', 'footer', 'string'],
+            'footer_featured_heading' => ['Featured Houses', 'footer', 'string'],
+            'footer_location_heading' => ['Pillar Location', 'footer', 'string'],
+            'site_tagline' => ['Pillar Real Estate in Meerut', 'general', 'string'],
+            'footer_gallery_images' => [json_encode(['piller-demo/demo.jpg']), 'footer', 'json'],
+            'logo' => ['theme-assets/img/logo-white.svg', 'branding', 'image'],
+            'favicon' => ['theme-assets/img/favicons/favicon-32x32.png', 'branding', 'image'],
+            'default_og_image' => ['piller-demo/og-image.jpg', 'seo', 'image'],
+            'custom_notice' => ['Administrator-approved wording', 'custom', 'string'],
+        ];
+
+        foreach ($legacySettings as $key => [$value, $group, $type]) {
+            Setting::query()->create(compact('key', 'group', 'value', 'type'));
+        }
+
+        $this->seed();
+
+        $this->assertSame('Buraaqh Properties', Setting::read('site_title'));
+        $this->assertSame('Buraaqh Properties', Setting::read('business_name'));
+        $this->assertSame('', Setting::read('site_email'));
+        $this->assertSame('', Setting::read('site_phone'));
+        $this->assertSame('', Setting::read('whatsapp_number'));
+        $this->assertSame('', Setting::read('site_address'));
+        $this->assertSame('', Setting::read('footer_map_embed_url'));
+        $this->assertSame('', Setting::read('social_facebook'));
+        $this->assertSame('Buraaqh Properties', Setting::read('footer_copyright'));
+        $this->assertSame('Explore Property Types', Setting::read('footer_featured_heading'));
+        $this->assertSame('Our Service Area', Setting::read('footer_location_heading'));
+        $this->assertSame('Clear information for better property decisions in Bareilly.', Setting::read('site_tagline'));
+        $this->assertSame([], Setting::read('footer_gallery_images', []));
+        $this->assertSame('Administrator-approved wording', Setting::read('custom_notice'));
     }
 
     public function test_seeder_preserves_owner_managed_content_when_rerun(): void
@@ -153,8 +435,33 @@ class BuraaqhContentSeederTest extends TestCase
         Storage::fake('public');
         $this->seed();
 
+        $inventory = fn (): array => [
+            'faqs' => FaqItem::query()->count(),
+            'faq_questions' => FaqItem::query()->distinct('question')->count('question'),
+            'posts' => Post::query()->count(),
+            'post_slugs' => Post::query()->distinct('slug')->count('slug'),
+            'categories' => Category::query()->count(),
+            'category_slugs' => Category::query()->distinct('slug')->count('slug'),
+            'services' => Service::query()->count(),
+            'service_slugs' => Service::query()->distinct('slug')->count('slug'),
+            'menus' => Menu::query()->count(),
+            'menu_locations' => Menu::query()->distinct('location')->count('location'),
+            'menu_items' => MenuItem::query()->count(),
+            'menu_item_keys' => MenuItem::query()->get(['menu_id', 'label'])
+                ->map(fn (MenuItem $item): string => $item->menu_id.'|'.$item->label)
+                ->unique()
+                ->count(),
+            'media' => Media::query()->count(),
+            'media_attachments' => MediaAttachment::query()->count(),
+            'media_attachment_keys' => MediaAttachment::query()->get(['mediable_type', 'mediable_id', 'field_key'])
+                ->map(fn (MediaAttachment $attachment): string => $attachment->mediable_type.'|'.$attachment->mediable_id.'|'.$attachment->field_key)
+                ->unique()
+                ->count(),
+        ];
         $faq = FaqItem::query()->firstOrFail();
-        $faq->update(['answer' => 'Owner-approved FAQ wording.']);
+        DB::table('faq_items')->where('id', $faq->id)->update([
+            'answer' => 'Owner-approved FAQ wording written directly through the database.',
+        ]);
         $guide = NeighborhoodGuide::query()->firstOrFail();
         $guide->update(['content' => '<p>Owner-approved neighborhood guide copy.</p>']);
 
@@ -166,14 +473,64 @@ class BuraaqhContentSeederTest extends TestCase
             'status' => 'draft',
         ]);
 
-        $this->seed(BuraaqhContentSeeder::class);
+        Setting::query()->where('key', 'site_title')->update(['value' => 'Owner-approved brand']);
+        Setting::query()->where('key', 'site_tagline')->update(['value' => '']);
+        $hero = HomepageSection::query()->where('section_key', 'hero.home-9')->firstOrFail();
+        $customMediaPath = 'owner/approved-hero.jpg';
+        Storage::disk('public')->put($customMediaPath, 'owner-selected-image');
+        $customMedia = Media::query()->create([
+            'disk' => 'public',
+            'path' => $customMediaPath,
+            'original_name' => 'approved-hero.jpg',
+            'mime_type' => 'image/jpeg',
+            'size' => 20,
+            'alt_text' => 'Administrator-selected hero image',
+        ]);
+        $heroConfig = $hero->config;
+        $heroConfig['heading_prefix'] = 'Administrator headline';
+        $heroConfig['foreground_image'] = $customMedia->id;
+        $hero->forceFill(['config' => $heroConfig, 'is_enabled' => false])->save();
+        $hero->mediaAttachments()->where('field_key', 'foreground_image')->update(['media_id' => $customMedia->id]);
+
+        $contactItem = MenuItem::query()->where('label', 'Contact')->firstOrFail();
+        $contactItem->update(['url' => '/administrator-contact']);
+        $service = Service::query()->where('slug', 'property-search-shortlisting')->firstOrFail();
+        $service->update(['content' => '<h2>Administrator-approved service scope</h2><p>Keep this approved service copy unchanged.</p>']);
+        $removedFeature = $service->features()->firstOrFail();
+        $removedFeature->delete();
+        $remainingFeatureCount = ServiceFeature::query()->where('service_id', $service->id)->count();
+        $initialInventory = $inventory();
+
+        $this->seed();
 
         $this->assertSame(
             '<p>Pillar is a proper noun in this owner-managed content and must not be rewritten.</p>',
             $page->fresh()->content
         );
         $this->assertSame('draft', $page->fresh()->status);
-        $this->assertSame('Owner-approved FAQ wording.', $faq->fresh()->answer);
+        $this->assertSame('Owner-approved FAQ wording written directly through the database.', $faq->fresh()->answer);
         $this->assertSame('<p>Owner-approved neighborhood guide copy.</p>', $guide->fresh()->content);
+        $this->assertSame('Owner-approved brand', Setting::query()->where('key', 'site_title')->value('value'));
+        $this->assertSame('', Setting::query()->where('key', 'site_tagline')->value('value'));
+        $this->assertSame('Administrator headline', data_get($hero->fresh()->config, 'heading_prefix'));
+        $this->assertSame($customMedia->id, data_get($hero->fresh()->config, 'foreground_image'));
+        $this->assertFalse((bool) $hero->fresh()->is_enabled);
+        $this->assertSame($customMedia->id, $hero->fresh()->mediaAttachments()->where('field_key', 'foreground_image')->value('media_id'));
+        $this->assertSame('/administrator-contact', $contactItem->fresh()->url);
+        $this->assertSame($remainingFeatureCount, ServiceFeature::query()->where('service_id', $service->id)->count());
+        $this->assertSame('<h2>Administrator-approved service scope</h2><p>Keep this approved service copy unchanged.</p>', $service->fresh()->content);
+        $this->assertSame($initialInventory, $inventory(), 'A second complete seed must not duplicate content, navigation or media relations.');
+        $this->assertSame(6, MediaAttachment::query()->count());
+        $this->assertSame(
+            6,
+            MediaAttachment::query()->whereHasMorph('mediable', [HomepageSection::class])->count(),
+            'All six homepage media attachments must remain connected to their original section records.'
+        );
+        $this->assertDatabaseHas('media_attachments', [
+            'mediable_type' => HomepageSection::class,
+            'mediable_id' => $hero->id,
+            'field_key' => 'foreground_image',
+            'media_id' => $customMedia->id,
+        ]);
     }
 }

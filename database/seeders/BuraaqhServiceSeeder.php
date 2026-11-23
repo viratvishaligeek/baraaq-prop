@@ -13,208 +13,271 @@ class BuraaqhServiceSeeder extends Seeder
     {
         $services = [
             [
-                'title' => 'Property Valuation Discussion',
-                'slug' => 'property-valuation',
-                'excerpt' => 'Prepare a property profile and a comparable-evidence checklist before discussing an asking price or purchase offer.',
-                'legacy_body' => 'Receive a considered valuation based on location, comparable sales, property condition and current buyer demand.',
-                'intro' => 'A useful price discussion begins with accurate property information and evidence from genuinely comparable transactions. This outline describes a possible information-gathering process; it is not a certified valuation, survey or promise of a sale price.',
-                'scope' => ['Record the exact location, property type, plot or built-up area and known age of construction.', 'Separate verified measurements and documents from estimates or information supplied verbally.', 'Identify comparable properties by location, size, condition, legal status and transaction timing.', 'List visible repairs, access constraints, occupancy and other factors that may affect a buyer’s assessment.'],
-                'benefits' => 'A structured property profile helps owners and buyers discuss the same facts. It can reveal missing information, highlight differences between asking prices and completed transactions and identify questions that need professional review.',
-                'process' => ['Share the property type, locality and basic specifications.', 'Provide only records that are appropriate to share through an agreed secure channel.', 'Confirm which details can be independently checked and which remain unverified.', 'Use the resulting checklist as one input to a price discussion; obtain a qualified valuation where required.'],
-                'faqs' => [['Is this a certified valuation?', 'No. A certified valuation must be obtained from a suitably qualified valuer where one is required.'], ['Can an asking price be guaranteed?', 'No. A market discussion cannot guarantee buyer interest, a final sale price or a transaction date.']],
+                'title' => 'Property Search and Shortlisting',
+                'slug' => 'property-search-shortlisting',
+                'excerpt' => 'A structured way to describe a property requirement and compare options against practical criteria.',
+                'keyword' => 'property search Bareilly',
+                'intro' => 'A property search is more effective when the requirement is clear. This draft service description outlines a possible process for recording preferences, comparing property information and identifying questions that need verification.',
+                'scope' => 'A search brief may cover intended use, property type, preferred locality, broad budget, size, access, essential features and expected timeline. Any property option should be considered only after its current availability and source information are confirmed.',
+                'benefits' => 'A written brief can reduce irrelevant options, make comparisons more consistent and help visitors identify missing information before arranging a site visit.',
+                'process' => 'The proposed process is to record the requirement, agree the comparison criteria, review information supplied for candidate properties, note unanswered questions and confirm whether a site visit can be arranged. Each step and the actual service scope must be agreed with the business before publication.',
+                'preparation' => 'Before a discussion, note the areas you can realistically consider, whether the requirement is for living or business use, the preferred property type, a broad budget ceiling, must-have features and the date by which you need to move. Keep optional preferences separate from non-negotiable requirements. Do not share identity documents or sensitive financial information through a general enquiry form.',
+                'steps' => [
+                    ['Clarify the brief', 'Confirm intended use, decision-makers, budget range, property type, preferred areas and timing.'],
+                    ['Agree comparison criteria', 'Choose the factors that matter and record which information must be verified for every option.'],
+                    ['Review candidate information', 'Compare only options with a traceable source and note availability, price and document details that still need confirmation.'],
+                    ['Prepare next actions', 'Create a shortlist of questions and arrange a viewing only after the property and access details are reconfirmed.'],
+                ],
                 'features' => [
-                    ['Property profile', 'Organise location, area, property type, condition and occupancy details in one reviewable brief.'],
-                    ['Comparable evidence', 'Compare like-for-like information and record the source and date of each reference.'],
-                    ['Open questions', 'Identify missing measurements, approvals, repairs or documents before relying on a price estimate.'],
+                    ['Requirement brief', 'Record intended use, property type, preferred area, budget range and essential needs.'],
+                    ['Comparable shortlist', 'Compare available information using consistent criteria rather than headline descriptions alone.'],
+                    ['Open-question log', 'Keep a written list of details that still need confirmation from the owner or relevant authority.'],
+                    ['Visit preparation', 'Prepare questions about access, condition, utilities, measurements and documents before a site visit.'],
                 ],
             ],
             [
-                'title' => 'Property Documentation Assistance',
-                'slug' => 'legal-assistance',
-                'excerpt' => 'Organise property records and questions for review by an independent lawyer or the relevant registration professional.',
-                'legacy_body' => 'We help you organise the questions and documents to discuss with your appointed legal and registration professionals.',
-                'intro' => 'Property paperwork can involve registered deeds, prior ownership records, land-use information, building permissions, tax records and lender documents. This page describes a document-coordination outline, not a legal practice or a substitute for advice from a qualified property lawyer.',
-                'scope' => ['Prepare a property-specific checklist of documents requested by your appointed lawyer.', 'Organise available copies by document type, date and issuing authority.', 'Record differences in names, area, boundaries or property descriptions that need explanation.', 'Track questions about title, encumbrances, land use, approvals and dues for professional review.'],
-                'benefits' => 'A complete, well-organised file makes it easier for the appointed professional to identify gaps and explain next steps. It also reduces reliance on verbal assurances when a document or authority record is still outstanding.',
-                'process' => ['Identify the property and the type of transaction.', 'Ask the lawyer which original records and searches are required.', 'Organise the requested information and note anything unavailable.', 'Wait for the qualified professional’s written advice before signing or paying.'],
-                'faqs' => [['Does this replace a lawyer?', 'No. Legal opinions, title verification and drafting advice must come from a qualified lawyer.'], ['Does a checklist prove ownership?', 'No. A checklist only organises records; the underlying documents and official records require independent verification.']],
+                'title' => 'Property Sale Preparation',
+                'slug' => 'property-sale-preparation',
+                'excerpt' => 'A checklist-led approach to organising property details and documents before a sale discussion.',
+                'keyword' => 'sell property Bareilly',
+                'intro' => 'Preparing a property for sale begins with accurate information. This draft service description sets out a possible preparation framework for owners considering a sale; the business must confirm whether it offers this assistance.',
+                'scope' => 'Preparation may include collecting property specifications, current photographs, ownership and approval records, known maintenance information, access arrangements and a written list of questions for professional review.',
+                'benefits' => 'Consistent information can make enquiries easier to handle, reduce avoidable misunderstandings and help prospective buyers identify the records they need to review independently.',
+                'process' => 'The proposed steps are to document the property, identify missing records, agree how viewings and enquiries will be handled, and ensure that material details are represented accurately. Asking-price advice or legal certification is not included unless separately confirmed and appropriately qualified.',
+                'preparation' => 'Owners should gather the current property description, available title and approval records, the area measurement basis, a list of fixtures included in the sale, known repairs and any occupancy or tenancy details. Identify information that is uncertain rather than estimating or presenting it as verified. Use recent photographs of the actual property.',
+                'steps' => [
+                    ['Record the property accurately', 'Prepare a factual description of the address, layout, condition, area basis and included fixtures.'],
+                    ['Inventory available records', 'List the documents supplied, their dates and the person or authority from whom they came.'],
+                    ['Identify open issues', 'Record missing approvals, unclear measurements, known defects or other questions for professional review.'],
+                    ['Agree enquiry handling', 'Confirm who will respond to enquiries, arrange viewings and keep prospective buyers updated.'],
+                ],
                 'features' => [
-                    ['Document inventory', 'Create a list of deeds, approvals, tax records and supporting papers relevant to the transaction.'],
-                    ['Consistency review', 'Flag differences in names, measurements, dates and property descriptions for professional review.'],
-                    ['Question tracking', 'Keep a written list of unresolved title, land-use and approval questions.'],
+                    ['Property information sheet', 'Organise address, area basis, layout, condition and included fixtures.'],
+                    ['Document checklist', 'List available title, approval, tax and maintenance records for independent review.'],
+                    ['Photography readiness', 'Use current photographs that accurately represent the property being offered.'],
+                    ['Enquiry preparation', 'Prepare consistent answers and a record of details that remain unverified.'],
                 ],
             ],
             [
-                'title' => 'Home Finance Readiness Information',
-                'slug' => 'mortgage-services',
-                'excerpt' => 'Prepare a property and affordability brief and understand the information a regulated lender may request.',
-                'legacy_body' => 'Understand the information lenders typically require and compare suitable home-finance options with our referral network.',
-                'intro' => 'A home-finance decision belongs between the applicant and a regulated lender. This draft page focuses on preparing information and questions before a lender discussion. It does not offer a loan, promise approval or imply a lending partnership.',
-                'scope' => ['List the expected purchase cost and the funds available for the transaction.', 'Prepare a basic income, existing-obligation and employment-information checklist for discussion with the lender.', 'Record the property documents and approvals the lender may request.', 'Compare the total repayment, fees, rate type, tenure and prepayment conditions in written lender offers.'],
-                'benefits' => 'Preparation helps applicants ask clearer questions and compare the full cost of finance rather than focusing on a headline interest rate. It also makes property-specific lender requirements easier to identify early.',
-                'process' => ['Define the approximate property budget and purchase timeline.', 'Ask the chosen lender for its current eligibility and document requirements.', 'Compare written offers directly with the lender and understand every charge.', 'Proceed only after the lender confirms its decision and the property review is complete.'],
-                'faqs' => [['Can anyone guarantee loan approval?', 'No. Only the lender can assess an application and issue an approval subject to its conditions.'], ['Does this website provide loans?', 'No loan or lending service is represented as available by this draft content.']],
+                'title' => 'Property Documentation Coordination',
+                'slug' => 'property-documentation-coordination',
+                'excerpt' => 'Help organising the questions and records that buyers and sellers may need to review with qualified professionals.',
+                'keyword' => 'property documentation Bareilly',
+                'intro' => 'Property documentation can involve several records and several parties. This draft service description is limited to organising information and coordinating questions; it does not represent legal advice or a title verification service.',
+                'scope' => 'A coordination checklist may identify the documents relevant to the property type, note missing items, record questions for a lawyer and track the status of requested information.',
+                'benefits' => 'An organised file can help the parties and their independent advisers work from consistent information and make gaps visible before a binding commitment.',
+                'process' => 'The proposed process is to identify the transaction type, prepare a document request list, record the source and date of supplied records, and refer legal questions to an independent qualified professional. The business must confirm the actual scope before this page is published.',
+                'preparation' => 'The relevant records depend on the property and transaction. A starting file may include prior conveyance documents, current revenue or municipal records where applicable, sanctioned plans and completion or occupancy records where applicable, tax and utility receipts, society or association statements, and the draft transaction terms. A qualified local lawyer should decide which records are legally relevant.',
+                'steps' => [
+                    ['Identify the transaction and property type', 'Record whether the matter concerns a plot, independent building, apartment, leasehold interest or commercial premises.'],
+                    ['Create a document register', 'List each record, its date, source, format and whether an original or certified copy needs to be inspected.'],
+                    ['Route legal questions', 'Send title, transfer, land-use and approval questions to the appointed qualified lawyer or competent authority.'],
+                    ['Track outstanding actions', 'Record who is responsible for each missing document or clarification and the agreed follow-up date.'],
+                ],
                 'features' => [
-                    ['Affordability brief', 'Organise purchase costs, available funds and existing financial commitments for a lender conversation.'],
-                    ['Document checklist', 'Record the identity, income and property records the chosen lender requests.'],
-                    ['Offer comparison', 'Compare written lender terms, fees, rate changes and repayment conditions.'],
+                    ['Document inventory', 'Create a list of records supplied and records still requested.'],
+                    ['Source tracking', 'Record who supplied each item and when it was received.'],
+                    ['Question register', 'Prepare clear questions for the buyer’s or seller’s independent legal adviser.'],
+                    ['Milestone coordination', 'Track agreed document-related actions without certifying legal sufficiency.'],
                 ],
             ],
             [
-                'title' => 'Property Insurance Information',
-                'slug' => 'insurance-solutions',
-                'excerpt' => 'Prepare questions about property risks, policy coverage, exclusions and the responsibilities of an insurer.',
-                'legacy_body' => 'Explore practical home and property protection options with guidance on the cover that may suit your needs.',
-                'intro' => 'Insurance needs depend on the property, its use, construction, location, ownership and the policy wording. This information outline is not insurance advice, a policy quotation or a representation that Buraaqh Properties is an insurer or licensed intermediary.',
-                'scope' => ['Describe the property type, occupancy and intended use accurately.', 'List the building, contents and liability risks you want to discuss with an insurer.', 'Ask how exclusions, deductibles, underinsurance and claim documentation work.', 'Compare policy wording, limits, exclusions, renewal conditions and claim procedures.'],
-                'benefits' => 'Reading the policy rather than relying on a headline premium helps owners understand what is and is not covered. A written comparison can make exclusions and responsibilities easier to see.',
-                'process' => ['Prepare a factual property description and any required supporting records.', 'Contact an authorised insurer or intermediary directly.', 'Ask for the policy wording and written answers to coverage questions.', 'Keep the issued policy, premium receipt and claim contact details securely.'],
-                'faqs' => [['Does this page recommend a particular policy?', 'No. Coverage should be selected directly with an authorised provider after reviewing the policy wording.'], ['Is every type of damage covered?', 'No. Coverage depends on the policy terms, limits, exclusions and facts of a claim.']],
+                'title' => 'Residential Property Consultation',
+                'slug' => 'residential-property-consultation',
+                'excerpt' => 'A discussion framework for comparing residential requirements, property condition and ownership considerations.',
+                'keyword' => 'residential property consultant Bareilly',
+                'intro' => 'A residential property consultation should begin with the household’s needs rather than a generic property list. This draft page describes a discussion framework for administrator review, not a claim that a particular consultant or appointment is currently available.',
+                'scope' => 'Topics may include household size, usable space, accessibility, location preferences, construction condition, utilities, maintenance, total cost and the documents that should be independently reviewed.',
+                'benefits' => 'A structured discussion can help households distinguish essential needs from preferences and prepare a consistent comparison of candidate homes.',
+                'process' => 'The proposed process is to record the requirement, identify suitable comparison criteria, list property-specific questions and agree the next step. Site visits, availability and any professional referrals must be confirmed separately.',
+                'preparation' => 'Households can prepare by listing who will use the home, daily travel patterns, accessibility needs, room and storage requirements, preferred building type, maintenance tolerance and a realistic total-cost range. Include one or two examples of what would make a property unsuitable so that the discussion can focus on practical trade-offs.',
+                'steps' => [
+                    ['Understand household priorities', 'Separate essential needs from preferences and identify constraints such as access, stairs or move-in timing.'],
+                    ['Set comparison questions', 'Prepare a consistent checklist for layout, natural light, ventilation, visible condition, utilities and shared facilities.'],
+                    ['Review candidate information', 'Compare the available facts and flag details that cannot be established from a listing or conversation.'],
+                    ['Plan independent checks', 'Identify the inspections, document reviews and cost estimates needed before a decision.'],
+                ],
                 'features' => [
-                    ['Property risk brief', 'Record the use, construction and features that an insurer may need to assess.'],
-                    ['Coverage questions', 'Prepare questions about limits, deductibles, exclusions and claim evidence.'],
-                    ['Policy comparison', 'Review the wording and total cost of options supplied by authorised providers.'],
+                    ['Household requirement review', 'Record space, layout, access and everyday-use priorities.'],
+                    ['Location checklist', 'Compare exact streets and routes against the household’s routine.'],
+                    ['Condition questions', 'Prepare an inspection checklist for visible defects and maintenance.'],
+                    ['Ownership review prompts', 'Identify records for independent legal review before a commitment.'],
                 ],
             ],
             [
-                'title' => 'Property Inspection Coordination',
-                'slug' => 'home-inspection',
-                'excerpt' => 'Prepare a practical inspection checklist and arrange qualified technical review where the property requires it.',
-                'legacy_body' => 'Arrange a structured inspection to review visible condition, fittings and maintenance considerations before completion.',
-                'intro' => 'A short viewing can reveal obvious concerns, but it cannot establish the structural or technical condition of a building. This outline explains how a buyer can prepare for an inspection and when to appoint an independent engineer, surveyor or other qualified specialist.',
-                'scope' => ['Record visible condition of walls, ceilings, floors, doors, windows and external surfaces.', 'Ask about plumbing, electrical systems, water ingress, ventilation and maintenance history.', 'Check access, parking, common areas, fixtures and any work promised by the seller.', 'Arrange specialist inspection for structural, electrical, plumbing or other technical questions.'],
-                'benefits' => 'A written inspection record makes it easier to compare properties, request clarification and agree which repairs or further checks are needed before completion.',
-                'process' => ['Confirm permission and access for the inspection.', 'Use a consistent checklist and photograph items where permission is given.', 'Refer technical concerns to an appropriately qualified professional.', 'Record agreed repairs and handover conditions in the written transaction documents.'],
-                'faqs' => [['Can a visual checklist certify a building as safe?', 'No. Safety and structural conclusions require appropriate qualified inspection.'], ['Should defects be recorded in writing?', 'Yes. Record observations and agree how any repair or further inspection will be handled.']],
+                'title' => 'Commercial Property Consultation',
+                'slug' => 'commercial-property-consultation',
+                'excerpt' => 'A planning framework for assessing intended commercial use, access, operating needs and transaction terms.',
+                'keyword' => 'commercial property consultant Bareilly',
+                'intro' => 'Commercial property suitability depends on the activity that will take place at the premises. This draft service description outlines questions an occupier or buyer may need to consider; permitted use and the availability of assistance must be independently confirmed.',
+                'scope' => 'A commercial brief may cover intended activity, customer and staff access, visibility, loading, utilities, fit-out, operating hours, lease or purchase terms and relevant permissions.',
+                'benefits' => 'A use-led brief can expose practical constraints early and help compare premises on the requirements that matter to the business.',
+                'process' => 'The proposed process is to record the intended activity, identify property requirements, list permissions and technical questions for qualified advisers, and compare confirmed information. No licence, approval or permitted-use status is guaranteed by this page.',
+                'preparation' => 'Describe the exact business activity, customer and staff profile, expected operating hours, equipment, power and water needs, loading or storage requirements, signage needs and fit-out plans. The same premises can be suitable for one activity and unsuitable for another, so do not rely on a broad “commercial” label.',
+                'steps' => [
+                    ['Define the intended activity', 'Record the business use, operating pattern, staffing, customer access and equipment requirements.'],
+                    ['Assess the premises against operations', 'Compare access, visibility, layout, utilities, loading, parking and recurring charges at the exact address.'],
+                    ['List approval questions', 'Identify land-use, building, fire, safety, trade and other permission questions for the competent authorities and advisers.'],
+                    ['Review transaction obligations', 'Record lease or purchase terms, deposits, fit-out rights, repairs, permitted use and exit conditions for legal review.'],
+                ],
                 'features' => [
-                    ['Visible condition checklist', 'Record the condition of finishes, fittings, access and common areas.'],
-                    ['Specialist referrals', 'Identify issues that need an independent engineer or technical professional.'],
-                    ['Handover record', 'Track agreed repairs, fixtures, keys and meter readings before possession.'],
+                    ['Business-use brief', 'Describe the activity, customer profile, equipment and operating needs.'],
+                    ['Premises comparison', 'Compare access, layout, utilities, visibility and recurring charges.'],
+                    ['Permission checklist', 'Identify land-use, building, safety and licensing questions for the relevant authority.'],
+                    ['Lease or purchase review prompts', 'Record questions about term, deposit, escalation, fit-out and exit obligations.'],
                 ],
             ],
             [
-                'title' => 'Transaction and Handover Coordination',
-                'slug' => 'escrow-transaction-support',
-                'excerpt' => 'Keep transaction milestones, document exchanges and handover responsibilities clearly recorded.',
-                'legacy_body' => 'We coordinate key milestones and communication so buyers and sellers know what is needed at each stage.',
-                'intro' => 'A property transaction involves several people, documents, payments and deadlines. This outline focuses on organising communication and handover steps. It does not provide escrow, custody of client funds, banking services or legal representation.',
-                'scope' => ['Prepare a timeline of agreed milestones, responsible parties and target dates.', 'Record which documents each party must provide and when they are expected.', 'Keep a written log of questions, agreed changes and outstanding conditions.', 'Prepare a handover checklist covering possession, keys, fixtures, meters and receipts.'],
-                'benefits' => 'A shared written timeline can reduce missed steps and confusion about who is responsible for a document or action. It also helps the parties identify unresolved conditions before a deadline arrives.',
-                'process' => ['Confirm the transaction parties and the professionals appointed by them.', 'Record the written agreement and milestones supplied by the parties.', 'Track progress without handling or holding transaction funds.', 'Confirm completion and handover only against the parties’ written records.'],
-                'faqs' => [['Does this service hold deposits or escrow funds?', 'No. Payments must be made through the parties’ agreed and legally appropriate channels.'], ['Can it replace legal transaction advice?', 'No. The parties should appoint qualified legal and financial professionals for their respective roles.']],
-                'features' => [
-                    ['Milestone tracker', 'Record agreed dates, responsibilities and outstanding conditions.'],
-                    ['Document exchange log', 'Keep a list of records requested, received and awaiting review.'],
-                    ['Handover checklist', 'Record possession items, keys, meters, fixtures and receipts.'],
+                'title' => 'Property Site-Visit Planning',
+                'slug' => 'property-site-visit-planning',
+                'excerpt' => 'Prepare a focused site visit with questions about access, condition, measurements, utilities and supporting records.',
+                'keyword' => 'property site visit Bareilly',
+                'intro' => 'A site visit is most useful when visitors know what they need to observe and what must be confirmed separately. This draft service description outlines a visit-planning checklist and must be approved by the business before publication.',
+                'scope' => 'Planning may include confirming the address and access, preparing a list of visible-condition checks, recording measurement questions and identifying documents to request after the visit.',
+                'benefits' => 'A consistent checklist helps visitors compare properties and reduces the chance that important practical questions are forgotten during a short viewing.',
+                'process' => 'The proposed process is to confirm the visit details, prepare the checklist, record observations and open questions, and arrange any specialist inspection separately. A visual visit is not a structural survey or legal verification.',
+                'preparation' => 'Before travelling, reconfirm the exact address, current availability, access arrangements and the identity of the person authorised to show the property. Prepare questions about the areas you need to measure, the condition of visible components, utilities, common areas, parking and documents to request after the visit.',
+                'steps' => [
+                    ['Confirm the appointment', 'Recheck the property address, contact person, access instructions and whether the property is still available.'],
+                    ['Use a property-specific checklist', 'Record observations about layout, light, ventilation, fittings, visible dampness, cracks and maintenance.'],
+                    ['Separate observations from conclusions', 'Note what you saw and what needs a qualified structural, electrical, plumbing or other inspection.'],
+                    ['Record follow-up requirements', 'List measurements, records, approvals and answers that must be obtained before making an offer.'],
                 ],
-            ],
-            [
-                'title' => 'Property Management Enquiry',
-                'slug' => 'property-management',
-                'excerpt' => 'Define the responsibilities, reporting and maintenance expectations that an owner may want to discuss with a property manager.',
-                'legacy_body' => 'From tenant coordination to routine property checks, our management support helps protect your time and asset.',
-                'intro' => 'Property management can involve tenant communication, maintenance, inspections, rent administration and records. The responsibilities must be agreed clearly with the owner and any appointed manager. This draft outline does not confirm that a management service, tenant placement or rent collection facility is currently available.',
-                'scope' => ['Describe the property, occupancy status and owner’s expectations.', 'List routine maintenance, inspection and emergency-response responsibilities.', 'Clarify who may approve repairs and the spending limit for urgent work.', 'Agree how tenant communication, records, payments and reporting will be handled.'],
-                'benefits' => 'A written management brief helps owners understand the work involved, the limits of authority and how issues will be reported. It can also make costs and response expectations easier to compare.',
-                'process' => ['Prepare a property and responsibility brief.', 'Confirm the manager’s authority, fees, service area and insurance where relevant.', 'Agree a written management contract and reporting schedule.', 'Keep records of instructions, invoices, inspections and tenant communications.'],
-                'faqs' => [['Can a manager guarantee rent or occupancy?', 'No. Tenant demand, payment and vacancy are uncertain and must not be guaranteed.'], ['Who approves major repairs?', 'The written management agreement should identify the owner’s approval rights and any emergency procedure.']],
                 'features' => [
-                    ['Responsibility schedule', 'Define inspections, routine tasks, reporting and owner approvals.'],
-                    ['Maintenance records', 'Track requests, quotations, invoices and completed work.'],
-                    ['Communication process', 'Agree how tenant and owner updates are recorded and escalated.'],
-                ],
-            ],
-            [
-                'title' => 'Real Estate Consultation',
-                'slug' => 'real-estate-consulting',
-                'excerpt' => 'Structure a property brief and compare residential or commercial options using clear, verifiable criteria.',
-                'legacy_body' => 'Discuss your goals with a specialist who understands local demand, neighbourhoods and the practical details of a move.',
-                'intro' => 'A useful property conversation starts with the decision you need to make. Buyers, sellers and commercial occupiers may have different priorities, and a general market statement cannot replace property-specific evidence. This draft page outlines a consultation framework for administrator review.',
-                'scope' => ['Clarify the intended use, preferred property type, location and timeline.', 'Separate essential requirements from flexible preferences.', 'Identify the information needed to compare shortlisted options fairly.', 'List legal, financial and technical questions that should be referred to qualified professionals.'],
-                'benefits' => 'A written brief makes it easier to focus a search, compare alternatives and identify missing evidence. It can also help prevent decisions based only on an attractive photograph or an unsupported forecast.',
-                'process' => ['Share the decision you are considering and the broad requirements.', 'Agree the scope, fees, information sources and limits of any consultation in writing.', 'Review available information and record unresolved questions.', 'Use independent professional advice for legal, tax, lending and technical matters.'],
-                'faqs' => [['Does a consultation guarantee a suitable property?', 'No. Availability, suitability and transaction outcomes depend on the facts and the parties involved.'], ['Can market appreciation be guaranteed?', 'No. Future values and rental income are uncertain and should not be promised.']],
-                'features' => [
-                    ['Requirement discovery', 'Create a brief covering use, location, budget, size and timeline.'],
-                    ['Option comparison', 'Compare available information against the same practical criteria.'],
-                    ['Decision checklist', 'Record due-diligence questions and the independent advice still required.'],
+                    ['Visit checklist', 'Prepare questions about layout, light, ventilation, fittings and maintenance.'],
+                    ['Access review', 'Observe the exact approach, parking and shared areas.'],
+                    ['Utility questions', 'Confirm water, electricity, drainage and service arrangements.'],
+                    ['Follow-up record', 'List documents and technical checks still required after the visit.'],
                 ],
             ],
         ];
 
-        foreach ($services as $serviceData) {
-            $service = Service::withTrashed()->where('slug', $serviceData['slug'])->first();
-            $isNew = ! $service;
+        foreach ($services as $index => $data) {
+            $faqs = [
+                'property-search-shortlisting' => [
+                    ['Can a shortlist guarantee that a property is still available?', 'No. Availability can change. Confirm the exact property, current terms and the person authorised to show or offer it before travelling or making a payment.'],
+                    ['Does a comparison replace document checks?', 'No. A shortlist helps organise options; ownership, approvals, land use and transaction documents require independent verification.'],
+                ],
+                'property-sale-preparation' => [
+                    ['Does preparation include a certified valuation?', 'No. A formal valuation should be obtained from a suitably qualified valuer where required. An information sheet is not a valuation certificate.'],
+                    ['Should photographs show the actual property?', 'Yes. Use current photographs that accurately represent the property and disclose material condition issues rather than relying on edited or unrelated images.'],
+                ],
+                'property-documentation-coordination' => [
+                    ['Does this service replace a property lawyer?', 'No. Title opinions, legal drafting and legal advice must come from a qualified lawyer appointed for the transaction.'],
+                    ['Does a document checklist prove ownership?', 'No. It records which documents have been supplied; the originals and relevant authority records must still be independently reviewed.'],
+                ],
+                'residential-property-consultation' => [
+                    ['Can a consultation confirm that a home is suitable?', 'A discussion can organise requirements and questions, but the buyer must inspect the exact property and verify its condition, documents and costs.'],
+                    ['Can future appreciation be predicted with certainty?', 'No. Future prices and rental outcomes are uncertain and should not be guaranteed.'],
+                ],
+                'commercial-property-consultation' => [
+                    ['Does a commercial listing confirm that my business use is permitted?', 'No. Verify the permitted use, licences, building approvals and any restrictions with the competent authority and qualified professionals.'],
+                    ['Should I review a lease before paying a deposit?', 'Yes. Understand the term, deposit, escalation, permitted use, fit-out, repair obligations and exit clauses in writing before paying.'],
+                ],
+                'property-site-visit-planning' => [
+                    ['Is a site visit the same as a technical inspection?', 'No. A viewing can help identify visible questions, but structural, electrical and other technical conclusions require an independent qualified inspector.'],
+                    ['What should I confirm before travelling?', 'Confirm current availability, the exact address, access arrangements and the identity of the person authorised to show the property.'],
+                ],
+            ][$data['slug']] ?? [];
 
-            $content = $this->renderService($serviceData);
+            $additionalFaqs = [
+                'property-search-shortlisting' => [
+                    ['Should I pay a token amount to reserve a shortlisted property?', 'Do not pay based only on a shortlist or an informal message. First confirm the seller or authorised representative, inspect the relevant original records with your lawyer, understand the written terms and use a traceable payment method only after the required checks.'],
+                    ['Can the service compare properties in every Bareilly locality?', 'The brief can record preferred localities, but available options and service coverage must be confirmed directly. A locality name alone is not evidence of a particular road condition, facility or property attribute.'],
+                ],
+                'property-sale-preparation' => [
+                    ['Should I hide a defect until a buyer asks?', 'No. Material known condition issues should be described accurately. A preparation checklist is intended to organise information, not conceal defects or create misleading advertising.'],
+                    ['Can this service decide the asking price?', 'No asking price or valuation is established by this checklist. If a formal valuation is needed, consult a suitably qualified valuer and compare relevant evidence.'],
+                ],
+                'property-documentation-coordination' => [
+                    ['Which documents are required for every property transaction?', 'There is no single checklist that fits every property. The records depend on ownership history, land category, property type, approvals and transaction structure. Ask the appointed local property lawyer to identify the applicable records.'],
+                    ['Can a scan or photocopy replace inspection of originals?', 'Not automatically. The relevant originals or certified records should be examined as advised by the lawyer and verified with the issuing authority where appropriate.'],
+                ],
+                'residential-property-consultation' => [
+                    ['Should I compare only the quoted purchase price?', 'No. Also consider applicable taxes and charges, repairs, utility costs, maintenance contributions, commute needs and the cost of any work required before occupation. Verify amounts from current documents.'],
+                    ['Can the consultation certify building quality?', 'No. Visible observations and discussion prompts are not a structural or technical certificate. Arrange an independent inspection by an appropriately qualified professional.'],
+                ],
+                'commercial-property-consultation' => [
+                    ['Can I assume a property advertised as commercial permits my specific activity?', 'No. Confirm the sanctioned use and all applicable permissions for the exact premises and proposed activity with the competent authority before signing or fitting out.'],
+                    ['What should a commercial occupier check in the written terms?', 'Review permitted use, lease term, deposit, escalation, maintenance, taxes, utilities, fit-out consent, repair duties, signage, renewal and exit provisions with a qualified adviser.'],
+                ],
+                'property-site-visit-planning' => [
+                    ['Should I rely on a viewing to assess structural safety?', 'No. A viewing can reveal visible questions but cannot certify structural safety. Engage an independent qualified professional for a technical inspection where needed.'],
+                    ['What should I record during a viewing?', 'Record the date and time, who provided access, rooms and areas inspected, visible issues, measurements still needed, utility questions, documents promised and the person responsible for each follow-up.'],
+                ],
+            ][$data['slug']] ?? [];
 
-            if ($isNew) {
-                $service = Service::query()->create([
-                    'title' => $serviceData['title'],
-                    'slug' => $serviceData['slug'],
-                    'excerpt' => $serviceData['excerpt'],
+            $legacyContent = '<p>'.$data['intro'].'</p>'
+                .'<h2>Scope to confirm</h2><p>'.$data['scope'].'</p>'
+                .'<h2>Potential benefits</h2><p>'.$data['benefits'].'</p>'
+                .'<h2>Proposed process</h2><p>'.$data['process'].'</p>';
+
+            if ($faqs !== []) {
+                $legacyContent .= '<h2>Frequently asked questions</h2>';
+                foreach ($faqs as [$question, $answer]) {
+                    $legacyContent .= '<h3>'.$question.'</h3><p>'.$answer.'</p>';
+                }
+            }
+
+            $legacyContent .= '<h2>Before proceeding</h2><p>Confirm the actual service availability, responsible person, scope, fees and any third-party involvement directly with Buraaqh Properties. Legal, financial, engineering and authority decisions should be handled by the appropriately qualified professional or competent authority.</p>'
+                .'<h2>Discuss your requirement</h2><p>Use the contact form to describe your requirement and the questions you would like to discuss. Do not send sensitive financial or identity information through the general enquiry form.</p>';
+
+            $content = '<p>'.$data['intro'].'</p>'
+                .'<h2>Service scope</h2><p>'.$data['scope'].'</p>'
+                .'<h2>Potential benefits</h2><p>'.$data['benefits'].'</p>'
+                .'<h2>What to prepare</h2><p>'.$data['preparation'].'</p>'
+                .'<h2>Proposed process</h2><ol>';
+
+            foreach ($data['steps'] as [$stepTitle, $stepDescription]) {
+                $content .= '<li><strong>'.$stepTitle.'</strong> — '.$stepDescription.'</li>';
+            }
+
+            $content .= '</ol><h2>Frequently asked questions</h2>';
+
+            foreach (array_merge($faqs, $additionalFaqs) as [$question, $answer]) {
+                $content .= '<h3>'.$question.'</h3><p>'.$answer.'</p>';
+            }
+
+            $content .= '<h2>Service features</h2><p>The service highlights below describe the proposed work areas. The final deliverables, responsible person, fees and timing must be agreed in writing before the service is offered.</p>'
+                .'<h2>Important limits</h2><p>This service description is not legal advice, a title certificate, a formal valuation, a structural survey or an approval from a government authority. Those matters must be handled by the relevant qualified professional or competent authority.</p>'
+                .'<h2>Discuss your requirement</h2><p>Contact Buraaqh Properties to confirm whether this service is currently available, who will handle it, what is included, the applicable fees and the expected next step. Do not send identity documents or sensitive financial information through the general enquiry form.</p>';
+
+            $existing = Service::withTrashed()->where('slug', $data['slug'])->first();
+            if ($existing?->trashed()) {
+                continue;
+            }
+
+            $service = $existing ?? Service::query()->firstOrCreate(
+                ['slug' => $data['slug']],
+                [
+                    'title' => $data['title'],
+                    'excerpt' => $data['excerpt'],
                     'content' => $content,
                     'featured_image' => null,
                     'status' => 'draft',
                     'published_at' => null,
-                    'meta_title' => Str::limit($serviceData['title'].' | Buraaqh Properties Bareilly', 255, ''),
-                    'meta_description' => Str::limit($serviceData['excerpt'], 155, ''),
+                    'meta_title' => Str::limit($data['title'].' | Buraaqh Properties Bareilly', 60, ''),
+                    'meta_description' => Str::limit($data['excerpt'], 155, ''),
+                    'focus_keyword' => $data['keyword'],
+                ]
+            );
+
+            if ($service->wasRecentlyCreated) {
+                foreach ($data['features'] as $featureIndex => [$title, $description]) {
+                    ServiceFeature::query()->firstOrCreate(
+                        ['service_id' => $service->id, 'title' => $title],
+                        ['description' => $description, 'sort_order' => $featureIndex + 1]
+                    );
+                }
+            } elseif ($service->status === 'draft' && $service->content === $legacyContent) {
+                // Upgrade only the exact previous generated draft. Administrator edits remain untouched.
+                $service->update([
+                    'content' => $content,
+                    'meta_title' => Str::limit($data['title'].' | Buraaqh Properties Bareilly', 60, ''),
+                    'meta_description' => Str::limit($data['excerpt'], 155, ''),
+                    'focus_keyword' => $data['keyword'],
                 ]);
-            } elseif ($service->trashed()) {
-                continue;
-            } else {
-                $legacyContent = '<p>'.$serviceData['legacy_body'].'</p><p>Contact Buraaqh Properties to discuss your requirements and the most suitable next step.</p>';
-
-                if ($service->content === $legacyContent) {
-                    $service->forceFill([
-                        'title' => $serviceData['title'],
-                        'excerpt' => $serviceData['excerpt'],
-                        'content' => $content,
-                        'meta_title' => Str::limit($serviceData['title'].' | Buraaqh Properties Bareilly', 255, ''),
-                        'meta_description' => Str::limit($serviceData['excerpt'], 155, ''),
-                    ])->save();
-                }
-            }
-
-            foreach ($serviceData['features'] as $index => [$title, $description]) {
-                $feature = ServiceFeature::query()->firstOrCreate(
-                    ['service_id' => $service->id, 'title' => $title],
-                    ['description' => $description, 'sort_order' => $index + 1]
-                );
-
-                $legacyDescription = 'A clearly scoped draft feature for the '.$service->title.' offering.';
-                if ($feature->description === $legacyDescription) {
-                    $feature->forceFill(['description' => $description])->save();
-                }
             }
         }
-    }
-
-    private function renderService(array $service): string
-    {
-        $html = '<p>'.$service['intro'].'</p>';
-        $html .= '<p><strong>Publication note:</strong> This service page remains unpublished until the business confirms that the offering, responsible personnel, service area, fees and terms are accurate.</p>';
-        $html .= '<h2>What the service may cover</h2><ul>';
-
-        foreach ($service['scope'] as $item) {
-            $html .= '<li>'.$item.'</li>';
-        }
-
-        $html .= '</ul><h2>Why a clear process matters</h2><p>'.$service['benefits'].'</p>';
-        $html .= '<h2>How an enquiry could proceed</h2><ol>';
-
-        foreach ($service['process'] as $step) {
-            $html .= '<li>'.$step.'</li>';
-        }
-
-        $html .= '</ol><h2>Questions to resolve</h2>';
-
-        foreach ($service['faqs'] as [$question, $answer]) {
-            $html .= '<h3>'.$question.'</h3><p>'.$answer.'</p>';
-        }
-
-        $html .= '<h2>Next step</h2><p>Use the contact form to describe your requirement. The business must confirm whether this service is currently available, who is responsible for it and what written terms apply before any appointment or payment.</p>';
-
-        return $html;
     }
 }

@@ -7,6 +7,7 @@ on:
       - fix/media-library-pagination-pages
       - feat/piller-elementor-cms-v3
       - feature/complete-cms-admin-overhaul
+      - feat/database-content-seeding
   pull_request:
     branches:
       - main
@@ -68,11 +69,32 @@ jobs:
           npm install
           npx playwright install --with-deps chromium
 
-      - name: Prepare browser-test database
+      - name: Prepare browser-test database with a genuinely fresh migration
         run: |
           touch database/database.sqlite
           php artisan storage:link --force
-          SEED_DEMO_CONTENT=true DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan migrate --seed --force
+          DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan migrate:fresh --force
+
+      - name: Execute the complete DatabaseSeeder
+        run: DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan db:seed --force
+
+      - name: Execute every content seeder independently
+        run: |
+          for seeder in \
+            BuraaqhLegacyDemoContentRetirementSeeder \
+            BuraaqhCategorySeeder \
+            BuraaqhPageSeeder \
+            BuraaqhBlogSeeder \
+            BuraaqhLocalContentSeeder \
+            BuraaqhServiceSeeder \
+            BuraaqhNavigationSeeder \
+            BuraaqhHomepageSeeder; do
+            echo "===== Running ${seeder} ====="
+            DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan db:seed --class="Database\Seeders\${seeder}" --force
+          done
+
+      - name: Verify a second complete DatabaseSeeder run is safe
+        run: DB_CONNECTION=sqlite DB_DATABASE=database/database.sqlite php artisan db:seed --force
 
       - name: Prepare original HTML reference pages for visual comparison
         run: |

@@ -9,24 +9,27 @@ class HomepageTemplateSeeder extends Seeder
 {
     public function run(): void
     {
-        $siteName = trim((string) env('SITE_NAME', 'Buraaqh Properties Real Estate')) ?: 'Buraaqh Properties Real Estate';
+        $existingHomepage = Homepage::withTrashed()->where('slug', 'home-9')->first();
 
-        $homepage = Homepage::query()->firstOrCreate(
+        if ($existingHomepage?->trashed()) {
+            return;
+        }
+
+        if ($existingHomepage) {
+            return;
+        }
+
+        Homepage::query()->firstOrCreate(
             ['slug' => 'home-9'],
             [
-                'name' => 'Home 9 — Buraaqh Properties Single Property',
+                'name' => 'Home 9 — Buraaqh Properties',
+                'design_key' => 'home-9',
+                'is_default' => true,
                 'status' => 'published',
                 'published_at' => now(),
-                'meta_title' => 'Discover Most Suitable Property | '.$siteName,
-                'meta_description' => 'Explore property information and share your requirements with '.$siteName.' in Bareilly, Uttar Pradesh.',
+                'meta_title' => 'Buraaqh Properties | Real Estate in Bareilly, Uttar Pradesh',
+                'meta_description' => 'Explore residential and commercial property guidance in Bareilly, Uttar Pradesh. Share your requirements with Buraaqh Properties and verify property details before proceeding.',
             ]
         );
-
-        if ($homepage->status !== 'published' || ! $homepage->published_at) {
-            $homepage->update([
-                'status' => 'published',
-                'published_at' => $homepage->published_at ?: now(),
-            ]);
-        }
     }
 }

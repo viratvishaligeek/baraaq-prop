@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Homepage;
 use App\Models\Page;
 use App\Models\Post;
 use App\Models\Property;
@@ -131,8 +132,35 @@ class ContentController extends Controller
             ->where('status', 'published')
             ->firstOrFail();
 
+        // Reuse the approved Home 9 Media Library attachments instead of the
+        // missing legacy /img/about/* theme paths. These are illustrative
+        // theme photographs, not representations of Buraaqh property listings.
+        $homepage = Homepage::query()
+            ->where('slug', 'home-9')
+            ->with('sections.mediaAttachments.media')
+            ->first();
+
+        $sectionAttachments = $homepage?->sections
+            ->mapWithKeys(fn ($section) => [$section->section_key => $section->mediaAttachments->keyBy('field_key')])
+            ?? collect();
+
+        $mediaFor = function (string $sectionKey, string $field) use ($sectionAttachments): ?array {
+            $media = $sectionAttachments->get($sectionKey)?->get($field)?->media;
+
+            return $media ? ['url' => $media->url, 'alt' => $media->alt_text] : null;
+        };
+
+        $aboutImages = [
+            'left_primary' => $mediaFor('about.home-9', 'image_primary'),
+            'left_secondary' => $mediaFor('hero.home-9', 'background_image'),
+            'middle' => $mediaFor('about.home-9', 'image_secondary'),
+            'right_secondary' => $mediaFor('home-details.home-9', 'image'),
+            'right_primary' => $mediaFor('about.home-9', 'image_tertiary'),
+        ];
+
         return view('frontend.about', [
             'page' => $page,
+            'aboutImages' => $aboutImages,
             'canonicalUrl' => $page->canonical_url ?: route('about'),
             'members' => TeamMember::query()->where('status', 'published')->where('is_active', true)->orderBy('sort_order')->limit(6)->get(),
             'testimonials' => Testimonial::query()->where('status', 'published')->where('is_active', true)->orderBy('sort_order')->limit(6)->get(),

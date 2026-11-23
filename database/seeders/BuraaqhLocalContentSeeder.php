@@ -11,130 +11,106 @@ class BuraaqhLocalContentSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->seedFaqs();
-        $this->seedNeighborhoodGuides();
+        $this->seedAdditionalFaqs();
+        $this->upgradeUneditedLegacyFaqs();
+        $this->upgradeUneditedLocalityGuides();
     }
 
-    private function seedFaqs(): void
+    private function seedAdditionalFaqs(): void
     {
         $faqs = [
-            [
-                'question' => 'What should I check before buying a property in Bareilly?',
-                'old_answer' => 'Review the ownership chain, approved plans where applicable, land-use status, encumbrances, taxes and the terms of the sale agreement. Have the documents independently checked by a qualified local professional.',
-                'answer' => 'Start with the exact property address and the seller’s authority to transfer it. Review the registered ownership documents and relevant prior deeds, land-use information, sanctioned plans where applicable, tax and maintenance dues, and any mortgage, charge or dispute. Inspect the property and its access, utilities and visible condition. Have a qualified local property lawyer review original records and verify relevant details with the competent authorities. The documents required differ for a plot, apartment, independent house and commercial premises, so use a property-specific checklist rather than relying on a generic list.',
-                'category' => 'Buying',
-            ],
-            [
-                'question' => 'How can I compare two residential properties?',
-                'old_answer' => 'Compare the exact location, usable area, construction condition, access, utilities, title documents, total transaction cost and resale considerations. Visit each property and verify all seller-provided information.',
-                'answer' => 'Use the same checklist for both properties. Compare the exact street and approach, usable layout, measured area, construction condition, daylight and ventilation, parking, water and electricity arrangements, drainage, maintenance obligations and total acquisition cost. Review the ownership and approval documents for each property independently. Visit both at different times where possible and record unanswered questions. Do not compare only the asking price or a locality name; a lower price may reflect a difference in condition, access, legal status or included facilities.',
-                'category' => 'Buying',
-            ],
-            [
-                'question' => 'What documents are commonly reviewed during a property purchase?',
-                'old_answer' => 'Depending on the property and transaction, buyers commonly review title documents, prior sale deeds, sanctioned plans where applicable, tax receipts, identity documents and applicable project or authority approvals. Requirements vary; obtain professional advice.',
-                'answer' => 'The checklist depends on the property and its history. It may include the current registered deed, relevant prior ownership documents, seller identity and authority, revenue or municipal records, land-use information, sanctioned plans, completion or occupancy records where applicable, tax receipts, lender release documents and project disclosures. For a project covered by RERA, check the relevant official registration and disclosures. Ask a qualified property lawyer to identify the records required for the exact transaction and verify originals with the appropriate authorities.',
-                'category' => 'Documentation',
-            ],
-            [
-                'question' => 'Should I pay a booking amount before document verification?',
-                'old_answer' => 'Do not rely on verbal assurances. Understand the written booking terms, refund conditions, seller authority and relevant documents before making a payment. Seek independent legal advice when needed.',
-                'answer' => 'Do not transfer money simply because a property is described as urgent or in demand. First confirm the identity and authority of the recipient, the exact property, the written booking terms, refund conditions, payment schedule and any conditions that must be met. Ask which documents have been checked and which remain outstanding. Have the terms reviewed independently where appropriate, pay only through a traceable agreed method and retain a receipt. A verbal promise does not replace a written agreement or title review.',
-                'category' => 'Payments',
-            ],
-            [
-                'question' => 'What affects residential property value in Bareilly?',
-                'old_answer' => 'Value can depend on micro-location, road access, plot or built-up area, construction quality, legal status, available infrastructure and comparable transactions. Verify current market evidence rather than relying on general estimates.',
-                'answer' => 'A property’s price may be influenced by its exact street, access, plot or usable area, layout, construction condition, permitted use, ownership records, utility arrangements, maintenance costs and the terms of comparable transactions. Conditions can vary within one locality. Compare properties with similar size, age, condition and legal status, and distinguish asking prices from completed transaction evidence. No general locality description can establish a current market value or guarantee future appreciation; obtain a qualified valuation where a formal opinion is needed.',
-                'category' => 'Property value',
-            ],
-            [
-                'question' => 'Can Buraaqh Properties confirm legal title or government approvals?',
-                'old_answer' => 'A property decision should be supported by independent document verification and relevant authority records. Do not treat marketing information as a legal opinion or an official approval.',
-                'answer' => 'Website content and general property discussions are not a legal title opinion or an official approval. Verify the registered ownership documents, land-use status, building permissions and other applicable records with the relevant authority, and ask a qualified property lawyer to review the originals. The required checks depend on the exact property and transaction. Do not make a payment or sign an agreement on the assumption that a listing description certifies title or compliance.',
-                'category' => 'Documentation',
-            ],
-            [
-                'question' => 'How can I confirm whether a property listing is still available?',
-                'answer' => 'Ask the person or business responsible for the listing to confirm the date on which availability was last checked, the exact address, the current asking terms and whether any offer or agreement is already in progress. A website page can remain online after circumstances change. Treat availability as unconfirmed until you receive a current response and verify the details directly with the authorised owner or representative.',
-                'category' => 'Listings',
-            ],
-            [
-                'question' => 'What should I inspect during a property site visit?',
-                'answer' => 'Check the exact address and access, room layout, measured area, visible cracks or dampness, roof and ceiling condition, doors and windows, plumbing, electrical fittings, ventilation, water supply, drainage, parking and shared spaces. Ask about repairs, occupancy, maintenance charges and utility arrangements. For technical or structural questions, appoint an independent qualified inspector; a viewing checklist cannot certify that a building is safe or defect-free.',
-                'category' => 'Site visits',
-            ],
-            [
-                'question' => 'Are advertised asking prices the same as market value?',
-                'answer' => 'No. An asking price is the amount a seller or advertiser is requesting; it is not proof of the amount a buyer will pay or a completed transaction value. Compare genuinely similar properties and note differences in location, size, condition, approvals and transaction date. Where a formal valuation is required for lending, tax, accounting or another purpose, appoint a suitably qualified valuer.',
-                'category' => 'Property value',
-            ],
-            [
-                'question' => 'What should I check before choosing a commercial property?',
-                'answer' => 'Start with the business activity the premises must support. Verify that the specific use is permitted at the address and review access, customer movement, parking, loading, signage, power requirements, fit-out permissions, maintenance charges and operating costs. Check ownership, building approvals, occupancy arrangements and written lease or sale terms. Do not assume that a property advertised as commercial can be used for every type of business.',
-                'category' => 'Commercial',
-            ],
-            [
-                'question' => 'What is mutation and does it prove ownership?',
-                'answer' => 'Mutation is an administrative update to relevant revenue or municipal records after a change that the authority recognises. Its purpose and procedure depend on the record and property type. A mutation entry or tax receipt should not be treated on its own as conclusive proof of legal title. Ask a qualified property lawyer to review the registered documents and explain which records should be updated after the transaction.',
-                'category' => 'Documentation',
-            ],
-            [
-                'question' => 'How should I check a real estate project under RERA?',
-                'answer' => 'If the project or phase is covered by the Real Estate (Regulation and Development) Act, check the relevant official Uttar Pradesh RERA record and compare the registered project name, promoter, phase, disclosures and unit information with the documents supplied to you. Confirm whether the specific transaction falls within the applicable requirements. RERA information is one part of due diligence and does not replace independent title, plan and agreement review.',
-                'category' => 'Documentation',
-            ],
-            [
-                'question' => 'Can a real estate consultant guarantee appreciation or rental income?',
-                'answer' => 'No responsible consultant can guarantee future property prices, rental income, occupancy, resale timing, loan approval or a completed transaction. These outcomes depend on market conditions, property-specific facts and decisions made by other parties. Ask for the source and date of any market information, understand the assumptions and make your own decision after independent legal and financial review.',
-                'category' => 'Consultation',
-            ],
-            [
-                'question' => 'What information should I include in a property enquiry?',
-                'answer' => 'Include the property type, preferred locality, intended use, approximate budget range, size or layout needs and your expected timeline. If you are asking about a published listing, include its link or reference. Share only contact information needed for a response; do not submit passwords, bank details, payment credentials or unnecessary identity-document numbers through a general enquiry form.',
-                'category' => 'Enquiries',
-            ],
-            [
-                'question' => 'How should I plan the total budget for a property purchase?',
-                'answer' => 'Consider more than the advertised price. Include applicable stamp duty and registration charges, legal review, loan processing, brokerage if agreed, taxes, society or maintenance dues, utility connections, repairs, moving and furnishing. Ask for a written breakdown and confirm current government charges from official sources at the time of the transaction. Keep a contingency for costs that become clear after inspection.',
-                'category' => 'Payments',
-            ],
-            [
-                'question' => 'How can I arrange a property site visit?',
-                'answer' => 'Share the listing reference or property details and your preferred days through the enquiry form. Before travelling, confirm that the property is currently available, the exact address, access arrangements and the identity of the person authorised to show it. A site visit should not be treated as a document check or technical inspection; arrange those separately where needed.',
-                'category' => 'Site visits',
-            ],
+            ["How should I decide between a ready-to-move home and an under-construction property?", "Compare your required move-in date, the evidence available about approvals and construction, the payment schedule, the agreement terms, the remaining work and the risks of delay. For either option, have the relevant records reviewed independently and do not rely only on a promised completion date. Ask for dated construction updates and payment milestones, and confirm what the written agreement says if work or approvals are delayed."],
+            ["What is the difference between carpet area and built-up area?", "Carpet area generally describes the usable floor area within the internal walls, while built-up area may include wall thickness and other covered portions. The precise definitions used in a transaction should be checked in the applicable documents and rules. Ask the seller to state the area basis clearly and compare like with like. Request the area basis in the agreement and compare only properties measured on the same basis. If a brochure uses more than one area figure, ask the seller to explain each one in writing."],
+            ["What should I verify before paying a property token amount?", "Confirm the seller or recipient is authorised, identify the exact property, understand what the payment reserves, review refund and forfeiture terms, and obtain a written receipt and agreement. Have the important documents reviewed before making a payment. Do not rely on a verbal promise about a refund or future approval. Use a traceable payment method and retain the signed receipt and agreement. If a material document or approval is still missing, ask your lawyer whether the payment should be deferred or made conditional."],
+            ["Can a mutation entry alone prove ownership?", "A mutation or revenue entry is not, by itself, a complete substitute for reviewing the title documents and the property's legal history. Its significance depends on the record and transaction. Ask an independent property lawyer to examine the relevant original documents and current records together. Ask your lawyer whether a mutation or record update is required after registration and which authority maintains it. Keep the registered deed and the relevant official records together rather than relying on one entry."],
+            ["What should I check before buying a residential plot?", "Verify the title chain, exact boundaries, recorded land details, permitted land use, layout or subdivision status, legal access, encumbrances and the approvals required for the intended construction. Have the site and records compared by qualified professionals before you commit. Check whether the intended use and any future construction require additional permission. A layout brochure or nearby construction is not proof that the same use is allowed for your parcel."],
+            ["What should I check before leasing a commercial property?", "Confirm that the intended business activity is permitted, review the owner's authority, lease term, rent and escalation, deposit, lock-in, renewal, exit and repair clauses, utilities, fit-out permissions, signage rules and any building or safety requirements that apply to the activity. Also confirm who pays utilities and maintenance, whether subletting or alterations are allowed, how repairs are approved and how disputes or early termination are handled."],
+            ["How can I prepare for a property site visit?", "Take a written list of requirements and questions, note the exact address, inspect the approach and common areas, check visible condition and utilities, ask for measurements and supporting records, take notes and record unanswered questions. Arrange a specialist inspection if technical issues need assessment. With permission, take dated photographs of relevant areas and make a written note of defects or unanswered questions. Ask who will provide follow-up documents and by when."],
+            ["Should I use the seller’s lawyer for my document review?", "A buyer should consider obtaining independent legal advice from a professional who represents the buyer’s interests. The seller’s adviser may explain the seller’s position, but that does not replace an independent review of title, approvals, restrictions and the agreement for the buyer. Ask your own lawyer to explain any qualification, missing record or risk in writing before you agree. Independent advice is particularly important where the transaction involves multiple owners or unusual authority documents."],
+            ["How do I compare property prices in the same locality?", "Compare properties with similar use, exact micro-location, area basis, age, condition, floor, access, approvals and included facilities. Ask for reliable evidence of comparable transactions and account for repairs and recurring charges. An advertised asking price is not proof of a completed market transaction. Adjust the comparison for registration costs, repairs, parking, maintenance, floor, access and the area basis. Keep asking prices separate from evidence of completed transactions."],
+            ["Does Buraaqh Properties guarantee property appreciation or rental income?", "No website article or general consultation should be treated as a guarantee of appreciation, rental income, resale value or investment performance. Outcomes depend on the property, market conditions, costs, legal position and many other factors. Obtain independent financial advice and assess conservative scenarios. Treat any projection as an assumption and test whether the decision remains affordable under a less favourable scenario. Do not borrow or commit on the basis of a guaranteed return."],
+            ["Can I rely on photographs instead of visiting a property?", "Photographs can help with an initial review but cannot establish the property's current condition, exact dimensions, surroundings, access, utilities or legal status. Visit the specific property and obtain the relevant documents and independent checks before making a decision. Images may be old, edited or taken from a different angle; confirm that they represent the exact unit being offered. A visit also lets you assess the approach, surroundings and access that photographs cannot show."],
+            ["What information should I include in a property enquiry?", "Share the property type, intended use, preferred areas, broad budget, required size or features, expected timeline and the questions you need answered. Do not include bank credentials, identity document numbers or other sensitive financial information in a general website enquiry. If you are asking about a published listing, include its reference and the date you last checked it. Share only the information needed to respond and keep sensitive identity or financial details out of a general enquiry."],
+            ["Does a property consultation include legal advice?", "A general property consultation should not be treated as legal advice or a title certificate. Ask what the service actually includes and have ownership, land use, approvals and agreement terms reviewed by an independent qualified property lawyer. Ask for the consultant’s role and limitations in writing and keep the legal review independent. A discussion can help organise questions, but it cannot certify title, approvals or the enforceability of an agreement."],
+            ["Can a property search guarantee that a suitable listing is available?", "No. Property availability changes and depends on information supplied by owners or authorised representatives. Ask for the date and source of each property detail and confirm current availability before arranging a visit or making a payment. Confirm availability again shortly before arranging a visit and do not assume that an online page is updated in real time. Ask who supplied the information and when it was last checked."],
+            ["Is a property site visit the same as a technical inspection?", "No. A viewing helps you observe the property and prepare questions, but it is not a structural, electrical, plumbing or legal inspection. Arrange an appropriately qualified specialist when technical or legal verification is required. A qualified inspector can explain the scope of the inspection and provide a written report. Choose the appropriate specialist for the concern, such as structural, electrical or plumbing condition."],
+            ["Can a consultant certify the market value of my property?", "A discussion of asking prices or comparable information is not automatically a formal valuation. If you need a valuation for lending, taxation, accounting or a legal purpose, confirm the required qualification and appoint an appropriately authorised professional. Confirm that the valuer is qualified for the intended purpose and that the report meets any lender, authority or accounting requirements. A general market discussion is not a substitute for a formal valuation."],
+            ["How are real estate consultation fees confirmed?", "Ask for the scope, fee amount, applicable taxes, payment timing, refund terms and any referral or commission arrangement in writing before engaging a service. Do not assume that a general enquiry or initial conversation has a particular fee structure. Clarify when the fee becomes due and whether travel, documentation, referral or third-party costs may arise. Keep the agreed fee and payment trigger in writing before work begins."],
+            ["Does commercial property guidance confirm that my business can operate at a location?", "No. Permitted use, licences, safety requirements, building approvals and other conditions depend on the exact premises and activity. Confirm the requirements with the relevant authority and qualified professionals before signing a lease or purchase agreement. Check the exact permitted activity, building occupancy status, fire and safety conditions and any local restrictions before signing. Obtain written confirmation from the competent authority where the use requires permission."],
         ];
 
-        foreach ($faqs as $index => $faqData) {
-            $faq = FaqItem::query()->firstOrNew(['question' => $faqData['question']]);
-            $oldAnswer = $faqData['old_answer'] ?? null;
-            unset($faqData['old_answer']);
+        foreach ($faqs as $index => [$question, $answer]) {
+            $existing = FaqItem::withTrashed()->where('question', $question)->first();
 
-            if (! $faq->exists) {
-                $faq->fill($faqData + [
-                    'sort_order' => $index + 1,
-                    'is_active' => true,
-                ])->save();
-
+            // Do not resurrect a question that an administrator deliberately deleted.
+            if ($existing?->trashed() || $existing) {
                 continue;
             }
 
-            if ($oldAnswer !== null && $faq->answer === $oldAnswer) {
-                $faq->forceFill(['answer' => $faqData['answer'], 'category' => $faqData['category']])->save();
+            FaqItem::query()->create([
+                'question' => $question,
+                'answer' => $answer,
+                'category' => 'Property guidance',
+                'sort_order' => 20 + $index,
+                'is_active' => true,
+            ]);
+        }
+    }
+
+    private function upgradeUneditedLegacyFaqs(): void
+    {
+        $faqs = [
+            [
+                'question' => "What should I check before buying a property in Bareilly?",
+                'old' => "Review the ownership chain, approved plans where applicable, land-use status, encumbrances, taxes and the terms of the sale agreement. Have the documents independently checked by a qualified local professional.",
+                'new' => "Start with the exact property address and the seller’s authority to transfer it. Review the registered ownership documents and relevant prior deeds, land-use information, sanctioned plans where applicable, tax and maintenance dues, and any mortgage, charge or dispute. Inspect the property and its access, utilities and visible condition. Have a qualified local property lawyer review original records and verify relevant details with the competent authorities. The documents required differ for a plot, apartment, independent house and commercial premises, so use a property-specific checklist rather than relying on a generic list.",
+            ],
+            [
+                'question' => "How can I compare two residential properties?",
+                'old' => "Compare the exact location, usable area, construction condition, access, utilities, title documents, total transaction cost and resale considerations. Visit each property and verify all seller-provided information.",
+                'new' => "Use the same checklist for both properties. Compare the exact street and approach, usable layout, measured area, construction condition, daylight and ventilation, parking, water and electricity arrangements, drainage, maintenance obligations and total acquisition cost. Review the ownership and approval documents for each property independently. Visit both at different times where possible and record unanswered questions. Do not compare only the asking price or a locality name; a lower price may reflect a difference in condition, access, legal status or included facilities.",
+            ],
+            [
+                'question' => "What documents are commonly reviewed during a property purchase?",
+                'old' => "Depending on the property and transaction, buyers commonly review title documents, prior sale deeds, sanctioned plans where applicable, tax receipts, identity documents and applicable project or authority approvals. Requirements vary; obtain professional advice.",
+                'new' => "The checklist depends on the property and its history. It may include the current registered deed, relevant prior ownership documents, seller identity and authority, revenue or municipal records, land-use information, sanctioned plans, completion or occupancy records where applicable, tax receipts, lender release documents and project disclosures. For a project covered by RERA, check the relevant official registration and disclosures. Ask a qualified property lawyer to identify the records required for the exact transaction and verify originals with the appropriate authorities.",
+            ],
+            [
+                'question' => "Should I pay a booking amount before document verification?",
+                'old' => "Do not rely on verbal assurances. Understand the written booking terms, refund conditions, seller authority and relevant documents before making a payment. Seek independent legal advice when needed.",
+                'new' => "Do not transfer money simply because a property is described as urgent or in demand. First confirm the identity and authority of the recipient, the exact property, the written booking terms, refund conditions, payment schedule and any conditions that must be met. Ask which documents have been checked and which remain outstanding. Have the terms reviewed independently where appropriate, pay only through a traceable agreed method and retain a receipt. A verbal promise does not replace a written agreement or title review.",
+            ],
+            [
+                'question' => "What affects residential property value in Bareilly?",
+                'old' => "Value can depend on micro-location, road access, plot or built-up area, construction quality, legal status, available infrastructure and comparable transactions. Verify current market evidence rather than relying on general estimates.",
+                'new' => "A property’s price may be influenced by its exact street, access, plot or usable area, layout, construction condition, permitted use, ownership records, utility arrangements, maintenance costs and the terms of comparable transactions. Conditions can vary within one locality. Compare properties with similar size, age, condition and legal status, and distinguish asking prices from completed transaction evidence. No general locality description can establish a current market value or guarantee future appreciation; obtain a qualified valuation where a formal opinion is needed.",
+            ],
+            [
+                'question' => "Can Buraaqh Properties confirm legal title or government approvals?",
+                'old' => "A property decision should be supported by independent document verification and relevant authority records. Do not treat marketing information as a legal opinion or an official approval.",
+                'new' => "Website content and general property discussions are not a legal title opinion or an official approval. Verify the registered ownership documents, land-use status, building permissions and other applicable records with the relevant authority, and ask a qualified property lawyer to review the originals. The required checks depend on the exact property and transaction. Do not make a payment or sign an agreement on the assumption that a listing description certifies title or compliance.",
+            ],
+        ];
+
+        foreach ($faqs as $faqData) {
+            $faq = FaqItem::withTrashed()->where('question', $faqData['question'])->first();
+
+            if ($faq && ! $faq->trashed() && $faq->answer === $faqData['old']) {
+                $faq->update([
+                    'answer' => $faqData['new'],
+                    'category' => 'Property guidance',
+                ]);
             }
         }
     }
 
-    private function seedNeighborhoodGuides(): void
+    private function upgradeUneditedLocalityGuides(): void
     {
         $guides = [
-            [
-                'locality' => 'Civil Lines',
-                'slug' => 'civil-lines-bareilly-property-guide',
+            'Civil Lines' => [
                 'title' => 'Civil Lines, Bareilly: A Property Evaluation Guide',
                 'excerpt' => 'A street-level checklist for comparing access, building use, parking, maintenance and documents when considering property in Civil Lines.',
-                'focus_keyword' => 'Civil Lines Bareilly property guide',
+                'keyword' => 'Civil Lines Bareilly property guide',
                 'content' => <<<'HTML'
 <p>Use this guide to evaluate a specific property in Civil Lines, Bareilly. It is not a ranking of the locality and does not claim that a particular school, hospital, road project, public service or transport connection is available near every address. Conditions should be checked at the exact street and property.</p>
 <h2>Understand the exact address</h2>
@@ -147,14 +123,15 @@ class BuraaqhLocalContentSeeder extends Seeder
 <p>Review the ownership chain, seller authority, applicable plans and approvals, tax records, encumbrances and written transaction terms. Ask a qualified local lawyer to review original records and verify details with the appropriate authority. Compare the property with genuinely similar options using measured area, condition, access and legal status.</p>
 <h2>Questions to take on a visit</h2>
 <ul><li>What is the exact boundary and measured area?</li><li>Which parking or common areas are included in the transaction?</li><li>What are the current utility and maintenance arrangements?</li><li>Are there any building-use restrictions, dues, disputes or pending repairs?</li><li>Which documents remain to be independently verified?</li></ul>
+<h2>Questions that matter for a mixed-use street</h2>
+<p>If a property is on or near a street with shops, offices or other commercial activity, assess the effect on the exact building rather than assuming the entire locality has one character. Visit during the hours when the neighbouring premises operate and again when they are closed. Ask about customer parking, deliveries, signage, noise, waste handling and access to the entrance. If you plan to use the premises for business, verify the permitted use and any building or local permissions with the competent authority before signing.</p>
+<p>For a residential purchase, ask whether the building rules restrict commercial activity, short-term use, alterations or external signage. Record the answers and the documents that support them. A nearby business does not establish that the same activity is permitted in the property you are considering.</p>
 HTML,
             ],
-            [
-                'locality' => 'Rajendra Nagar',
-                'slug' => 'rajendra-nagar-bareilly-property-guide',
+            'Rajendra Nagar' => [
                 'title' => 'Rajendra Nagar, Bareilly: A Residential Property Checklist',
                 'excerpt' => 'Questions to ask about everyday convenience, street conditions, building maintenance and ownership records when comparing homes in Rajendra Nagar.',
-                'focus_keyword' => 'Rajendra Nagar Bareilly property',
+                'keyword' => 'Rajendra Nagar Bareilly property',
                 'content' => <<<'HTML'
 <p>This guide helps buyers assess an individual home in Rajendra Nagar, Bareilly. It does not make a claim about current prices, infrastructure, transport links or the availability of any particular facility. A locality name cannot establish the condition or suitability of a specific street, building or plot.</p>
 <h2>Match the location to your routine</h2>
@@ -162,19 +139,20 @@ HTML,
 <h2>Inspect the home and shared spaces</h2>
 <p>Look at the roof, ceilings, walls, floors, windows, ventilation, plumbing, electrical fittings and visible signs of dampness. Ask about repairs and maintenance history. If you are considering an apartment or floor, inspect stairways, lifts where relevant, parking, water storage, drainage and the upkeep of common areas.</p>
 <h2>Verify utility arrangements</h2>
-<p>Ask how water, electricity, sewage, waste collection and internet services are provided to the exact property. Confirm whether any connection is shared and how charges are divided. Request current bills or records where appropriate. Do not assume that arrangements at one building are the same for another property nearby.</p>
+<p>Ask how water, electricity, sewage, waste collection and internet services are provided to the exact property. Confirm whether any connection is shared and how charges are divided. Request current bills or service information where appropriate. Do not assume that arrangements at one building are the same for another property nearby.</p>
 <h2>Review documents and responsibilities</h2>
 <p>Check the seller's authority, registered ownership records, property description, boundaries, applicable building permissions, taxes, dues and any mortgage or dispute. Ask about society or maintenance rules, parking rights and any outstanding repair obligations. A qualified local lawyer should review original documents and confirm which authority records apply.</p>
 <h2>Compare options consistently</h2>
 <p>Use the same checklist for each property and record the visit date, exact address, area, condition, recurring costs and unresolved questions. Compare evidence rather than relying on a general impression or an advertised price. If a future facility or development is mentioned, verify it through an official source before treating it as part of the decision.</p>
+<h2>Test the home against an ordinary weekday</h2>
+<p>Make one visit that reflects the routine you expect after moving in. Check the route from the entrance to the street, the time needed to leave and return, parking availability at the hours you need it, and whether deliveries or visitors can reach the property without blocking access. If the home is in a shared building, inspect stairways, lifts if present, roof and terrace access, water storage, drainage points and the condition of common areas. Ask who is responsible for each shared system and how maintenance decisions are recorded.</p>
+<p>For an independent house, ask about boundary maintenance, rainwater flow, utility connections and any shared access arrangement. Confirm every verbal statement against the sale documents, approved plan or written maintenance rules where relevant.</p>
 HTML,
             ],
-            [
-                'locality' => 'Izatnagar',
-                'slug' => 'izatnagar-bareilly-property-guide',
+            'Izatnagar' => [
                 'title' => 'Izatnagar, Bareilly: Questions to Ask Before Buying',
                 'excerpt' => 'A practical framework for checking exact-site access, noise, utilities, land status and building documents when assessing property in Izatnagar.',
-                'focus_keyword' => 'Izatnagar Bareilly property guide',
+                'keyword' => 'Izatnagar Bareilly property guide',
                 'content' => <<<'HTML'
 <p>When considering property in Izatnagar, Bareilly, assess the exact address rather than relying on a broad locality description. This guide does not state that any road, railway connection, facility or project is close to a particular property. It is a checklist of matters to verify during your own visits and document review.</p>
 <h2>Check the approach and surroundings</h2>
@@ -187,14 +165,15 @@ HTML,
 <p>Ask for the registered ownership documents, prior deeds relevant to the title chain, land-use information, sanctioned plans where applicable, tax records and details of any loan, charge or dispute. Have a qualified property lawyer review original documents and verify information with the appropriate authority. Do not rely only on a mutation entry, brochure or seller statement.</p>
 <h2>Keep a comparison record</h2>
 <p>Record the exact address, date of visit, access observations, utility arrangements, property condition, asking terms and outstanding documents. Compare the same factors across each shortlisted property. Treat any statement about future development or appreciation as unverified until supported by a current official source and independent analysis.</p>
+<h2>Check site conditions at different times</h2>
+<p>Do not assume that every address in Izatnagar has the same surroundings. If the particular property is close to a railway line, workshop, warehouse, industrial activity or a busy route, visit at more than one time and assess the actual noise, vibration, vehicle movement, dust, lighting and pedestrian conditions. These are site-specific checks, not claims that any of those activities are present at every address in the locality.</p>
+<p>Ask whether the property has any use restrictions, access easements or boundary issues. For land or a plot, compare the on-site boundary with the relevant survey and revenue records. For a built home, inspect cracks, dampness, roof condition and utility connections; obtain a specialist inspection if the surrounding activity or visible condition raises technical questions.</p>
 HTML,
             ],
-            [
-                'locality' => 'Pilibhit Bypass',
-                'slug' => 'pilibhit-bypass-bareilly-property-guide',
+            'Pilibhit Bypass' => [
                 'title' => 'Pilibhit Bypass, Bareilly: A Property Access and Due-Diligence Guide',
                 'excerpt' => 'How to assess approach roads, entry points, daily travel, services and property records for a specific address near Pilibhit Bypass.',
-                'focus_keyword' => 'Pilibhit Bypass Bareilly property',
+                'keyword' => 'Pilibhit Bypass Bareilly property',
                 'content' => <<<'HTML'
 <p>A property described as being near Pilibhit Bypass still needs an exact-site assessment. Distance from a main road does not automatically mean convenient access, safe entry or suitability for a household or business. Use this guide to check the specific address and verify all claims independently.</p>
 <h2>Test the actual route</h2>
@@ -207,14 +186,15 @@ HTML,
 <p>For plots and developments, verify the land classification, layout approval, boundaries, access rights and permitted use. For constructed properties, compare the actual building with applicable sanctioned plans and completion or occupancy records. Review the ownership chain, seller authority, taxes, encumbrances and any restrictions with a qualified professional.</p>
 <h2>Compare total cost, not only the advertised price</h2>
 <p>Include registration and applicable government charges, legal review, repairs, utility connections, maintenance and travel costs in your comparison. Ask for written terms and confirm what is included. If a future road, service lane or development project is mentioned, verify its official status before relying on it.</p>
+<h2>Confirm legal access and site conditions</h2>
+<p>A description such as “near Pilibhit Bypass” does not tell you whether a particular property has a safe or convenient entrance. Check whether the approach uses a service road, an internal street or a direct road connection, and whether the direction of travel requires a long detour or difficult turn. Observe the actual entry and exit at busy and quiet times. Consider pedestrian access, visibility, parking, delivery access and whether a median or divider affects the route you would use.</p>
+<p>For a road-facing property, assess noise, dust, lighting, privacy and the practicality of opening windows or using outdoor space. After rain, inspect the property's entrance and immediate approach for water accumulation. Confirm the legal access shown in the property records; a track used informally by neighbours is not proof of a permanent legal right of way.</p>
 HTML,
             ],
-            [
-                'locality' => 'DD Puram',
-                'slug' => 'dd-puram-bareilly-property-guide',
+            'DD Puram' => [
                 'title' => 'DD Puram, Bareilly: A Checklist for Comparing Homes',
                 'excerpt' => 'A practical checklist for comparing the exact block, building condition, parking, utilities, maintenance and documents in DD Puram.',
-                'focus_keyword' => 'DD Puram Bareilly property guide',
+                'keyword' => 'DD Puram Bareilly property guide',
                 'content' => <<<'HTML'
 <p>Use this guide when comparing a home in DD Puram, Bareilly. It does not assign a rating to the locality or make a factual claim about current amenities, prices or infrastructure. A sound decision depends on the exact block, street, building and documents of the property you are considering.</p>
 <h2>Compare the exact block and street</h2>
@@ -227,14 +207,15 @@ HTML,
 <p>Review registered ownership records, seller authority, prior deeds, property description, applicable building plans, completion records, taxes and encumbrances. Have original documents reviewed by a qualified local property lawyer. If a floor, extension or change of use has been made, ask which permissions apply and verify them with the relevant authority.</p>
 <h2>Make a consistent comparison</h2>
 <p>Use a written checklist for each shortlisted home. Record measured area, visit date, condition, access, utilities, total costs and open document questions. A careful comparison is more useful than a broad claim that one locality or block is always better than another.</p>
+<h2>Inspect shared parking and building records</h2>
+<p>Do not compare two homes only because both are advertised as being in DD Puram. Record the exact block, street, building position, floor, orientation and approach. Check whether the entrance, parking and common areas are usable for your household, and whether the property has any access or boundary arrangement shared with another owner. Visit at the time you expect to commute and at a quieter time so that you can compare parking, noise and movement around the building.</p>
+<p>For apartments or multi-owner buildings, ask for the current maintenance statement, rules, meeting or repair records where available, and details of any unpaid contribution or planned major work. For an independent property, verify the approved building plan and whether later additions are reflected in the relevant records.</p>
 HTML,
             ],
-            [
-                'locality' => 'Bareilly Cantt',
-                'slug' => 'bareilly-cantt-property-guide',
+            'Bareilly Cantt' => [
                 'title' => 'Bareilly Cantt: Property Permission and Document Checks',
                 'excerpt' => 'Additional questions to raise about jurisdiction, land status, access and permissions when assessing a property in or around Bareilly Cantt.',
-                'focus_keyword' => 'Bareilly Cantt property due diligence',
+                'keyword' => 'Bareilly Cantt property due diligence',
                 'content' => <<<'HTML'
 <p>When assessing a property described as being in or around Bareilly Cantt, establish the exact jurisdiction and land status before making assumptions about ownership or permitted use. This guide does not claim that a particular property is restricted, transferable or subject to a specific permission. Those facts must be confirmed for the exact parcel with the competent authority and a qualified local lawyer.</p>
 <h2>Identify the exact jurisdiction</h2>
@@ -247,14 +228,15 @@ HTML,
 <p>Have a qualified local property lawyer examine the registered deeds, title chain, authority documents, land classification, permissions and encumbrance information. Verify original records with the appropriate office. If the seller cannot provide a required document or the authority is unclear, pause the transaction until the issue is resolved in writing.</p>
 <h2>Do not rely on assumptions</h2>
 <p>Do not make a payment based on an assurance that a transfer or construction permission will be granted later. Confirm current requirements directly with the competent authority and include any necessary conditions in the written agreement. This locality guide is a prompt for due diligence, not a legal opinion about any specific property.</p>
+<h2>Verify transfer, renovation and use permissions</h2>
+<p>“Bareilly Cantt” is not a substitute for a legal property description. Before treating a property as freely transferable or assuming that ordinary municipal processes apply, identify its exact location, land category, recorded owner and the authority that controls the land or building permissions. Ask a qualified local property lawyer to determine whether any cantonment, defence-estate, leasehold, transfer, construction or use conditions apply to that particular parcel. Do not assume that every property described by an agent as being in or around the Cantt has the same status.</p>
+<p>Ask for the relevant lease, grant, title or allotment records and verify them with the responsible authority. Confirm whether the proposed transfer, mortgage, renovation or change of use needs consent or a separate approval. Put unresolved permissions and conditions in writing before paying a token amount.</p>
 HTML,
             ],
-            [
-                'locality' => 'Mahanagar',
-                'slug' => 'mahanagar-bareilly-property-guide',
+            'Mahanagar' => [
                 'title' => 'Mahanagar, Bareilly: A Guide to Property Selection',
                 'excerpt' => 'Questions about street conditions, permitted use, utilities, maintenance and ownership records to ask when comparing property in Mahanagar.',
-                'focus_keyword' => 'Mahanagar Bareilly property guide',
+                'keyword' => 'Mahanagar Bareilly property guide',
                 'content' => <<<'HTML'
 <p>This guide provides a practical framework for evaluating a property in Mahanagar, Bareilly. It is not a locality rating and does not claim that any particular amenity, road, school, hospital or development project is available near a given address. Verify conditions at the exact property before relying on them.</p>
 <h2>Understand the immediate surroundings</h2>
@@ -267,37 +249,46 @@ HTML,
 <p>Prepare a full cost estimate that includes applicable registration charges, legal review, repairs, maintenance, taxes and utility costs. Review the sale or lease terms, payment schedule, possession, inclusions and responsibilities. Ask for outstanding dues and disputes to be disclosed and addressed in writing.</p>
 <h2>Keep a record of what remains unverified</h2>
 <p>For each option, write down the documents received, authority checks completed, technical questions referred to a specialist and information still awaiting confirmation. Compare alternatives on the same basis. Do not treat a general neighbourhood description or an advertised price as proof of the property's condition or value.</p>
+<h2>Check expansion, access and recurring upkeep</h2>
+<p>If you may extend, renovate or change the use of a home, ask which permissions are required and whether the existing building matches its sanctioned plan. Do not treat a neighbouring extension as evidence that the same work is permitted on your property. Check the available access for construction or repair work, the position of shared walls and drains, and whether any common passage or utility line crosses the site.</p>
+<p>Ask the seller for recent utility and maintenance information, details of known repairs and any recurring issue with water, drainage or the building envelope. If the property is part of a shared development, request the written rules and a statement of outstanding dues. Compare the total cost of ownership, not only the asking price.</p>
 HTML,
             ],
         ];
 
-        foreach ($guides as $index => $guideData) {
-            $guide = NeighborhoodGuide::query()->firstOrNew(['slug' => $guideData['slug']]);
-            $legacyContent = '<p>Use this guide as a starting point when assessing a property in '.$guideData['locality'].'. It is not a rating of the locality or a statement that any particular facility, road, school or project is nearby.</p><h2>What to verify on a visit</h2><ul><li>Check the exact street, approach road and access at different times of day.</li><li>Confirm water, electricity, drainage and other utility arrangements for the specific property.</li><li>Verify land use, title chain, sanctioned plans and applicable approvals independently.</li><li>Compare recent transactions for genuinely comparable properties in the immediate area.</li><li>Check the written terms, total charges and any society or maintenance obligations.</li></ul><p>Local conditions can vary street by street. Confirm current details with relevant authorities and qualified local professionals before making a decision.</p>';
+        $legacyContent = static fn (string $locality): string => '<p>Use this guide as a starting point when assessing a property in '.$locality.'. It is not a rating of the locality or a statement that any particular facility, road, school or project is nearby.</p><h2>What to verify on a visit</h2><ul><li>Check the exact street, approach road and access at different times of day.</li><li>Confirm water, electricity, drainage and other utility arrangements for the specific property.</li><li>Verify land use, title chain, sanctioned plans and applicable approvals independently.</li><li>Compare recent transactions for genuinely comparable properties in the immediate area.</li><li>Check the written terms, total charges and any society or maintenance obligations.</li></ul><p>Local conditions can vary street by street. Confirm current details with relevant authorities and qualified local professionals before making a decision.</p>';
 
-            if (! $guide->exists) {
-                $guide->fill($guideData + [
-                    'city' => 'Bareilly',
-                    'state' => 'Uttar Pradesh',
-                    'status' => 'published',
-                    'published_at' => now()->subDays($index),
-                    'sort_order' => $index + 1,
-                    'meta_title' => Str::limit($guideData['title'].' | Buraaqh Properties', 255, ''),
-                    'meta_description' => Str::limit($guideData['excerpt'], 155, ''),
-                ])->save();
+        foreach ($guides as $locality => $data) {
+            $slug = Str::slug($locality.' Bareilly property guide');
+            $guide = NeighborhoodGuide::withTrashed()->where('slug', $slug)->first();
 
+            if ($guide?->trashed()) {
                 continue;
             }
 
-            if ($guide->content === $legacyContent) {
-                $guide->forceFill([
-                    'title' => $guideData['title'],
-                    'excerpt' => $guideData['excerpt'],
-                    'content' => $guideData['content'],
-                    'meta_title' => Str::limit($guideData['title'].' | Buraaqh Properties', 255, ''),
-                    'meta_description' => Str::limit($guideData['excerpt'], 155, ''),
-                    'focus_keyword' => $guideData['focus_keyword'],
-                ])->save();
+            $attributes = [
+                'title' => $data['title'],
+                'locality' => $locality,
+                'city' => 'Bareilly',
+                'state' => 'Uttar Pradesh',
+                'excerpt' => $data['excerpt'],
+                'content' => $data['content'],
+                'status' => 'published',
+                'published_at' => now(),
+                'meta_title' => Str::limit($data['title'].' | Buraaqh Properties', 255, ''),
+                'meta_description' => Str::limit($data['excerpt'], 155, ''),
+                'focus_keyword' => $data['keyword'],
+                'sort_order' => array_search($locality, array_keys($guides), true) + 1,
+            ];
+
+            if (! $guide) {
+                NeighborhoodGuide::query()->create($attributes);
+                continue;
+            }
+
+            if (trim((string) $guide->content) === $legacyContent($locality)) {
+                unset($attributes['status'], $attributes['published_at'], $attributes['sort_order']);
+                $guide->update($attributes);
             }
         }
     }

@@ -5,84 +5,134 @@ namespace Database\Seeders;
 use App\Models\Homepage;
 use App\Models\HomepageSection;
 use App\Models\Media;
-use App\Models\User;
 use App\Support\ThemeMediaImporter;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
+use RuntimeException;
 
 class BuraaqhHomepageSeeder extends Seeder
 {
     public function run(): void
     {
-        $homepage = Homepage::query()->where('slug', 'home-9')->first();
+        $homepage = Homepage::withTrashed()->where('slug', 'home-9')->first();
 
-        if (! $homepage) {
-            throw new \RuntimeException('Home 9 is missing. Run HomepageTemplateSeeder before BuraaqhHomepageSeeder.');
+        if ($homepage?->trashed()) {
+            return;
         }
 
-        $authorId = User::query()->orderBy('id')->value('id');
-        $definitions = config('cms-sections.sections', []);
-        $enabled = [
-            'hero.home-9' => true,
-            'about.home-9' => true,
-            'statistics.home-9' => false,
-            'services.home-9' => true,
-            'properties.index' => true,
-            'featured-gallery.home-9' => false,
-            'home-details.home-9' => false,
-            'team.home-2' => false,
-            'testimonials.home-3' => false,
-            'blog.home-2' => true,
-        ];
+        if (! $homepage) {
+            throw new RuntimeException('Home 9 must be created by HomepageTemplateSeeder before BuraaqhHomepageSeeder.');
+        }
 
-        $overrides = [
+        $definitions = config('cms-sections.sections', []);
+        $sections = [
             'hero.home-9' => [
-                'eyebrow' => 'Real Estate in Bareilly',
-                'heading_prefix' => 'Explore',
-                'heading_highlight' => 'Property Options',
-                'heading_suffix' => 'with Clarity',
-                'description' => 'Explore residential and commercial property guidance in Bareilly, Uttar Pradesh. Share your requirements and verify every property detail before making a decision.',
-                'primary_button_label' => 'Explore Properties',
-                'primary_button_url' => '/properties',
-                'secondary_button_label' => 'Send an Enquiry',
-                'secondary_button_url' => '/contact',
+                'enabled' => true,
+                'config' => [
+                    'eyebrow' => 'Real Estate in Bareilly',
+                    'heading_prefix' => 'Explore',
+                    'heading_highlight' => 'Property Options',
+                    'heading_suffix' => 'with Clarity',
+                    'description' => 'Explore residential and commercial property information in Bareilly, Uttar Pradesh. Share your requirements and verify every property detail before proceeding.',
+                    'primary_button_label' => 'Explore Properties',
+                    'primary_button_url' => '/properties',
+                    'secondary_button_label' => 'Send an Enquiry',
+                    'secondary_button_url' => '/contact',
+                ],
             ],
             'about.home-9' => [
-                'eyebrow' => 'About Buraaqh Properties',
-                'heading' => 'A clearer starting point for property decisions in Bareilly',
-                'mission_title' => 'Our Mission',
-                'mission_text' => 'Help people organise their property requirements, ask informed questions and approach every decision with clear information and careful verification.',
-                'vision_title' => 'Our Vision',
-                'vision_text' => 'Make residential and commercial property information easier to understand, compare and discuss for people exploring options in Bareilly.',
+                'enabled' => true,
+                'config' => [
+                    'eyebrow' => 'About Buraaqh Properties',
+                    'heading' => 'A clearer starting point for property decisions in Bareilly',
+                    'button_label' => 'About Us',
+                    'button_url' => '/about',
+                    'mission_title' => 'Our Mission',
+                    'mission_text' => 'To make property information easier to understand through clear enquiries, practical questions and careful verification.',
+                    'vision_title' => 'Our Vision',
+                    'vision_text' => 'To support a more informed property-search experience for people exploring residential and commercial real estate in Bareilly.',
+                ],
+            ],
+            'statistics.home-9' => [
+                'enabled' => false,
+                'config' => [],
             ],
             'services.home-9' => [
-                'eyebrow' => 'Property Guidance',
-                'heading' => 'Understand the support you may need',
-                'description' => 'Service outlines are being reviewed by the business. Each offering will be published only after its availability, scope, responsible personnel and terms have been confirmed.',
-                'empty_state_text' => 'Service information will appear here after the available offerings have been confirmed and approved for publication.',
+                'enabled' => true,
+                'config' => [
+                    'eyebrow' => 'Property Guidance',
+                    'heading' => 'Services and support',
+                    'description' => 'Service information will be published after the available offerings and scope have been confirmed.',
+                    'empty_state_text' => 'Service information will appear here once the available offerings have been confirmed and published.',
+                ],
             ],
             'properties.index' => [
-                'eyebrow' => 'Property Search',
-                'heading' => 'Residential and Commercial Property',
-                'description' => 'Browse verified property information when it is available. No sample inventory or unconfirmed prices are published as genuine listings.',
-                'empty_state_text' => 'There are no verified property listings published at the moment. Share your requirements and ask us to confirm current availability.',
+                'enabled' => true,
+                'config' => [
+                    'eyebrow' => 'Property Search',
+                    'heading' => 'Residential and Commercial Property',
+                    'description' => 'Explore property information and share the details of what you are looking for.',
+                    'empty_state_text' => 'No verified property listings are currently published. Contact Buraaqh Properties to share your requirements.',
+                ],
+            ],
+            'featured-gallery.home-9' => [
+                'enabled' => false,
+                'config' => [
+                    'eyebrow' => 'Property Gallery',
+                    'heading' => 'Approved Property Photography',
+                    'video_url' => '',
+                ],
+            ],
+            'home-details.home-9' => [
+                'enabled' => false,
+                'config' => [
+                    'eyebrow' => 'Bareilly Property Information',
+                    'heading' => 'Explore property options in Bareilly',
+                    'location' => 'Bareilly, Uttar Pradesh',
+                    'total_area' => '',
+                    'living_space' => '',
+                    'bedrooms' => '',
+                    'bathrooms' => '',
+                    'floors' => '',
+                    'button_label' => 'Contact Us',
+                    'button_url' => '/contact',
+                ],
+            ],
+            'team.home-2' => [
+                'enabled' => false,
+                'config' => [
+                    'eyebrow' => 'Our Team',
+                    'heading' => 'Meet the Team',
+                    'empty_state_text' => 'Team profiles will be published after the business confirms the names, roles and biographies.',
+                ],
             ],
             'testimonials.home-3' => [
-                'trust_brand' => 'Client feedback',
-                'trust_score_prefix' => 'Feedback from',
-                'reviews_suffix' => 'verified reviews',
-                'eyebrow' => 'Client Feedback',
-                'heading' => 'Experiences will be shared here after approval',
-                'avatar_group_image' => '',
+                'enabled' => false,
+                'config' => [
+                    'eyebrow' => 'Client Feedback',
+                    'heading' => 'Testimonials',
+                    'trust_brand' => '',
+                    'trust_score_prefix' => '',
+                    'reviews_suffix' => '',
+                    'avatar_group_image' => '',
+                ],
             ],
             'blog.home-2' => [
-                'eyebrow' => 'Property Knowledge',
-                'heading' => 'Guides for better property decisions',
-                'description' => 'Read practical guidance on buying, documentation, locality checks and residential and commercial property decisions.',
-                'empty_state_text' => 'New property guides will appear here when they are published.',
+                'enabled' => true,
+                'config' => [
+                    'eyebrow' => 'Property Journal',
+                    'heading' => 'Practical Real Estate Guides',
+                    'description' => 'Read useful guidance about property searches, documentation, locality assessment and ownership decisions.',
+                    'items_limit' => 6,
+                    'button_label' => 'Explore All Articles',
+                    'button_url' => '/blog',
+                    'empty_state_text' => 'Property guidance articles will appear here as they are published.',
+                ],
             ],
         ];
 
+        // These bundled theme photographs were visually inspected and dimension-checked.
+        // They are illustrative design assets, not photographs of Buraaqh listings.
         $imageMap = [
             'hero.home-9' => [
                 'background_image' => [
@@ -116,73 +166,164 @@ class BuraaqhHomepageSeeder extends Seeder
             ],
         ];
 
-        foreach (array_keys($enabled) as $sortOrder => $sectionKey) {
-            $definition = $definitions[$sectionKey] ?? null;
+        $importer = app(ThemeMediaImporter::class);
+        $position = 0;
 
-            if (! is_array($definition)) {
+        foreach ($sections as $key => $definition) {
+            $schema = $definitions[$key] ?? null;
+
+            if (! $schema || ! view()->exists($schema['view'] ?? '')) {
+                throw new RuntimeException('Home 9 section is not renderable: '.$key);
+            }
+
+            $existingSection = HomepageSection::withTrashed()
+                ->where('homepage_id', $homepage->id)
+                ->where('section_key', $key)
+                ->first();
+
+            if ($existingSection?->trashed()) {
+                $position++;
                 continue;
             }
 
-            $config = array_merge($definition['defaults'] ?? [], $overrides[$sectionKey] ?? []);
+            $config = array_merge($schema['defaults'] ?? [], $definition['config'] ?? []);
             $imageFields = [];
 
-            foreach (($definition['fields'] ?? []) as $field => $fieldDefinition) {
+            foreach (($schema['fields'] ?? []) as $field => $fieldDefinition) {
                 if (($fieldDefinition['type'] ?? null) !== 'image') {
                     continue;
                 }
 
                 $imageFields[] = $field;
 
-                if (isset($imageMap[$sectionKey][$field])) {
-                    $image = $imageMap[$sectionKey][$field];
-                    $media = app(ThemeMediaImporter::class)->import($image['path'], $image['alt'], $authorId);
-                    $config[$field] = $media?->id;
-                    $config[$field.'_alt'] = $image['alt'];
+                if (isset($imageMap[$key][$field])) {
+                    $image = $imageMap[$key][$field];
+                    $existingValue = data_get($existingSection?->config, $field);
+                    $defaultValue = $schema['defaults'][$field] ?? null;
+
+                    // Import only for a new section or an untouched theme default.
+                    // Administrator-selected media and custom paths remain untouched.
+                    $existingAttachmentId = $existingSection && $existingValue === $defaultValue
+                        ? $existingSection->mediaAttachments()->where('field_key', $field)->value('media_id')
+                        : null;
+
+                    if ($existingAttachmentId && Media::query()->whereKey($existingAttachmentId)->exists()) {
+                        $config[$field] = (int) $existingAttachmentId;
+                    } elseif (! $existingSection || $existingValue === $defaultValue) {
+                        $media = $importer->import($image['path'], $image['alt']);
+                        $config[$field] = $media?->id;
+                        $config[$field.'_alt'] = $image['alt'];
+                    } else {
+                        $config[$field] = $existingValue;
+                    }
                     continue;
                 }
 
                 $value = $config[$field] ?? null;
                 if (is_string($value) && str_starts_with($value, '/theme-assets/')) {
-                    $relativePath = ltrim($value, '/');
-                    if (! File::isFile(public_path($relativePath))) {
+                    if (! File::isFile(public_path(ltrim($value, '/')))) {
                         $config[$field] = null;
                     }
                 }
             }
 
-            $section = HomepageSection::query()->firstOrCreate(
-                ['homepage_id' => $homepage->id, 'section_key' => $sectionKey],
+            $section = $existingSection ?? HomepageSection::query()->firstOrCreate(
+                ['homepage_id' => $homepage->id, 'section_key' => $key],
                 [
-                    'label' => $definition['label'] ?? $sectionKey,
-                    'section_type' => $definition['type'] ?? 'content',
-                    'view' => $definition['view'] ?? null,
+                    'section_type' => $schema['type'],
+                    'sort_order' => $position + 1,
+                    'is_enabled' => $definition['enabled'],
                     'config' => $config,
-                    'data_source' => [],
-                    'sort_order' => $sortOrder + 1,
-                    'is_enabled' => $enabled[$sectionKey],
+                    'data_source' => $this->dataSourceFor($schema['type']),
                 ]
             );
 
-            // Attach defaults only when the field has no relationship yet. An
-            // administrator's selected image must never be replaced by a rerun.
             $persistedConfig = is_array($section->config) ? $section->config : [];
+            $configChanged = false;
 
             foreach ($imageFields as $field) {
-                $mediaId = $persistedConfig[$field] ?? null;
+                $currentValue = $persistedConfig[$field] ?? null;
+                $defaultValue = $schema['defaults'][$field] ?? null;
 
-                if ((! is_string($mediaId) && ! is_int($mediaId)) || ! ctype_digit((string) $mediaId)) {
-                    continue;
+                // If the administrator selected media through the attachment
+                // relation while the config still contains the old theme path,
+                // keep that selected media and align the config to it.
+                $existingAttachmentId = $section->mediaAttachments()
+                    ->where('field_key', $field)
+                    ->value('media_id');
+
+                if (
+                    is_string($currentValue)
+                    && $currentValue === $defaultValue
+                    && $existingAttachmentId
+                    && Media::query()->whereKey($existingAttachmentId)->exists()
+                ) {
+                    $persistedConfig[$field] = (int) $existingAttachmentId;
+                    $configChanged = true;
+                    $currentValue = (int) $existingAttachmentId;
+                } elseif (
+                    $key === 'testimonials.home-3'
+                    && $field === 'avatar_group_image'
+                    && is_string($currentValue)
+                    && $currentValue === $defaultValue
+                ) {
+                    // Never seed the template's unidentified reviewer portraits.
+                    $persistedConfig[$field] = null;
+                    $configChanged = true;
+                    $currentValue = null;
+                } elseif (
+                    isset($imageMap[$key][$field])
+                    && is_string($currentValue)
+                    && $currentValue === $defaultValue
+                ) {
+                    $image = $imageMap[$key][$field];
+                    $media = $importer->import($image['path'], $image['alt']);
+
+                    $persistedConfig[$field] = $media?->id;
+                    $persistedConfig[$field.'_alt'] = $image['alt'];
+                    $configChanged = true;
+                    $currentValue = $media?->id;
+                } elseif (
+                    is_string($currentValue)
+                    && str_starts_with($currentValue, '/theme-assets/')
+                    && ! File::isFile(public_path(ltrim($currentValue, '/')))
+                    && $currentValue === $defaultValue
+                ) {
+                    $persistedConfig[$field] = null;
+                    $configChanged = true;
+                    $currentValue = null;
                 }
 
-                if (! Media::query()->whereKey((int) $mediaId)->exists()) {
-                    continue;
+                if (
+                    (is_string($currentValue) || is_int($currentValue))
+                    && ctype_digit((string) $currentValue)
+                    && Media::query()->whereKey((int) $currentValue)->exists()
+                ) {
+                    $section->mediaAttachments()->firstOrCreate(
+                        ['field_key' => $field],
+                        ['media_id' => (int) $currentValue]
+                    );
                 }
-
-                $section->mediaAttachments()->firstOrCreate(
-                    ['field_key' => $field],
-                    ['media_id' => (int) $mediaId]
-                );
             }
+
+            if ($configChanged) {
+                $section->forceFill(['config' => $persistedConfig])->save();
+            }
+
+            $position++;
         }
+    }
+
+    private function dataSourceFor(string $type): array
+    {
+        return match ($type) {
+            'service-list' => ['limit' => 8, 'sort_by' => 'published_at', 'sort_direction' => 'desc'],
+            'property-list', 'property-slider-grid' => ['limit' => 8, 'sort_by' => 'published_at', 'sort_direction' => 'desc', 'filters' => []],
+            'featured-gallery-slider' => ['limit' => 3, 'sort_by' => 'published_at', 'sort_direction' => 'desc', 'filters' => []],
+            'team-slider' => ['limit' => 6, 'sort_by' => 'sort_order', 'sort_direction' => 'asc'],
+            'testimonial-slider' => ['limit' => 4, 'sort_by' => 'sort_order', 'sort_direction' => 'asc'],
+            'blog-slider' => ['limit' => 6, 'sort_by' => 'published_at', 'sort_direction' => 'desc'],
+            default => [],
+        };
     }
 }

@@ -14,6 +14,11 @@ class Homepage extends Model
     protected $fillable = [
         'name',
         'slug',
+        'design_key',
+        'is_default',
+        'is_composition_complete',
+        'created_by',
+        'updated_by',
         'status',
         'meta_title',
         'meta_description',
@@ -24,7 +29,19 @@ class Homepage extends Model
     {
         return [
             'published_at' => 'datetime',
+            'is_default' => 'boolean',
+            'is_composition_complete' => 'boolean',
         ];
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
     public function sections(): HasMany

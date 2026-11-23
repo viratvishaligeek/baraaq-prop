@@ -11,8 +11,13 @@ class HomepageSection extends Model
 {
     protected $fillable = [
         'homepage_id',
+        'page_id',
+        'service_id',
+        'reusable_section_id',
+        'instance_key',
         'section_key',
         'section_type',
+        'source_design',
         'sort_order',
         'is_enabled',
         'config',
@@ -39,6 +44,21 @@ class HomepageSection extends Model
         static::deleting(function (HomepageSection $section): void {
             $section->mediaAttachments()->delete();
         });
+    }
+
+    public function page(): BelongsTo
+    {
+        return $this->belongsTo(Page::class);
+    }
+
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class);
+    }
+
+    public function reusableSection(): BelongsTo
+    {
+        return $this->belongsTo(ReusableSection::class);
     }
 
     public function homepage(): BelongsTo
