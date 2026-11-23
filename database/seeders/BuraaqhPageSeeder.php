@@ -148,16 +148,24 @@ HTML,
         ];
 
         foreach ($pages as $data) {
-            $page = Page::query()->firstOrNew(['slug' => $data['slug']]);
+            $page = Page::withTrashed()->where('slug', $data['slug'])->first();
             $legacyContent = $data['legacy_content'];
             unset($data['legacy_content']);
+
+            // A soft-deleted page is an administrator decision. Do not restore
+            // it or attempt a duplicate insert against its unique slug.
+            if ($page?->trashed()) {
+                continue;
+            }
+
+            $page ??= new Page(['slug' => $data['slug']]);
 
             if (! $page->exists) {
                 $page->fill($data + [
                     'author_id' => $authorId,
                     'template' => 'default',
                     'status' => 'published',
-                    'meta_title' => $data['title'].' | Buraaqh Properties',
+                    'meta_title' => Str::limit($data['title'].' | Buraaqh Properties', 60, ''),
                     'meta_description' => Str::limit(strip_tags($data['content']), 155),
                 ])->save();
 
@@ -168,8 +176,9 @@ HTML,
             // Any administrator-edited page content and publication state is preserved.
             if ($page->content === $legacyContent) {
                 $page->forceFill([
+                    'title' => $data['title'],
                     'content' => $data['content'],
-                    'meta_title' => $data['title'].' | Buraaqh Properties',
+                    'meta_title' => Str::limit($data['title'].' | Buraaqh Properties', 60, ''),
                     'meta_description' => Str::limit(strip_tags($data['content']), 155),
                     'focus_keyword' => $data['focus_keyword'],
                 ])->save();
