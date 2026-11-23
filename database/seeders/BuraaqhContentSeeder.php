@@ -134,21 +134,9 @@ class BuraaqhContentSeeder extends Seeder
     {
         $site = trim((string) env('SITE_NAME', 'Buraaqh Properties')) ?: 'Buraaqh Properties';
         if (stripos($site, 'Pillar') !== false) $site = 'Buraaqh Properties';
-        $footerGalleryPaths = [
-            'theme-assets/img/gallery/footer-gallery-1-1.jpg',
-            'theme-assets/img/gallery/footer-gallery-1-2.jpg',
-            'theme-assets/img/gallery/footer-gallery-1-3.jpg',
-            'theme-assets/img/gallery/footer-gallery-1-5.jpg',
-            'theme-assets/img/gallery/footer-gallery-1-6.jpg',
-            'theme-assets/img/gallery/footer-gallery-1-7.jpg',
-            'theme-assets/img/gallery/footer-gallery-1-4.jpg',
-        ];
         $defaultOgMedia = $this->themeMedia('theme-assets/img/hero/hero-9-right.png', 'Buraaqh Properties social sharing image');
+        // Do not present stock template photography as real property or office imagery.
         $footerGalleryImages = [];
-        foreach ($footerGalleryPaths as $galleryPath) {
-            $galleryMedia = $this->themeMedia($galleryPath, 'Buraaqh Properties gallery');
-            $footerGalleryImages[] = $galleryMedia?->id ?? $galleryPath;
-        }
 
         $settings = [
             'site_title' => [$site, 'general', 'string'],
@@ -521,35 +509,8 @@ class BuraaqhContentSeeder extends Seeder
             ]);
         }
 
-        $galleryAssets = [
-            'theme-assets/img/gallery/footer-gallery-1-1.jpg',
-            'theme-assets/img/gallery/footer-gallery-1-2.jpg',
-            'theme-assets/img/gallery/footer-gallery-1-3.jpg',
-            'theme-assets/img/gallery/footer-gallery-1-4.jpg',
-        ];
-        foreach ($galleryAssets as $i => $asset) {
-            $source = public_path($asset);
-            if (! File::exists($source)) continue;
-            $path = 'gallery/buraaqh-reference-'.($i + 1).'.jpg';
-            if (! Storage::disk('public')->exists($path)) Storage::disk('public')->put($path, File::get($source));
-            $item = GalleryItem::updateOrCreate(['slug' => 'bareilly-property-gallery-'.($i + 1)], [
-                'title' => 'Property and lifestyle image '.($i + 1),
-                'description' => 'Visual inspiration from the Buraaqh Properties website gallery.',
-                'image' => $path,
-                'alt_text' => 'Property and real estate gallery image',
-                'sort_order' => $i + 1,
-                'status' => 'published',
-                'published_at' => now(),
-            ]);
-            Media::firstOrCreate(['path' => $path], [
-                'uploaded_by' => $this->authorId,
-                'disk' => 'public',
-                'original_name' => basename($asset),
-                'mime_type' => 'image/jpeg',
-                'size' => Storage::disk('public')->size($path),
-                'alt_text' => $item->alt_text,
-            ]);
-        }
+        // The template gallery photos are illustrative assets, not verified Buraaqh property photographs.
+        // Gallery entries are created only when an administrator uploads approved business imagery.
     }
 
     private function seedServiceDetails(): void
@@ -570,14 +531,7 @@ class BuraaqhContentSeeder extends Seeder
             foreach ($titles as $i => $title) {
                 ServiceFeature::firstOrCreate(['service_id' => $service->id, 'title' => $title], ['description' => 'A clearly scoped part of the '.$service->title.' service.', 'sort_order' => $i + 1]);
             }
-            $asset = 'theme-assets/img/gallery/footer-gallery-1-'.(($service->id % 4) + 1).'.jpg';
-            $source = public_path($asset);
-            if (File::exists($source) && ! $service->images()->exists()) {
-                $path = 'services/inside/seed-'.$service->slug.'.jpg';
-                if (! Storage::disk('public')->exists($path)) Storage::disk('public')->put($path, File::get($source));
-                $service->images()->create(['path' => $path, 'alt_text' => $service->title.' service image', 'sort_order' => 1]);
-                Media::firstOrCreate(['path' => $path], ['uploaded_by' => $this->authorId, 'disk' => 'public', 'original_name' => basename($asset), 'mime_type' => 'image/jpeg', 'size' => Storage::disk('public')->size($path), 'alt_text' => $service->title.' service image']);
-            }
+            // Service photography is uploaded only after the offering is confirmed.
         }
     }
 
@@ -611,7 +565,7 @@ class BuraaqhContentSeeder extends Seeder
                 'description' => 'Explore property information and contact Buraaqh Properties to discuss your requirements in Bareilly, Uttar Pradesh.',
                 'primary_button_label' => 'Explore Properties',
                 'primary_button_url' => '/properties',
-                'secondary_button_label' => 'Request A Visit',
+                'secondary_button_label' => 'Contact Us',
                 'secondary_button_url' => '/contact',
                 'background_image' => '/theme-assets/img/hero/hero-9-bg.png',
                 'foreground_image' => '/theme-assets/img/hero/hero-9-right.png',
@@ -620,9 +574,9 @@ class BuraaqhContentSeeder extends Seeder
                 'eyebrow' => 'About Us',
                 'heading' => 'Create Your Story in a place where dreams and reality merge',
                 'mission_title' => 'Our Mission',
-                'mission_text' => 'We specialize in residential and commercial property transactions, offering end-to-end assistance—from property valuation and marketing to negotiation, documentation, and closing support.',
+                'mission_text' => 'To help people approach property decisions with clear information, careful questions and a practical next step.',
                 'vision_title' => 'Our Vision',
-                'vision_text' => 'At the heart of our agency is a commitment to honesty, availability, and tailored service. Whether you are searching for your dream home, planning to list your property or exploring investment opportunities, our advice stays personal.',
+                'vision_text' => 'To make property information easier to understand and the process more transparent for people exploring homes and commercial spaces in Bareilly.',
             ],
             'services.home-9' => [
                 'eyebrow' => 'Our Services',
