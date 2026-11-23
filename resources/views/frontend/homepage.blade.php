@@ -24,7 +24,21 @@
 @empty
 <div class="col-12 text-center text-muted">No services are currently published.</div>
 @endforelse</div></section><section class="popular-sec-1 overflow-hidden space" @unless($homepageSectionEnabled['properties.index'] ?? true) hidden @endunless><div class="container"><div class="row justify-content-center"><div class="col-xl-7"><div class="title-area text-center mb-2"><p class="sub-title style4 text-anime-style-1">{{ $propertiesConfig['eyebrow'] ?? 'Popular Properties' }}</p><h2 class="sec-title style-2 mb-4 text-anime-style-3">{{ $propertiesConfig['heading'] ?? 'Featured Property Listings' }}</h2><div class="filter-menu style-2 indicator-active filter-menu-active mt-2 justify-content-center fadeinup wow" data-wow-duration="1.3s" data-wow-delay="0.4s"><button data-filter="*" class="th-btn tab-btn active" type="button">View All</button> <button data-filter=".cat1" class="th-btn tab-btn" type="button">Apartment</button> <button data-filter=".cat2" class="th-btn tab-btn" type="button">Commercial</button> <button data-filter=".cat3" class="th-btn tab-btn" type="button">Land or Plot</button> <button data-filter=".cat4" class="th-btn tab-btn" type="button">Farm</button></div></div></div></div><div class="row gy-30 justify-content-center filter-active">@forelse ($featuredProperties as $property)
-<div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 filter-item {{ $propertyFilterClass }}"><div class="popular-list-1 style-4">@php
+@php
+    $listingImages = collect();
+    if ($property->featured_image) $listingImages->push((object) ['path' => $property->featured_image, 'alt_text' => $property->title]);
+    foreach ($property->images as $listingImage) {
+        if ($listingImage->path !== $property->featured_image) $listingImages->push($listingImage);
+    }
+    $propertyFilterClass = match(\Illuminate\Support\Str::slug($property->category?->name ?? '')) {
+        'apartment' => 'cat1',
+        'commercial' => 'cat2',
+        'land-or-plot' => 'cat3',
+        'farm' => 'cat4',
+        default => '',
+    };
+@endph
+<div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6 filter-item {{ $propertyFilterClass }}"><div class="popular-list-1 style-4"><div class="popular-list-1 style-4">@php
     $listingImages = collect();
     if ($property->featured_image) $listingImages->push((object) ['path' => $property->featured_image, 'alt_text' => $property->title]);
     foreach ($property->images as $listingImage) {
