@@ -68,6 +68,14 @@
                     <input class="form-control" name="meta_keywords" maxlength="1000"
                         value="{{ old('meta_keywords', $settings['meta_keywords'] ?? '') }}">
                 </div>
+                <div class="col-12"><h5 class="mt-2 mb-0">Local content SEO</h5><p class="text-muted small mb-0">Search snippets for Gallery, FAQs and Neighborhood Guides.</p></div>
+                <div class="col-md-6"><label class="form-label">Gallery meta title</label><input class="form-control" name="gallery_meta_title" maxlength="255" value="{{ old('gallery_meta_title', $settings['gallery_meta_title'] ?? '') }}"></div>
+                <div class="col-md-6"><label class="form-label">FAQ meta title</label><input class="form-control" name="faq_meta_title" maxlength="255" value="{{ old('faq_meta_title', $settings['faq_meta_title'] ?? '') }}"></div>
+                <div class="col-md-6"><label class="form-label">Gallery meta description</label><textarea class="form-control" name="gallery_meta_description" rows="2" maxlength="1000">{{ old('gallery_meta_description', $settings['gallery_meta_description'] ?? '') }}</textarea></div>
+                <div class="col-md-6"><label class="form-label">FAQ meta description</label><textarea class="form-control" name="faq_meta_description" rows="2" maxlength="1000">{{ old('faq_meta_description', $settings['faq_meta_description'] ?? '') }}</textarea></div>
+                <div class="col-md-6"><label class="form-label">Neighborhood Guides meta title</label><input class="form-control" name="neighborhood_guides_meta_title" maxlength="255" value="{{ old('neighborhood_guides_meta_title', $settings['neighborhood_guides_meta_title'] ?? '') }}"></div>
+                <div class="col-md-6"><label class="form-label">Neighborhood Guides meta description</label><textarea class="form-control" name="neighborhood_guides_meta_description" rows="2" maxlength="1000">{{ old('neighborhood_guides_meta_description', $settings['neighborhood_guides_meta_description'] ?? '') }}</textarea></div>
+                <div class="col-md-6"><label class="form-label">Service area city</label><input class="form-control" name="service_area_city" maxlength="100" value="{{ old('service_area_city', $settings['service_area_city'] ?? 'Bareilly') }}"></div>
                 <div class="col-md-6">
                     <label class="form-label">Robots policy</label>
                     <select class="form-select" name="meta_robots">
