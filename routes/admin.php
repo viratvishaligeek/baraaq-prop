@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Admin\AppearanceController;
 use App\Http\Controllers\Admin\AnalyticsController;
+use App\Http\Controllers\Admin\AppearanceController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\ContentController;
@@ -41,7 +41,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::patch('/homepages/{homepage}', [HomepageController::class, 'update'])->middleware('permission:settings.manage')->name('homepages.update');
         Route::patch('/homepages/{homepage}/sections/{section}', [HomepageController::class, 'updateSection'])->middleware('permission:settings.manage')->name('homepages.sections.update');
 
-
         Route::get('/seo', [SeoController::class, 'index'])->middleware('permission:settings.manage')->name('seo.index');
         Route::get('/seo/indexing', [SeoController::class, 'indexing'])->middleware('permission:settings.manage')->name('seo.indexing');
         Route::get('/appearance', [AppearanceController::class, 'index'])->middleware('permission:settings.manage')->name('appearance.index');
@@ -62,9 +61,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
         Route::patch('/comments/services/{serviceComment}', [CommentController::class, 'updateService'])->name('service-comments.update');
         Route::delete('/comments/services/{serviceComment}', [CommentController::class, 'destroyService'])->name('service-comments.destroy');
-
-        
-
 
         Route::resource('tags', TagController::class)->except(['show'])->middleware('permission:tags.manage');
         Route::get('/content/{type}/{id}/preview', [ContentPreviewController::class, 'show'])->name('content.preview');

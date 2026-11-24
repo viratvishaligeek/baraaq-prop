@@ -12,7 +12,9 @@
             }
         @endphp
         <li class="{{ implode(' ', $menuClasses) }}">
-            <a href="{{ $item->resolved_url }}" target="{{ $item->target }}" @if ($item->target === '_blank') rel="noopener noreferrer" @endif @if ($isCurrent) aria-current="page" @endif>{{ $item->label }}</a>
+            <a href="{{ $item->resolved_url }}" target="{{ $item->target }}"
+                @if ($item->target === '_blank') rel="noopener noreferrer" @endif
+                @if ($isCurrent) aria-current="page" @endif>{{ $item->label }}</a>
             @if ($item->children->isNotEmpty())
                 <ul class="sub-menu">
                     @include('frontend.partials.menu-items', ['items' => $item->children])

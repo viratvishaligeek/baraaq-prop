@@ -17,13 +17,14 @@
     <meta property="og:url" content="@yield('canonical_url', url()->current())">
     @php
         $defaultSocialPath = ltrim((string) ($siteSettings['default_og_image'] ?? ''), '/');
-        $defaultSocialImage = $defaultSocialPath === ''
-            ? asset('theme-assets/img/hero/hero-9-right.png')
-            : (\App\Rules\SafeLink::isHttpUrl($defaultSocialPath)
-                ? $defaultSocialPath
-                : (\Illuminate\Support\Str::startsWith($defaultSocialPath, 'theme-assets/')
-                    ? asset($defaultSocialPath)
-                    : Storage::disk('public')->url($defaultSocialPath)));
+        $defaultSocialImage =
+            $defaultSocialPath === ''
+                ? asset('theme-assets/img/hero/hero-9-right.png')
+                : (\App\Rules\SafeLink::isHttpUrl($defaultSocialPath)
+                    ? $defaultSocialPath
+                    : (\Illuminate\Support\Str::startsWith($defaultSocialPath, 'theme-assets/')
+                        ? asset($defaultSocialPath)
+                        : Storage::disk('public')->url($defaultSocialPath)));
     @endphp
     <meta property="og:image" content="@yield('og_image', $defaultSocialImage)">
     <meta property="og:site_name" content="{{ $siteSettings['site_title'] ?? config('app.name') }}">
@@ -62,10 +63,17 @@
             line-height: 1.05;
             white-space: nowrap;
         }
-        .site-brand-wordmark--inverse { color: #fff; }
-        .mobile-logo .site-brand-wordmark { font-size: 20px; }
 
-        html, body {
+        .site-brand-wordmark--inverse {
+            color: #fff;
+        }
+
+        .mobile-logo .site-brand-wordmark {
+            font-size: 20px;
+        }
+
+        html,
+        body {
             overflow-x: clip;
         }
 
@@ -73,7 +81,10 @@
             position: relative !important;
             top: auto !important
         }
-    </style>@php echo $siteSettings['head_scripts'] ?? ''; @endphp
+    </style>
+    @php
+        echo $siteSettings['head_scripts'] ?? '';
+    @endphp
 
     @php
         $organization = [
@@ -188,7 +199,8 @@
                 <a href="{{ route('home') }}">
                     @if (!empty($siteSettings['logo']))
                         <img src="{{ asset('storage/' . $siteSettings['logo']) }}"
-                        alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">@else<span class="site-brand-wordmark">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
+                        alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">@else<span
+                            class="site-brand-wordmark">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
                     @endif
                 </a>
             </div>
@@ -203,37 +215,45 @@
                 <div class="container">
                     <div class="row justify-content-center justify-content-lg-between align-items-center gy-2">
                         <div class="col-auto d-none d-lg-block">
-                            <div class="header-links"><ul>
-                                @if (!empty($siteSettings['site_email']))
-                                    <li><i class="fa-solid fa-envelope"></i> <a href="mailto:{{ $siteSettings['site_email'] }}">{{ $siteSettings['site_email'] }}</a></li>
-                                @endif
-                                @if (!empty($siteSettings['site_phone']))
-                                    <li><i class="fa-solid fa-phone"></i> <a href="tel:{{ preg_replace('/\D+/', '', $siteSettings['site_phone']) }}">{{ $siteSettings['site_phone'] }}</a></li>
-                                @endif
-                            </ul></div>
+                            <div class="header-links">
+                                <ul>
+                                    @if (!empty($siteSettings['site_email']))
+                                        <li><i class="fa-solid fa-envelope"></i> <a
+                                                href="mailto:{{ $siteSettings['site_email'] }}">{{ $siteSettings['site_email'] }}</a>
+                                        </li>
+                                    @endif
+                                    @if (!empty($siteSettings['site_phone']))
+                                        <li><i class="fa-solid fa-phone"></i> <a
+                                                href="tel:{{ preg_replace('/\D+/', '', $siteSettings['site_phone']) }}">{{ $siteSettings['site_phone'] }}</a>
+                                        </li>
+                                    @endif
+                                </ul>
+                            </div>
                         </div>
                         <div class="col-auto">
-                            <div class="header-links"><ul>
-                                <li><div class="th-social">
-                                    @foreach (['facebook' => 'social_facebook', 'twitter' => 'social_x', 'linkedin' => 'social_linkedin', 'whatsapp' => 'whatsapp_number'] as $network => $setting)
-                                        @if (!empty($siteSettings[$setting]))
-                                            <a href="{{ $network === 'whatsapp' ? 'https://wa.me/' . preg_replace('/\D+/', '', $siteSettings[$setting]) : \App\Rules\SafeLink::sanitizeHttp($siteSettings[$setting]) }}" target="_blank" rel="noopener noreferrer" aria-label="{{ ucfirst($network) }}"><i class="fab fa-{{ $network === 'facebook' ? 'facebook-f' : ($network === 'linkedin' ? 'linkedin-in' : $network) }}"></i></a>
-                                        @endif
-                                    @endforeach
-                                </div></li>
-                                <li class="lang-wrapper"><div class="lang-menu">
-                                    <div class="icon"><img src="{{ asset('theme-assets/img/icon/english.png') }}" alt="Language"></div>
-                                    <select class="form-select nice-select" aria-label="Language">
-                                        <option selected>English</option><option>Spanish</option><option>Hindi</option>
-                                    </select>
-                                </div></li>
-                            </ul></div>
+                            <div class="header-links">
+                                <ul>
+                                    <li>
+                                        <div class="th-social">
+                                            @foreach (['facebook' => 'social_facebook', 'twitter' => 'social_x', 'linkedin' => 'social_linkedin', 'whatsapp' => 'whatsapp_number'] as $network => $setting)
+                                                @if (!empty($siteSettings[$setting]))
+                                                    <a href="{{ $network === 'whatsapp' ? 'https://wa.me/' . preg_replace('/\D+/', '', $siteSettings[$setting]) : \App\Rules\SafeLink::sanitizeHttp($siteSettings[$setting]) }}"
+                                                        target="_blank" rel="noopener noreferrer"
+                                                        aria-label="{{ ucfirst($network) }}"><i
+                                                            class="fab fa-{{ $network === 'facebook' ? 'facebook-f' : ($network === 'linkedin' ? 'linkedin-in' : $network) }}"></i></a>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         @endunless
-        <div class="sticky-wrapper" data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
+        <div class="sticky-wrapper"
+            data-sticky-enabled="{{ $siteSettings['sticky_header'] ?? true ? 'true' : 'false' }}">
             <div class="menu-area">
                 <div class="container">
                     <div class="row align-items-center justify-content-between">
@@ -241,23 +261,29 @@
                             <div class="header-logo">
                                 <a href="{{ route('home') }}">
                                     @if (!empty($siteSettings['logo']))
-                                        <img src="{{ asset('storage/' . $siteSettings['logo']) }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                        <img src="{{ asset('storage/' . $siteSettings['logo']) }}"
+                                            alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
                                     @else
-                                        <span class="site-brand-wordmark">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
+                                        <span
+                                            class="site-brand-wordmark">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
                                     @endif
                                 </a>
                             </div>
                         </div>
                         <div class="col-auto">
-                            <nav class="main-menu d-none d-lg-inline-block"><ul>@include('frontend.partials.navigation')</ul></nav>
-                            <button type="button" class="th-menu-toggle d-block d-lg-none" aria-label="Open navigation"><i class="far fa-bars"></i></button>
+                            <nav class="main-menu d-none d-lg-inline-block">
+                                <ul>@include('frontend.partials.navigation')</ul>
+                            </nav>
+                            <button type="button" class="th-menu-toggle d-block d-lg-none"
+                                aria-label="Open navigation"><i class="far fa-bars"></i></button>
                         </div>
                         <div class="col-auto d-none d-xl-block">
                             <div class="header-button">
-                                <a href="{{ !empty($siteSettings['header_cta_url']) ? \App\Rules\SafeLink::sanitize($siteSettings['header_cta_url']) : route('contact') }}" class="th-btn bg-black {{ request()->routeIs('home') ? '' : 'radius' }}">
-                                    <i class="fa-regular fa-house-chimney me-2"></i> {{ $siteSettings['header_cta_label'] ?? 'Add Listing' }}
+                                <a href="{{ !empty($siteSettings['header_cta_url']) ? \App\Rules\SafeLink::sanitize($siteSettings['header_cta_url']) : route('contact') }}"
+                                    class="th-btn bg-black {{ request()->routeIs('home') ? '' : 'radius' }}">
+                                    <i class="fa-regular fa-house-chimney me-2"></i>
+                                    {{ $siteSettings['header_cta_label'] ?? 'Add Listing' }}
                                 </a>
-                                <button type="button" class="sidemenu-bar sideMenuInfo {{ request()->routeIs('home') ? 'pill' : '' }}" aria-label="Open information panel"><span></span><span></span><span></span></button>
                             </div>
                         </div>
                     </div>
@@ -270,32 +296,39 @@
     </main>
     <footer class="footer-wrapper {{ request()->routeIs('home') ? 'footer-layout1' : 'footer-default' }}">
         @if (request()->routeIs('home'))
-            <div class="footer-top-shape animation-infinite" data-bg-src="{{ asset('theme-assets/img/icon/footer-top-shape.png') }}"></div>
+            <div class="footer-top-shape animation-infinite"
+                data-bg-src="{{ asset('theme-assets/img/icon/footer-top-shape.png') }}"></div>
         @endif
-            <div class="widget-area">
+        <div class="widget-area">
             <div class="container">
                 @php
                     $footerMenu = \App\Models\Menu::cached($siteSettings['footer_menu_location'] ?? '');
-                    $footerQuickLinks = \App\Models\Menu::cached($siteSettings['footer_quick_links_menu_location'] ?? '');
+                    $footerQuickLinks = \App\Models\Menu::cached(
+                        $siteSettings['footer_quick_links_menu_location'] ?? '',
+                    );
                     $footerSupport = \App\Models\Menu::cached($siteSettings['footer_support_menu_location'] ?? '');
                 @endphp
 
                 <div class="footer-all-widget-wrapper">
                     <div class="footer-all-widget-item">
-                        
+
 
                         <div class="widget footer-widget">
                             @if (request()->routeIs('home'))
-                                <h3 class="widget_title">{{ $siteSettings['footer_about_heading'] ?? ('About ' . ($siteSettings['site_title'] ?? config('app.name'))) }}</h3>
+                                <h3 class="widget_title">
+                                    {{ $siteSettings['footer_about_heading'] ?? 'About ' . ($siteSettings['site_title'] ?? config('app.name')) }}
+                                </h3>
                             @endif
                             <div class="th-widget-about">
                                 @unless (request()->routeIs('home'))
                                     <div class="about-logo">
                                         <a href="{{ route('home') }}">
                                             @if (!empty($siteSettings['logo']))
-                                                <img src="{{ asset('storage/' . $siteSettings['logo']) }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                                <img src="{{ asset('storage/' . $siteSettings['logo']) }}"
+                                                    alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
                                             @else
-                                                <span class="site-brand-wordmark site-brand-wordmark--inverse">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
+                                                <span
+                                                    class="site-brand-wordmark site-brand-wordmark--inverse">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
                                             @endif
                                         </a>
                                     </div>
@@ -333,40 +366,57 @@
                                     <div class="about-logo">
                                         <a href="{{ route('home') }}">
                                             @if (!empty($siteSettings['logo']))
-                                                <img src="{{ asset('storage/' . $siteSettings['logo']) }}" alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
+                                                <img src="{{ asset('storage/' . $siteSettings['logo']) }}"
+                                                    alt="{{ $siteSettings['site_title'] ?? config('app.name') }}">
                                             @else
-                                                <span class="site-brand-wordmark site-brand-wordmark--inverse">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
+                                                <span
+                                                    class="site-brand-wordmark site-brand-wordmark--inverse">{{ $siteSettings['site_title'] ?? config('app.name') }}</span>
                                             @endif
                                         </a>
                                     </div>
                                 @endif
                             </div>
                         </div>
-                    
-                        
+
+
                     </div>
                     <div class="footer-all-widget-item">
                         <div class="footer-right-wrap">
                             <div class="footer-item-wrap">
                                 @php
                                     $footerFeaturedCategories = \App\Models\Category::query()
-                                        ->where('type', 'property')->where('is_active', true)->orderBy('name')->limit(5)->get();
-                                    $footerFeaturedProperties = \App\Models\Property::published()->where('is_featured', true)->latest()->limit(5)->get();
+                                        ->where('type', 'property')
+                                        ->where('is_active', true)
+                                        ->orderBy('name')
+                                        ->limit(5)
+                                        ->get();
+                                    $footerFeaturedProperties = \App\Models\Property::published()
+                                        ->where('is_featured', true)
+                                        ->latest()
+                                        ->limit(5)
+                                        ->get();
                                 @endphp
                                 <div class="footer-item">
                                     <div class="widget widget_nav_menu footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_featured_heading'] ?? 'Featured Houses' }}</h3>
+                                        <h3 class="widget_title">
+                                            {{ $siteSettings['footer_featured_heading'] ?? 'Featured Houses' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
                                                 @if ($footerMenu && $footerMenu->items->isNotEmpty())
-                                                    @include('frontend.partials.menu-items', ['items' => $footerMenu->items])
+                                                    @include('frontend.partials.menu-items', [
+                                                        'items' => $footerMenu->items,
+                                                    ])
                                                 @elseif ($footerFeaturedCategories->isNotEmpty())
                                                     @foreach ($footerFeaturedCategories as $footerCategory)
-                                                        <li><a href="{{ route('properties.index', ['category' => $footerCategory->slug]) }}">#{{ $footerCategory->name }}</a></li>
+                                                        <li><a
+                                                                href="{{ route('properties.index', ['category' => $footerCategory->slug]) }}">#{{ $footerCategory->name }}</a>
+                                                        </li>
                                                     @endforeach
                                                 @else
                                                     @foreach ($footerFeaturedProperties as $footerProperty)
-                                                        <li><a href="{{ route('properties.show', $footerProperty) }}">{{ $footerProperty->title }}</a></li>
+                                                        <li><a
+                                                                href="{{ route('properties.show', $footerProperty) }}">{{ $footerProperty->title }}</a>
+                                                        </li>
                                                     @endforeach
                                                 @endif
                                             </ul>
@@ -374,14 +424,17 @@
                                     </div>
                                 </div>
                                 <div class="footer-item">
-                                    
+
 
                                     <div class="widget widget_nav_menu footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_quick_links_heading'] ?? 'Quick Links' }}</h3>
+                                        <h3 class="widget_title">
+                                            {{ $siteSettings['footer_quick_links_heading'] ?? 'Quick Links' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
                                                 @if ($footerQuickLinks && $footerQuickLinks->items->isNotEmpty())
-                                                    @include('frontend.partials.menu-items', ['items' => $footerQuickLinks->items])
+                                                    @include('frontend.partials.menu-items', [
+                                                        'items' => $footerQuickLinks->items,
+                                                    ])
                                                 @else
                                                     <li><a href="{{ route('properties.index') }}">Properties</a></li>
                                                     <li><a href="{{ route('services.index') }}">Services</a></li>
@@ -392,21 +445,25 @@
                                             </ul>
                                         </div>
                                     </div>
-                                
-                                    
+
+
                                 </div>
                                 <div class="footer-item">
-                                    
+
 
                                     <div class="widget widget_nav_menu footer-widget">
-                                        <h3 class="widget_title">{{ $siteSettings['footer_support_heading'] ?? 'Support' }}</h3>
+                                        <h3 class="widget_title">
+                                            {{ $siteSettings['footer_support_heading'] ?? 'Support' }}</h3>
                                         <div class="menu-all-pages-container">
                                             <ul class="menu">
                                                 @if ($footerSupport && $footerSupport->items->isNotEmpty())
-                                                    @include('frontend.partials.menu-items', ['items' => $footerSupport->items])
+                                                    @include('frontend.partials.menu-items', [
+                                                        'items' => $footerSupport->items,
+                                                    ])
                                                 @else
                                                     <li><a href="{{ route('faq.index') }}">FAQs</a></li>
-                                                    <li><a href="{{ route('neighborhood-guides.index') }}">Neighborhood Guide</a></li>
+                                                    <li><a href="{{ route('neighborhood-guides.index') }}">Neighborhood
+                                                            Guide</a></li>
                                                     <li><a href="{{ route('gallery.index') }}">Gallery</a></li>
                                                     <li><a href="{{ route('contact') }}">Help Center</a></li>
                                                     <li><a href="{{ route('contact') }}">Contact Support</a></li>
@@ -414,64 +471,105 @@
                                             </ul>
                                         </div>
                                     </div>
-                                
-                                    
+
+
                                 </div>
-                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null) || !empty($siteSettings['site_address']))
+                                @if (
+                                    \App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null) ||
+                                        !empty($siteSettings['site_address']))
                                     <div class="footer-item">
                                         <div class="widget widget_banner footer-widget">
-                                            <h3 class="widget_title">{{ $siteSettings['footer_location_heading'] ?? 'Pillar Location' }}</h3>
+                                            <h3 class="widget_title">
+                                                {{ $siteSettings['footer_location_heading'] ?? 'Pillar Location' }}
+                                            </h3>
                                             <div class="widget-map">
-                                                <iframe src="{{ \App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null) ? \App\Rules\SafeLink::sanitizeHttp($siteSettings['footer_map_embed_url']) : 'https://www.google.com/maps?q=' . urlencode($siteSettings['site_address']) . '&output=embed' }}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                                <iframe
+                                                    src="{{ \App\Rules\SafeLink::isHttpUrl($siteSettings['footer_map_embed_url'] ?? null) ? \App\Rules\SafeLink::sanitizeHttp($siteSettings['footer_map_embed_url']) : 'https://www.google.com/maps?q=' . urlencode($siteSettings['site_address']) . '&output=embed' }}"
+                                                    loading="lazy"
+                                                    referrerpolicy="no-referrer-when-downgrade"></iframe>
                                             </div>
                                         </div>
                                     </div>
                                 @endif
                             </div>
                             @unless (request()->routeIs('home'))
-                            <div class="footer-right-bottom-wrap">
-                                <div class="footer-right-bottom-item help">
-                                    <div class="footer-right-bottom-item__thumb help"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-1.png') }}" alt=""></div>
-                                    <div class="footer-right-bottom-item__content"><h4 class="box-title"><a href="{{ route('contact') }}">{{ $siteSettings['footer_cta_text'] ?? 'Need help buying or selling?' }}</a></h4></div>
+                                <div class="footer-right-bottom-wrap">
+                                    <div class="footer-right-bottom-item help">
+                                        <div class="footer-right-bottom-item__thumb help"><img
+                                                src="{{ asset('theme-assets/img/icon/footer-default-icon-1-1.png') }}"
+                                                alt=""></div>
+                                        <div class="footer-right-bottom-item__content">
+                                            <h4 class="box-title"><a
+                                                    href="{{ route('contact') }}">{{ $siteSettings['footer_cta_text'] ?? 'Need help buying or selling?' }}</a>
+                                            </h4>
+                                        </div>
+                                    </div>
+                                    @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['app_store_url'] ?? null))
+                                        <div class="footer-right-bottom-item scan">
+                                            <div class="footer-right-bottom-item__thumb"><img
+                                                    src="{{ asset('theme-assets/img/icon/footer-default-icon-1-2.png') }}"
+                                                    alt=""></div>
+                                            <div class="footer-right-bottom-item__content">
+                                                <p>Download on the</p>
+                                                <h4 class="box-title"><a
+                                                        href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['app_store_url']) }}"
+                                                        target="_blank" rel="noopener noreferrer">App Store</a></h4>
+                                            </div>
+                                            <div class="footer-right-bottom-item__right"><img
+                                                    src="{{ asset('theme-assets/img/icon/footer-default-icon-1-2-scan.png') }}"
+                                                    alt="App Store QR code"></div>
+                                        </div>
+                                    @endif
+                                    @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['play_store_url'] ?? null))
+                                        <div class="footer-right-bottom-item scan">
+                                            <div class="footer-right-bottom-item__thumb"><img
+                                                    src="{{ asset('theme-assets/img/icon/footer-default-icon-1-3.png') }}"
+                                                    alt=""></div>
+                                            <div class="footer-right-bottom-item__content">
+                                                <p>GET IT ON</p>
+                                                <h4 class="box-title"><a
+                                                        href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['play_store_url']) }}"
+                                                        target="_blank" rel="noopener noreferrer">Google Play</a></h4>
+                                            </div>
+                                            <div class="footer-right-bottom-item__right"><img
+                                                    src="{{ asset('theme-assets/img/icon/footer-default-icon-1-2-scan.png') }}"
+                                                    alt="Google Play QR code"></div>
+                                        </div>
+                                    @endif
                                 </div>
-                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['app_store_url'] ?? null))
-                                <div class="footer-right-bottom-item scan">
-                                    <div class="footer-right-bottom-item__thumb"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-2.png') }}" alt=""></div>
-                                    <div class="footer-right-bottom-item__content"><p>Download on the</p><h4 class="box-title"><a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['app_store_url']) }}" target="_blank" rel="noopener noreferrer">App Store</a></h4></div><div class="footer-right-bottom-item__right"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-2-scan.png') }}" alt="App Store QR code"></div>
-                                </div>
-                                @endif
-                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['play_store_url'] ?? null))
-                                <div class="footer-right-bottom-item scan">
-                                    <div class="footer-right-bottom-item__thumb"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-3.png') }}" alt=""></div>
-                                    <div class="footer-right-bottom-item__content"><p>GET IT ON</p><h4 class="box-title"><a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['play_store_url']) }}" target="_blank" rel="noopener noreferrer">Google Play</a></h4></div><div class="footer-right-bottom-item__right"><img src="{{ asset('theme-assets/img/icon/footer-default-icon-1-2-scan.png') }}" alt="Google Play QR code"></div>
-                                </div>
-                                @endif
-                            </div>
                             @endunless
                             @if (request()->routeIs('home') && !empty($siteSettings['footer_gallery_images']))
-                            <div class="footer-bottom-community">
-                                <div class="content">
-                                    <p>{{ $siteSettings['footer_gallery_handle'] ?? '' }}</p>
-                                    <h4 class="box-title">{{ $siteSettings['footer_gallery_title'] ?? '' }}</h4>
+                                <div class="footer-bottom-community">
+                                    <div class="content">
+                                        <p>{{ $siteSettings['footer_gallery_handle'] ?? '' }}</p>
+                                        <h4 class="box-title">{{ $siteSettings['footer_gallery_title'] ?? '' }}</h4>
+                                    </div>
+                                    <div class="footer-gallery-wrapper">
+                                        @foreach ($siteSettings['footer_gallery_images'] ?? [] as $galleryImage)
+                                            @php
+                                                $galleryMedia = is_numeric($galleryImage)
+                                                    ? \App\Models\Media::query()->find((int) $galleryImage)
+                                                    : null;
+                                                $galleryImageUrl =
+                                                    $galleryMedia?->url ??
+                                                    (\Illuminate\Support\Str::startsWith((string) $galleryImage, [
+                                                        'http://',
+                                                        'https://',
+                                                    ])
+                                                        ? $galleryImage
+                                                        : asset(ltrim((string) $galleryImage, '/')));
+                                            @endphp
+                                            <div class="simple-gallery-card">
+                                                <div class="gallery-img">
+                                                    <img src="{{ $galleryImageUrl }}"
+                                                        alt="{{ $siteSettings['footer_gallery_title'] ?? ($siteSettings['site_title'] ?? '') }}">
+                                                    <a href="{{ $galleryImageUrl }}" class="icon-btn popup-image"><i
+                                                            class="fa-brands fa-instagram"></i></a>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
-                                <div class="footer-gallery-wrapper">
-                    @foreach(($siteSettings['footer_gallery_images'] ?? []) as $galleryImage)
-                        @php
-                            $galleryMedia = is_numeric($galleryImage) ? \App\Models\Media::query()->find((int) $galleryImage) : null;
-                            $galleryImageUrl = $galleryMedia?->url
-                                ?? (\Illuminate\Support\Str::startsWith((string) $galleryImage, ['http://', 'https://'])
-                                    ? $galleryImage
-                                    : asset(ltrim((string) $galleryImage, '/')));
-                        @endphp
-                        <div class="simple-gallery-card">
-                            <div class="gallery-img">
-                                <img src="{{ $galleryImageUrl }}" alt="{{ $siteSettings['footer_gallery_title'] ?? ($siteSettings['site_title'] ?? '') }}">
-                                <a href="{{ $galleryImageUrl }}" class="icon-btn popup-image"><i class="fa-brands fa-instagram"></i></a>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-                            </div>
                             @endif
                         </div>
                     </div>
@@ -486,7 +584,9 @@
                 <div class="row gy-3 justify-content-lg-between justify-content-center align-items-center">
                     <div class="col-lg-7">
                         <p class="copyright-text">
-                            Copyright <i class="fal fa-copyright"></i> {{ date('Y') }} {{ $siteSettings['footer_copyright'] ?? ($siteSettings['site_title'] ?? config('app.name')) }}. {{ $siteSettings['footer_rights_text'] ?? 'All Rights Reserved.' }}
+                            Copyright <i class="fal fa-copyright"></i> {{ date('Y') }}
+                            {{ $siteSettings['footer_copyright'] ?? ($siteSettings['site_title'] ?? config('app.name')) }}.
+                            {{ $siteSettings['footer_rights_text'] ?? 'All Rights Reserved.' }}
                         </p>
                     </div>
                     <div class="col-auto">
@@ -494,41 +594,47 @@
                             <p>{{ $siteSettings['footer_social_heading'] ?? 'Social Media:' }}</p>
                             <div class="th-social">
                                 @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_facebook'] ?? null))
-                                    <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_facebook']) }}" target="_blank" rel="noopener noreferrer">
+                                    <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_facebook']) }}"
+                                        target="_blank" rel="noopener noreferrer">
                                         <i class="fab fa-facebook-f">
                                         </i>
                                     </a>
-                                    @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_instagram'] ?? null))
-                                        <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_instagram']) }}" target="_blank"
-                                            rel="noopener noreferrer">
-                                            <i class="fab fa-instagram">
-                                            </i>
-                                        </a>
-                                        @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_linkedin'] ?? null))
-                                            <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_linkedin']) }}" target="_blank"
-                                                rel="noopener noreferrer">
-                                                <i class="fab fa-linkedin-in">
-                                                </i>
-                                            </a>
-                                            @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_youtube'] ?? null))
-                                                <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_youtube']) }}" target="_blank"
-                                                    rel="noopener noreferrer">
-                                                    <i class="fab fa-youtube">
-                                                    </i>
-                                                </a>
-                                                @endif @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_x'] ?? null))
-                                                    <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_x']) }}" target="_blank"
-                                                        rel="noopener noreferrer">
-                                                        <i class="fab fa-x-twitter">
-                                                        </i>
-                                                    </a>
-                                                    @endif @if (!empty($siteSettings['whatsapp_number']))
-                                                        <a href="https://wa.me/{{ preg_replace('/\D+/', '', $siteSettings['whatsapp_number']) }}"
-                                                            target="_blank" rel="noopener noreferrer">
-                                                            <i class="fab fa-whatsapp">
-                                                            </i>
-                                                        </a>
-                                                    @endif
+                                @endif
+                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_instagram'] ?? null))
+                                    <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_instagram']) }}"
+                                        target="_blank" rel="noopener noreferrer">
+                                        <i class="fab fa-instagram">
+                                        </i>
+                                    </a>
+                                @endif
+                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_linkedin'] ?? null))
+                                    <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_linkedin']) }}"
+                                        target="_blank" rel="noopener noreferrer">
+                                        <i class="fab fa-linkedin-in">
+                                        </i>
+                                    </a>
+                                @endif
+                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_youtube'] ?? null))
+                                    <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_youtube']) }}"
+                                        target="_blank" rel="noopener noreferrer">
+                                        <i class="fab fa-youtube">
+                                        </i>
+                                    </a>
+                                @endif
+                                @if (\App\Rules\SafeLink::isHttpUrl($siteSettings['social_x'] ?? null))
+                                    <a href="{{ \App\Rules\SafeLink::sanitizeHttp($siteSettings['social_x']) }}"
+                                        target="_blank" rel="noopener noreferrer">
+                                        <i class="fab fa-x-twitter">
+                                        </i>
+                                    </a>
+                                @endif
+                                @if (!empty($siteSettings['whatsapp_number']))
+                                    <a href="https://wa.me/{{ preg_replace('/\D+/', '', $siteSettings['whatsapp_number']) }}"
+                                        target="_blank" rel="noopener noreferrer">
+                                        <i class="fab fa-whatsapp">
+                                        </i>
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>

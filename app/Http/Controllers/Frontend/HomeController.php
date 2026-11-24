@@ -18,6 +18,7 @@ class HomeController extends Controller
 {
     public function __invoke()
     {
+        // dd('here');
         $homepage = Homepage::published()
             ->where('slug', 'home-9')
             ->with([
@@ -25,7 +26,7 @@ class HomeController extends Controller
             ])
             ->first();
 
-        abort_unless($homepage, 503, 'The fixed homepage is not published yet.');
+        // abort_unless($homepage, 503, 'The fixed homepage is not published yet.');
 
         $definitions = config('cms-sections.sections', []);
         $sectionConfigs = [];
@@ -66,7 +67,6 @@ class HomeController extends Controller
         $featuredProperties->loadMissing(['images', 'category']);
         $posts = $blogSection ?? Post::published()->with('author')->latest('published_at')->limit(6)->get();
         $posts->loadCount(['comments as approved_comments_count' => fn ($query) => $query->where('status', 'approved')]);
-
         return view('frontend.homepage', [
             'homepage' => $homepage,
             'homepageSectionConfigs' => $sectionConfigs,

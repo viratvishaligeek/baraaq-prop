@@ -19,14 +19,17 @@
     <div class="row g-3 mb-4">
         @forelse($dashboardCards as $card)
             <div class="col-6 col-xl-3">
-                <a class="stat-card h-100 d-block text-decoration-none text-reset" href="{{ $card['url'] }}" aria-label="View {{ $card['label'] }}">
+                <a class="stat-card h-100 d-block text-decoration-none text-reset" href="{{ $card['url'] }}"
+                    aria-label="View {{ $card['label'] }}">
                     <div class="stat-icon"><i class="fa {{ $card['icon'] }}"></i></div>
                     <div class="text-muted small">{{ $card['label'] }}</div>
                     <div class="stat-value">{{ number_format($card['value']) }}</div>
                 </a>
             </div>
         @empty
-            <div class="col-12"><div class="content-card text-muted">Dashboard metrics will appear here when data is available.</div></div>
+            <div class="col-12">
+                <div class="content-card text-muted">Dashboard metrics will appear here when data is available.</div>
+            </div>
         @endforelse
     </div>
 
@@ -39,7 +42,13 @@
                 </div>
                 <div class="table-responsive">
                     <table class="table align-middle mb-0" data-datatable>
-                        <thead><tr><th>Property</th><th>City</th><th>Status</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>City</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             @forelse($recentProperties as $property)
                                 <tr>
@@ -48,7 +57,9 @@
                                     <td>{{ ucfirst($property->status) }}</td>
                                 </tr>
                             @empty
-                                <tr><td colspan="3" class="text-center text-muted py-4">No properties yet.</td></tr>
+                                <tr>
+                                    <td colspan="3" class="text-center text-muted py-4">No properties yet.</td>
+                                </tr>
                             @endforelse
                         </tbody>
                     </table>
@@ -66,7 +77,8 @@
                     <div class="enquiry-row">
                         <div class="fw-semibold">{{ $enquiry->name }}</div>
                         <div class="small text-muted">
-                            {{ $enquiry->property?->title ?? 'General enquiry' }} · {{ $enquiry->created_at->diffForHumans() }}
+                            {{ $enquiry->property?->title ?? 'General enquiry' }} ·
+                            {{ $enquiry->created_at->diffForHumans() }}
                         </div>
                     </div>
                 @empty
@@ -85,7 +97,8 @@
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 border-bottom py-2">
                         <div>
                             <div class="fw-semibold">{{ $activity->description }}</div>
-                            <div class="small text-muted">{{ $activity->causer?->name ?? 'System' }} · {{ ucfirst($activity->event) }}</div>
+                            <div class="small text-muted">{{ $activity->causer?->name ?? 'System' }} ·
+                                {{ ucfirst($activity->event) }}</div>
                         </div>
                         <time class="small text-muted" datetime="{{ $activity->created_at->toIso8601String() }}">
                             {{ $activity->created_at->diffForHumans() }}

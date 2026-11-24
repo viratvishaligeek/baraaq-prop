@@ -14,7 +14,7 @@ class BuraaqhHomepageSeeder extends Seeder
 {
     public function run(): void
     {
-        $homepage = Homepage::withTrashed()->where('slug', 'home-9')->first();
+        $homepage = Homepage::where('slug', 'home-9')->first();
 
         if ($homepage?->trashed()) {
             return;
@@ -176,8 +176,7 @@ class BuraaqhHomepageSeeder extends Seeder
                 throw new RuntimeException('Home 9 section is not renderable: '.$key);
             }
 
-            $existingSection = HomepageSection::withTrashed()
-                ->where('homepage_id', $homepage->id)
+            $existingSection = HomepageSection::where('homepage_id', $homepage->id)
                 ->where('section_key', $key)
                 ->first();
 
