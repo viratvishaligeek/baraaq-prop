@@ -154,6 +154,19 @@
                                 This exact map will appear in the property details page. Existing latitude/longitude values are kept for legacy map features.
                             </div>
                             @error('map_url')<div class="text-danger small">{{ $message }}</div>@enderror
+                            <details class="mt-3">
+                                <summary class="small text-muted">Optional coordinates for legacy homepage map pins</summary>
+                                <div class="row g-3 mt-1">
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="latitude">Latitude</label>
+                                        <input class="form-control" type="number" step="any" min="-90" max="90" id="latitude" name="latitude" value="{{ old('latitude', $property->latitude) }}" placeholder="e.g. 28.6139">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="longitude">Longitude</label>
+                                        <input class="form-control" type="number" step="any" min="-180" max="180" id="longitude" name="longitude" value="{{ old('longitude', $property->longitude) }}" placeholder="e.g. 77.2090">
+                                    </div>
+                                </div>
+                            </details>
                         </div>
                     </div>
                 </div>
