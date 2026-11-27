@@ -95,7 +95,7 @@
         }
         .property-detail-vibrant .page-features .box-text {
             display:flex; align-items:center; gap:9px; color:var(--pd-navy);
-            font-weight:700; margin-bottom:14px;
+             font-size: 10px; margin-bottom:14px;
         }
         .property-detail-vibrant .page-features .box-text .icon { flex:0 0 20px; }
         .property-detail-vibrant .property-featured {

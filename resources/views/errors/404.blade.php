@@ -4,7 +4,7 @@
 @section('meta_robots', 'noindex, nofollow')
 @section('canonical_url', url()->current())
 @section('content')
-    <div class="breadcumb-wrapper" data-bg-src="{{ URL::asset('/theme-assets/img/bg/breadcrumb-bg.jpg') }}">
+    <div class="breadcumb-wrapper" data-bg-src="{{ URL::asset('/theme-assets/img/blog/breadcrumb-bg.jpg') }}">
         <div class="container">
             <div class="breadcumb-content">
                 <h1 class="breadcumb-title">Error Page</h1>

@@ -3,7 +3,7 @@
 @section('meta_description', $service->meta_description ?: $service->excerpt)
 @section('canonical_url', $service->canonical_url ?: route('services.show', $service))
 @section('content')
-    <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcrumb-bg.jpg') }}">
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/blog/breadcrumb-bg.jpg') }}">
         <div class="container">
             <div class="breadcumb-content">
                 <h1 class="breadcumb-title">{{ $service->title }}</h1>

@@ -447,7 +447,7 @@
                                 <p class="about-text">{{ $siteSettings['footer_description'] ?? '' }}</p>
                                 <div class="footer-info-wrap">
                                     <div class="footer-info">
-                                        <i class="fas fa-phone">
+                                        <i class="fas fa-phone text-success">
 
                                         </i>
                                         <p class="info-box_link">
@@ -465,7 +465,7 @@
                                         </p>
                                     </div>
                                     <div class="footer-info">
-                                        <i class="fas fa-location-dot">
+                                        <i class="fas fa-location-dot text-danger">
 
                                         </i>
                                         <p class="info-box_link">

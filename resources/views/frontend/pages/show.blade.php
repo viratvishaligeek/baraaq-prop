@@ -11,13 +11,13 @@
         'name' => $page->meta_title ?: $page->title,
         'description' => $page->meta_description ?: ($siteSettings['meta_description'] ?? ''),
         'url' => $canonicalUrl ?? (($isHomepage ?? false) ? route('home') : route('pages.show', $page)),
-    
+
         ];
     @endphp
     <script type="application/ld+json">{!! json_encode($structuredData, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) !!}</script>
 @endsection
 @section('content')
-    <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/bg/breadcumb-bg.jpg') }}">
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/blog/breadcumb-bg.jpg') }}">
         <div class="container">
             <div class="breadcumb-content">
                 <h1 class="breadcumb-title">{{ $page->title }}</h1>

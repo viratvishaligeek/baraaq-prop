@@ -25,7 +25,8 @@
                                 <img src="{{ Storage::disk('public')->url($post->featured_image) }}"
                                 alt="{{ $post->title }}">@else<div
                                     class="blog-image-placeholder bg-smoke d-flex align-items-center justify-content-center">
-                                    <span class="text-muted p-5">Article image pending</span></div>
+                                    <span class="text-muted p-5">Article image pending</span>
+                                </div>
                             @endif
                         </div>
                         <div class="blog-content">
@@ -136,7 +137,9 @@
                                         class="far fa-search"></i></button></form>
                         </div>
                         <div class="widget">
-                            <h3 class="widget_title" style="border: 1px solid #0000006b; text-align: center; padding: 10px; border-radius: 7px;">Featured Listings</h3>
+                            <h3 class="widget_title"
+                                style="border: 1px solid #0000006b; text-align: center; padding: 10px; border-radius: 7px;">
+                                Featured Listings</h3>
                             <div class="recent-post-wrap featured-listing">
                                 @forelse($sidebarProperties as $sidebarProperty)
                                     <div class="recent-post">
@@ -144,8 +147,9 @@
                                                 href="{{ route('properties.show', $sidebarProperty) }}">
                                                 @if ($sidebarProperty->featured_image)
                                                     <img src="{{ Storage::disk('public')->url($sidebarProperty->featured_image) }}"
-                                                    alt="{{ $sidebarProperty->title }}">@else<span
-                                                        class="property-image-placeholder bg-smoke d-block"></span>
+                                                        alt="{{ $sidebarProperty->title }}">
+                                                @else
+                                                    <span class="property-image-placeholder bg-smoke d-block"></span>
                                                 @endif
                                             </a>
                                         </div>
@@ -179,8 +183,7 @@
                                                     </h5>
                                                 </div>
                                             </div>
-                                            <div class="recent-post-meta"><a
-                                                class="price-red-shine"
+                                            <div class="recent-post-meta"><a class="price-red-shine"
                                                     href="{{ route('properties.show', $sidebarProperty) }}">{{ $sidebarProperty->price ? '₹ ' . number_format((float) $sidebarProperty->price, 0) : $sidebarProperty->price_label ?? 'Price on request' }}</a>
                                             </div>
                                         </div>

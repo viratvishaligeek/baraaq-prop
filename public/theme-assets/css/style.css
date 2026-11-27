@@ -36,7 +36,7 @@ body {
 
 body {
     font-family: var(--body-font);
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 400;
     color: var(--body-color);
     line-height: 26px;
@@ -234,37 +234,37 @@ h6 {
 
 .h1,
 h1 {
-    font-size: 80px;
+    font-size: 45px;
     line-height: 1.22
 }
 
 .h2,
 h2 {
-    font-size: 57px;
+    font-size: 35px;
     line-height: 1.263
 }
 
 .h3,
 h3 {
-    font-size: 40px;
+    font-size: 25px;
     line-height: 1.25
 }
 
 .h4,
 h4 {
-    font-size: 32px;
+    font-size: 20px;
     line-height: 1.5
 }
 
 .h5,
 h5 {
-    font-size: 24px;
+    font-size: 16px;
     line-height: 2
 }
 
 .h6,
 h6 {
-    font-size: 18px;
+    font-size: 15px;
     line-height: 1.77
 }
 
@@ -272,7 +272,7 @@ h6 {
 
     .h1,
     h1 {
-        font-size: 70px
+        font-size: 50px
     }
 }
 
@@ -280,32 +280,32 @@ h6 {
 
     .h1,
     h1 {
-        font-size: 45px
+        font-size: 35px
     }
 
     .h2,
     h2 {
-        font-size: 36px
+        font-size: 30px
     }
 
     .h3,
     h3 {
-        font-size: 30px
+        font-size: 25px
     }
 
     .h4,
     h4 {
-        font-size: 24px
+        font-size: 20px
     }
 
     .h5,
     h5 {
-        font-size: 20px
+        font-size: 16px
     }
 
     .h6,
     h6 {
-        font-size: 16px
+        font-size: 14px
     }
 }
 
@@ -313,32 +313,32 @@ h6 {
 
     .h1,
     h1 {
-        font-size: 40px
+        font-size: 30px
     }
 
     .h2,
     h2 {
-        font-size: 32px
+        font-size: 25px
     }
 
     .h3,
     h3 {
-        font-size: 26px
+        font-size: 20px
     }
 
     .h4,
     h4 {
-        font-size: 22px
+        font-size: 18px
     }
 
     .h5,
     h5 {
-        font-size: 18px
+        font-size: 15px
     }
 
     .h6,
     h6 {
-        font-size: 16px
+        font-size: 12px
     }
 }
 
@@ -346,12 +346,12 @@ h6 {
 
     .h1,
     h1 {
-        font-size: 34px
+        font-size: 28px
     }
 
     .h2,
     h2 {
-        font-size: 28px
+        font-size: 24px
     }
 }
 
@@ -359,7 +359,7 @@ h6 {
 
     .h1,
     h1 {
-        font-size: 32px
+        font-size: 28px
     }
 }
 
@@ -587,7 +587,7 @@ figure.wp-block-gallery {
 
 .wp-caption .wp-caption-text {
     margin: .5em 0;
-    font-size: 14px
+    font-size: 12px
 }
 
 .wp-block-media-text,
@@ -1151,7 +1151,7 @@ ul.wp-block-rss a {
 }
 
 .th-search .search-grid-title {
-    font-size: 20px;
+    font-size: 18px;
     margin-bottom: 5px;
     margin-top: 0
 }
@@ -3137,12 +3137,12 @@ textarea.is-invalid {
 }
 
 .th-btn.big-btn {
-    padding: 19px
+    padding: 16px
 }
 
 @media(max-width: 425px) {
     .th-btn.big-btn {
-        padding: 19px
+        padding: 16px
     }
 }
 
@@ -10042,7 +10042,7 @@ ol.wp-block-rss {
 
 .th-header.header-default.header-layout9 .menu-area {
     background: rgb(0 0 0 / 17%);
-    border-radius: 40px;
+    /* border-radius: 40px; */
     border-bottom: 1px #068fffa6 solid;
 }
 
@@ -17041,13 +17041,13 @@ ul.comment-list:has(>.th-comment-item~.th-comment-item):first-child>.th-post-com
     }
 
     .hero-style9 .hero-title {
-        font-size: 80px
+        font-size: 50px
     }
 }
 
 @media(max-width: 1399px) {
     .hero-style9 .hero-title {
-        font-size: 70px
+        font-size: 45px
     }
 
     .hero-style9 {
@@ -17065,7 +17065,7 @@ ul.comment-list:has(>.th-comment-item~.th-comment-item):first-child>.th-post-com
 
 @media(max-width: 1199px) {
     .hero-style9 .hero-title {
-        font-size: 50px
+        font-size: 30px
     }
 
     .hero-9-img {
@@ -17105,7 +17105,7 @@ ul.comment-list:has(>.th-comment-item~.th-comment-item):first-child>.th-post-com
 
 @media(max-width: 767px) {
     .hero-style9 .hero-title {
-        font-size: 45px;
+        font-size: 25px;
         margin-bottom: 15px
     }
 
@@ -17123,7 +17123,7 @@ ul.comment-list:has(>.th-comment-item~.th-comment-item):first-child>.th-post-com
     }
 
     .hero-style9 .hero-title {
-        font-size: 36px;
+        font-size: 30px;
         margin-bottom: 15px;
         line-height: 1.2
     }
@@ -17136,7 +17136,7 @@ ul.comment-list:has(>.th-comment-item~.th-comment-item):first-child>.th-post-com
 
 @media(max-width: 375px) {
     .hero-style9 .hero-title {
-        font-size: 30px;
+        font-size: 26px;
         margin-bottom: 13px
     }
 
@@ -29473,7 +29473,7 @@ input {
     display: flex;
     gap: 10px;
     margin: 0;
-    font-size: 14px;
+    font-size: 10px;
     font-weight: 500;
     border: 0.1px #00000087 solid;
     border-radius: 20px;
