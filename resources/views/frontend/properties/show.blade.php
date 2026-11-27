@@ -205,7 +205,7 @@
 
                                 @php
                                     $propertyPhone = preg_replace('/\\D+/', '', (string) ($siteSettings['site_phone'] ?? ''));
-                                    $propertyWhatsapp = preg_replace('/\\D+/', '', (string) ($siteSettings['whatsapp_number'] ?? ''));
+                                    $propertyWhatsapp = preg_replace('/\\D+/', '', (string) ($property->whatsapp_number ?? ''));
                                     $propertyContactNumber = $propertyPhone ?: $propertyWhatsapp;
                                 @endphp
                                 @if ($propertyContactNumber || $propertyWhatsapp)
