@@ -25,6 +25,9 @@ class SettingsController extends Controller
     {
         $data = $request->validate([
             'sticky_header' => ['sometimes', 'boolean'],
+            'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp,svg', 'max:5120'],
+            'logo_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
+            'remove_logo' => ['sometimes', 'boolean'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:1000'],
             'meta_keywords' => ['nullable', 'string', 'max:1000'],
@@ -59,6 +62,7 @@ class SettingsController extends Controller
         foreach ([
             'favicon_media_id' => 'favicon',
             'default_og_image_media_id' => 'default_og_image',
+            'logo_media_id' => 'logo',
         ] as $mediaField => $field) {
             if (! empty($data[$mediaField])) {
                 $selectedMediaPaths[$field] = Media::query()
@@ -72,7 +76,7 @@ class SettingsController extends Controller
 
         $uploads = [];
         $uploadedPaths = [];
-        foreach (['favicon', 'default_og_image'] as $field) {
+        foreach (['favicon', 'default_og_image', 'logo'] as $field) {
             if (! $request->hasFile($field)) {
                 continue;
             }
@@ -99,7 +103,7 @@ class SettingsController extends Controller
             }
         }
 
-        unset($data['favicon'], $data['default_og_image']);
+        unset($data['favicon'], $data['default_og_image'], $data['logo']);
         $data = array_merge($data, $selectedMediaPaths, $uploads);
         $data['sticky_header'] = $request->boolean('sticky_header');
 
@@ -114,7 +118,7 @@ class SettingsController extends Controller
                         'original_name' => $file->getClientOriginalName(),
                         'mime_type' => $file->getMimeType(),
                         'size' => $file->getSize(),
-                        'alt_text' => $field === 'favicon' ? 'Site favicon' : 'Default social sharing image',
+                        'alt_text' => $field === 'favicon' ? 'Site favicon' : ($field === 'logo' ? 'Website logo' : 'Default social sharing image'),
                     ]);
                 }
 
