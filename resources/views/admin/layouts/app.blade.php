@@ -16,7 +16,7 @@
 
 <body>
     <div class="admin-shell">
-        <aside class="sidebar">
+        <aside class="sidebar" id="admin-sidebar">
             <a class="brand" href="{{ route('admin.dashboard') }}">{{ config('app.name') }}</a>
             <div class="nav-label">CMS WORKSPACE</div>
             <details class="sidebar-group" @if (request()->routeIs('admin.dashboard') || request()->routeIs('admin.analytics.*')) open @endif>
@@ -231,9 +231,13 @@
                     </i> Sign out</button>
             </form>
         </aside>
+        <button type="button" class="sidebar-backdrop" aria-label="Close navigation" data-sidebar-close></button>
         <main class="main-panel">
             <header class="topbar">
-                <span class="text-muted small">Content management</span>
+                <div class="d-flex align-items-center gap-3">
+                    <button type="button" class="btn btn-outline-secondary sidebar-toggle d-md-none" aria-controls="admin-sidebar" aria-expanded="false" aria-label="Open navigation" data-sidebar-toggle><i class="fa-solid fa-bars"></i></button>
+                    <span class="text-muted small">Content management</span>
+                </div>
                 <span class="small fw-semibold">{{ auth()->user()->name }}</span>
             </header>
             <div class="page-content">
@@ -262,6 +266,38 @@
     <script src="https://cdn.datatables.net/2.3.4/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/3.0.7/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/3.0.7/js/responsive.bootstrap5.min.js"></script>
+    <script>
+        (function () {
+            const shell = document.querySelector('.admin-shell');
+            const toggle = document.querySelector('[data-sidebar-toggle]');
+            const closeControls = document.querySelectorAll('[data-sidebar-close]');
+            const sidebar = document.getElementById('admin-sidebar');
+            if (!shell || !toggle || !sidebar) return;
+            function setSidebarOpen(open) {
+                shell.classList.toggle('sidebar-open', open);
+                document.body.classList.toggle('sidebar-open', open);
+                toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                toggle.setAttribute('aria-label', open ? 'Close navigation' : 'Open navigation');
+            }
+            toggle.addEventListener('click', function () {
+                setSidebarOpen(!shell.classList.contains('sidebar-open'));
+            });
+            closeControls.forEach(function (control) {
+                control.addEventListener('click', function () { setSidebarOpen(false); });
+            });
+            sidebar.querySelectorAll('a').forEach(function (link) {
+                link.addEventListener('click', function () {
+                    if (window.matchMedia('(max-width: 767.98px)').matches) setSidebarOpen(false);
+                });
+            });
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') setSidebarOpen(false);
+            });
+            window.addEventListener('resize', function () {
+                if (window.innerWidth >= 768) setSidebarOpen(false);
+            });
+        })();
+    </script>
     <script src="{{ asset('admin/js/admin.js') }}"></script>
     @include('admin.partials.rich-text-editor')
     <script src="{{ asset('admin/js/slug-generator.js') }}"></script>
