@@ -4,6 +4,12 @@
 
 @section('content')
     @php
+        $logoPath = ltrim((string) ($settings['logo'] ?? ''), '/');
+        $logoUrl = $logoPath === '' ? '' : (\\App\\Rules\\SafeLink::isHttpUrl($logoPath)
+            ? $logoPath
+            : (\\Illuminate\\Support\\Str::startsWith($logoPath, 'theme-assets/')
+                ? asset($logoPath)
+                : Storage::disk('public')->url($logoPath)));
         $faviconPath = ltrim((string) ($settings['favicon'] ?? ''), '/');
         $faviconUrl = $faviconPath === '' ? '' : (\App\Rules\SafeLink::isHttpUrl($faviconPath)
             ? $faviconPath
