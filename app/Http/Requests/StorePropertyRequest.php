@@ -22,6 +22,20 @@ class StorePropertyRequest extends FormRequest
             if ($uploaded + $selected > 20) {
                 $validator->errors()->add('gallery', 'You can add up to 20 gallery images in total.');
             }
+
+            $mapUrl = trim((string) $this->input('map_url'));
+            if ($mapUrl !== '') {
+                $host = strtolower((string) parse_url($mapUrl, PHP_URL_HOST));
+                $path = strtolower((string) parse_url($mapUrl, PHP_URL_PATH));
+                $isGoogleHost = $host === 'google.com'
+                    || $host === 'google.co.in'
+                    || str_ends_with($host, '.google.com')
+                    || str_ends_with($host, '.google.co.in');
+
+                if (! $isGoogleHost || ! str_contains($path, '/maps/')) {
+                    $validator->errors()->add('map_url', 'Please paste a Google Maps embed URL (Share → Embed a map).');
+                }
+            }
         });
     }
 
