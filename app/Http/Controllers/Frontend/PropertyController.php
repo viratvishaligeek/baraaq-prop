@@ -101,6 +101,34 @@ class PropertyController extends Controller
             default => $query->latest('published_at'),
         };
 
+        $publishedProperties = Property::published();
+
+        $propertyTypes = (clone $publishedProperties)
+            ->whereNotNull('property_type')
+            ->where('property_type', '!=', '')
+            ->distinct()
+            ->orderBy('property_type')
+            ->pluck('property_type');
+
+        $cities = (clone $publishedProperties)
+            ->whereNotNull('city')
+            ->where('city', '!=', '')
+            ->distinct()
+            ->orderBy('city')
+            ->pluck('city');
+
+        $priceMin = (float) ((clone $publishedProperties)->whereNotNull('price')->min('price') ?? 0);
+        $priceMax = (float) ((clone $publishedProperties)->whereNotNull('price')->max('price') ?? 0);
+        if ($priceMax <= $priceMin) {
+            $priceMax = $priceMin + 1000;
+        }
+
+        $bedroomMin = (int) ((clone $publishedProperties)->whereNotNull('bedrooms')->min('bedrooms') ?? 0);
+        $bedroomMax = (int) ((clone $publishedProperties)->whereNotNull('bedrooms')->max('bedrooms') ?? 5);
+        $bedroomOptions = $bedroomMin <= $bedroomMax
+            ? range(max(0, $bedroomMin), max(max(0, $bedroomMin), $bedroomMax))
+            : range(0, 5);
+
         return view('frontend.properties.index', [
             'properties' => $query->paginate(12)->withQueryString(),
             'featuredProperties' => Property::published()->where('is_featured', true)->with('category:id,name')->latest('published_at')->limit(3)->get(),
@@ -110,6 +138,11 @@ class PropertyController extends Controller
                 ->orderBy('sort_order')
                 ->orderBy('name')
                 ->get(),
+            'propertyTypes' => $propertyTypes,
+            'cities' => $cities,
+            'priceMin' => $priceMin,
+            'priceMax' => $priceMax,
+            'bedroomOptions' => $bedroomOptions,
         ]);
     }
 
