@@ -68,6 +68,7 @@
             transition:transform .2s ease,box-shadow .2s ease;
         }
         .property-detail-vibrant .property-contact-btn:hover { transform:translateY(-2px); color:#fff; }
+        .property-detail-vibrant .property-contact-btn:only-child { grid-column:1 / -1; }
         .property-detail-vibrant .property-contact-btn.call {
             background:linear-gradient(135deg,#17499e,#09265f);
         }
@@ -204,7 +205,7 @@
 
                                 @php
                                     $propertyPhone = preg_replace('/\\D+/', '', (string) ($siteSettings['site_phone'] ?? ''));
-                                    $propertyWhatsapp = preg_replace('/\\D+/', '', (string) ($siteSettings['whatsapp_number'] ?? $siteSettings['site_phone'] ?? ''));
+                                    $propertyWhatsapp = preg_replace('/\\D+/', '', (string) ($siteSettings['whatsapp_number'] ?? ''));
                                     $propertyContactNumber = $propertyPhone ?: $propertyWhatsapp;
                                 @endphp
                                 @if ($propertyContactNumber || $propertyWhatsapp)
