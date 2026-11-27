@@ -4,6 +4,12 @@
 
 @section('content')
     @php
+        $logoPath = ltrim((string) ($settings['logo'] ?? ''), '/');
+        $logoUrl = $logoPath === '' ? '' : (\App\Rules\SafeLink::isHttpUrl($logoPath)
+            ? $logoPath
+            : (\Illuminate\Support\Str::startsWith($logoPath, 'theme-assets/')
+                ? asset($logoPath)
+                : Storage::disk('public')->url($logoPath)));
         $faviconPath = ltrim((string) ($settings['favicon'] ?? ''), '/');
         $faviconUrl = $faviconPath === '' ? '' : (\App\Rules\SafeLink::isHttpUrl($faviconPath)
             ? $faviconPath
@@ -25,6 +31,33 @@
     <form method="POST" enctype="multipart/form-data" action="{{ route('admin.settings.update') }}">
         @csrf
         @method('PUT')
+
+        <div class="content-card mb-4">
+            <h4 class="mb-3">Website logo</h4>
+            <p class="text-muted small">Upload your site logo or select an existing image from the Media Library. It will replace the text/logo mark in the public website header.</p>
+            <input type="hidden" name="logo_media_id" id="media-site-logo" data-remove-flag-id="remove-site-logo">
+            <input type="hidden" name="remove_logo" id="remove-site-logo" value="0">
+            <div class="row g-3 align-items-end">
+                <div class="col-lg-6">
+                    <label class="form-label" for="site-logo-upload">Upload logo image</label>
+                    <input class="form-control" type="file" id="site-logo-upload" name="logo" accept=".png,.jpg,.jpeg,.webp,.svg,image/png,image/jpeg,image/webp,image/svg+xml">
+                    <div class="form-text">PNG, JPG, WEBP or SVG; maximum 5 MB. A transparent PNG/SVG works best.</div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary" data-open-media-picker data-target="media-site-logo">Choose from Media Library</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-clear-media data-target="media-site-logo">Remove selected logo</button>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="border rounded bg-light p-3 d-inline-flex align-items-center" style="min-height:88px;min-width:180px">
+                        <img src="{{ $logoUrl }}" alt="Current website logo" style="max-width:240px;max-height:64px;object-fit:contain" data-media-preview @if (empty($settings['logo'])) hidden @endif>
+                        @if (empty($settings['logo']))<span class="text-muted small">No logo uploaded — site title is displayed.</span>@endif
+                        <span class="small text-muted ms-2" data-media-meta></span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="content-card mb-4">
             <h4 class="mb-3">Favicon</h4>

@@ -29,6 +29,7 @@ class Property extends Model
         'postal_code',
         'latitude',
         'longitude',
+        'map_url',
         'description',
         'meta_title',
         'meta_description',

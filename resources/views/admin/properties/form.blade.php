@@ -144,21 +144,29 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="latitude">Latitude</label>
-                            <input class="form-control" type="number" step="any" min="-90" max="90"
-                                id="latitude" name="latitude" value="{{ old('latitude', $property->latitude) }}"
-                                placeholder="e.g. 28.6139">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label" for="longitude">Longitude</label>
-                            <input class="form-control" type="number" step="any" min="-180" max="180"
-                                id="longitude" name="longitude" value="{{ old('longitude', $property->longitude) }}"
-                                placeholder="e.g. 77.2090">
-                        </div>
                         <div class="col-12">
-                            <small class="text-muted">Coordinates place this listing on the Home 3 property map. Leave both
-                                blank to omit it from the map.</small>
+                            <label class="form-label" for="map_url">Google Maps Embed URL</label>
+                            <input class="form-control" type="url" id="map_url" name="map_url"
+                                value="{{ old('map_url', $property->map_url) }}"
+                                placeholder="https://www.google.com/maps/embed?pb=...">
+                            <div class="form-text">
+                                Open Google Maps, choose Share → Embed a map → Copy HTML, then paste only the iframe src URL here.
+                                This exact map will appear in the property details page. Existing latitude/longitude values are kept for legacy map features.
+                            </div>
+                            @error('map_url')<div class="text-danger small">{{ $message }}</div>@enderror
+                            <details class="mt-3">
+                                <summary class="small text-muted">Optional coordinates for legacy homepage map pins</summary>
+                                <div class="row g-3 mt-1">
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="latitude">Latitude</label>
+                                        <input class="form-control" type="number" step="any" min="-90" max="90" id="latitude" name="latitude" value="{{ old('latitude', $property->latitude) }}" placeholder="e.g. 28.6139">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="longitude">Longitude</label>
+                                        <input class="form-control" type="number" step="any" min="-180" max="180" id="longitude" name="longitude" value="{{ old('longitude', $property->longitude) }}" placeholder="e.g. 77.2090">
+                                    </div>
+                                </div>
+                            </details>
                         </div>
                     </div>
                 </div>
