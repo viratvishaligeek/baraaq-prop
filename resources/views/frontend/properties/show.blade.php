@@ -16,6 +16,116 @@
         }
     @endphp
 
+
+    <style>
+        .property-detail-vibrant {
+            --pd-navy: #102b61;
+            --pd-blue: #123f91;
+            --pd-gold: #f2b632;
+            --pd-red: #f12d2d;
+            --pd-ink: #14213d;
+        }
+        .property-detail-vibrant .property-meta-wrap {
+            display:flex; align-items:center; justify-content:space-between; gap:14px;
+            flex-wrap:wrap; margin-bottom:22px !important;
+        }
+        .property-detail-vibrant .property-meta {
+            display:flex; align-items:center; gap:12px 18px; flex-wrap:wrap;
+        }
+        .property-detail-vibrant .property-meta > span {
+            display:inline-flex; align-items:center; gap:8px; color:var(--pd-ink);
+            font-size:14px; font-weight:600;
+        }
+        .property-detail-vibrant .property-meta > span i { color:var(--pd-red); }
+        .property-detail-vibrant .property-meta .property-tag {
+            background:linear-gradient(135deg,#ff514b,#e91f28); color:#fff;
+            border-radius:30px; padding:9px 19px; font-weight:700;
+            box-shadow:0 6px 15px rgba(241,45,45,.18);
+        }
+        .property-detail-vibrant .wishlist-icon .icon-btn {
+            border:2px solid #e8e8e8; background:#fff; color:#444;
+            width:48px; height:48px; border-radius:50%;
+        }
+        .property-detail-vibrant .property-contact-highlight {
+            display:flex; align-items:center; gap:14px; padding:14px 18px;
+            border:2px solid #f4c64e; border-radius:18px;
+            background:linear-gradient(110deg,#fff9e8,#fffdf7);
+            color:var(--pd-navy); margin:0 0 18px;
+        }
+        .property-detail-vibrant .property-contact-highlight .contact-icon {
+            flex:0 0 48px; width:48px; height:48px; display:grid; place-items:center;
+            border-radius:50%; background:var(--pd-navy); color:#fff; font-size:21px;
+        }
+        .property-detail-vibrant .property-contact-highlight strong { color:var(--pd-blue); }
+        .property-detail-vibrant .property-contact-actions {
+            display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px;
+            margin-bottom:30px;
+        }
+        .property-detail-vibrant .property-contact-btn {
+            min-height:66px; display:flex; align-items:center; justify-content:center;
+            gap:12px; border-radius:18px; color:#fff !important; font-size:20px;
+            font-weight:800; box-shadow:0 9px 18px rgba(16,43,97,.15);
+            transition:transform .2s ease,box-shadow .2s ease;
+        }
+        .property-detail-vibrant .property-contact-btn:hover { transform:translateY(-2px); color:#fff; }
+        .property-detail-vibrant .property-contact-btn.call {
+            background:linear-gradient(135deg,#17499e,#09265f);
+        }
+        .property-detail-vibrant .property-contact-btn.whatsapp {
+            background:linear-gradient(135deg,#18c653,#079b3c);
+        }
+        .property-detail-vibrant .property-heading-row {
+            display:flex; align-items:center; gap:16px; margin-bottom:10px;
+        }
+        .property-detail-vibrant .property-heading-row .page-title {
+            color:var(--pd-ink); margin:0; white-space:nowrap;
+        }
+        .property-detail-vibrant .property-heading-line {
+            height:4px; flex:1; border-radius:5px; background:var(--pd-gold);
+        }
+        .property-detail-vibrant .property-price {
+            display:block; color:var(--pd-ink) !important; font-size:clamp(28px,4vw,44px);
+            font-weight:800; line-height:1.15; margin:0 0 20px;
+        }
+        .property-detail-vibrant .property-price::after { display:none; }
+        .property-detail-vibrant .page-features {
+            padding:17px 18px; border:1px solid #e8edf5; border-radius:16px;
+            background:#f8faff; margin-bottom:22px;
+        }
+        .property-detail-vibrant .page-features .box-text {
+            display:flex; align-items:center; gap:9px; color:var(--pd-navy);
+            font-weight:700; margin-bottom:14px;
+        }
+        .property-detail-vibrant .page-features .box-text .icon { flex:0 0 20px; }
+        .property-detail-vibrant .property-featured {
+            display:flex; flex-wrap:wrap; gap:12px 20px; margin:0; padding:0;
+        }
+        .property-detail-vibrant .property-featured li {
+            display:flex; align-items:center; gap:7px; color:#526078; font-weight:600;
+        }
+        .property-detail-vibrant .property-featured .icon img { width:19px; height:19px; }
+        @media(max-width:575px) {
+            .property-detail-vibrant .property-meta-wrap { gap:10px; margin-bottom:18px !important; }
+            .property-detail-vibrant .property-meta { gap:9px 12px; }
+            .property-detail-vibrant .property-meta > span { font-size:12px; }
+            .property-detail-vibrant .property-meta .property-tag { padding:7px 13px; }
+            .property-detail-vibrant .wishlist-icon .icon-btn { width:40px; height:40px; }
+            .property-detail-vibrant .property-contact-highlight { padding:11px 12px; gap:10px; border-radius:14px; }
+            .property-detail-vibrant .property-contact-highlight .contact-icon { width:40px; height:40px; flex-basis:40px; font-size:18px; }
+            .property-detail-vibrant .property-contact-highlight span { font-size:13px; line-height:1.45; }
+            .property-detail-vibrant .property-contact-actions { gap:9px; margin-bottom:25px; }
+            .property-detail-vibrant .property-contact-btn { min-height:54px; gap:7px; border-radius:13px; font-size:14px; }
+            .property-detail-vibrant .property-contact-btn i { font-size:18px; }
+            .property-detail-vibrant .property-heading-row { gap:9px; }
+            .property-detail-vibrant .property-heading-row .page-title { font-size:21px; white-space:normal; }
+            .property-detail-vibrant .property-heading-line { height:3px; min-width:20px; }
+            .property-detail-vibrant .property-price { font-size:30px; margin-bottom:16px; }
+            .property-detail-vibrant .page-features { padding:13px; border-radius:13px; }
+            .property-detail-vibrant .property-featured { gap:10px 14px; }
+            .property-detail-vibrant .property-featured li { font-size:12px; }
+        }
+    </style>
+
     <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/blog/breadcrumb-bg.jpg') }}">
         <div class="container">
             <div class="breadcumb-content">
@@ -75,23 +185,53 @@
                                     class="far fa-arrow-left"></i></button> <button data-slider-next="#panoramaSlide2"
                                 class="slider-arrow slider-next"><i class="far fa-arrow-right"></i></button>
                         </div>
-                        <div class="property-page-single">
+                        <div class="property-page-single property-detail-vibrant">
                             <div class="page-content">
-                                <div class="property-meta-wrap mb-55 fadeinup wow">
+                                <div class="property-meta-wrap fadeinup wow">
                                     <div class="property-meta">
                                         @if ($property->is_featured)
                                             <span class="property-tag">Featured</span>
-                                        @endif <span><i class="fa-solid fa-calendar-days"></i>
-                                            {{ $property->published_at?->format('d M, Y') ?? '—' }}</span> <span><i
-                                                class="fa-solid fa-location-dot"></i>
+                                        @endif
+                                        <span><i class="fa-solid fa-calendar-days"></i>
+                                            {{ $property->published_at?->format('d M, Y') ?? '—' }}</span>
+                                        <span><i class="fa-solid fa-location-dot"></i>
                                             {{ $property->city ?: 'Bareilly' }}</span>
                                     </div>
-                                    <div class="wishlist-icon"><a href="#" class="icon-btn"><i
-                                                class="fa-solid fa-heart"></i></a></div>
+                                    <div class="wishlist-icon">
+                                        <a href="#" class="icon-btn" aria-label="Add property to favourites"><i class="fa-solid fa-heart"></i></a>
+                                    </div>
                                 </div>
+
+                                @php
+                                    $propertyPhone = preg_replace('/\\D+/', '', (string) ($siteSettings['site_phone'] ?? ''));
+                                    $propertyWhatsapp = preg_replace('/\\D+/', '', (string) ($siteSettings['whatsapp_number'] ?? $siteSettings['site_phone'] ?? ''));
+                                    $propertyContactNumber = $propertyPhone ?: $propertyWhatsapp;
+                                @endphp
+                                @if ($propertyContactNumber || $propertyWhatsapp)
+                                    <div class="property-contact-highlight fadeinup wow">
+                                        <div class="contact-icon"><i class="fa-solid fa-headset"></i></div>
+                                        <span>For more details about this property, <strong>contact our team directly.</strong></span>
+                                    </div>
+                                    <div class="property-contact-actions fadeinup wow">
+                                        @if ($propertyContactNumber)
+                                            <a class="property-contact-btn call" href="tel:{{ $propertyContactNumber }}">
+                                                <i class="fa-solid fa-phone"></i><span>Call Now</span>
+                                            </a>
+                                        @endif
+                                        @if ($propertyWhatsapp)
+                                            <a class="property-contact-btn whatsapp" href="https://wa.me/{{ $propertyWhatsapp }}?text={{ rawurlencode('Hello, I am interested in ' . $property->title . ' (' . route('properties.show', $property) . ')') }}" target="_blank" rel="noopener noreferrer">
+                                                <i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span>
+                                            </a>
+                                        @endif
+                                    </div>
+                                @endif
+
                                 <div class="page-title-wrap fadeinup wow mb-0">
-                                    <h2 class="page-title mb-2">About This Property</h2>
-                                    <h4 class="page-title price-red-shine">
+                                    <div class="property-heading-row">
+                                        <h2 class="page-title">About This Property</h2>
+                                        <span class="property-heading-line"></span>
+                                    </div>
+                                    <h4 class="property-price">
                                         {{ $property->price ? '₹ ' . number_format((float) $property->price, 2) : $property->price_label ?? 'Price on request' }}
                                     </h4>
                                 </div>
@@ -104,16 +244,15 @@
                                     </div>
                                     <ul class="property-featured">
                                         <li>
-                                            <div class="icon"><img src="{{ asset('theme-assets/img/icon/bed.svg') }}"
-                                                    alt="icon"></div>Bed {{ $property->bedrooms ?? '—' }}
+                                            <div class="icon"><img src="{{ asset('theme-assets/img/icon/bed.svg') }}" alt="Bedrooms"></div>
+                                            Bed {{ $property->bedrooms ?? '—' }}
                                         </li>
                                         <li>
-                                            <div class="icon"><img src="{{ asset('theme-assets/img/icon/bath.svg') }}"
-                                                    alt="icon"></div>Bath {{ $property->bathrooms ?? '—' }}
+                                            <div class="icon"><img src="{{ asset('theme-assets/img/icon/bath.svg') }}" alt="Bathrooms"></div>
+                                            Bath {{ $property->bathrooms ?? '—' }}
                                         </li>
                                         <li>
-                                            <div class="icon"><img src="{{ asset('theme-assets/img/icon/sqft.svg') }}"
-                                                    alt="icon"></div>
+                                            <div class="icon"><img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="Area"></div>
                                             {{ $property->area ? number_format((float) $property->area) . ' ' . ($property->area_unit ?? 'sqft') : '—' }}
                                         </li>
                                     </ul>
