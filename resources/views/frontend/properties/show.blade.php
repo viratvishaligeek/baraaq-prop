@@ -469,9 +469,16 @@
                                 <h3 class="page-title mt-50 mb-30 fadeinup wow">Location</h3>
                                 <div class="location-map fadeinup wow">
                                     <div class="contact-map">
-                                        @if ($property->latitude && $property->longitude)
+                                        @if ($property->map_url)
+                                            <iframe
+                                                src="{{ $property->map_url }}"
+                                                title="Map location for {{ $property->title }}"
+                                                allowfullscreen="" loading="lazy"
+                                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                                        @elseif ($property->latitude !== null && $property->longitude !== null)
                                             <iframe
                                                 src="https://www.google.com/maps?q={{ $property->latitude }},{{ $property->longitude }}&output=embed"
+                                                title="Map location for {{ $property->title }}"
                                                 allowfullscreen="" loading="lazy"
                                                 referrerpolicy="no-referrer-when-downgrade"></iframe>
                                         @endif
