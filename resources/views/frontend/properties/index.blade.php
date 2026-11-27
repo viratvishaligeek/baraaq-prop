@@ -93,8 +93,8 @@
                                             <input type="range" id="property-min-price-range" min="{{ $priceMin }}" max="{{ $priceMax }}" step="1000" value="{{ request('min_price', $priceMin) }}">
                                             <input type="range" id="property-max-price-range" min="{{ $priceMin }}" max="{{ $priceMax }}" step="1000" value="{{ request('max_price', $priceMax) }}">
                                         </div>
-                                        <input type="hidden" name="min_price" id="property-min-price" value="{{ request('min_price', $priceMin) }}">
-                                        <input type="hidden" name="max_price" id="property-max-price" value="{{ request('max_price', $priceMax) }}">
+                                        <input type="hidden" name="min_price" id="property-min-price" value="{{ request('min_price') }}">
+                                        <input type="hidden" name="max_price" id="property-max-price" value="{{ request('max_price') }}">
                                     </div>
                                 </div>
                                 <div class="advance-btn-wrapper">
@@ -150,7 +150,7 @@
             const maxLabel = document.getElementById('property-max-price-label');
             const money = value => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(value);
 
-            function syncPriceRange(changed) {
+            function syncPriceRange(changed, updateFields) {
                 let low = Number(minRange.value);
                 let high = Number(maxRange.value);
                 if (low > high) {
@@ -159,14 +159,16 @@
                 }
                 minRange.value = low;
                 maxRange.value = high;
-                minField.value = low;
-                maxField.value = high;
+                if (updateFields) {
+                    minField.value = low;
+                    maxField.value = high;
+                }
                 minLabel.textContent = money(low);
                 maxLabel.textContent = money(high);
             }
-            minRange.addEventListener('input', () => syncPriceRange('min'));
-            maxRange.addEventListener('input', () => syncPriceRange('max'));
-            syncPriceRange();
+            minRange.addEventListener('input', () => syncPriceRange('min', true));
+            maxRange.addEventListener('input', () => syncPriceRange('max', true));
+            syncPriceRange(null, false);
 
             const minBedrooms = document.getElementById('min_bedrooms');
             const maxBedrooms = document.getElementById('max_bedrooms');
