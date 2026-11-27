@@ -20,487 +20,166 @@
         </div>
     </div>
     <div class="search-area">
-        <form action="https://html.themehour.net/submit-form">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-xxl-10">
-                        <div class="search-wrap">
-                            <div class="row">
-                                <div class="search-wrap-area-top">
-                                    <ul class="nav nav-tabs custom" id="myTab" role="tablist">
-                                        <li class="nav-item" role="presentation"><button class="nav-link active"
-                                                id="buy-tab" data-bs-toggle="tab" data-bs-target="#buy" type="button"
-                                                role="tab" aria-controls="buy" aria-selected="true">Buy</button></li>
-                                        <li class="nav-item" role="presentation"><button class="nav-link" id="sell-tab"
-                                                data-bs-toggle="tab" data-bs-target="#sell" type="button" role="tab"
-                                                aria-controls="sell" aria-selected="false">Sell</button></li>
-                                        <li class="nav-item" role="presentation"><button class="nav-link" id="rent-tab"
-                                                data-bs-toggle="tab" data-bs-target="#rent" type="button" role="tab"
-                                                aria-controls="rent" aria-selected="false">Rent</button></li>
-                                    </ul>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xxl-10">
+                    <div class="search-wrap">
+                        <div class="search-wrap-area-top">
+                            <ul class="nav nav-tabs custom" id="propertySearchTabs" role="tablist">
+                                <li class="nav-item" role="presentation"><button class="nav-link active" type="button" data-listing-type="sale" aria-pressed="true">Buy</button></li>
+                                <li class="nav-item" role="presentation"><button class="nav-link" type="button" data-listing-type="rent" aria-pressed="false">Rent</button></li>
+                                <li class="nav-item" role="presentation"><button class="nav-link" type="button" data-listing-type="lease" aria-pressed="false">Lease</button></li>
+                            </ul>
+                        </div>
+                        <form method="GET" action="{{ route('properties.index') }}" id="property-search-form">
+                            <input type="hidden" name="listing_type" id="property-listing-type" value="{{ request('listing_type', 'sale') }}">
+                            <div class="select-group-wrapper">
+                                <div class="form-group">
+                                    <label for="property-keyword">Keyword</label>
+                                    <input class="form-control" type="search" id="property-keyword" name="q" value="{{ request('q') }}" placeholder="Property name, reference or keyword">
                                 </div>
-                                <div class="tab-content" id="myTabContent">
-                                    <div class="tab-pane fade show active" id="buy" role="tabpanel"
-                                        aria-labelledby="buy-tab">
-                                        <div class="select-group-wrapper">
-                                            <div class="form-group"><label for="property_type">Property Type</label>
-                                                <select name="property_type" id="property_type"
-                                                    class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected" hidden>
-                                                        Select Property Type</option>
-                                                    <option value="apartment">Apartment</option>
-                                                    <option value="house">House</option>
-                                                    <option value="villa">Villa</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group"><label for="room_type">Room Type</label> <select
-                                                    name="room_type" id="room_type" class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected" hidden>
-                                                        Select Room Type</option>
-                                                    <option value="single">Single Room</option>
-                                                    <option value="double">Double Room</option>
-                                                    <option value="suite">Suite</option>
-                                                </select></div>
-                                            <div class="form-group"><label for="mini_area">Mini Area (Sqft)</label>
-                                                <select name="mini_area" id="mini_area" class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected" hidden>
-                                                        Select Area</option>
-                                                    <option value="500">500 Sqft</option>
-                                                    <option value="1000">1000 Sqft</option>
-                                                    <option value="1500">1500 Sqft</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group"><label for="max_area">Max Area (Sqft)</label>
-                                                <select name="max_area" id="max_area" class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected" hidden>
-                                                        Select Max Area</option>
-                                                    <option value="2000">2000 Sqft</option>
-                                                    <option value="3000">3000 Sqft</option>
-                                                    <option value="4000">4000 Sqft</option>
-                                                </select>
-                                            </div>
-                                            <div class="advance-btn-wrapper">
-                                                <div class="advance-search-btn advance-search-active">
-                                                    <div class="search-btn-item"><a
-                                                            class="th-btn radius outline w-100">Advanced Search <i
-                                                                class="fa-solid fa-sliders"></i></a></div>
-                                                </div>
-                                            </div>
-                                            <div class="advance-search-wrapper">
-                                                <div class="form-group"><label for="Amenities">Amenities</label> <select
-                                                        name="Amenities" id="Amenities" class="form-select nice-select">
-                                                        <option value="1" disabled="disabled" selected="selected"
-                                                            hidden>Select Amenities</option>
-                                                        <option value="2">Gymnasium</option>
-                                                        <option value="3">Swiming Pool</option>
-                                                    </select></div>
-                                                <div class="form-group"><label for="Garage">Garage</label> <select
-                                                        name="Garage" id="Garage" class="form-select nice-select">
-                                                        <option value="" disabled="disabled" selected="selected"
-                                                            hidden>
-                                                            Select Garage</option>
-                                                        <option value="1">Small Garage</option>
-                                                        <option value="2">Large Garage</option>
-                                                        <option value="3">Extra Large Garage</option>
-                                                    </select></div>
-                                                <div class="form-group"><label for="Floor_Level">Floor Level</label>
-                                                    <select name="Floor_Level" id="Floor_Level"
-                                                        class="form-select nice-select">
-                                                        <option value="Floor_Level" disabled="disabled"
-                                                            selected="selected" hidden>Select Floor Level</option>
-                                                        <option value="1">Ground Floor</option>
-                                                        <option value="2">Middle Floor</option>
-                                                        <option value="3">Top Floor</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group"><label for="parking_spaces">Parking
-                                                        Spaces</label> <select name="parking_spaces" id="parking_spaces"
-                                                        class="form-select nice-select">
-                                                        <option value="" disabled="disabled" selected="selected"
-                                                            hidden>
-                                                            Select Parking Spaces</option>
-                                                        <option value="1">No Parking</option>
-                                                        <option value="2">2 Space</option>
-                                                        <option value="3">3 Spaces</option>
-                                                    </select></div>
-                                            </div>
-                                            <div class="form-group"><label for="max_bedrooms1">Max of Bedrooms</label>
-                                                <select name="max_bedrooms" id="max_bedrooms1"
-                                                    class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Max Bedrooms</option>
-                                                    <option value="1">1 Bedroom</option>
-                                                    <option value="2">2 Bedrooms</option>
-                                                    <option value="3">3 Bedrooms</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group"><label for="max_bedrooms">Max of Bedrooms</label>
-                                                <select name="max_bedrooms" id="max_bedrooms"
-                                                    class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Max Bedrooms</option>
-                                                    <option value="1">1 Bedroom</option>
-                                                    <option value="2">2 Bedrooms</option>
-                                                    <option value="3">3 Bedrooms</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group"><label for="location">Location</label> <select
-                                                    name="location" id="location" class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Location</option>
-                                                    <option value="new_york">New York</option>
-                                                    <option value="los_angeles">Los Angeles</option>
-                                                    <option value="chicago">Chicago</option>
-                                                </select></div>
-                                            <div class="form-group">
-                                                <p class="price-range-title">Price Range</p>
-                                                <div class="price_slider_wrapper">
-                                                    <div class="price_slider"></div>
-                                                    <div class="price_label"><span class="from">$125000</span>-<span
-                                                            class="to">$825,000.00</span></div>
-                                                </div>
-                                            </div>
-                                            <div class="advance-btn-wrapper">
-                                                <div class="advance-search-btn">
-                                                    <div class="search-btn-item"><a class="th-btn radius w-100"><i
-                                                                class="fa-regular fa-magnifying-glass me-2"></i> Search
-                                                            Property</a></div>
-                                                </div>
-                                            </div>
+                                <div class="form-group">
+                                    <label for="property_type">Property Type</label>
+                                    <select name="property_type" id="property_type" class="form-select nice-select">
+                                        <option value="">All Property Types</option>
+                                        @foreach ($propertyTypes as $propertyType)
+                                            <option value="{{ $propertyType }}" @selected(request('property_type') === $propertyType)>{{ \Illuminate\Support\Str::headline($propertyType) }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="property-city">Location</label>
+                                    <select name="city" id="property-city" class="form-select nice-select">
+                                        <option value="">All Locations</option>
+                                        @foreach ($cities as $city)
+                                            <option value="{{ $city }}" @selected(request('city', request('location')) === $city)>{{ $city }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="min_bedrooms">Min Bedrooms</label>
+                                    <select name="min_bedrooms" id="min_bedrooms" class="form-select nice-select">
+                                        <option value="">Any</option>
+                                        @foreach ($bedroomOptions as $bedroom)
+                                            <option value="{{ $bedroom }}" @selected((string) request('min_bedrooms') === (string) $bedroom)>{{ $bedroom }}+</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="max_bedrooms">Max Bedrooms</label>
+                                    <select name="max_bedrooms" id="max_bedrooms" class="form-select nice-select">
+                                        <option value="">Any</option>
+                                        @foreach ($bedroomOptions as $bedroom)
+                                            <option value="{{ $bedroom }}" @selected((string) request('max_bedrooms') === (string) $bedroom)>{{ $bedroom }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="min_area">Min Area (Sqft)</label>
+                                    <input class="form-control" type="number" min="0" step="1" name="min_area" id="min_area" value="{{ request('min_area', request('mini_area')) }}" placeholder="Any">
+                                </div>
+                                <div class="form-group">
+                                    <label for="max_area">Max Area (Sqft)</label>
+                                    <input class="form-control" type="number" min="0" step="1" name="max_area" id="max_area" value="{{ request('max_area') }}" placeholder="Any">
+                                </div>
+                                <div class="form-group price-filter-group">
+                                    <p class="price-range-title">Price Range</p>
+                                    <div class="price_slider_wrapper property-price-range" data-min="{{ $priceMin }}" data-max="{{ $priceMax }}">
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span class="price_label">₹ <span id="property-min-price-label">{{ number_format((float) request('min_price', $priceMin)) }}</span></span>
+                                            <span class="price_label">₹ <span id="property-max-price-label">{{ number_format((float) request('max_price', $priceMax)) }}</span></span>
+                                        </div>
+                                        <div class="property-range-inputs">
+                                            <input type="range" id="property-min-price-range" min="{{ $priceMin }}" max="{{ $priceMax }}" step="1000" value="{{ request('min_price', $priceMin) }}">
+                                            <input type="range" id="property-max-price-range" min="{{ $priceMin }}" max="{{ $priceMax }}" step="1000" value="{{ request('max_price', $priceMax) }}">
+                                        </div>
+                                        <input type="hidden" name="min_price" id="property-min-price" value="{{ request('min_price', $priceMin) }}">
+                                        <input type="hidden" name="max_price" id="property-max-price" value="{{ request('max_price', $priceMax) }}">
+                                    </div>
+                                </div>
+                                <div class="advance-btn-wrapper">
+                                    <div class="advance-search-btn">
+                                        <div class="search-btn-item">
+                                            <button type="submit" class="th-btn radius w-100"><i class="fa-regular fa-magnifying-glass me-2"></i> Search Property</button>
                                         </div>
                                     </div>
-                                    <div class="tab-pane fade" id="sell" role="tabpanel"
-                                        aria-labelledby="sell-tab">
-                                        <div class="select-group-wrapper">
-                                            <div class="form-group"><label for="property_type1">Property Type</label>
-                                                <select name="property_type" id="property_type1"
-                                                    class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Property Type</option>
-                                                    <option value="apartment">Apartment</option>
-                                                    <option value="house">House</option>
-                                                    <option value="villa">Villa</option>
-                                                    <option value="commercial">Commercial</option>
-                                                    <option value="land">Land</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group"><label for="room_type1">Room Type</label> <select
-                                                    name="room_type1" id="room_type1" class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Room Type</option>
-                                                    <option value="single">Single Room</option>
-                                                    <option value="double">Double Room</option>
-                                                    <option value="suite">Suite</option>
-                                                    <option value="studio">Studio</option>
-                                                </select></div>
-                                            <div class="form-group"><label for="mini_area1">Mini Area (Sqft)</label>
-                                                <select name="mini_area1" id="mini_area1"
-                                                    class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Area</option>
-                                                    <option value="500">500 Sqft</option>
-                                                    <option value="1000">1000 Sqft</option>
-                                                    <option value="1500">1500 Sqft</option>
-                                                    <option value="2000">2000 Sqft</option>
-                                                    <option value="2500">2500+ Sqft</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group"><label for="max_area1">Max Area (Sqft)</label>
-                                                <select name="max_area1" id="max_area1" class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Max Area</option>
-                                                    <option value="2000">2000 Sqft</option>
-                                                    <option value="3000">3000 Sqft</option>
-                                                    <option value="4000">4000 Sqft</option>
-                                                    <option value="5000">5000+ Sqft</option>
-                                                </select>
-                                            </div>
-                                            <div class="advance-btn-wrapper">
-                                                <div class="advance-search-btn advance-search-active">
-                                                    <div class="search-btn-item"><a
-                                                            class="th-btn radius outline w-100">Advanced Search <i
-                                                                class="fa-solid fa-sliders"></i></a></div>
-                                                </div>
-                                            </div>
-                                            <div class="advance-search-wrapper">
-                                                <div class="form-group"><label for="Amenities1">Amenities</label>
-                                                    <select name="Amenities1" id="Amenities1"
-                                                        class="form-select nice-select">
-                                                        <option value="1" disabled="disabled" selected="selected"
-                                                            hidden>Select Amenities</option>
-                                                        <option value="2">Gymnasium</option>
-                                                        <option value="3">Swiming Pool</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group"><label for="Garage1">Garage</label> <select
-                                                        name="Garage1" id="Garage1" class="form-select nice-select">
-                                                        <option value="" disabled="disabled" selected="selected"
-                                                            hidden>
-                                                            Select Garage</option>
-                                                        <option value="1">Small Garage</option>
-                                                        <option value="2">Large Garage</option>
-                                                        <option value="3">Extra Large Garage</option>
-                                                    </select></div>
-                                                <div class="form-group"><label for="Floor_Level1">Floor Level</label>
-                                                    <select name="Floor_Level1" id="Floor_Level1"
-                                                        class="form-select nice-select">
-                                                        <option value="Floor_Level" disabled="disabled"
-                                                            selected="selected" hidden>Select Floor Level</option>
-                                                        <option value="1">Ground Floor</option>
-                                                        <option value="2">Middle Floor</option>
-                                                        <option value="3">Top Floor</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group"><label for="parking_spaces1">Parking
-                                                        Spaces</label> <select name="parking_spaces1" id="parking_spaces1"
-                                                        class="form-select nice-select">
-                                                        <option value="" disabled="disabled" selected="selected"
-                                                            hidden>
-                                                            Select Parking Spaces</option>
-                                                        <option value="1">No Parking</option>
-                                                        <option value="2">2 Space</option>
-                                                        <option value="3">3 Spaces</option>
-                                                    </select></div>
-                                            </div>
-                                            <div class="form-group"><label for="max_bedrooms11">Max of Bedrooms</label>
-                                                <select name="max_bedrooms1" id="max_bedrooms11"
-                                                    class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Max Bedrooms</option>
-                                                    <option value="1">1 Bedroom</option>
-                                                    <option value="2">2 Bedrooms</option>
-                                                    <option value="3">3 Bedrooms</option>
-                                                    <option value="4">4 Bedrooms</option>
-                                                    <option value="5">5+ Bedrooms</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group"><label for="max_bedrooms12">Max of Bedrooms</label>
-                                                <select name="max_bedrooms" id="max_bedrooms12"
-                                                    class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Max Bedrooms</option>
-                                                    <option value="1">1 Bedroom</option>
-                                                    <option value="2">2 Bedrooms</option>
-                                                    <option value="3">3 Bedrooms</option>
-                                                    <option value="4">4 Bedrooms</option>
-                                                    <option value="5">5+ Bedrooms</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group"><label for="location1">Location</label> <select
-                                                    name="location1" id="location1" class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Location</option>
-                                                    <option value="new_york">New York</option>
-                                                    <option value="los_angeles">Los Angeles</option>
-                                                    <option value="chicago">Chicago</option>
-                                                    <option value="houston">Houston</option>
-                                                    <option value="miami">Miami</option>
-                                                </select></div>
-                                            <div class="form-group">
-                                                <p class="price-range-title">Price Range</p>
-                                                <div class="price_slider_wrapper">
-                                                    <div class="price_slider"></div>
-                                                    <div class="price_label"><span class="from">$125000</span>-<span
-                                                            class="to">$825,000.00</span></div>
-                                                </div>
-                                            </div>
-                                            <div class="advance-btn-wrapper">
-                                                <div class="advance-search-btn">
-                                                    <div class="search-btn-item"><a class="th-btn radius w-100"><i
-                                                                class="fa-regular fa-magnifying-glass me-2"></i> Search
-                                                            Property</a></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="rent" role="tabpanel"
-                                        aria-labelledby="rent-tab">
-                                        <div class="select-group-wrapper">
-                                            <div class="form-group"><label for="property_type2">Property Type</label>
-                                                <select name="property_type2" id="property_type2"
-                                                    class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Property Type</option>
-                                                    <option value="apartment">Apartment</option>
-                                                    <option value="house">House</option>
-                                                    <option value="villa">Villa</option>
-                                                    <option value="commercial">Commercial</option>
-                                                    <option value="land">Land</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group"><label for="room_type2">Room Type</label> <select
-                                                    name="room_type2" id="room_type2" class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Room Type</option>
-                                                    <option value="single">Single Room</option>
-                                                    <option value="double">Double Room</option>
-                                                    <option value="suite">Suite</option>
-                                                    <option value="studio">Studio</option>
-                                                </select></div>
-                                            <div class="form-group"><label for="mini_area2">Mini Area (Sqft)</label>
-                                                <select name="mini_area2" id="mini_area2"
-                                                    class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Area</option>
-                                                    <option value="500">500 Sqft</option>
-                                                    <option value="1000">1000 Sqft</option>
-                                                    <option value="1500">1500 Sqft</option>
-                                                    <option value="2000">2000 Sqft</option>
-                                                    <option value="2500">2500+ Sqft</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group"><label for="max_area2">Max Area (Sqft)</label>
-                                                <select name="max_area2" id="max_area2" class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Max Area</option>
-                                                    <option value="2000">2000 Sqft</option>
-                                                    <option value="3000">3000 Sqft</option>
-                                                    <option value="4000">4000 Sqft</option>
-                                                    <option value="5000">5000+ Sqft</option>
-                                                </select>
-                                            </div>
-                                            <div class="advance-btn-wrapper">
-                                                <div class="advance-search-btn advance-search-active">
-                                                    <div class="search-btn-item"><a
-                                                            class="th-btn radius outline w-100">Advanced Search <i
-                                                                class="fa-solid fa-sliders"></i></a></div>
-                                                </div>
-                                            </div>
-                                            <div class="advance-search-wrapper">
-                                                <div class="form-group"><label for="Amenities2">Amenities</label>
-                                                    <select name="Amenities2" id="Amenities2"
-                                                        class="form-select nice-select">
-                                                        <option value="1" disabled="disabled" selected="selected"
-                                                            hidden>Select Amenities</option>
-                                                        <option value="2">Gymnasium</option>
-                                                        <option value="3">Swiming Pool</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group"><label for="Garage2">Garage</label> <select
-                                                        name="Garage2" id="Garage2" class="form-select nice-select">
-                                                        <option value="" disabled="disabled" selected="selected"
-                                                            hidden>
-                                                            Select Garage</option>
-                                                        <option value="1">Small Garage</option>
-                                                        <option value="2">Large Garage</option>
-                                                        <option value="3">Extra Large Garage</option>
-                                                    </select></div>
-                                                <div class="form-group"><label for="Floor_Level2">Floor Level</label>
-                                                    <select name="Floor_Level2" id="Floor_Level2"
-                                                        class="form-select nice-select">
-                                                        <option value="Floor_Level" disabled="disabled"
-                                                            selected="selected" hidden>Select Floor Level</option>
-                                                        <option value="1">Ground Floor</option>
-                                                        <option value="2">Middle Floor</option>
-                                                        <option value="3">Top Floor</option>
-                                                    </select>
-                                                </div>
-                                                <div class="form-group"><label for="parking_spaces2">Parking
-                                                        Spaces</label> <select name="parking_spaces2" id="parking_spaces2"
-                                                        class="form-select nice-select">
-                                                        <option value="" disabled="disabled" selected="selected"
-                                                            hidden>
-                                                            Select Parking Spaces</option>
-                                                        <option value="1">No Parking</option>
-                                                        <option value="2">2 Space</option>
-                                                        <option value="3">3 Spaces</option>
-                                                    </select></div>
-                                            </div>
-                                            <div class="form-group"><label for="max_bedrooms22">Max of Bedrooms</label>
-                                                <select name="max_bedrooms2" id="max_bedrooms22"
-                                                    class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Max Bedrooms</option>
-                                                    <option value="1">1 Bedroom</option>
-                                                    <option value="2">2 Bedrooms</option>
-                                                    <option value="3">3 Bedrooms</option>
-                                                    <option value="4">4 Bedrooms</option>
-                                                    <option value="5">5+ Bedrooms</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group"><label for="max_bedrooms2">Max of Bedrooms</label>
-                                                <select name="max_bedrooms2" id="max_bedrooms2"
-                                                    class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Max Bedrooms</option>
-                                                    <option value="1">1 Bedroom</option>
-                                                    <option value="2">2 Bedrooms</option>
-                                                    <option value="3">3 Bedrooms</option>
-                                                    <option value="4">4 Bedrooms</option>
-                                                    <option value="5">5+ Bedrooms</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group"><label for="location2">Location</label> <select
-                                                    name="location2" id="location2" class="form-select nice-select">
-                                                    <option value="" disabled="disabled" selected="selected"
-                                                        hidden>
-                                                        Select Location</option>
-                                                    <option value="new_york">New York</option>
-                                                    <option value="los_angeles">Los Angeles</option>
-                                                    <option value="chicago">Chicago</option>
-                                                    <option value="houston">Houston</option>
-                                                    <option value="miami">Miami</option>
-                                                </select></div>
-                                            <div class="form-group">
-                                                <p class="price-range-title">Price Range</p>
-                                                <div class="price_slider_wrapper">
-                                                    <div class="price_slider"></div>
-                                                    <div class="price_label"><span class="from">$125000</span>-<span
-                                                            class="to">$825,000.00</span></div>
-                                                </div>
-                                            </div>
-                                            <div class="advance-btn-wrapper">
-                                                <div class="advance-search-btn">
-                                                    <div class="search-btn-item"><a class="th-btn radius w-100"><i
-                                                                class="fa-regular fa-magnifying-glass me-2"></i> Search
-                                                            Property</a></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                </div>
+                                <div class="advance-btn-wrapper">
+                                    <a href="{{ route('properties.index') }}" class="th-btn radius outline w-100">Reset Filters</a>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
-        </form>
-    </div>
-    {{-- <form method="GET" action="{{ route('properties.index') }}" class="container property-search-form mb-4">
-        <div class="row g-3">
-            <div class="col-lg-3"><input class="form-control" name="q" value="{{ request('q') }}"
-                    placeholder="Search properties"></div>
-            <div class="col-lg-2"><input class="form-control" name="city" value="{{ request('city') }}"
-                    placeholder="City"></div>
-            <div class="col-lg-2"><select class="form-select" name="listing_type">
-                    <option value="">Buy or rent</option>
-                    <option value="sale" @selected(request('listing_type') === 'sale')>For sale</option>
-                    <option value="rent" @selected(request('listing_type') === 'rent')>For rent</option>
-                    <option value="lease" @selected(request('listing_type') === 'lease')>For lease</option>
-                </select></div>
-            <div class="col-lg-2"><input class="form-control" type="number" name="min_price"
-                    value="{{ request('min_price') }}" placeholder="Min price"></div>
-            <div class="col-lg-2"><input class="form-control" type="number" name="max_price"
-                    value="{{ request('max_price') }}" placeholder="Max price"></div>
-            <div class="col-lg-1"><button class="th-btn w-100">Search</button></div>
         </div>
-    </form> --}}
+    </div>
+    <style>
+        .property-price-range { width: 100%; }
+        .property-range-inputs { display: grid; gap: 8px; }
+        .property-range-inputs input[type="range"] { width: 100%; accent-color: var(--theme-color, #b18b5e); }
+        #property-search-form .select-group-wrapper { align-items: end; }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('property-search-form');
+            if (!form) return;
+
+            const listingInput = document.getElementById('property-listing-type');
+            document.querySelectorAll('#propertySearchTabs [data-listing-type]').forEach(function (tab) {
+                const active = tab.dataset.listingType === listingInput.value;
+                tab.classList.toggle('active', active);
+                tab.setAttribute('aria-pressed', active ? 'true' : 'false');
+                tab.addEventListener('click', function () {
+                    listingInput.value = tab.dataset.listingType;
+                    document.querySelectorAll('#propertySearchTabs [data-listing-type]').forEach(function (item) {
+                        const selected = item === tab;
+                        item.classList.toggle('active', selected);
+                        item.setAttribute('aria-pressed', selected ? 'true' : 'false');
+                    });
+                });
+            });
+
+            const minRange = document.getElementById('property-min-price-range');
+            const maxRange = document.getElementById('property-max-price-range');
+            const minField = document.getElementById('property-min-price');
+            const maxField = document.getElementById('property-max-price');
+            const minLabel = document.getElementById('property-min-price-label');
+            const maxLabel = document.getElementById('property-max-price-label');
+            const money = value => new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(value);
+
+            function syncPriceRange(changed) {
+                let low = Number(minRange.value);
+                let high = Number(maxRange.value);
+                if (low > high) {
+                    if (changed === 'min') low = high;
+                    else high = low;
+                }
+                minRange.value = low;
+                maxRange.value = high;
+                minField.value = low;
+                maxField.value = high;
+                minLabel.textContent = money(low);
+                maxLabel.textContent = money(high);
+            }
+            minRange.addEventListener('input', () => syncPriceRange('min'));
+            maxRange.addEventListener('input', () => syncPriceRange('max'));
+            syncPriceRange();
+
+            const minBedrooms = document.getElementById('min_bedrooms');
+            const maxBedrooms = document.getElementById('max_bedrooms');
+            minBedrooms.addEventListener('change', function () {
+                if (minBedrooms.value && maxBedrooms.value && Number(minBedrooms.value) > Number(maxBedrooms.value)) {
+                    maxBedrooms.value = minBedrooms.value;
+                }
+            });
+            maxBedrooms.addEventListener('change', function () {
+                if (minBedrooms.value && maxBedrooms.value && Number(maxBedrooms.value) < Number(minBedrooms.value)) {
+                    minBedrooms.value = maxBedrooms.value;
+                }
+            });
+        });
+    </script>
     <section class="th-blog-wrapper space-top space-extra-bottom">
         <div class="container">
             <div class="th-sort-bar property-style">
@@ -752,15 +431,7 @@
                         </div>
                         <div class="col-xl-4 col-lg-6">
                             <aside class="sidebar-area">
-                                <div class="widget widget_search">
-                                    <h3 class="widget_title">search</h3>
-                                    <form class="search-form" method="GET" action="{{ route('properties.index') }}">
-                                        <input type="search" name="q" value="{{ request('q') }}"
-                                            placeholder="Enter Keyword"> <button type="submit"><i
-                                                class="far fa-search"></i></button>
-                                    </form>
-                                </div>
-                                <div class="widget">
+<div class="widget">
                                     <h3 class="widget_title">Featured Properties</h3>
                                     <div class="recent-post-wrap featured-listing">
                                         @forelse($featuredProperties as $featuredProperty)
