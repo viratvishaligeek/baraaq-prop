@@ -81,6 +81,117 @@
             position: relative !important;
             top: auto !important
         }
+
+        /* -------------------- */
+        .price-red-shine {
+            position: relative;
+            display: inline-block;
+            overflow: hidden !important;
+            isolation: isolate;
+            color: darkred !important;
+        }
+        .price-red-shine::after {
+            content: "";
+            position: absolute;
+            top: -60%;
+            left: -80%;
+            width: 45%;
+            height: 220%;
+
+            background: linear-gradient(40deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.05) 20%,
+                    rgba(255, 255, 255, 0.9) 48%,
+                    #ffffff 50%,
+                    rgba(255, 255, 255, 0.9) 52%,
+                    rgba(255, 255, 255, 0.05) 80%,
+                    transparent 100%);
+
+            transform: rotate(25deg);
+            filter: blur(2px);
+            pointer-events: none;
+            z-index: 10;
+
+            animation: flashShine 2.2s ease-in-out infinite;
+        }
+        .shine-heading {
+            position: relative;
+            display: inline-block;
+            overflow: hidden !important;
+            isolation: isolate;
+        }
+
+        .shine-heading::after {
+            content: "";
+            position: absolute;
+            top: -60%;
+            left: -80%;
+            width: 45%;
+            height: 220%;
+
+            background: linear-gradient(40deg,
+                    transparent 0%,
+                    rgba(255, 255, 255, 0.05) 20%,
+                    rgba(255, 255, 255, 0.9) 48%,
+                    #ffffff 50%,
+                    rgba(255, 255, 255, 0.9) 52%,
+                    rgba(255, 255, 255, 0.05) 80%,
+                    transparent 100%);
+
+            transform: rotate(25deg);
+            filter: blur(2px);
+            pointer-events: none;
+            z-index: 10;
+
+            animation: flashShine 2.2s ease-in-out infinite;
+        }
+
+        @keyframes flashShine {
+            0% {
+                left: -80%;
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 1;
+            }
+
+            45% {
+                left: 140%;
+                opacity: 1;
+            }
+
+            46%,
+            100% {
+                left: 140%;
+                opacity: 0;
+            }
+        }
+
+        /* ------------ for blink */
+        .blink-glow {
+            animation: blinkGlow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blinkGlow {
+
+            0%,
+            100% {
+                opacity: 1;
+                text-shadow: 0 0 10px #fff;
+            }
+
+            50% {
+                opacity: 0.5;
+                text-shadow: 0 0 0 transparent;
+            }
+        }
+
+        a.th-btn.sm.style3.pill {
+            border: 0.1px solid #000000ad;
+            border-radius: 20px;
+            background: #068fff17;
+        }
     </style>
     @php
         echo $siteSettings['head_scripts'] ?? '';
@@ -130,8 +241,8 @@
     <div class="preloader">
         <button class="th-btn preloaderCls">Cancel Preloader</button>
         <div id="preloader" class="preloader-inner">
-            <div class="txt-loading" aria-label="{{ $siteSettings['site_title'] ?? 'Buraaqh Properties' }}">
-                @foreach (mb_str_split((string) ($siteSettings['site_title'] ?? 'Buraaqh Properties')) as $letter)
+            <div class="txt-loading" aria-label="{{ 'Buraaqh' }}">
+                @foreach (mb_str_split((string) ('Buraaqh')) as $letter)
                     <span data-text-preloader="{{ e($letter) }}" class="letters-loading">{{ $letter }}</span>
                 @endforeach
             </div>

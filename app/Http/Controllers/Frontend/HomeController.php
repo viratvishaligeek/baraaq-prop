@@ -18,7 +18,6 @@ class HomeController extends Controller
 {
     public function __invoke()
     {
-        // dd('here');
         $homepage = Homepage::published()
             ->where('slug', 'home-9')
             ->with([

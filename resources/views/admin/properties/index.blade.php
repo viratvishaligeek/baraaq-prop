@@ -42,7 +42,7 @@
                                 <div class="small text-muted">{{ $p->reference ?: 'No reference' }}</div>
                             </td>
                             <td>{{ ucfirst($p->listing_type) }}</td>
-                            <td>{{ $p->price ? number_format((float) $p->price, 2) : ($p->price_label ?: '—') }}</td>
+                            <td class="price-red-shine">{{ $p->price ? '₹ '.number_format((float)$p->price, 2) : ($p->price_label ?: '—') }}</td>
                             <td>{{ $p->city ?: '—' }}</td>
                             <td>{{ ucfirst($p->status) }}</td>
                             <td class="text-end">

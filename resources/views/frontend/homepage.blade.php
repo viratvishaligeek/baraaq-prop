@@ -25,7 +25,7 @@
                 <div class="row gy-50 gx-40 align-items-center">
                     <div class="col-xl-6 col-lg-6">
                         <div class="hero-style9">
-                            <span class="hero-subtitle">{{ $heroConfig['eyebrow'] ?? 'About Buraaqh' }}</span>
+                            <span class="hero-subtitle shine-heading">{{ $heroConfig['eyebrow'] ?? 'About Buraaqh' }}</span>
                             <h1 class="hero-title wow fadeinup" data-wow-duration="1.5s" data-wow-delay="0.2s">
                                 <span class="title1">{{ $heroConfig['heading_prefix'] ?? 'Discover' }}</span> <span
                                     class="title2">{{ $heroConfig['heading_highlight'] ?? 'Most Suitable' }}</span> <span
@@ -35,9 +35,9 @@
                                 {!! \App\Support\HtmlSanitizer::sanitize($heroConfig['description'] ?? '') !!}</p>
                             <div class="btn-group wow fadeinup" data-wow-duration="1.5s" data-wow-delay="0.4s">
                                 <a href="{{ $heroConfig['primary_button_url'] ?? route('properties.index') }}"
-                                    class="th-btn big-btn style2">{{ $heroConfig['primary_button_label'] ?? 'Explore Properties' }}</a>
+                                    class="th-btn big-btn blink-glow style2">{{ $heroConfig['primary_button_label'] ?? 'Explore Properties' }}</a>
                                 <a href="{{ $heroConfig['secondary_button_url'] ?? route('contact') }}"
-                                    class="th-btn big-btn style3">{{ $heroConfig['secondary_button_label'] ?? 'Contact Us' }}</a>
+                                    class="th-btn big-btn blink-glow style3">{{ $heroConfig['secondary_button_label'] ?? 'Contact Us' }}</a>
                             </div>
                         </div>
                     </div>
@@ -295,7 +295,8 @@
                             <div class="property-content">
                                 <div class="media-body">
                                     <h3 class="box-title">
-                                        <a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a>
+                                        <a
+                                            href="{{ route('properties.show', $property) }}">{{ Str::limit($property->title, 45, '..') }}</a>
                                     </h3>
                                     <div class="box-text">
                                         <div class="icon">
@@ -320,12 +321,12 @@
                                         <div class="icon">
                                             <img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="icon">
                                         </div>
-                                        {{ $property->area ? number_format((float) $property->area) . ' ' . ($property->area_unit ?? 'sqft') : '—' }}
+                                        {{ $property->area ? number_format((float)$property->area) . ' ' . ($property->area_unit ?? 'sqft') : '—' }}
                                     </li>
                                 </ul>
                                 <div class="property-bottom">
-                                    <h6 class="box-title">
-                                        {{ $property->price ? number_format((float) $property->price, 2) : $property->price_label ?? 'Price on request' }}
+                                    <h6 class="box-title price-red-shine">
+                                        {{ $property->price ? '₹ '.number_format((float) $property->price, 2) : $property->price_label ?? 'Price on request' }}
                                     </h6>
                                     <a class="th-btn sm style3 pill"
                                         href="{{ route('properties.show', $property) }}">View More</a>
@@ -640,7 +641,7 @@
 
                                                                 </i>
                                                                 <div class="rating">
-                                                                    <span>{{ $testimonial->rating ? number_format((float) $testimonial->rating, 1) : '—' }}</span>
+                                                                    <span>{{ $testimonial->rating ? number_format((float)$testimonial->rating, 1) : '—' }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>

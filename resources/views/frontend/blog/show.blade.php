@@ -1,40 +1,224 @@
 @extends('frontend.layouts.theme')
 @section('title', $post->meta_title ?: $post->title)
 @section('meta_description', $post->meta_description ?: $post->excerpt)
-@section('canonical_url', $post->canonical_url ?: route('blog.show',$post))
+@section('canonical_url', $post->canonical_url ?: route('blog.show', $post))
 @section('content')
-@php($sidebarProperties = \App\Models\Property::published()->where('is_featured', true)->latest()->limit(4)->get())
-<div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/blog/breadcrumb-bg.jpg') }}"><div class="container"><div class="breadcumb-content"><h1 class="breadcumb-title">{{ $post->title }}</h1><ul class="breadcumb-menu"><li><a href="{{ route('home') }}">Home</a></li><li>Blog Details</li></ul></div></div></div><section class="th-blog-wrapper blog-details space-top space-extra-bottom"><div class="container"><div class="row"><div class="col-xxl-8 col-lg-7"><div class="th-blog blog-single"><div class="blog-img">@if($post->featured_image)<img src="{{ Storage::disk('public')->url($post->featured_image) }}" alt="{{ $post->title }}">@else<div class="blog-image-placeholder bg-smoke d-flex align-items-center justify-content-center"><span class="text-muted p-5">Article image pending</span></div>@endif</div><div class="blog-content"><div class="blog-meta">
-<a href="{{ route('blog.index') }}"><i class="fa-light fa-user"></i> {{ $post->author?->name ?? 'Buraaqh Properties' }}</a>
-@if($post->published_at)<a href="{{ route('blog.index') }}"><i class="fa-regular fa-calendar"></i> {{ $post->published_at->format('d/m/Y') }}</a>@endif
-@foreach($post->categories as $category)<a href="{{ route('blog.index', ['category' => $category->slug]) }}"><i class="fa-regular fa-tag"></i> {{ $category->name }}</a>@endforeach
-</div>
-<h2 class="blog-title">{{ $post->title }}</h2>
-<div class="cms-post-content">{!! \App\Support\HtmlSanitizer::sanitize($post->content ?? '') !!}</div>
-<div class="share-links clearfix">
-    <div class="row justify-content-between">
-        <div class="col-sm-auto">
-            <span class="share-links-title">Tags:</span>
-            <div class="tagcloud">
-                @forelse($post->tags as $tag)
-                    <a href="{{ route('blog.index', ['tag' => $tag->slug]) }}">{{ $tag->name }}</a>
-                @empty
-                    <span class="text-muted">No tags</span>
-                @endforelse
-            </div>
-        </div>
-        <div class="col-sm-auto text-xl-end">
-            <span class="share-links-title">Share this article:</span>
-            <div class="th-social">
-                @php($facebook = \App\Models\Setting::read('social_facebook', ''))
-                @php($instagram = \App\Models\Setting::read('social_instagram', ''))
-                @php($linkedin = \App\Models\Setting::read('social_linkedin', ''))
-                @if($facebook)<a href="{{ $facebook }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>@endif
-                @if($linkedin)<a href="{{ $linkedin }}" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>@endif
-                @if($instagram)<a href="{{ $instagram }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>@endif
+    @php($sidebarProperties = \App\Models\Property::published()->where('is_featured', true)->latest()->limit(4)->get())
+    <div class="breadcumb-wrapper" data-bg-src="{{ asset('theme-assets/img/blog/breadcrumb-bg.jpg') }}">
+        <div class="container">
+            <div class="breadcumb-content">
+                <h1 class="breadcumb-title">{{ $post->title }}</h1>
+                <ul class="breadcumb-menu">
+                    <li><a href="{{ route('home') }}">Home</a></li>
+                    <li>Blog Details</li>
+                </ul>
             </div>
         </div>
     </div>
-</div>
-</div></div><div class="th-comments-wrap"><h2 class="blog-inner-title h4">Comments ({{ $post->comments->count() }})</h2><ul class="comment-list">@forelse($post->comments as $comment)<li class="th-comment-item"><div class="th-post-comment"><div class="comment-avater"><span aria-hidden="true">{{ mb_strtoupper(mb_substr($comment->name, 0, 1)) }}</span></div><div class="comment-content"><h3 class="name">{{ $comment->name }}</h3><span class="commented-on">{{ $comment->created_at?->format('d M Y') }}</span><p class="text">{{ $comment->body }}</p><div class="reply_and_edit"><a href="#post-comment-form" class="reply-btn">Reply</a></div></div></div></li>@empty<li class="text-muted">No approved comments yet.</li>@endforelse</ul></div><div class="th-comment-form blog-comment-wrap" id="post-comment-form"><div class="form-title mb-25"><h3 class="blog-inner-title h4">Leave a Reply</h3><p class="form-text">Your comment will appear after moderation.</p></div>@if(session('comment_submitted'))<div class="alert alert-success">{{ session('comment_submitted') }}</div>@endif<form method="POST" action="{{ route('blog.comments.store', $post) }}">@csrf<div class="row"><div class="col-md-6 form-group style-border"><i class="fa-regular fa-user"></i><input id="comment-name" name="name" type="text" value="{{ old('name') }}" placeholder="Your name*" class="form-control" required maxlength="120"></div><div class="col-md-6 form-group style-border"><i class="fa-regular fa-envelope"></i><input id="comment-email" name="email" type="email" value="{{ old('email') }}" placeholder="Your email*" class="form-control" required maxlength="190"></div><div class="col-12 form-group style-border"><textarea name="body" id="comment-body" rows="4" placeholder="Comment*" class="form-control" required>{{ old('body') }}</textarea></div><div class="col-12 form-group"><button type="submit" class="th-btn radius">Submit comment</button></div></div></form></div></div><div class="col-xxl-4 col-lg-5"><aside class="sidebar-area"><div class="widget widget_search"><h3 class="widget_title">search</h3><form class="search-form" method="GET" action="{{ route('blog.index') }}"><input type="search" name="q" value="{{ request('q') }}" placeholder="Enter Keyword"> <button type="submit"><i class="far fa-search"></i></button></form></div><div class="widget"><h3 class="widget_title">Featured Listings</h3><div class="recent-post-wrap featured-listing">@forelse($sidebarProperties as $sidebarProperty)<div class="recent-post"><div class="media-img"><a href="{{ route('properties.show', $sidebarProperty) }}">@if($sidebarProperty->featured_image)<img src="{{ Storage::disk('public')->url($sidebarProperty->featured_image) }}" alt="{{ $sidebarProperty->title }}">@else<span class="property-image-placeholder bg-smoke d-block"></span>@endif</a></div><div class="media-body"><h4 class="post-title"><a class="text-inherit" href="{{ route('properties.show', $sidebarProperty) }}">{{ $sidebarProperty->title }}</a></h4><div class="property-features-wrap"><div class="property-features-item"><div class="thumb"><img src="{{ asset('theme-assets/img/icon/bed.svg') }}" alt="Bedrooms"></div><h5 class="feature-title">Bed {{ $sidebarProperty->bedrooms ?? '—' }}</h5></div><div class="divider"></div><div class="property-features-item"><div class="thumb"><img src="{{ asset('theme-assets/img/icon/bath.svg') }}" alt="Bathrooms"></div><h5 class="feature-title">Bath {{ $sidebarProperty->bathrooms ?? '—' }}</h5></div><div class="divider"></div><div class="property-features-item"><div class="thumb"><img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="Area"></div><h5 class="feature-title">{{ $sidebarProperty->area ? number_format((float) $sidebarProperty->area) . ' ' . ($sidebarProperty->area_unit ?? 'sqft') : '— sqft' }}</h5></div></div><div class="recent-post-meta"><a href="{{ route('properties.show', $sidebarProperty) }}">{{ $sidebarProperty->price ? number_format((float) $sidebarProperty->price, 0) : ($sidebarProperty->price_label ?? 'Price on request') }}</a></div></div></div>@empty<p class="text-muted">No featured listings are currently available.</p>@endforelse</div></div><div class="widget sidebar-contact-form"><h3 class="widget_title">Contact Us</h3><div class="contact-form-widget"><form action="{{ route('enquiries.store') }}" method="POST" class="newsletter-form">@csrf<input type="hidden" name="subject" value="Blog enquiry"><div class="form-group"><input class="form-control" type="text" name="name" value="{{ old('name') }}" placeholder="Your Name" required maxlength="150"></div><div class="form-group"><input class="form-control" type="email" name="email" value="{{ old('email') }}" placeholder="Your Email" required></div><div class="form-group"><input class="form-control" type="text" name="phone" value="{{ old('phone') }}" placeholder="Your Phone" required maxlength="30"></div><div class="form-group mb-4"><textarea name="message" cols="30" rows="3" class="form-control" placeholder="Your Message">{{ old('message') }}</textarea></div><div class="form-btn pt-2"><button type="submit" class="th-btn radius">Send Us</button></div></form></div></div><div class="widget widget_banner" data-bg-src="{{ asset('theme-assets/img/bg/widget_banner.jpg') }}"><div class="widget-banner"><h2 class="title">We can help you to find real estate agency</h2><a href="{{ route('contact') }}" class="th-btn radius">Contact with Agent</a></div></div></aside></div></div></div></section>
+    <section class="th-blog-wrapper blog-details space-top space-extra-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-xxl-8 col-lg-7">
+                    <div class="th-blog blog-single">
+                        <div class="blog-img">
+                            @if ($post->featured_image)
+                                <img src="{{ Storage::disk('public')->url($post->featured_image) }}"
+                                alt="{{ $post->title }}">@else<div
+                                    class="blog-image-placeholder bg-smoke d-flex align-items-center justify-content-center">
+                                    <span class="text-muted p-5">Article image pending</span></div>
+                            @endif
+                        </div>
+                        <div class="blog-content">
+                            <div class="blog-meta">
+                                <a href="{{ route('blog.index') }}"><i class="fa-light fa-user"></i>
+                                    {{ $post->author?->name ?? 'Buraaqh Properties' }}</a>
+                                @if ($post->published_at)
+                                    <a href="{{ route('blog.index') }}"><i class="fa-regular fa-calendar"></i>
+                                        {{ $post->published_at->format('d/m/Y') }}</a>
+                                @endif
+                                @foreach ($post->categories as $category)
+                                    <a href="{{ route('blog.index', ['category' => $category->slug]) }}"><i
+                                            class="fa-regular fa-tag"></i> {{ $category->name }}</a>
+                                @endforeach
+                            </div>
+                            <h2 class="blog-title">{{ $post->title }}</h2>
+                            <div class="cms-post-content">{!! \App\Support\HtmlSanitizer::sanitize($post->content ?? '') !!}</div>
+                            <div class="share-links clearfix">
+                                <div class="row justify-content-between">
+                                    <div class="col-sm-auto">
+                                        <span class="share-links-title">Tags:</span>
+                                        <div class="tagcloud">
+                                            @forelse($post->tags as $tag)
+                                                <a
+                                                    href="{{ route('blog.index', ['tag' => $tag->slug]) }}">{{ $tag->name }}</a>
+                                            @empty
+                                                <span class="text-muted">No tags</span>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-auto text-xl-end">
+                                        <span class="share-links-title">Share this article:</span>
+                                        <div class="th-social">
+                                            @php($facebook = \App\Models\Setting::read('social_facebook', ''))
+                                            @php($instagram = \App\Models\Setting::read('social_instagram', ''))
+                                            @php($linkedin = \App\Models\Setting::read('social_linkedin', ''))
+                                            @if ($facebook)
+                                                <a href="{{ $facebook }}" target="_blank" rel="noopener noreferrer"
+                                                    aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                                            @endif
+                                            @if ($linkedin)
+                                                <a href="{{ $linkedin }}" target="_blank" rel="noopener noreferrer"
+                                                    aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                                            @endif
+                                            @if ($instagram)
+                                                <a href="{{ $instagram }}" target="_blank" rel="noopener noreferrer"
+                                                    aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="th-comments-wrap">
+                        <h2 class="blog-inner-title h4">Comments ({{ $post->comments->count() }})</h2>
+                        <ul class="comment-list">
+                            @forelse($post->comments as $comment)
+                                <li class="th-comment-item">
+                                    <div class="th-post-comment">
+                                        <div class="comment-avater"><span
+                                                aria-hidden="true">{{ mb_strtoupper(mb_substr($comment->name, 0, 1)) }}</span>
+                                        </div>
+                                        <div class="comment-content">
+                                            <h3 class="name">{{ $comment->name }}</h3><span
+                                                class="commented-on">{{ $comment->created_at?->format('d M Y') }}</span>
+                                            <p class="text">{{ $comment->body }}</p>
+                                            <div class="reply_and_edit"><a href="#post-comment-form"
+                                                    class="reply-btn">Reply</a></div>
+                                        </div>
+                                    </div>
+                            </li>@empty<li class="text-muted">No approved comments yet.</li>
+                            @endforelse
+                        </ul>
+                    </div>
+                    <div class="th-comment-form blog-comment-wrap" id="post-comment-form">
+                        <div class="form-title mb-25">
+                            <h3 class="blog-inner-title h4">Leave a Reply</h3>
+                            <p class="form-text">Your comment will appear after moderation.</p>
+                        </div>
+                        @if (session('comment_submitted'))
+                            <div class="alert alert-success">{{ session('comment_submitted') }}</div>
+                        @endif
+                        <form method="POST" action="{{ route('blog.comments.store', $post) }}">
+                            @csrf<div class="row">
+                                <div class="col-md-6 form-group style-border"><i class="fa-regular fa-user"></i><input
+                                        id="comment-name" name="name" type="text" value="{{ old('name') }}"
+                                        placeholder="Your name*" class="form-control" required maxlength="120"></div>
+                                <div class="col-md-6 form-group style-border"><i class="fa-regular fa-envelope"></i><input
+                                        id="comment-email" name="email" type="email" value="{{ old('email') }}"
+                                        placeholder="Your email*" class="form-control" required maxlength="190"></div>
+                                <div class="col-12 form-group style-border">
+                                    <textarea name="body" id="comment-body" rows="4" placeholder="Comment*" class="form-control" required>{{ old('body') }}</textarea>
+                                </div>
+                                <div class="col-12 form-group"><button type="submit" class="th-btn radius">Submit
+                                        comment</button></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-xxl-4 col-lg-5">
+                    <aside class="sidebar-area">
+                        <div class="widget widget_search">
+                            <h3 class="widget_title">search</h3>
+                            <form class="search-form" method="GET" action="{{ route('blog.index') }}"><input
+                                    type="search" name="q" value="{{ request('q') }}"
+                                    placeholder="Enter Keyword"> <button type="submit"><i
+                                        class="far fa-search"></i></button></form>
+                        </div>
+                        <div class="widget">
+                            <h3 class="widget_title" style="border: 1px solid #0000006b; text-align: center; padding: 10px; border-radius: 7px;">Featured Listings</h3>
+                            <div class="recent-post-wrap featured-listing">
+                                @forelse($sidebarProperties as $sidebarProperty)
+                                    <div class="recent-post">
+                                        <div class="media-img"><a
+                                                href="{{ route('properties.show', $sidebarProperty) }}">
+                                                @if ($sidebarProperty->featured_image)
+                                                    <img src="{{ Storage::disk('public')->url($sidebarProperty->featured_image) }}"
+                                                    alt="{{ $sidebarProperty->title }}">@else<span
+                                                        class="property-image-placeholder bg-smoke d-block"></span>
+                                                @endif
+                                            </a>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="post-title"><a class="text-inherit"
+                                                    href="{{ route('properties.show', $sidebarProperty) }}">{{ $sidebarProperty->title }}</a>
+                                            </h4>
+                                            <div class="property-features-wrap">
+                                                <div class="property-features-item">
+                                                    <div class="thumb"><img
+                                                            src="{{ asset('theme-assets/img/icon/bed.svg') }}"
+                                                            alt="Bedrooms"></div>
+                                                    <h5 class="feature-title">Bed {{ $sidebarProperty->bedrooms ?? '—' }}
+                                                    </h5>
+                                                </div>
+                                                <div class="divider"></div>
+                                                <div class="property-features-item">
+                                                    <div class="thumb"><img
+                                                            src="{{ asset('theme-assets/img/icon/bath.svg') }}"
+                                                            alt="Bathrooms"></div>
+                                                    <h5 class="feature-title">Bath
+                                                        {{ $sidebarProperty->bathrooms ?? '—' }}</h5>
+                                                </div>
+                                                <div class="divider"></div>
+                                                <div class="property-features-item">
+                                                    <div class="thumb"><img
+                                                            src="{{ asset('theme-assets/img/icon/sqft.svg') }}"
+                                                            alt="Area"></div>
+                                                    <h5 class="feature-title">
+                                                        {{ $sidebarProperty->area ? number_format((float) $sidebarProperty->area) . ' ' . ($sidebarProperty->area_unit ?? 'sqft') : '— sqft' }}
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                            <div class="recent-post-meta"><a
+                                                class="price-red-shine"
+                                                    href="{{ route('properties.show', $sidebarProperty) }}">{{ $sidebarProperty->price ? '₹ ' . number_format((float) $sidebarProperty->price, 0) : $sidebarProperty->price_label ?? 'Price on request' }}</a>
+                                            </div>
+                                        </div>
+                                </div>@empty<p class="text-muted">No featured listings are currently available.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                        <div class="widget sidebar-contact-form">
+                            <h3 class="widget_title">Contact Us</h3>
+                            <div class="contact-form-widget">
+                                <form action="{{ route('enquiries.store') }}" method="POST" class="newsletter-form">
+                                    @csrf<input type="hidden" name="subject" value="Blog enquiry">
+                                    <div class="form-group"><input class="form-control" type="text" name="name"
+                                            value="{{ old('name') }}" placeholder="Your Name" required
+                                            maxlength="150"></div>
+                                    <div class="form-group"><input class="form-control" type="email" name="email"
+                                            value="{{ old('email') }}" placeholder="Your Email" required></div>
+                                    <div class="form-group"><input class="form-control" type="text" name="phone"
+                                            value="{{ old('phone') }}" placeholder="Your Phone" required
+                                            maxlength="30"></div>
+                                    <div class="form-group mb-4">
+                                        <textarea name="message" cols="30" rows="3" class="form-control" placeholder="Your Message">{{ old('message') }}</textarea>
+                                    </div>
+                                    <div class="form-btn pt-2"><button type="submit" class="th-btn radius">Send
+                                            Us</button></div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="widget widget_banner"
+                            data-bg-src="{{ asset('theme-assets/img/bg/widget_banner.jpg') }}">
+                            <div class="widget-banner">
+                                <h2 class="title">We can help you to find real estate agency</h2><a
+                                    href="{{ route('contact') }}" class="th-btn radius">Contact with Agent</a>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </section>
 @endsection
