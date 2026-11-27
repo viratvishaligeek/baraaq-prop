@@ -27,8 +27,8 @@
                         <div class="search-wrap-area-top">
                             <ul class="nav nav-tabs custom" id="propertySearchTabs" role="tablist">
                                 <li class="nav-item" role="presentation"><button class="nav-link active" type="button" data-listing-type="sale" aria-pressed="true">Buy</button></li>
+                                <li class="nav-item" role="presentation"><button class="nav-link" type="button" data-listing-type="sale" aria-pressed="false">Sell</button></li>
                                 <li class="nav-item" role="presentation"><button class="nav-link" type="button" data-listing-type="rent" aria-pressed="false">Rent</button></li>
-                                <li class="nav-item" role="presentation"><button class="nav-link" type="button" data-listing-type="lease" aria-pressed="false">Lease</button></li>
                             </ul>
                         </div>
                         <form method="GET" action="{{ route('properties.index') }}" id="property-search-form">
@@ -126,8 +126,10 @@
             if (!form) return;
 
             const listingInput = document.getElementById('property-listing-type');
+            let initialTabSelected = false;
             document.querySelectorAll('#propertySearchTabs [data-listing-type]').forEach(function (tab) {
-                const active = tab.dataset.listingType === listingInput.value;
+                const active = !initialTabSelected && tab.dataset.listingType === listingInput.value;
+                if (active) initialTabSelected = true;
                 tab.classList.toggle('active', active);
                 tab.setAttribute('aria-pressed', active ? 'true' : 'false');
                 tab.addEventListener('click', function () {
