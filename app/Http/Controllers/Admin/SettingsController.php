@@ -25,7 +25,7 @@ class SettingsController extends Controller
     {
         $data = $request->validate([
             'sticky_header' => ['sometimes', 'boolean'],
-            'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp,svg', 'max:5120'],
+            'logo' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp,svg', 'max:5120'],
             'logo_media_id' => ['nullable', 'integer', Rule::exists('media', 'id')->where(fn ($query) => $query->where('mime_type', 'like', 'image/%'))],
             'remove_logo' => ['sometimes', 'boolean'],
             'meta_title' => ['nullable', 'string', 'max:255'],
