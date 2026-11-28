@@ -417,6 +417,16 @@ class CircleRateImportController extends Controller
         return $model::query()->where('is_active', true)->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->first();
     }
 
+    private function locationMatchesIds(?CircleRateLocation $location, array $allowedIds): bool
+    {
+        $allowed = array_map('strval', $allowedIds);
+        while ($location) {
+            if (in_array((string) $location->id, $allowed, true)) return true;
+            $location = $location->parent;
+        }
+        return false;
+    }
+
     private function findCategory(string $name, ?int $propertyTypeId): ?CircleRatePropertyCategory
     {
         if ($name === '') return null;
@@ -434,7 +444,10 @@ class CircleRateImportController extends Controller
         if (! $range) return null;
         $applicability = $range->applicability ?? [];
         foreach (['property_type_ids' => $propertyTypeId, 'location_ids' => $locationId, 'district_ids' => $districtId] as $key => $selected) {
-            if (! empty($applicability[$key]) && ! in_array((string) $selected, array_map('strval', $applicability[$key]), true)) return null;
+            if (! empty($applicability[$key])) {
+                $matches = $key === 'location_ids' ? ($locationId ? $this->locationMatchesIds(CircleRateLocation::query()->find($locationId), $applicability[$key]) : false) : in_array((string) $selected, array_map('strval', $applicability[$key]), true);
+                if (! $matches) return null;
+            }
         }
         return $range;
     }
