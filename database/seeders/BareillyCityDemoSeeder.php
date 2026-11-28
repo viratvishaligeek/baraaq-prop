@@ -21,6 +21,7 @@ use App\Models\CircleRateUnit;
 use App\Models\CircleRateUnitConversion;
 use App\Models\CircleRateVersion;
 use App\Models\User;
+use App\Services\CircleRate\CircleRateCache;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -189,7 +190,10 @@ class BareillyCityDemoSeeder extends Seeder
                     [
                         'name' => $name,
                         'description' => self::DEMO_NOTE,
-                        'priority' => 100,
+                        // Within the demo dataset, prefer specific fixtures to the catch-all.
+            // ValuationService independently ranks every non-demo source above
+            // all synthetic demo records.
+            'priority' => ($tehsil === null && $location === null && $areaType === null && $category === null && $road === null) ? 0 : 100,
                         'applicability' => ['dataset' => 'DEMO', 'property_type_slugs' => $applicableTypes],
                         'is_active' => true,
                     ]
@@ -374,6 +378,20 @@ class BareillyCityDemoSeeder extends Seeder
                     ->map(fn (string $slug) => $categories[$slug])
                     ->values();
 
+                // District-wide DEMO fallback: this row intentionally has no
+                // tehsil, location, area type, category or road-width restriction.
+                // The calculator resolver treats null optional dimensions as a
+                // wildcard, so every valid Bareilly form combination can still
+                // calculate when no more-specific sample rate exists.
+                foreach (array_values($years) as $yearIndex => $year) {
+                    $this->seedRate(
+                        $district, null, null, null, $type, null, null,
+                        $year, $units['square-foot'],
+                        $source, $actor, $baseRates[$typeSlug], 0, $yearIndex
+                    );
+                    $rateCount++;
+                }
+
                 foreach (array_values($locations) as $locationIndex => $location) {
                     foreach (array_values($years) as $yearIndex => $year) {                        // General fallback makes the type/location/year calculable
                         // even when category and road-width are not selected.
@@ -400,6 +418,25 @@ class BareillyCityDemoSeeder extends Seeder
                 }
             }
 
+            // Existing active property types outside this demo fixture also get
+            // a generic district-wide test rate, so the public selector never
+            // exposes a type that cannot be calculated in the Bareilly QA dataset.
+            $demoTypeIds = collect($types)->pluck('id')->map(fn ($id) => (int) $id)->all();
+            foreach (CircleRatePropertyType::query()->where('is_active', true)->get() as $otherType) {
+                if (in_array((int) $otherType->id, $demoTypeIds, true)) {
+                    continue;
+                }
+
+                foreach (array_values($years) as $yearIndex => $year) {
+                    $this->seedRate(
+                        $district, null, null, null, $otherType, null, null,
+                        $year, $units['square-foot'],
+                        $source, $actor, 500.0, 0, $yearIndex
+                    );
+                    $rateCount++;
+                }
+            }
+
             $this->seedCalculatorFields($types);
             $this->seedCalculationRules($source, $actor, $types, $categories, $roadWidths);
 
@@ -423,13 +460,16 @@ class BareillyCityDemoSeeder extends Seeder
                 ]
             );
         });
+
+        // Invalidate any previously cached "no match" or demo-only rate choice.
+        CircleRateCache::bumpVersion();
     }
 
     private function seedRate(
         CircleRateDistrict $district,
-        CircleRateTehsil $tehsil,
-        CircleRateAreaType $areaType,
-        CircleRateLocation $location,
+        ?CircleRateTehsil $tehsil,
+        ?CircleRateAreaType $areaType,
+        ?CircleRateLocation $location,
         CircleRatePropertyType $type,
         ?CircleRatePropertyCategory $category,
         ?CircleRateRoadWidthRange $road,
@@ -456,10 +496,14 @@ class BareillyCityDemoSeeder extends Seeder
         ];
 
         $manualMatch = CircleRate::query()
+            ->with('source')
+            ->where('status', 'published')
+            ->where('verification_status', 'verified')
+            ->whereHas('source', fn ($query) => $query->whereNotNull('document_path')->orWhereNotNull('source_url'))
             ->where('district_id', $district->id)
-            ->where('tehsil_id', $tehsil->id)
-            ->where('location_id', $location->id)
-            ->where('area_type_id', $areaType->id)
+            ->where('tehsil_id', $tehsil?->id)
+            ->where('location_id', $location?->id)
+            ->where('area_type_id', $areaType?->id)
             ->where('property_type_id', $type->id)
             ->where('category_id', $category?->id)
             ->where('road_width_range_id', $road?->id)

@@ -14,6 +14,12 @@
                         <p class="text-muted">Choose the applicable location, property type and area to calculate an estimate from published, verified rate records.</p>
                     </div>
 
+                    @if (!app()->environment('production'))
+                        <div class="alert alert-info" role="status">
+                            <strong>Development calculator:</strong> If no locality/category/road-specific rate matches, a district-wide synthetic DEMO rate is used so you can test the calculation flow. Demo values are illustrative only, not official government circle rates.
+                        </div>
+                    @endif
+
                     @if ($errors->any())
                         <div class="alert alert-danger" role="alert">
                             <strong>We could not calculate this valuation.</strong>
@@ -117,7 +123,7 @@
                             @endforeach
                         </div>
                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mt-4">
-                            <p class="small text-muted mb-0">Calculation is available only when a matching published and verified rate exists.</p>
+                            <p class="small text-muted mb-0">Specific published rates are preferred. In development, a clearly labelled synthetic DEMO fallback is available for unmatched Bareilly selections.</p>
                             <button class="th-btn" type="submit">Calculate valuation <i class="fa-regular fa-arrow-right ms-2"></i></button>
                         </div>
                     </form>

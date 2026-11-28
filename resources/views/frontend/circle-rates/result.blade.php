@@ -4,6 +4,9 @@
 @section('meta_description', 'Circle rate valuation estimate and calculation breakdown.')
 
 @section('content')
+@php
+    $isDemoRate = str_contains(strtoupper((string) ($record->rate?->source?->title ?? '')), 'DEMO TEST DATA');
+@endphp
 <style>
     @media print {
         @page { margin: 14mm; }
@@ -24,21 +27,24 @@
             </div>
             <div class="card border-0 shadow-sm p-4 mb-4">
                 <div class="text-center">
-                    <div class="text-muted">Estimated government circle-rate value</div>
+                    <div class="text-muted">{{ $isDemoRate ? 'Estimated demo valuation (testing only)' : 'Estimated government circle-rate value' }}</div>
                     <div class="display-5 fw-bold">₹{{ number_format((float) $record->estimated_value, 2) }}</div>
                     <div class="small text-muted mt-1">Financial year {{ $record->financialYear?->name ?? '—' }}</div>
+                    @if($isDemoRate)
+                        <div class="alert alert-warning text-start mt-3 mb-0"><strong>DEMO DATA — NOT AN OFFICIAL CIRCLE RATE.</strong> This result uses synthetic test data only. Do not use it for property purchase decisions, stamp duty, registration, lending, or legal valuation.</div>
+                    @endif
                 </div>
                 <hr>
                 <div class="row g-3">
                     <div class="col-md-6"><strong>District:</strong> {{ $record->rate?->district?->name ?? '—' }}</div>
                     <div class="col-md-6"><strong>Tehsil:</strong> {{ $record->rate?->tehsil?->name ?? '—' }}</div>
-                    <div class="col-md-6"><strong>Location:</strong> {{ $record->rate?->location?->name ?? '—' }}</div>
+                    <div class="col-md-6"><strong>Location:</strong> {{ $record->rate?->location?->name ?? ($isDemoRate ? 'District-wide DEMO fallback for the selected location' : '—') }}</div>
                     <div class="col-md-6"><strong>Property type:</strong> {{ $record->rate?->propertyType?->name ?? '—' }}</div>
-                    <div class="col-md-6"><strong>Category:</strong> {{ $record->rate?->category?->name ?? '—' }}</div>
+                    <div class="col-md-6"><strong>Category:</strong> {{ $record->rate?->category?->name ?? ($isDemoRate ? 'General DEMO fallback' : '—') }}</div>
                     <div class="col-md-6"><strong>Property area:</strong> {{ number_format((float) $record->property_area, 4) }}</div>
                     <div class="col-md-6"><strong>Rate:</strong> {{ number_format((float) $record->applicable_rate, 2) }} / {{ $record->rate?->unit?->name ?? '—' }}</div>
                     <div class="col-md-6"><strong>Effective from:</strong> {{ $record->rate?->effective_from?->format('d M Y') ?? '—' }}</div>
-                    <div class="col-md-6"><strong>Verification:</strong> {{ ucfirst($record->rate?->verification_status ?? 'unknown') }}</div>
+                    <div class="col-md-6"><strong>Verification:</strong> {{ $isDemoRate ? 'Synthetic demo fixture — not government verified' : ucfirst($record->rate?->verification_status ?? 'unknown') }}</div>
                     <div class="col-md-6"><strong>Source document:</strong>
                         @if($record->rate?->source?->document_path)
                             <a href="{{ asset('storage/'.$record->rate->source->document_path) }}" target="_blank" rel="noopener">{{ $record->rate->source->title }}</a>

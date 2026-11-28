@@ -120,11 +120,19 @@ class ValuationService
                         $specificity++;
                     }
                 }
+                $rate->setAttribute('_is_demo_rate', str_contains(strtoupper((string) $rate->source?->title), 'DEMO TEST DATA'));
                 $rate->setAttribute('_match_specificity', $specificity);
                 $rate->setAttribute('_condition_specificity', count($rate->conditions ?? []));
                 return $rate;
             })
-            ->sortByDesc(fn (CircleRate $rate) => [(int) $rate->priority, (int) $rate->getAttribute('_match_specificity'), (int) $rate->getAttribute('_condition_specificity')])
+            // Real published source-backed rates always outrank synthetic demo
+            // fixtures. Within the same source class, use priority and specificity.
+            ->sortByDesc(fn (CircleRate $rate) => [
+                $rate->getAttribute('_is_demo_rate') ? 0 : 1,
+                (int) $rate->priority,
+                (int) $rate->getAttribute('_match_specificity'),
+                (int) $rate->getAttribute('_condition_specificity'),
+            ])
             ->values();
 
         if ($candidates->isEmpty()) {
@@ -135,7 +143,8 @@ class ValuationService
 
         $first = $candidates->first();
         $top = $candidates->filter(fn (CircleRate $rate) =>
-            (int) $rate->priority === (int) $first->priority
+            (bool) $rate->getAttribute('_is_demo_rate') === (bool) $first->getAttribute('_is_demo_rate')
+            && (int) $rate->priority === (int) $first->priority
             && (int) $rate->getAttribute('_match_specificity') === (int) $first->getAttribute('_match_specificity')
             && (int) $rate->getAttribute('_condition_specificity') === (int) $first->getAttribute('_condition_specificity')
         );
@@ -273,7 +282,9 @@ class ValuationService
         $areaStrategies = ['land_area', 'agricultural_land', 'agricultural_area', 'residential_plot', 'commercial_plot', 'industrial_plot', 'mixed_use_land', 'building_area'];
         $formula = $rate->propertyType->formula_configuration['formula'] ?? null;
 
-        if (! in_array($strategy, $areaStrategies, true) && ! is_string($formula)) {
+        $isDemoRate = str_contains(strtoupper((string) $rate->source?->title), 'DEMO TEST DATA');
+
+        if (! in_array($strategy, $areaStrategies, true) && ! is_string($formula) && ! $isDemoRate) {
             throw new RuntimeException("The '{$strategy}' valuation strategy needs an administrator-configured safe formula before it can be used.");
         }
 
@@ -291,13 +302,22 @@ class ValuationService
         if (is_string($formula) && trim($formula) !== '') {
             try {
                 $value = app(SafeFormulaEvaluator::class)->evaluate($formula, $variables);
+                $formulaDescription = $formula;
             } catch (\InvalidArgumentException $exception) {
-                throw ValidationException::withMessages(['property_type_id' => 'The configured valuation formula is invalid: '.$exception->getMessage()]);
+                if (! $isDemoRate) {
+                    throw ValidationException::withMessages(['property_type_id' => 'The configured valuation formula is invalid: '.$exception->getMessage()]);
+                }
+
+                // Synthetic demo rows must remain calculable even when an
+                // unrelated legacy property type has an incomplete formula.
+                $value = $convertedArea * (float) $rate->rate;
+                $formulaDescription = 'DEMO fallback: converted property area × synthetic test rate';
             }
-            $formulaDescription = $formula;
         } else {
             $value = $convertedArea * (float) $rate->rate;
-            $formulaDescription = $strategy.' : converted property area × verified circle rate';
+            $formulaDescription = $isDemoRate
+                ? 'DEMO: converted property area × synthetic test rate'
+                : $strategy.' : converted property area × verified circle rate';
         }
 
         if (! is_finite($value) || $value < 0 || $value > 9999999999999999) {
