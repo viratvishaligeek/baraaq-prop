@@ -55,7 +55,7 @@ class CircleRateSourceController extends Controller
 
     public function destroy(CircleRateSource $source)
     {
-        if ($source->rates()->exists()) {
+        if ($source->rates()->exists() || $source->rules()->exists()) {
             return back()->withErrors(['source' => 'This source is linked to circle rates. Replace the source reference before deleting it.']);
         }
 
