@@ -87,7 +87,7 @@
                                         <td>
                                             @php($cell = $item->{$column})
                                             @if (is_bool($cell))<span class="badge {{ $cell ? 'text-bg-success' : 'text-bg-secondary' }}">{{ $cell ? 'Yes' : 'No' }}</span>
-                                            @elseif (is_array($cell))<code>{{ \\Illuminate\\Support\\Str::limit(json_encode($cell), 55) }}</code>
+                                            @elseif (is_array($cell))<code>{{ \Illuminate\Support\Str::limit(json_encode($cell), 55) }}</code>
                                             @else{{ \Illuminate\Support\Str::limit((string) ($cell ?? '—'), 55) }}@endif
                                         </td>
                                     @endforeach
