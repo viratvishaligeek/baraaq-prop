@@ -59,7 +59,14 @@ class CircleRateController extends Controller
             ->when($filters['property_type_id'] ?? null, fn ($q, $id) => $q->where('property_type_id', $id))
             ->when($filters['verification_status'] ?? null, fn ($q, $status) => $q->where('verification_status', $status))
             ->when($filters['status'] ?? null, fn ($q, $status) => $q->where('status', $status))
-            ->when($filters['q'] ?? null, fn ($q, $term) => $q->whereHas('location', fn ($l) => $l->where('name', 'like', '%'.$term.'%')));
+            ->when($filters['q'] ?? null, function ($q, $term): void {
+                $q->where(function ($search) use ($term): void {
+                    $search->whereHas('location', fn ($relation) => $relation->where('name', 'like', '%'.$term.'%'))
+                        ->orWhereHas('district', fn ($relation) => $relation->where('name', 'like', '%'.$term.'%'))
+                        ->orWhereHas('tehsil', fn ($relation) => $relation->where('name', 'like', '%'.$term.'%'))
+                        ->orWhereHas('propertyType', fn ($relation) => $relation->where('name', 'like', '%'.$term.'%'));
+                });
+            });
 
         if (! empty($filters['effective_dates'])) $rates->orderByDesc('effective_from')->orderByDesc('id');
         else $rates->latest();
