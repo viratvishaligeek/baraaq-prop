@@ -75,14 +75,14 @@
 
         <div class="col-xl-8">
             <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2"><h2 class="h5 mb-0">Existing records</h2><form method="GET" class="d-flex gap-2"><select class="form-select form-select-sm" name="demo_filter"><option value="">All records</option><option value="demo" @selected(request('demo_filter') === 'demo')>DEMO only</option><option value="official" @selected(request('demo_filter') === 'official')>Official / managed</option></select><button class="btn btn-sm btn-outline-primary">Filter</button></form><span class="text-muted small">{{ $records->total() }} total</span></div>
+                <div class="card-header bg-white d-flex justify-content-between align-items-center"><h2 class="h5 mb-0">Existing records</h2><span class="text-muted small">{{ $records->total() }} total</span></div>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead><tr><th>ID</th>@foreach ($definition['columns'] as $column)<th>{{ \Illuminate\Support\Str::headline($column) }}</th>@endforeach<th class="text-end">Actions</th></tr></thead>
                         <tbody>
                             @forelse ($records as $item)
                                 <tr>
-                                    <td>{{ $item->id }} @if($item->is_demo)<span class="badge text-bg-warning">DEMO</span>@endif</td>
+                                    <td>{{ $item->id }}</td>
                                     @foreach ($definition['columns'] as $column)
                                         <td>
                                             @php($cell = $item->{$column})
