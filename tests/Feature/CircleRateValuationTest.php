@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\CircleRate;
+use App\Models\CircleRateAreaType;
 use App\Models\CircleRateDistrict;
 use App\Models\CircleRateFinancialYear;
 use App\Models\CircleRatePropertyType;
@@ -236,7 +237,7 @@ class CircleRateValuationTest extends TestCase
         $district = CircleRateDistrict::query()->where('slug', 'bareilly')->firstOrFail();
         $this->assertSame(6, $district->tehsils()->count());
         $this->assertSame(15, $district->locations()->count());
-        $this->assertSame(2, \\App\\Models\\CircleRateAreaType::query()->count());
+        $this->assertSame(2, CircleRateAreaType::query()->count());
         $this->assertSame(0, CircleRate::query()->count());
 
         $tehsil = $district->tehsils()->where('slug', 'bareilly')->firstOrFail();
