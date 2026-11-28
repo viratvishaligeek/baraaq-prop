@@ -17,6 +17,7 @@ use App\Models\CircleRateRule;
 use App\Models\CircleRateCalculatorField;
 use App\Models\CircleRateCalculatorFieldOption;
 use App\Models\CircleRateSource;
+use App\Services\CircleRate\CircleRateCache;
 use App\Models\CircleRateTehsil;
 use App\Models\CircleRateUnit;
 use Illuminate\Database\Eloquent\Model;
@@ -278,6 +279,7 @@ class CircleRateMasterController extends Controller
             return $created;
         });
         $this->audit($request, $record, 'created', null, $record->getAttributes());
+        CircleRateCache::bumpVersion();
 
         return redirect()->route('admin.circle-rates.master.index', $module)->with('success', $definition['title'].' record created.');
     }
@@ -303,6 +305,7 @@ class CircleRateMasterController extends Controller
             }
         });
         $this->audit($request, $record, 'updated', $oldValues, $record->fresh()->getAttributes());
+        CircleRateCache::bumpVersion();
 
         return redirect()->route('admin.circle-rates.master.index', $module)->with('success', $definition['title'].' record updated.');
     }
@@ -321,6 +324,7 @@ class CircleRateMasterController extends Controller
         }
 
         $this->audit($request, $record, 'deleted', $oldValues, ['deleted_at' => now()->toDateTimeString()]);
+        CircleRateCache::bumpVersion();
 
         return redirect()->route('admin.circle-rates.master.index', $module)->with('success', $definition['title'].' record deleted.');
     }
