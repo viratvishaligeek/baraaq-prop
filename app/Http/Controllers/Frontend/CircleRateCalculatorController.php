@@ -13,6 +13,8 @@ use App\Models\CircleRateTehsil;
 use App\Models\CircleRateUnit;
 use App\Models\CircleRateValuationRecord;
 use App\Models\CircleRateDistrict;
+use App\Models\CircleRateCalculatorField;
+use Illuminate\Validation\Rule;
 use App\Services\CircleRate\ValuationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -102,6 +104,46 @@ class CircleRateCalculatorController extends Controller
             'valuation_date' => ['required', 'date'],
             'custom' => ['nullable', 'array'],
         ]);
+
+        $customRules = [];
+        $applicableFields = [];
+        foreach (CircleRateCalculatorField::query()->where('is_active', true)->with('options')->get() as $field) {
+            $applicability = $field->applicability ?? [];
+            $matches = true;
+            foreach (['district_ids' => 'district_id', 'tehsil_ids' => 'tehsil_id', 'area_type_ids' => 'area_type_id', 'location_ids' => 'location_id', 'property_type_ids' => 'property_type_id'] as $configured => $selected) {
+                if (! empty($applicability[$configured]) && ! in_array((string) ($input[$selected] ?? ''), array_map('strval', $applicability[$configured]), true)) {
+                    $matches = false;
+                    break;
+                }
+            }
+            if (! $matches) continue;
+
+            $key = 'custom.'.$field->name;
+            $rules = [$field->is_required ? 'required' : 'nullable'];
+            if (in_array($field->input_type, ['select', 'dropdown', 'radio'])) {
+                $rules[] = Rule::in($field->options->pluck('value')->all());
+            } elseif (in_array($field->input_type, ['number', 'range'])) {
+                $rules[] = 'numeric';
+            } elseif ($field->input_type === 'date') {
+                $rules[] = 'date';
+            } elseif ($field->input_type === 'checkbox') {
+                $rules[] = 'boolean';
+            } elseif ($field->input_type === 'multi-select') {
+                $rules[] = 'array';
+            } else {
+                $rules[] = 'string';
+                $rules[] = 'max:1000';
+            }
+            $customRules[$key] = $rules;
+            $applicableFields[] = $field->name;
+        }
+
+        if ($customRules) {
+            $customInput = $request->validate($customRules);
+            $input['custom'] = collect($customInput['custom'] ?? [])->only($applicableFields)->all();
+        } else {
+            $input['custom'] = [];
+        }
 
         $result = $service->calculate($input);
         $rate = $result['rate'];
