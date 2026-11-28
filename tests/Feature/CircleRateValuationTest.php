@@ -296,6 +296,7 @@ class CircleRateValuationTest extends TestCase
         $source = CircleRateSource::query()->create([
             'title' => 'Test official rate list',
             'reference_number' => 'TEST-2026',
+            'source_url' => 'https://example.org/official-test-rate-list',
         ]);
 
         return [$district, $propertyType, $year, $unit, $source];
