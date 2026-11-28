@@ -12,7 +12,7 @@ php artisan test
 
 `CircleRateReferenceSeeder` creates only configurable reference data: Bareilly district, the six tehsils listed by the Bareilly district directory, fifteen development-block locations, Urban/Rural area types, and optional location-level types. It does not create circle-rate amounts, property categories, property types, or valuation assumptions. It uses `firstOrCreate` so later seeder runs do not overwrite administrator edits.
 
-The Bareilly district demography page (last updated 25 June 2018) reports 2,070 villages and links a tehsil-wise village PDF. That PDF could not be retrieved in this implementation session, so a complete village/mohalla list is not fabricated or seeded; use the staged Bulk Location Import after obtaining an authoritative dataset. Block-to-tehsil mappings are left unset because the cited directory does not provide those relationships.
+The official district directory reports 2,070 villages. A complete village/mohalla list is not fabricated or seeded; use the staged Bulk Location Import after obtaining an authoritative dataset. Block-to-tehsil mappings are left unset because the cited directory does not provide those relationships.
 
 ## Admin workflow
 
