@@ -37,6 +37,7 @@
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.dashboard') ? 'active' : '' }}" href="{{ route('admin.circle-rates.dashboard') }}">Dashboard</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.rates.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.rates.index') }}">Circle rate records</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.sources.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.sources.index') }}">Source documents</a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.imports.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.imports.index') }}">Excel / CSV Import</a>
                     @foreach ([
                         'districts' => 'Districts',
                         'tehsils' => 'Tehsils',
