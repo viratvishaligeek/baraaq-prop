@@ -417,6 +417,20 @@ class CircleRateMasterController extends Controller
             }
         }
 
+        if ($definition['model'] === CircleRateFinancialYear::class) {
+            if ($data['starts_on'] > $data['ends_on']) {
+                throw ValidationException::withMessages(['ends_on' => 'Financial year end date must be on or after its start date.']);
+            }
+            $overlap = CircleRateFinancialYear::query()
+                ->when($record, fn ($query) => $query->whereKeyNot($record->id))
+                ->whereDate('starts_on', '<=', $data['ends_on'])
+                ->whereDate('ends_on', '>=', $data['starts_on'])
+                ->exists();
+            if ($overlap) {
+                throw ValidationException::withMessages(['starts_on' => 'Financial year dates overlap another configured financial year.']);
+            }
+        }
+
         if ($definition['model'] === CircleRateRule::class) {
             if (! is_array($data['conditions'] ?? null) || ! array_is_list($data['conditions'])) {
                 throw ValidationException::withMessages(['conditions' => 'Rule conditions must be a JSON array of field/operator/value objects.']);
