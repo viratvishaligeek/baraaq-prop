@@ -85,6 +85,7 @@ class CircleRateImportController extends Controller
             'stored_path' => $storedPath,
             'file_hash' => $hash,
             'file_type' => $extension,
+            'column_mapping' => $this->detectMapping($preview['headers']),
             'status' => 'uploaded',
             'total_rows' => count($preview['rows']),
             'summary' => $duplicate ? 'File content matches earlier import batch #'.$duplicate->id.'. Review for duplicate rates before confirmation.' : null,
@@ -351,6 +352,41 @@ class CircleRateImportController extends Controller
             }
             fclose($output);
         }, 'circle-rate-import-errors-'.$batch->id.'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    private function detectMapping(array $headers): array
+    {
+        $aliases = [
+            'district' => ['district', 'zilla'],
+            'tehsil' => ['tehsil'],
+            'area_type' => ['area type', 'area category', 'urban rural', 'urban/rural'],
+            'location' => ['location', 'village', 'mohalla', 'locality', 'zone'],
+            'property_type' => ['property type', 'property', 'type'],
+            'category' => ['category', 'property category'],
+            'road_width' => ['road width', 'width range', 'road width range'],
+            'rate' => ['rate', 'circle rate', 'amount', 'value'],
+            'unit' => ['unit', 'rate unit', 'measurement unit'],
+            'effective_from' => ['effective from', 'effective date', 'start date', 'valid from'],
+            'effective_until' => ['effective until', 'expiry date', 'end date', 'valid until'],
+            'conditions' => ['conditions', 'conditions json', 'rule conditions'],
+        ];
+
+        $normalized = [];
+        foreach ($headers as $header) {
+            $normalized[preg_replace('/[^a-z0-9]+/', ' ', strtolower(trim($header)))] = $header;
+        }
+
+        $mapping = [];
+        foreach ($aliases as $field => $candidates) {
+            foreach ($candidates as $candidate) {
+                if (isset($normalized[$candidate])) {
+                    $mapping[$field] = $normalized[$candidate];
+                    break;
+                }
+            }
+        }
+
+        return $mapping;
     }
 
     private function matchingRates(array $data)
