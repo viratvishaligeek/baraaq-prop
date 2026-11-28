@@ -352,7 +352,7 @@ class BareillyCityDemoSeeder extends Seeder
             // An upload-history fixture only. It is not a confirmed import and has no
             // stored source file or imported official rows.
             $hash = hash('sha256', 'BAREILLY-CITY-DEMO-TEST-DATA-V1');
-            CircleRateImportBatch::query()->firstOrCreate(
+            $batch = CircleRateImportBatch::query()->firstOrCreate(
                 ['file_hash' => $hash],
                 [
                     'financial_year_id' => $years['2026-27']->id,
@@ -368,6 +368,11 @@ class BareillyCityDemoSeeder extends Seeder
                     'conflict_rows' => 0,
                     'summary' => self::DEMO_NOTE.'; metadata-only import history fixture; no import was confirmed.',
                 ]
+            );
+            $this->assertDemoMarker(
+                str_starts_with((string) $batch->original_filename, 'DEMO-')
+                && str_contains((string) $batch->summary, self::DEMO_NOTE),
+                'import batch fixture'
             );
         });
     }
