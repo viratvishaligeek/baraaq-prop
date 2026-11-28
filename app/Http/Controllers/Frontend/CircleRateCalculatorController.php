@@ -230,6 +230,9 @@ class CircleRateCalculatorController extends Controller
                 'not_equals' => (string) $actual !== (string) $expected,
                 'greater_than' => is_numeric($actual) && is_numeric($expected) && (float) $actual > (float) $expected,
                 'less_than' => is_numeric($actual) && is_numeric($expected) && (float) $actual < (float) $expected,
+                'greater_than_or_equal' => is_numeric($actual) && is_numeric($expected) && (float) $actual >= (float) $expected,
+                'less_than_or_equal' => is_numeric($actual) && is_numeric($expected) && (float) $actual <= (float) $expected,
+                'between' => is_array($expected) && count($expected) === 2 && is_numeric($actual) && (float) $actual >= (float) $expected[0] && (float) $actual <= (float) $expected[1],
                 'in' => is_array($expected) && in_array((string) $actual, array_map('strval', $expected), true),
                 default => false,
             };
