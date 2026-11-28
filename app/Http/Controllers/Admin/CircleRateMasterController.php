@@ -399,6 +399,10 @@ class CircleRateMasterController extends Controller
             if ($field['type'] === 'json' && isset($data[$name])) $data[$name] = json_decode($data[$name], true, 512, JSON_THROW_ON_ERROR);
         }
         if ($definition['model'] === CircleRatePropertyType::class) {
+            $data['formula_configuration'] = $data['formula_configuration'] ?? [];
+            if (! is_array($data['formula_configuration'])) {
+                throw ValidationException::withMessages(['formula_configuration' => 'Formula configuration must be a JSON object.']);
+            }
             $formula = $data['formula_configuration']['formula'] ?? null;
             $supportedStrategies = ['land_area', 'agricultural_land', 'agricultural_area', 'residential_plot', 'commercial_plot', 'industrial_plot', 'mixed_use_land', 'building_area'];
             if (! in_array($data['calculation_strategy'] ?? '', $supportedStrategies, true) && (! is_string($formula) || trim($formula) === '')) {
