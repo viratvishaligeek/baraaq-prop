@@ -4,6 +4,16 @@
 @section('meta_description', 'Circle rate valuation estimate and calculation breakdown.')
 
 @section('content')
+<style>
+    @media print {
+        @page { margin: 14mm; }
+        body { background: #fff !important; color: #111 !important; }
+        .no-print, header, footer, nav { display: none !important; }
+        .container, .container-fluid { width: 100% !important; max-width: 100% !important; }
+        .card, .shadow, .shadow-sm { box-shadow: none !important; border-color: #ddd !important; }
+        a { color: inherit !important; text-decoration: none !important; }
+    }
+</style>
 <section class="space" style="padding: 70px 0;">
     <div class="container">
         <div class="row justify-content-center"><div class="col-lg-9">
