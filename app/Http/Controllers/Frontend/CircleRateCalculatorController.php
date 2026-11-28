@@ -32,7 +32,8 @@ class CircleRateCalculatorController extends Controller
             'propertyTypes' => CircleRatePropertyType::query()->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(),
             'financialYears' => CircleRateFinancialYear::query()->where('is_active', true)->where('show_on_frontend', true)->orderByDesc('starts_on')->get(),
             'units' => CircleRateUnit::query()->where('is_active', true)->where('dimension', 'area')->orderBy('name')->get(),
-            'fields' => \App\Models\CircleRateCalculatorField::query()->where('is_active', true)->with('options')->orderBy('sort_order')->get(),
+            'fields' => CircleRateCalculatorField::query()->where('is_active', true)->with('options')->orderBy('sort_order')->get(),
+            'disclaimer' => Setting::read('circle_rate.valuation_disclaimer', 'This is an estimate based on published, verified circle rate records. It is not a market-price appraisal or a guarantee of the final registration assessment.'),
         ]);
     }
 
