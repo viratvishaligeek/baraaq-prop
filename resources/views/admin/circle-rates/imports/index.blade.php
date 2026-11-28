@@ -13,7 +13,7 @@
         </div></div></div>
         <div class="col-lg-8"><div class="card border-0 shadow-sm"><div class="card-header bg-white"><h2 class="h5 mb-0">Import history</h2></div>
             <div class="table-responsive"><table class="table align-middle mb-0"><thead><tr><th>File</th><th>Financial year</th><th>Rows</th><th>Valid</th><th>Errors / conflicts</th><th>Status</th><th></th></tr></thead><tbody>
-                @forelse($batches as $batch)<tr><td>{{ $batch->original_filename }}</td><td>{{ $batch->financialYear?->name ?? '—' }}</td><td>{{ $batch->total_rows }}</td><td>{{ $batch->valid_rows }}</td><td>{{ $batch->invalid_rows + $batch->conflict_rows }}</td><td>{{ ucfirst(str_replace('_', ' ', $batch->status)) }}</td><td><a class="btn btn-sm btn-outline-primary" href="{{ route('admin.circle-rates.imports.show', $batch) }}">Open</a></td></tr>@empty<tr><td colspan="7" class="text-center text-muted py-4">No imports uploaded yet.</td></tr>@endforelse
+                @forelse($batches as $batch)<tr><td>{{ $batch->original_filename }} @if($batch->is_demo)<span class="badge text-bg-warning">DEMO</span>@endif</td><td>{{ $batch->financialYear?->name ?? '—' }}</td><td>{{ $batch->total_rows }}</td><td>{{ $batch->valid_rows }}</td><td>{{ $batch->invalid_rows + $batch->conflict_rows }}</td><td>{{ ucfirst(str_replace('_', ' ', $batch->status)) }}</td><td><a class="btn btn-sm btn-outline-primary" href="{{ route('admin.circle-rates.imports.show', $batch) }}">Open</a></td></tr>@empty<tr><td colspan="7" class="text-center text-muted py-4">No imports uploaded yet.</td></tr>@endforelse
             </tbody></table></div><div class="card-body">{{ $batches->links() }}</div>
         </div></div>
     </div>
