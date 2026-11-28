@@ -21,6 +21,7 @@ use App\Models\CircleRateUnit;
 use App\Models\CircleRateUnitConversion;
 use App\Models\CircleRateVersion;
 use App\Models\User;
+use App\Services\CircleRate\CircleRateCache;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -460,6 +461,9 @@ class BareillyCityDemoSeeder extends Seeder
                 ]
             );
         });
+
+        // Invalidate any previously cached "no match" or demo-only rate choice.
+        CircleRateCache::bumpVersion();
     }
 
     private function seedRate(
