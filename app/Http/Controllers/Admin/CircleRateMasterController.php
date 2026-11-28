@@ -18,6 +18,8 @@ use App\Models\CircleRateCalculatorField;
 use App\Models\CircleRateCalculatorFieldOption;
 use App\Models\CircleRateSource;
 use App\Services\CircleRate\CircleRateCache;
+use App\Services\CircleRate\SafeFormulaEvaluator;
+use InvalidArgumentException;
 use App\Models\CircleRateTehsil;
 use App\Models\CircleRateUnit;
 use Illuminate\Database\Eloquent\Model;
@@ -404,8 +406,8 @@ class CircleRateMasterController extends Controller
             }
             if (is_string($formula) && trim($formula) !== '') {
                 try {
-                    app(\\App\\Services\\CircleRate\\SafeFormulaEvaluator::class)->validate($formula);
-                } catch (\\InvalidArgumentException $exception) {
+                    app(SafeFormulaEvaluator::class)->validate($formula);
+                } catch (InvalidArgumentException $exception) {
                     throw ValidationException::withMessages(['formula_configuration' => $exception->getMessage()]);
                 }
             }
