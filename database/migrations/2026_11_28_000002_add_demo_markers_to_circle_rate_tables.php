@@ -13,7 +13,7 @@ return new class extends Migration
             'circle_rate_location_levels', 'circle_rate_locations', 'circle_rate_property_types',
             'circle_rate_property_categories', 'circle_rate_units', 'circle_rate_unit_conversions',
             'circle_rate_road_width_ranges', 'circle_rate_financial_years', 'circle_rate_sources',
-            'circle_rate_import_batches', 'circle_rate_rules', 'circle_rate_calculator_fields',
+            'circle_rate_import_batches', 'circle_rate_valuation_records', 'circle_rate_rules', 'circle_rate_calculator_fields',
             'circle_rate_calculator_field_options', 'circle_rates', 'circle_rate_versions',
         ] as $tableName) {
             Schema::table($tableName, function (Blueprint $table): void {
@@ -25,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         foreach ([
-            'circle_rate_versions', 'circle_rates', 'circle_rate_calculator_field_options',
+            'circle_rate_versions', 'circle_rates', 'circle_rate_valuation_records', 'circle_rate_calculator_field_options',
             'circle_rate_calculator_fields', 'circle_rate_rules', 'circle_rate_import_batches',
             'circle_rate_sources', 'circle_rate_financial_years', 'circle_rate_road_width_ranges',
             'circle_rate_unit_conversions', 'circle_rate_units', 'circle_rate_property_categories',
