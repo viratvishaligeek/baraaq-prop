@@ -135,7 +135,7 @@ class CircleRateCalculatorController extends Controller
                     break;
                 }
             }
-            if (! $matches) continue;
+            if (! $matches || ! $this->customFieldVisible($field->visibility_conditions ?? [], $input)) continue;
 
             $key = 'custom.'.$field->name;
             $rules = [$field->is_required ? 'required' : 'nullable'];
@@ -187,6 +187,29 @@ class CircleRateCalculatorController extends Controller
         ]);
 
         return redirect()->route('circle-rates.result', $record->reference);
+    }
+
+    private function customFieldVisible(array $conditions, array $input): bool
+    {
+        foreach ($conditions as $condition) {
+            if (! is_array($condition) || empty($condition['field']) || ! array_key_exists('value', $condition)) {
+                return false;
+            }
+
+            $actual = data_get($input, $condition['field']);
+            $expected = $condition['value'];
+            $matched = match ($condition['operator'] ?? 'equals') {
+                'equals' => (string) $actual === (string) $expected,
+                'not_equals' => (string) $actual !== (string) $expected,
+                'greater_than' => is_numeric($actual) && is_numeric($expected) && (float) $actual > (float) $expected,
+                'less_than' => is_numeric($actual) && is_numeric($expected) && (float) $actual < (float) $expected,
+                'in' => is_array($expected) && in_array((string) $actual, array_map('strval', $expected), true),
+                default => false,
+            };
+            if (! $matched) return false;
+        }
+
+        return true;
     }
 
     public function result(string $reference)
