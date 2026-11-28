@@ -99,14 +99,14 @@
                                         </select>
                                     @elseif ($field->input_type === 'multi-select')
                                         <select class="form-select" name="{{ $fieldName }}[]" multiple @required($field->is_required)>
-                                            @foreach ($field->options as $option)<option value="{{ $option->value }}">{{ $option->label }}</option>@endforeach
+                                            @foreach ($field->options as $option)<option value="{{ $option->value }}" @selected(in_array((string) $option->value, array_map('strval', (array) old($fieldName, $field->default_value)), true))>{{ $option->label }}</option>@endforeach
                                         </select>
                                     @elseif ($field->input_type === 'radio')
-                                        <div class="d-flex flex-wrap gap-3">@foreach ($field->options as $option)<label class="form-check"><input class="form-check-input" type="radio" name="{{ $fieldName }}" value="{{ $option->value }}" @required($field->is_required)> <span class="form-check-label">{{ $option->label }}</span></label>@endforeach</div>
+                                        <div class="d-flex flex-wrap gap-3">@foreach ($field->options as $option)<label class="form-check"><input class="form-check-input" type="radio" name="{{ $fieldName }}" value="{{ $option->value }}" @checked(old($fieldName, $field->default_value) == $option->value) @required($field->is_required)> <span class="form-check-label">{{ $option->label }}</span></label>@endforeach</div>
                                     @elseif ($field->input_type === 'checkbox')
                                         <input class="form-check-input" type="checkbox" name="{{ $fieldName }}" value="1" @checked(old($fieldName, $field->default_value) == '1')>
                                     @elseif ($field->input_type === 'date')
-                                        <input class="form-control" type="date" name="{{ $fieldName }}" @required($field->is_required)>
+                                        <input class="form-control" type="date" name="{{ $fieldName }}" value="{{ old($fieldName, $field->default_value) }}" @required($field->is_required)>
                                     @elseif ($field->input_type === 'number' || $field->input_type === 'range')
                                         <input class="form-control" type="{{ $field->input_type === 'range' ? 'range' : 'number' }}" name="{{ $fieldName }}" value="{{ old($fieldName, $field->default_value) }}" placeholder="{{ $field->placeholder }}" @required($field->is_required)>
                                     @else
