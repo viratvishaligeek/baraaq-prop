@@ -482,7 +482,7 @@ class BareillyCityDemoSeeder extends Seeder
     private function assertDemoMarker(bool $valid, string $record): void
     {
         if (! $valid) {
-            throw new \\RuntimeException('Refusing to reuse a non-demo record for '.$record.'. No existing official or manually managed data was changed.');
+            throw new \RuntimeException('Refusing to reuse a non-demo record for '.$record.'. No existing official or manually managed data was changed.');
         }
     }
 }
