@@ -164,7 +164,7 @@ class CircleRateMasterController extends Controller
                     ['name' => 'description', 'label' => 'Description', 'type' => 'textarea'],
                     ['name' => 'conditions', 'label' => 'Conditions JSON', 'type' => 'json', 'required' => true],
                     ['name' => 'actions', 'label' => 'Actions JSON', 'type' => 'json', 'required' => true],
-                    ['name' => 'source_id', 'label' => 'Official source document', 'type' => 'select', 'options' => CircleRateSource::class],
+                    ['name' => 'source_id', 'label' => 'Official source document', 'type' => 'select', 'options' => CircleRateSource::class, 'option_label' => 'title'],
                     ['name' => 'is_verified', 'label' => 'Verified rule (authorized verifier only)', 'type' => 'boolean'],
                     ['name' => 'priority', 'label' => 'Priority', 'type' => 'number'],
                     ['name' => 'stop_processing', 'label' => 'Stop after match', 'type' => 'boolean'],
@@ -243,7 +243,11 @@ class CircleRateMasterController extends Controller
         foreach ($definition['fields'] as $field) {
             if (! empty($field['options'])) {
                 $optionModel = $field['options'];
-                $options[$field['name']] = $optionModel::query()->orderBy('name')->get(['id', 'name']);
+                $labelColumn = $field['option_label'] ?? 'name';
+                $options[$field['name']] = $optionModel::query()->orderBy($labelColumn)->get(['id', $labelColumn])->map(function ($option) use ($labelColumn) {
+                    $option->name = $option->{$labelColumn};
+                    return $option;
+                });
             }
         }
 
@@ -336,6 +340,7 @@ class CircleRateMasterController extends Controller
             if ($name === 'location_ids') $base = ['nullable', 'array'];
             if ($name === 'unit_id' || $name === 'from_unit_id' || $name === 'to_unit_id') $base = ['required', 'integer', 'exists:circle_rate_units,id'];
             if ($name === 'field_id') $base = ['required', 'integer', 'exists:circle_rate_calculator_fields,id'];
+            if ($name === 'source_id') $base = ['nullable', 'integer', 'exists:circle_rate_sources,id'];
             if ($name === 'property_type_ids.*') $base = ['integer', 'exists:circle_rate_property_types,id'];
             if ($name === 'location_ids.*') $base = ['integer', 'exists:circle_rate_locations,id'];
             if ($name === 'starts_on' || $name === 'ends_on') $base = ['required', 'date'];
@@ -359,6 +364,9 @@ class CircleRateMasterController extends Controller
         }
         if (array_key_exists('is_verified', $data) && $data['is_verified'] && ! request()->user()->isAdministrator() && ! request()->user()->hasPermission('circle-rates.verify')) {
             throw ValidationException::withMessages(['is_verified' => 'Only an authorized verifier can approve conversions or calculation rules.']);
+        }
+        if ($definition['model'] === CircleRateRule::class && ! empty($data['is_verified']) && empty($data['source_id'])) {
+            throw ValidationException::withMessages(['source_id' => 'Attach an official source document before verifying this rule.']);
         }
         if (array_key_exists('is_verified', $data)) {
             $data['verified_by'] = $data['is_verified'] ? request()->user()->id : null;
