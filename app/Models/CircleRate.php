@@ -45,6 +45,7 @@ class CircleRate extends Model
 
     public function scopePublishedAndVerified($query)
     {
-        return $query->where('status', 'published')->where('verification_status', 'verified');
+        return $query->where('status', 'published')->where('verification_status', 'verified')
+            ->whereHas('source', fn ($source) => $source->whereNotNull('document_path')->orWhereNotNull('source_url'));
     }
 }
