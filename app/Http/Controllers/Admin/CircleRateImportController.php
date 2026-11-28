@@ -46,7 +46,7 @@ class CircleRateImportController extends Controller
     public function index()
     {
         return view('admin.circle-rates.imports.index', [
-            'batches' => CircleRateImportBatch::query()->with('financialYear')->latest()->paginate(20),
+            'batches' => CircleRateImportBatch::query()->where('status', 'not like', 'location_%')->with('financialYear')->latest()->paginate(20),
             'financialYears' => CircleRateFinancialYear::query()->where('is_active', true)->orderByDesc('starts_on')->get(),
             'sources' => CircleRateSource::query()->orderByDesc('id')->get(),
         ]);
