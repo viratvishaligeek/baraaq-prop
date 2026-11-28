@@ -182,6 +182,33 @@ $(function () {
         $locationId.val('');
         loadCategories();
     }
+    function appendChildLocations(parentId, $parentWrap) {
+        const $wrap = $('<div class="mt-2"></div>');
+        const $select = $('<select class="form-select" aria-label="More specific location"><option value="">Loading sub-locations...</option></select>');
+        $wrap.append($select);
+        $parentWrap.append($wrap);
+        const params = { district_id: $district.val(), parent_id: parentId };
+        if ($tehsil.val()) params.tehsil_id = $tehsil.val();
+        if ($areaType.val()) params.area_type_id = $areaType.val();
+        $.getJSON('{{ route('circle-rates.data.locations') }}', params)
+            .done(function (rows) {
+                fillSelect($select, rows, 'Select a more specific location (optional)');
+                if (!rows.length) $wrap.remove();
+            })
+            .fail(function () { $wrap.remove(); });
+        $select.on('change', function () {
+            $wrap.nextAll().remove();
+            if ($(this).val()) {
+                $locationId.val($(this).val());
+                loadCategories();
+                appendChildLocations($(this).val(), $wrap);
+            } else {
+                const parentSelect = $wrap.prev().find('select').last();
+                $locationId.val(parentSelect.length ? parentSelect.val() : $root.val());
+                loadCategories();
+            }
+        });
+    }
     $district.on('change', function () {
         loadTehsils();
         fillSelect($root, [], 'Loading locations...');
@@ -194,26 +221,9 @@ $(function () {
         if ($district.val()) loadLocations($root, null);
     });
     $root.on('change', function () {
-        $children.empty();
+        resetLocationChildren();
         $locationId.val($(this).val() || '');
-        loadCategories();
-        if (!$(this).val()) return;
-        const $child = $('<select class="form-select mt-2" aria-label="More specific location"><option value="">Loading sub-locations...</option></select>');
-        $children.append($child);
-        loadLocations($child, $(this).val());
-        $child.on('change', function () {
-            $children.find('select').slice($children.find('select').index(this) + 1).remove();
-            if ($(this).val()) $locationId.val($(this).val());
-            loadCategories();
-            if (!$(this).val()) return;
-            const $next = $('<select class="form-select mt-2" aria-label="More specific location"></select>');
-            $children.append($next);
-            loadLocations($next, $(this).val());
-            $next.on('change', function () {
-                if ($(this).val()) $locationId.val($(this).val());
-                loadCategories();
-            });
-        });
+        if ($(this).val()) appendChildLocations($(this).val(), $children);
     });
     $propertyType.on('change', function () { loadCategories(); loadRoadWidths(); });
     loadRoadWidths();
