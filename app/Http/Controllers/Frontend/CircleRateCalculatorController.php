@@ -54,7 +54,7 @@ class CircleRateCalculatorController extends Controller
 
         return response()->json(CircleRateLocation::query()
             ->where('district_id', $data['district_id'])
-            ->when($data['tehsil_id'] ?? null, fn ($q, $id) => $q->where(fn ($scope) => $scope->where('tehsil_id', $id)->orWhereNull('tehsil_id')))
+            ->when($data['tehsil_id'] ?? null, fn ($q, $id) => $q->where('tehsil_id', $id))
             ->when($data['area_type_id'] ?? null, fn ($q, $id) => $q->where(fn ($scope) => $scope->where('area_type_id', $id)->orWhereNull('area_type_id')))
             ->when($request->has('parent_id'), fn ($q) => $q->where('parent_id', $data['parent_id'] ?? null), fn ($q) => $q->whereNull('parent_id'))
             ->where('is_active', true)->orderBy('name')->get(['id', 'name', 'level_id', 'parent_id']));
