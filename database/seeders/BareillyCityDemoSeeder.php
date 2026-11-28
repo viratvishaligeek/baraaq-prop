@@ -107,6 +107,21 @@ class BareillyCityDemoSeeder extends Seeder
             }
 
             $types = [];
+            foreach (['Civil Lines', 'Prem Nagar', 'Rajendra Nagar', 'Model Town'] as $index => $parentName) {
+                $parent = $locations[$parentName];
+                $slug = 'demo-ward-'.Str::slug($parentName);
+                $ward = $this->demo(CircleRateLocation::class, [
+                    'district_id' => $district->id, 'parent_id' => $parent->id, 'slug' => $slug,
+                ], [
+                    'district_id' => $district->id, 'tehsil_id' => $tehsil->id,
+                    'area_type_id' => $urban->id, 'level_id' => $levels['Ward']->id,
+                    'parent_id' => $parent->id, 'name' => 'Ward '.($index + 1).' – '.$parentName.' (Demo)',
+                    'slug' => $slug, 'attributes' => ['demo' => true, 'official_ward_number' => false],
+                    'is_active' => true,
+                ]);
+                $this->records['locations'][] = $ward->id;
+            }
+
             $typeRows = [
                 ['Agricultural Land', 'agricultural_land', 'agricultural_land'],
                 ['Residential Plot', 'residential_plot', 'residential_plot'],
@@ -306,6 +321,7 @@ class BareillyCityDemoSeeder extends Seeder
                 ['Commercial demo valuation adjustment', [['field' => 'property_type_id', 'operator' => 'in', 'value' => [$types['commercial_plot']->id, $types['commercial_building']->id]]], ['rate_multiplier' => 1.12], 80],
                 ['Building demo construction input', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['residential_building']->id]], ['require_fields' => ['custom.demo_construction_type']], 70],
                 ['Road width demo priority scenario', [['field' => 'road_width_range_id', 'operator' => 'in', 'value' => collect($roadWidths)->pluck('id')->all()]], ['rate_multiplier' => 1.02], 60],
+                ['Demo unit conversion scenario', [['field' => 'area_unit_id', 'operator' => 'in', 'value' => collect($units)->pluck('id')->all()]], ['rate_multiplier' => 1.0], 65],
                 ['Category demo priority scenario', [['field' => 'category_id', 'operator' => 'in', 'value' => collect($categories)->pluck('id')->all()]], ['fixed_adjustment' => 250], 50],
                 ['Demo conditional-field rule', [['field' => 'custom.demo_corner_plot', 'operator' => 'equals', 'value' => true]], ['rate_multiplier' => 1.01], 40],
                 ['Demo lower-priority matching rule', [['field' => 'custom.demo_development_status', 'operator' => 'equals', 'value' => 'developed']], ['fixed_adjustment' => 100], 10],
