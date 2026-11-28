@@ -37,7 +37,7 @@ class CircleRateLocationImportController extends Controller
         $path = $file->store('circle-rate-location-imports', 'local');
 
         $batch = CircleRateImportBatch::query()->create([
-            'created_by' => $request->user()->id,
+            'uploaded_by' => $request->user()->id,
             'original_filename' => $file->getClientOriginalName(),
             'stored_path' => $path,
             'file_type' => $extension,
