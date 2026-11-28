@@ -13,6 +13,7 @@ use App\Models\CircleRateUnitConversion;
 use App\Models\CircleRateUnit;
 use App\Services\CircleRate\SpreadsheetReader;
 use App\Services\CircleRate\ValuationService;
+use App\Services\CircleRate\SafeFormulaEvaluator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use Database\Seeders\CircleRateReferenceSeeder;
@@ -248,6 +249,22 @@ class CircleRateValuationTest extends TestCase
         $this->assertSame('Administrator edited name', $tehsil->fresh()->name);
         $this->assertSame(6, $district->tehsils()->count());
         $this->assertSame(15, $district->locations()->count());
+    }
+
+    public function test_safe_formula_evaluator_supports_custom_valuation_fields(): void
+    {
+        $value = app(SafeFormulaEvaluator::class)->evaluate(
+            'converted_area * rate * (1 - custom.depreciation_percent / 100)',
+            ['converted_area' => 100, 'rate' => 5000, 'custom.depreciation_percent' => 10]
+        );
+
+        $this->assertSame(450000.0, $value);
+    }
+
+    public function test_safe_formula_evaluator_rejects_function_calls_and_code_injection(): void
+    {
+        $this->expectException(\\InvalidArgumentException::class);
+        app(SafeFormulaEvaluator::class)->validate('system("id")');
     }
 
     public function test_csv_reader_returns_header_mapped_rows(): void
