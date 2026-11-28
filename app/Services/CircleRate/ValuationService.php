@@ -329,6 +329,7 @@ class ValuationService
 
         return [
             'financial_year' => $previousYear->name,
+            'circle_rate_id' => $previousRate->id,
             'rate' => $previousRate->rate,
             'unit' => $previousRate->unit->name,
             'estimated_value' => $result['estimated_value'],
