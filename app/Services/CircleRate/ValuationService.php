@@ -158,7 +158,7 @@ class ValuationService
         $amount = (float) $valuation['estimated_value'];
 
         $rules = CircleRateRule::query()
-            ->with('source:id,title')
+            ->with('source:id,title,document_path,source_url')
             ->where('is_active', true)
             ->where('is_verified', true)
             ->whereNotNull('source_id')
