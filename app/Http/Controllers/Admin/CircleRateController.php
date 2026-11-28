@@ -49,6 +49,7 @@ class CircleRateController extends Controller
             'property_type_id' => ['nullable', 'integer'],
             'verification_status' => ['nullable', Rule::in(['pending', 'verified', 'rejected'])],
             'status' => ['nullable', Rule::in(['draft', 'published', 'archived'])],
+            'effective_dates' => ['nullable', 'boolean'],
             'q' => ['nullable', 'string', 'max:120'],
         ]);
 
@@ -58,8 +59,11 @@ class CircleRateController extends Controller
             ->when($filters['property_type_id'] ?? null, fn ($q, $id) => $q->where('property_type_id', $id))
             ->when($filters['verification_status'] ?? null, fn ($q, $status) => $q->where('verification_status', $status))
             ->when($filters['status'] ?? null, fn ($q, $status) => $q->where('status', $status))
-            ->when($filters['q'] ?? null, fn ($q, $term) => $q->whereHas('location', fn ($l) => $l->where('name', 'like', '%'.$term.'%')))
-            ->latest()->paginate(25)->withQueryString();
+            ->when($filters['q'] ?? null, fn ($q, $term) => $q->whereHas('location', fn ($l) => $l->where('name', 'like', '%'.$term.'%')));
+
+        if (! empty($filters['effective_dates'])) $rates->orderByDesc('effective_from')->orderByDesc('id');
+        else $rates->latest();
+        $rates = $rates->paginate(25)->withQueryString();
 
         return view('admin.circle-rates.rates.index', array_merge($this->formData(), compact('rates', 'filters')));
     }
