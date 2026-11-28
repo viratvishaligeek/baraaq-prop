@@ -363,7 +363,9 @@ class CircleRateMasterController extends Controller
                 $base[0] = 'required';
             }
             if ($name === 'slug') {
-                $base = ['nullable', 'string', 'max:180', Rule::unique($definition['table'], 'slug')->ignore($record?->id)];
+                $uniqueSlug = Rule::unique($definition['table'], 'slug');
+                if ($record) $uniqueSlug->ignore($record->getKey());
+                $base = ['nullable', 'string', 'max:180', $uniqueSlug];
             }
             if ($name === 'district_id') $base = ['required', 'integer', 'exists:circle_rate_districts,id'];
             if ($name === 'tehsil_id') $base = ['nullable', 'integer', 'exists:circle_rate_tehsils,id'];
