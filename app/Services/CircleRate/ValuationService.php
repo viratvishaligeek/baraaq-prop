@@ -285,7 +285,7 @@ class ValuationService
             throw new RuntimeException("The '{$strategy}' valuation strategy needs an administrator-configured safe formula before it can be used.");
         }
 
-        $convertedArea = $this->convertArea($area, $inputUnitId, (int) $rate->unit_id);
+        $convertedArea = $this->convertArea($area, $inputUnitId, (int) $rate->unit_id, (bool) $rate->is_demo);
         $variables = [
             'area' => $convertedArea,
             'converted_area' => $convertedArea,
@@ -319,7 +319,7 @@ class ValuationService
         ];
     }
 
-    private function convertArea(float $area, int $fromUnitId, int $toUnitId): float
+    private function convertArea(float $area, int $fromUnitId, int $toUnitId, bool $demoMode = false): float
     {
         $fromUnit = CircleRateUnit::query()->findOrFail($fromUnitId);
         $toUnit = CircleRateUnit::query()->findOrFail($toUnitId);
@@ -334,8 +334,11 @@ class ValuationService
         $conversion = CircleRateUnitConversion::query()
             ->where('from_unit_id', $fromUnitId)
             ->where('to_unit_id', $toUnitId)
-            ->where('is_verified', true)
             ->whereNotNull('source_note')
+            ->where(function ($query) use ($demoMode): void {
+                $query->where(fn ($official) => $official->where('is_verified', true)->where('is_demo', false));
+                if ($demoMode) $query->orWhere(fn ($demo) => $demo->where('is_demo', true)->where('is_verified', false));
+            })
             ->first();
 
         if ($conversion) {
