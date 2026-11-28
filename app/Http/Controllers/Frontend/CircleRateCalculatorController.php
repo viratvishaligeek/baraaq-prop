@@ -154,6 +154,16 @@ class CircleRateCalculatorController extends Controller
                 $rules[] = 'string';
                 $rules[] = 'max:1000';
             }
+            $configuredRules = $field->validation_rules ?? [];
+            if (is_array($configuredRules)) {
+                foreach ($configuredRules as $ruleName => $ruleValue) {
+                    if (in_array($ruleName, ['min', 'max'], true) && is_numeric($ruleValue)) {
+                        $rules[] = $ruleName.':'.$ruleValue;
+                    } elseif (in_array($ruleName, ['integer', 'numeric', 'email', 'url', 'date', 'alpha', 'alpha_num'], true) && $ruleValue) {
+                        $rules[] = $ruleName;
+                    }
+                }
+            }
             $customRules[$key] = $rules;
             $applicableFields[] = $field->name;
         }
