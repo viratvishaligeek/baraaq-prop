@@ -67,12 +67,16 @@ class SpreadsheetReader
         try {
             $workbook = $this->xml($zip->getFromName('xl/workbook.xml'));
             $relationships = $this->xml($zip->getFromName('xl/_rels/workbook.xml.rels'));
-            $sheet = $workbook->sheets->sheet[0] ?? null;
+            $mainNamespace = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+            $relationshipNamespace = 'http://schemas.openxmlformats.org/package/2006/relationships';
+            $workbookMain = $workbook->children($mainNamespace);
+            $relationshipRoot = $relationships->children($relationshipNamespace);
+            $sheet = $workbookMain->sheets->sheet[0] ?? null;
             if (! $sheet) return ['headers' => [], 'rows' => []];
 
             $relationshipId = (string) $sheet->attributes('r', true)['id'];
             $target = null;
-            foreach ($relationships->Relationship as $relationship) {
+            foreach ($relationshipRoot->Relationship as $relationship) {
                 if ((string) $relationship['Id'] === $relationshipId) {
                     $target = (string) $relationship['Target'];
                     break;
@@ -86,29 +90,31 @@ class SpreadsheetReader
             $sharedXml = $zip->getFromName('xl/sharedStrings.xml');
             if ($sharedXml !== false) {
                 $shared = $this->xml($sharedXml);
-                foreach ($shared->si as $item) {
+                foreach ($shared->children($mainNamespace)->si as $item) {
+                    $itemMain = $item->children($mainNamespace);
                     $text = '';
-                    if (isset($item->t)) $text = (string) $item->t;
-                    else foreach ($item->r as $run) $text .= (string) $run->t;
+                    if (isset($itemMain->t)) $text = (string) $itemMain->t;
+                    else foreach ($itemMain->r as $run) $text .= (string) $run->children($mainNamespace)->t;
                     $sharedStrings[] = $text;
                 }
             }
 
             $matrix = [];
-            foreach ($worksheet->sheetData->row ?? [] as $row) {
+            foreach ($worksheet->children($mainNamespace)->sheetData->row ?? [] as $row) {
                 $values = [];
-                foreach ($row->c as $cell) {
+                foreach ($row->children($mainNamespace)->c as $cell) {
                     $reference = (string) $cell['r'];
                     preg_match('/^[A-Z]+/', $reference, $match);
                     $column = $this->columnIndex($match[0] ?? 'A');
                     $type = (string) $cell['t'];
+                    $cellMain = $cell->children($mainNamespace);
                     if ($type === 's') {
-                        $value = $sharedStrings[(int) ($cell->v ?? 0)] ?? '';
+                        $value = $sharedStrings[(int) ($cellMain->v ?? 0)] ?? '';
                     } elseif ($type === 'inlineStr') {
-                        $value = isset($cell->is->t) ? (string) $cell->is->t : '';
-                        if ($value === '') foreach ($cell->is->r as $run) $value .= (string) $run->t;
+                        $value = isset($cellMain->is->t) ? (string) $cellMain->is->t : '';
+                        if ($value === '') foreach ($cellMain->is->r as $run) $value .= (string) $run->t;
                     } else {
-                        $value = isset($cell->v) ? (string) $cell->v : '';
+                        $value = isset($cellMain->v) ? (string) $cellMain->v : '';
                     }
                     $values[$column] = $value;
                 }
