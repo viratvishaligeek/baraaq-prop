@@ -356,7 +356,9 @@ class CircleRateImportController extends Controller
             $output = fopen('php://output', 'wb');
             fputcsv($output, ['Row', 'Status', 'Errors', 'Original data']);
             foreach ($batch->rows()->whereIn('status', ['invalid', 'conflict', 'duplicate'])->orderBy('row_number')->cursor() as $row) {
-                fputcsv($output, [$row->row_number, $row->status, implode(' | ', $row->validation_errors ?? []), json_encode($row->original_data)]);
+                $values = [$row->row_number, $row->status, implode(' | ', $row->validation_errors ?? []), json_encode($row->original_data)];
+                $values = array_map(fn ($value) => is_string($value) && preg_match('/^[\\s]*[=+@-]/', $value) ? "'".$value : $value, $values);
+                fputcsv($output, $values);
             }
             fclose($output);
         }, 'circle-rate-import-errors-'.$batch->id.'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
