@@ -41,6 +41,7 @@
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.sources.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.sources.index') }}">Source documents</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.imports.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.imports.index') }}">Excel / CSV Import</a>
                     <a class="sidebar-link" href="{{ route('admin.circle-rates.imports.index') }}">Import history</a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.locations.import.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.locations.import.index') }}">Bulk location import</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.api.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.api.index') }}">API integration settings</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.reports.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.reports.index') }}">Valuation reports</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.audit.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.audit.index') }}">Audit logs</a>
