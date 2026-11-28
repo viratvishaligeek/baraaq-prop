@@ -302,10 +302,17 @@ class ValuationService
         if (is_string($formula) && trim($formula) !== '') {
             try {
                 $value = app(SafeFormulaEvaluator::class)->evaluate($formula, $variables);
+                $formulaDescription = $formula;
             } catch (\InvalidArgumentException $exception) {
-                throw ValidationException::withMessages(['property_type_id' => 'The configured valuation formula is invalid: '.$exception->getMessage()]);
+                if (! $isDemoRate) {
+                    throw ValidationException::withMessages(['property_type_id' => 'The configured valuation formula is invalid: '.$exception->getMessage()]);
+                }
+
+                // Synthetic demo rows must remain calculable even when an
+                // unrelated legacy property type has an incomplete formula.
+                $value = $convertedArea * (float) $rate->rate;
+                $formulaDescription = 'DEMO fallback: converted property area × synthetic test rate';
             }
-            $formulaDescription = $formula;
         } else {
             $value = $convertedArea * (float) $rate->rate;
             $formulaDescription = $strategy.' : converted property area × verified circle rate';
