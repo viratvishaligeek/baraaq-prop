@@ -9,7 +9,7 @@ Artisan::command('inspire', function () {
 
 
 Artisan::command('bareilly:seed-demo', function () {
-    $this->call(\\Database\\Seeders\\BareillyCityDemoSeeder::class);
+    app(\\Database\\Seeders\\BareillyCityDemoSeeder::class)->run();
     $this->info('Bareilly city DEMO data is seeded. Sample rates remain pending and marked DEMO.');
 })->purpose('Seed idempotent Bareilly city-only circle rate demo data');
 
