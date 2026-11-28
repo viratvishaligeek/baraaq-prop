@@ -36,8 +36,11 @@
                     <summary><i class="fa-solid fa-calculator"></i> Property Circle Rate Management</summary>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.dashboard') ? 'active' : '' }}" href="{{ route('admin.circle-rates.dashboard') }}">Dashboard</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.rates.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.rates.index') }}">Circle rate records</a>
+                    <a class="sidebar-link" href="{{ route('admin.circle-rates.rates.index', ['verification_status' => 'pending']) }}">Rate verification & approval</a>
+                    <a class="sidebar-link" href="{{ route('admin.circle-rates.rates.index', ['effective_dates' => 1]) }}">Effective date management</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.sources.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.sources.index') }}">Source documents</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.imports.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.imports.index') }}">Excel / CSV Import</a>
+                    <a class="sidebar-link" href="{{ route('admin.circle-rates.imports.index') }}">Import history</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.api.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.api.index') }}">API integration settings</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.reports.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.reports.index') }}">Valuation reports</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.audit.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.audit.index') }}">Audit logs</a>
