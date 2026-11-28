@@ -49,6 +49,7 @@ class CircleRateController extends Controller
             'property_type_id' => ['nullable', 'integer'],
             'verification_status' => ['nullable', Rule::in(['pending', 'verified', 'rejected'])],
             'status' => ['nullable', Rule::in(['draft', 'published', 'archived'])],
+            'demo_filter' => ['nullable', Rule::in(['demo', 'official'])],
             'effective_dates' => ['nullable', 'boolean'],
             'q' => ['nullable', 'string', 'max:120'],
         ]);
@@ -59,6 +60,8 @@ class CircleRateController extends Controller
             ->when($filters['property_type_id'] ?? null, fn ($q, $id) => $q->where('property_type_id', $id))
             ->when($filters['verification_status'] ?? null, fn ($q, $status) => $q->where('verification_status', $status))
             ->when($filters['status'] ?? null, fn ($q, $status) => $q->where('status', $status))
+            ->when(($filters['demo_filter'] ?? null) === 'demo', fn ($q) => $q->where('is_demo', true))
+            ->when(($filters['demo_filter'] ?? null) === 'official', fn ($q) => $q->where('is_demo', false))
             ->when($filters['q'] ?? null, function ($q, $term): void {
                 $q->where(function ($search) use ($term): void {
                     $search->whereHas('location', fn ($relation) => $relation->where('name', 'like', '%'.$term.'%'))
@@ -133,6 +136,9 @@ class CircleRateController extends Controller
     {
         $request->validate(['reason' => ['required', 'string', 'max:2000']]);
         abort_unless($request->user()->isAdministrator() || $request->user()->hasPermission('circle-rates.verify'), 403);
+        if ($circleRate->is_demo) {
+            return back()->withErrors(['source_id' => 'DEMO records can never be verified or promoted to official rates.']);
+        }
         $source = $circleRate->source;
         if (! $source || (! $source->document_path && ! $source->source_url)) {
             return back()->withErrors(['source_id' => 'Attach an official source document or documented official source URL before verifying this rate.']);
@@ -214,6 +220,9 @@ class CircleRateController extends Controller
             }
 
             if ($data['action'] === 'verify') {
+                if ($rates->contains(fn (CircleRate $rate) => $rate->is_demo)) {
+                    throw ValidationException::withMessages(['ids' => 'DEMO records can never be verified or promoted to official rates.']);
+                }
                 foreach ($rates as $rate) {
                     if (! $rate->source || (! $rate->source->document_path && ! $rate->source->source_url)) {
                         throw ValidationException::withMessages(['ids' => 'Every selected rate must have an official source document or URL before bulk verification.']);
