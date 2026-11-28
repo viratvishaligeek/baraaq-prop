@@ -90,7 +90,7 @@
                             </div>
                             @foreach ($fields as $field)
                                 @php($fieldName = 'custom['.$field->name.']')
-                                <div class="col-md-6" data-custom-field="{{ $field->name }}" data-applicability='@json($field->applicability ?? [])'>
+                                <div class="col-md-6" data-custom-field="{{ $field->name }}" data-applicability='@json($field->applicability ?? [])' data-visibility='@json($field->visibility_conditions ?? [])'>
                                     <label class="form-label">{{ $field->label }} @if($field->is_required)<span class="text-danger">*</span>@endif</label>
                                     @if (in_array($field->input_type, ['select', 'dropdown']))
                                         <select class="form-select" name="{{ $fieldName }}" @required($field->is_required)>
@@ -108,9 +108,9 @@
                                     @elseif ($field->input_type === 'date')
                                         <input class="form-control" type="date" name="{{ $fieldName }}" @required($field->is_required)>
                                     @elseif ($field->input_type === 'number' || $field->input_type === 'range')
-                                        <input class="form-control" type="{{ $field->input_type === 'range' ? 'range' : 'number' }}" name="{{ $fieldName }}" placeholder="{{ $field->placeholder }}" @required($field->is_required)>
+                                        <input class="form-control" type="{{ $field->input_type === 'range' ? 'range' : 'number' }}" name="{{ $fieldName }}" value="{{ old($fieldName, $field->default_value) }}" placeholder="{{ $field->placeholder }}" @required($field->is_required)>
                                     @else
-                                        <input class="form-control" type="text" name="{{ $fieldName }}" placeholder="{{ $field->placeholder }}" @required($field->is_required)>
+                                        <input class="form-control" type="text" name="{{ $fieldName }}" value="{{ old($fieldName, $field->default_value) }}" placeholder="{{ $field->placeholder }}" @required($field->is_required)>
                                     @endif
                                     @if($field->help_text)<small class="text-muted">{{ $field->help_text }}</small>@endif
                                 </div>
@@ -179,7 +179,7 @@ $(function () {
     function loadRoadWidths() {
         fillSelect($roadWidth, [], 'Loading road widths...');
         if (!$propertyType.val()) return fillSelect($roadWidth, [], 'Select road width (if applicable)');
-        $.getJSON('{{ route('circle-rates.data.road-widths') }}', { property_type_id: $propertyType.val() })
+        $.getJSON('{{ route('circle-rates.data.road-widths') }}', { property_type_id: $propertyType.val(), location_id: $locationId.val(), district_id: $district.val() })
           .done(rows => fillSelect($roadWidth, rows, 'Select road width (if applicable)'))
           .fail(() => fillSelect($roadWidth, [], 'Unable to load road widths'));
     }
@@ -242,7 +242,9 @@ $(function () {
         };
         $('[data-custom-field]').each(function () {
             let applicability = {};
+            let visibility = [];
             try { applicability = JSON.parse($(this).attr('data-applicability') || '{}'); } catch (e) {}
+            try { visibility = JSON.parse($(this).attr('data-visibility') || '[]'); } catch (e) {}
             const map = {
                 district_ids: 'district_id',
                 tehsil_ids: 'tehsil_id',
@@ -256,11 +258,28 @@ $(function () {
                     if (!applicability[key].map(String).includes(String(selected[field] || ''))) visible = false;
                 }
             });
+            if (visible && Array.isArray(visibility)) {
+                visibility.forEach(function (condition) {
+                    const fieldName = condition.field || '';
+                    const $target = $('[name="' + fieldName + '"], [name="custom[' + fieldName + ']"]');
+                    const actual = $target.length ? $target.first().val() : selected[fieldName];
+                    const expected = condition.value;
+                    const operator = condition.operator || 'equals';
+                    let matched = true;
+                    if (operator === 'equals') matched = String(actual || '') === String(expected);
+                    else if (operator === 'not_equals') matched = String(actual || '') !== String(expected);
+                    else if (operator === 'in') matched = Array.isArray(expected) && expected.map(String).includes(String(actual || ''));
+                    else if (operator === 'greater_than') matched = Number(actual) > Number(expected);
+                    else if (operator === 'less_than') matched = Number(actual) < Number(expected);
+                    if (!matched) visible = false;
+                });
+            }
             $(this).toggle(visible);
             $(this).find('input,select,textarea').prop('disabled', !visible);
         });
     }
     $district.add($tehsil).add($areaType).add($propertyType).on('change', updateCustomFields);
+    $('#circle-rate-calculator').on('change input', 'input,select,textarea', updateCustomFields);
     $propertyType.on('change', function () { loadCategories(); loadRoadWidths(); updateCustomFields(); });
     updateCustomFields();
     loadRoadWidths();
