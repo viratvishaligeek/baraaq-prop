@@ -56,6 +56,7 @@
                                 </div>
                             @endforeach
                         </div>
+                        <div class="col-12 mt-3"><label class="form-label" for="change_reason">Change reason (optional)</label><input class="form-control" id="change_reason" name="change_reason" maxlength="2000" value="{{ old('change_reason') }}"></div>
                         <div class="d-flex gap-2 mt-4">
                             <button class="btn btn-primary" type="submit">{{ $record ? 'Save changes' : 'Create record' }}</button>
                             @if ($record)<a class="btn btn-outline-secondary" href="{{ route('admin.circle-rates.master.index', $module) }}">Cancel</a>@endif
