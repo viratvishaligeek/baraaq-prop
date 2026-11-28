@@ -41,6 +41,7 @@
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.api.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.api.index') }}">API integration settings</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.reports.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.reports.index') }}">Valuation reports</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.audit.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.audit.index') }}">Audit logs</a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.settings.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.settings.index') }}">Calculator settings</a>
                     @foreach ([
                         'districts' => 'Districts',
                         'tehsils' => 'Tehsils',
