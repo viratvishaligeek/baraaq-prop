@@ -15,6 +15,7 @@ use App\Models\CircleRateUnitConversion;
 use App\Models\CircleRateRule;
 use App\Models\CircleRateCalculatorField;
 use App\Models\CircleRateCalculatorFieldOption;
+use App\Models\CircleRateSource;
 use App\Models\CircleRateTehsil;
 use App\Models\CircleRateUnit;
 use Illuminate\Database\Eloquent\Model;
@@ -163,6 +164,8 @@ class CircleRateMasterController extends Controller
                     ['name' => 'description', 'label' => 'Description', 'type' => 'textarea'],
                     ['name' => 'conditions', 'label' => 'Conditions JSON', 'type' => 'json', 'required' => true],
                     ['name' => 'actions', 'label' => 'Actions JSON', 'type' => 'json', 'required' => true],
+                    ['name' => 'source_id', 'label' => 'Official source document', 'type' => 'select', 'options' => CircleRateSource::class],
+                    ['name' => 'is_verified', 'label' => 'Verified rule (authorized verifier only)', 'type' => 'boolean'],
                     ['name' => 'priority', 'label' => 'Priority', 'type' => 'number'],
                     ['name' => 'stop_processing', 'label' => 'Stop after match', 'type' => 'boolean'],
                     ['name' => 'is_active', 'label' => 'Active', 'type' => 'boolean'],
@@ -355,7 +358,11 @@ class CircleRateMasterController extends Controller
             throw ValidationException::withMessages(['parent_id' => 'The parent location must belong to the selected district.']);
         }
         if (array_key_exists('is_verified', $data) && $data['is_verified'] && ! request()->user()->isAdministrator() && ! request()->user()->hasPermission('circle-rates.verify')) {
-            throw ValidationException::withMessages(['is_verified' => 'Only an authorized verifier can approve unit conversions.']);
+            throw ValidationException::withMessages(['is_verified' => 'Only an authorized verifier can approve conversions or calculation rules.']);
+        }
+        if (array_key_exists('is_verified', $data)) {
+            $data['verified_by'] = $data['is_verified'] ? request()->user()->id : null;
+            $data['verified_at'] = $data['is_verified'] ? now() : null;
         }
         return $data;
     }
