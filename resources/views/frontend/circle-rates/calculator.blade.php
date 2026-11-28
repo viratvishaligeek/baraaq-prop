@@ -90,19 +90,25 @@
                             </div>
                             @foreach ($fields as $field)
                                 @php($fieldName = 'custom['.$field->name.']')
-                                <div class="col-md-6" data-custom-field="{{ $field->name }}">
+                                <div class="col-md-6" data-custom-field="{{ $field->name }}" data-applicability='@json($field->applicability ?? [])'>
                                     <label class="form-label">{{ $field->label }} @if($field->is_required)<span class="text-danger">*</span>@endif</label>
-                                    @if (in_array($field->input_type, ['select', 'dropdown', 'radio']))
+                                    @if (in_array($field->input_type, ['select', 'dropdown']))
                                         <select class="form-select" name="{{ $fieldName }}" @required($field->is_required)>
                                             <option value="">{{ $field->placeholder ?: 'Select '.$field->label }}</option>
                                             @foreach ($field->options as $option)<option value="{{ $option->value }}">{{ $option->label }}</option>@endforeach
                                         </select>
+                                    @elseif ($field->input_type === 'multi-select')
+                                        <select class="form-select" name="{{ $fieldName }}[]" multiple @required($field->is_required)>
+                                            @foreach ($field->options as $option)<option value="{{ $option->value }}">{{ $option->label }}</option>@endforeach
+                                        </select>
+                                    @elseif ($field->input_type === 'radio')
+                                        <div class="d-flex flex-wrap gap-3">@foreach ($field->options as $option)<label class="form-check"><input class="form-check-input" type="radio" name="{{ $fieldName }}" value="{{ $option->value }}" @required($field->is_required)> <span class="form-check-label">{{ $option->label }}</span></label>@endforeach</div>
                                     @elseif ($field->input_type === 'checkbox')
                                         <input class="form-check-input" type="checkbox" name="{{ $fieldName }}" value="1">
                                     @elseif ($field->input_type === 'date')
                                         <input class="form-control" type="date" name="{{ $fieldName }}" @required($field->is_required)>
                                     @elseif ($field->input_type === 'number' || $field->input_type === 'range')
-                                        <input class="form-control" type="number" name="{{ $fieldName }}" placeholder="{{ $field->placeholder }}" @required($field->is_required)>
+                                        <input class="form-control" type="{{ $field->input_type === 'range' ? 'range' : 'number' }}" name="{{ $fieldName }}" placeholder="{{ $field->placeholder }}" @required($field->is_required)>
                                     @else
                                         <input class="form-control" type="text" name="{{ $fieldName }}" placeholder="{{ $field->placeholder }}" @required($field->is_required)>
                                     @endif
@@ -226,7 +232,37 @@ $(function () {
         $locationId.val($(this).val() || '');
         if ($(this).val()) appendChildLocations($(this).val(), $children);
     });
-    $propertyType.on('change', function () { loadCategories(); loadRoadWidths(); });
+    function updateCustomFields() {
+        const selected = {
+            district_id: $district.val(),
+            tehsil_id: $tehsil.val(),
+            area_type_id: $areaType.val(),
+            location_id: $locationId.val(),
+            property_type_id: $propertyType.val()
+        };
+        $('[data-custom-field]').each(function () {
+            let applicability = {};
+            try { applicability = JSON.parse($(this).attr('data-applicability') || '{}'); } catch (e) {}
+            const map = {
+                district_ids: 'district_id',
+                tehsil_ids: 'tehsil_id',
+                area_type_ids: 'area_type_id',
+                location_ids: 'location_id',
+                property_type_ids: 'property_type_id'
+            };
+            let visible = true;
+            $.each(map, function (key, field) {
+                if (Array.isArray(applicability[key]) && applicability[key].length) {
+                    if (!applicability[key].map(String).includes(String(selected[field] || ''))) visible = false;
+                }
+            });
+            $(this).toggle(visible);
+            $(this).find('input,select,textarea').prop('disabled', !visible);
+        });
+    }
+    $district.add($tehsil).add($areaType).add($propertyType).on('change', updateCustomFields);
+    $propertyType.on('change', function () { loadCategories(); loadRoadWidths(); updateCustomFields(); });
+    updateCustomFields();
     loadRoadWidths();
 });
 </script>
