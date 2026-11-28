@@ -11,7 +11,6 @@ use App\Models\CircleRateImportBatch;
 use App\Models\CircleRateLocation;
 use App\Models\CircleRatePropertyType;
 use App\Models\CircleRateTehsil;
-use App\Models\CircleRatePropertyType;
 use Illuminate\Http\Request;
 
 class CircleRateDashboardController extends Controller
