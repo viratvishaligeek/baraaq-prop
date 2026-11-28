@@ -235,6 +235,8 @@ class CircleRateValuationTest extends TestCase
 
         $district = CircleRateDistrict::query()->where('slug', 'bareilly')->firstOrFail();
         $this->assertSame(6, $district->tehsils()->count());
+        $this->assertSame(15, $district->locations()->count());
+        $this->assertSame(2, \\App\\Models\\CircleRateAreaType::query()->count());
         $this->assertSame(0, CircleRate::query()->count());
 
         $tehsil = $district->tehsils()->where('slug', 'bareilly')->firstOrFail();
@@ -244,6 +246,7 @@ class CircleRateValuationTest extends TestCase
 
         $this->assertSame('Administrator edited name', $tehsil->fresh()->name);
         $this->assertSame(6, $district->tehsils()->count());
+        $this->assertSame(15, $district->locations()->count());
     }
 
     public function test_csv_reader_returns_header_mapped_rows(): void
