@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\CircleRate;
 use App\Models\CircleRateAreaType;
-use App\Models\CircleRateAuditLog;
 use App\Models\CircleRateCalculatorField;
 use App\Models\CircleRateCalculatorFieldOption;
 use App\Models\CircleRateDistrict;
@@ -25,12 +24,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use RuntimeException;
 
+/**
+ * Temporary Bareilly city-only test data for the existing Circle Rate calculator.
+ *
+ * All sample rates remain DRAFT + PENDING and are explicitly labelled in their
+ * source and admin notes. The existing calculator requires published, verified
+ * records, so this seeder deliberately does not bypass that workflow or make
+ * synthetic values eligible for official/public valuation.
+ *
+ * Run explicitly:
+ *   php artisan db:seed --class=BareillyCityDemoSeeder
+ */
 class BareillyCityDemoSeeder extends Seeder
 {
-    private const PREFIX = 'DEMO – Bareilly City';
-    private array $records = [];
+    private const DEMO_NOTE = 'DEMO TEST DATA - NOT OFFICIAL GOVERNMENT CIRCLE RATE';
 
     public function run(): void
     {
@@ -39,335 +47,407 @@ class BareillyCityDemoSeeder extends Seeder
                 ['slug' => 'bareilly'],
                 ['name' => 'Bareilly', 'state' => 'Uttar Pradesh', 'is_active' => true]
             );
+
+            // Bareilly urban tehsil only. No rural village/block directory is seeded.
             $tehsil = CircleRateTehsil::query()->firstOrCreate(
                 ['district_id' => $district->id, 'slug' => 'bareilly'],
                 ['name' => 'Bareilly', 'is_active' => true]
             );
 
-            $urban = $this->demo(CircleRateAreaType::class, ['slug' => 'demo-urban-city'], [
-                'name' => 'Urban (Demo)', 'description' => 'DEMO city-only area type; not an officially notified valuation zone.',
-                'is_active' => true, 'sort_order' => 90,
-            ]);
-            $levels = [];
-            foreach (['Locality', 'Sub Area', 'Mohalla', 'Ward'] as $i => $name) {
-                $levels[$name] = $this->demo(CircleRateLocationLevel::class, ['slug' => 'demo-'.Str::slug($name)], [
-                    'name' => $name.' (Demo)', 'description' => 'DEMO hierarchy level for Bareilly city testing.',
-                    'is_required' => false, 'is_active' => true, 'sort_order' => 90 + $i,
-                ]);
-            }
+            $urban = CircleRateAreaType::query()->firstOrCreate(
+                ['slug' => 'urban'],
+                ['name' => 'Urban', 'description' => 'Urban area type used by the Bareilly city demo dataset.', 'is_active' => true, 'sort_order' => 1]
+            );
+
+            $localityLevel = CircleRateLocationLevel::query()->firstOrCreate(
+                ['slug' => 'locality'],
+                ['name' => 'Locality', 'description' => 'City locality level.', 'is_required' => false, 'is_active' => true, 'sort_order' => 1]
+            );
 
             $localityNames = [
-                'Civil Lines', 'Prem Nagar', 'Rajendra Nagar', 'Model Town', 'DD Puram',
-                'Izzatnagar', 'Subhash Nagar', 'Shahamatganj', 'Qila', 'Kotwali',
-                'Suresh Sharma Nagar', 'Green Park', 'Satellite', 'Mahanagar Colony',
+                'Civil Lines', 'Prem Nagar', 'Rajendra Nagar', 'Model Town',
+                'DD Puram', 'Izzatnagar', 'Subhash Nagar', 'Shahamatganj',
+                'Qila', 'Kotwali', 'Suresh Sharma Nagar', 'Green Park',
             ];
+
             $locations = [];
-            foreach ($localityNames as $i => $name) {
+            foreach ($localityNames as $name) {
                 $slug = 'demo-'.Str::slug($name);
-                $locations[$name] = $this->demo(CircleRateLocation::class, [
-                    'district_id' => $district->id, 'parent_id' => null, 'slug' => $slug,
-                ], [
-                    'district_id' => $district->id, 'tehsil_id' => $tehsil->id,
-                    'area_type_id' => $urban->id, 'level_id' => $levels['Locality']->id,
-                    'parent_id' => null, 'name' => $name.' (Demo)', 'slug' => $slug,
-                    'code' => 'BR-D-'.str_pad((string) ($i + 1), 3, '0', STR_PAD_LEFT),
-                    'attributes' => ['demo' => true, 'demo_scope' => 'Bareilly city only', 'official_zone' => false],
-                    'is_active' => true,
-                ]);
-            }
-            foreach (['Civil Lines', 'Rajendra Nagar', 'Model Town', 'Qila'] as $parentName) {
-                foreach (['North', 'South'] as $suffix) {
-                    $parent = $locations[$parentName];
-                    $slug = 'demo-'.Str::slug($parentName.' '.$suffix);
-                    $child = $this->demo(CircleRateLocation::class, [
-                        'district_id' => $district->id, 'parent_id' => $parent->id, 'slug' => $slug,
-                    ], [
-                        'district_id' => $district->id, 'tehsil_id' => $tehsil->id,
-                        'area_type_id' => $urban->id, 'level_id' => $levels['Sub Area']->id,
-                        'parent_id' => $parent->id, 'name' => $parentName.' '.$suffix.' (Demo)',
-                        'slug' => $slug, 'attributes' => ['demo' => true, 'official_zone' => false],
+                $locations[$name] = CircleRateLocation::query()->firstOrCreate(
+                    ['district_id' => $district->id, 'parent_id' => null, 'slug' => $slug],
+                    [
+                        'tehsil_id' => $tehsil->id,
+                        'area_type_id' => $urban->id,
+                        'level_id' => $localityLevel->id,
+                        'name' => $name.' (DEMO)',
+                        'attributes' => [
+                            'dataset' => 'DEMO',
+                            'notice' => 'Synthetic city locality for calculator testing; not a notified valuation zone.',
+                        ],
                         'is_active' => true,
-                    ]);
-                    $this->records['locations'][] = $child->id;
-                }
+                    ]
+                );
             }
-            foreach (['Civil Lines', 'DD Puram', 'Shahamatganj'] as $parentName) {
-                $parent = $locations[$parentName];
-                $slug = 'demo-mohalla-'.Str::slug($parentName);
-                $child = $this->demo(CircleRateLocation::class, [
-                    'district_id' => $district->id, 'parent_id' => $parent->id, 'slug' => $slug,
-                ], [
-                    'district_id' => $district->id, 'tehsil_id' => $tehsil->id,
-                    'area_type_id' => $urban->id, 'level_id' => $levels['Mohalla']->id,
-                    'parent_id' => $parent->id, 'name' => $parentName.' Mohalla (Demo)',
-                    'slug' => $slug, 'attributes' => ['demo' => true, 'official_zone' => false],
-                    'is_active' => true,
-                ]);
-                $this->records['locations'][] = $child->id;
-            }
+
+            $typeDefinitions = [
+                ['agricultural_land', 'Agricultural Land (DEMO)', 'agricultural_land'],
+                ['residential_plot', 'Residential Plot (DEMO)', 'residential_plot'],
+                ['commercial_plot', 'Commercial Plot (DEMO)', 'commercial_plot'],
+                ['residential_building', 'Residential Building (DEMO)', 'building_area'],
+                ['commercial_building', 'Commercial Building (DEMO)', 'building_area'],
+                ['industrial_property', 'Industrial Property (DEMO)', 'industrial_plot'],
+                ['mixed_use_property', 'Mixed-Use Property (DEMO)', 'mixed_use_land'],
+            ];
 
             $types = [];
-            foreach (['Civil Lines', 'Prem Nagar', 'Rajendra Nagar', 'Model Town'] as $index => $parentName) {
-                $parent = $locations[$parentName];
-                $slug = 'demo-ward-'.Str::slug($parentName);
-                $ward = $this->demo(CircleRateLocation::class, [
-                    'district_id' => $district->id, 'parent_id' => $parent->id, 'slug' => $slug,
-                ], [
-                    'district_id' => $district->id, 'tehsil_id' => $tehsil->id,
-                    'area_type_id' => $urban->id, 'level_id' => $levels['Ward']->id,
-                    'parent_id' => $parent->id, 'name' => 'Ward '.($index + 1).' – '.$parentName.' (Demo)',
-                    'slug' => $slug, 'attributes' => ['demo' => true, 'official_ward_number' => false],
-                    'is_active' => true,
-                ]);
-                $this->records['locations'][] = $ward->id;
+            foreach ($typeDefinitions as $index => [$slug, $name, $strategy]) {
+                $types[$slug] = CircleRatePropertyType::query()->firstOrCreate(
+                    ['slug' => 'demo-'.$slug],
+                    [
+                        'name' => $name,
+                        'description' => self::DEMO_NOTE,
+                        'calculation_strategy' => $strategy,
+                        'field_configuration' => ['dataset' => 'DEMO'],
+                        'is_active' => true,
+                        'sort_order' => $index + 1,
+                    ]
+                );
             }
 
-            $typeRows = [
-                ['Agricultural Land', 'agricultural_land', 'agricultural_land'],
-                ['Residential Plot', 'residential_plot', 'residential_plot'],
-                ['Commercial Plot', 'commercial_plot', 'commercial_plot'],
-                ['Residential Building', 'residential_building', 'building_area'],
-                ['Commercial Building', 'commercial_building', 'building_area'],
-                ['Industrial Property', 'industrial_property', 'industrial_plot'],
-                ['Mixed-Use Property', 'mixed_use_property', 'mixed_use_land'],
+            $categoryDefinitions = [
+                ['main-road', 'Main Road (DEMO)', ['residential_plot', 'commercial_plot', 'commercial_building', 'mixed_use_property']],
+                ['internal-road', 'Internal Road (DEMO)', ['residential_plot', 'residential_building', 'mixed_use_property']],
+                ['corner-property', 'Corner Property (DEMO)', ['residential_plot', 'commercial_plot', 'residential_building', 'commercial_building', 'mixed_use_property']],
+                ['residential-colony', 'Residential Colony (DEMO)', ['residential_plot', 'residential_building', 'mixed_use_property']],
+                ['commercial-market', 'Commercial Market (DEMO)', ['commercial_plot', 'commercial_building', 'mixed_use_property']],
+                ['developed-area', 'Developed Area (DEMO)', ['residential_plot', 'commercial_plot', 'residential_building', 'commercial_building', 'industrial_property', 'mixed_use_property']],
+                ['undeveloped-area', 'Undeveloped Area (DEMO)', ['agricultural_land', 'residential_plot', 'industrial_property', 'mixed_use_property']],
+                ['agricultural-category', 'Agricultural Category (DEMO)', ['agricultural_land']],
             ];
-            foreach ($typeRows as $i => [$name, $slug, $strategy]) {
-                $types[$slug] = $this->demo(CircleRatePropertyType::class, ['slug' => 'demo-'.$slug], [
-                    'name' => $name.' (Demo)', 'description' => 'DEMO property type for calculator and matching tests.',
-                    'calculation_strategy' => $strategy, 'field_configuration' => ['demo' => true],
-                    'formula_configuration' => null, 'is_active' => true, 'sort_order' => 90 + $i,
-                ]);
-            }
 
             $categories = [];
-            foreach ([
-                'Main Road', 'Internal Road', 'Corner Property', 'Residential Colony',
-                'Commercial Market', 'Developed Area', 'Undeveloped Area', 'Agricultural Category',
-            ] as $i => $name) {
-                $slug = 'demo-'.Str::slug($name);
-                $categories[$name] = $this->demo(CircleRatePropertyCategory::class, ['slug' => $slug], [
-                    'name' => $name.' (Demo)', 'description' => 'DEMO category; not an official classification.',
-                    'priority' => 90 - $i, 'applicability' => ['demo' => true], 'is_active' => true,
-                ]);
-            }
-            $typeCategoryMap = [
-                'agricultural_land' => ['Agricultural Category', 'Undeveloped Area'],
-                'residential_plot' => ['Residential Colony', 'Main Road', 'Internal Road', 'Corner Property', 'Developed Area', 'Undeveloped Area'],
-                'commercial_plot' => ['Commercial Market', 'Main Road', 'Corner Property'],
-                'residential_building' => ['Residential Colony', 'Developed Area', 'Corner Property'],
-                'commercial_building' => ['Commercial Market', 'Main Road', 'Corner Property'],
-                'industrial_property' => ['Developed Area', 'Undeveloped Area', 'Main Road'],
-                'mixed_use_property' => ['Main Road', 'Commercial Market', 'Corner Property'],
-            ];
-            foreach ($typeCategoryMap as $typeSlug => $names) {
-                $types[$typeSlug]->categories()->syncWithoutDetaching(collect($names)->map(fn ($n) => $categories[$n]->id)->all());
-            }
-            foreach ($categories as $category) {
-                $category->locations()->syncWithoutDetaching(collect($locations)->pluck('id')->all());
+            foreach ($categoryDefinitions as $index => [$slug, $name, $applicableTypes]) {
+                $category = CircleRatePropertyCategory::query()->firstOrCreate(
+                    ['slug' => 'demo-'.$slug],
+                    [
+                        'name' => $name,
+                        'description' => self::DEMO_NOTE,
+                        'priority' => 100 - $index,
+                        'applicability' => ['dataset' => 'DEMO', 'property_type_slugs' => $applicableTypes],
+                        'is_active' => true,
+                    ]
+                );
+                $categories[$slug] = $category;
+                $category->propertyTypes()->syncWithoutDetaching(
+                    collect($applicableTypes)->map(fn (string $typeSlug) => $types[$typeSlug]->id)->all()
+                );
             }
 
-            $unitRows = [
-                ['Per Square Foot', 'sq ft', 'demo-square-foot', 1.0, true],
-                ['Per Square Metre', 'sq m', 'demo-square-metre', 10.7639, false],
-                ['Per Acre', 'acre', 'demo-acre', 43560.0, false],
-                ['Per Hectare', 'ha', 'demo-hectare', 107639.0, false],
-                ['Bigha (Configurable Demo)', 'bigha*', 'demo-bigha', 27000.0, false],
+            // Square-foot base factors. Bigha is intentionally configurable demo data,
+            // not an asserted local statutory conversion.
+            $unitDefinitions = [
+                ['square-foot', 'Square Foot (DEMO)', 'sq ft', 1.0, true],
+                ['square-metre', 'Square Metre (DEMO)', 'sq m', 10.7639, false],
+                ['acre', 'Acre (DEMO)', 'acre', 43560.0, false],
+                ['hectare', 'Hectare (DEMO)', 'ha', 107639.0, false],
+                ['bigha', 'Bigha (CONFIGURABLE DEMO)', 'bigha', 27225.0, false],
             ];
+
             $units = [];
-            foreach ($unitRows as [$name, $symbol, $slug, $factor, $base]) {
-                $units[$slug] = $this->demo(CircleRateUnit::class, ['slug' => $slug], [
-                    'name' => $name.' (Demo)', 'symbol' => $symbol, 'dimension' => 'area',
-                    'base_factor' => $factor, 'is_base_unit' => $base, 'is_active' => true,
-                ]);
+            foreach ($unitDefinitions as [$slug, $name, $symbol, $baseFactor, $isBase]) {
+                $units[$slug] = CircleRateUnit::query()->firstOrCreate(
+                    ['slug' => 'demo-'.$slug],
+                    [
+                        'name' => $name,
+                        'symbol' => $symbol,
+                        'dimension' => 'area',
+                        'base_factor' => $baseFactor,
+                        'is_base_unit' => $isBase,
+                        'is_active' => true,
+                    ]
+                );
             }
-            foreach ($units as $fromSlug => $from) {
-                foreach ($units as $toSlug => $to) {
-                    if ($from->id === $to->id) continue;
-                    $conversion = CircleRateUnitConversion::query()->firstOrNew([
-                        'from_unit_id' => $from->id, 'to_unit_id' => $to->id,
-                    ]);
-                    if ($conversion->exists && ! $conversion->is_demo) {
-                        throw new RuntimeException('A non-demo unit conversion conflicts with the requested demo conversion.');
+
+            // Road widths are measured in metres; this is a length unit, not a
+            // calculator area unit.
+            $metre = CircleRateUnit::query()->firstOrCreate(
+                ['slug' => 'demo-metre'],
+                [
+                    'name' => 'Metre (DEMO road-width unit)',
+                    'symbol' => 'm',
+                    'dimension' => 'length',
+                    'base_factor' => 1,
+                    'is_base_unit' => true,
+                    'is_active' => true,
+                ]
+            );
+
+            $unitList = array_values($units);
+            foreach ($unitList as $from) {
+                foreach ($unitList as $to) {
+                    if ($from->id === $to->id) {
+                        continue;
                     }
-                    $conversion->forceFill([
-                        'factor' => (float) $from->base_factor / (float) $to->base_factor,
-                        'source_note' => 'DEMO ONLY: configurable testing factor; not an official land-measure conversion.',
-                        'is_verified' => false, 'is_demo' => true,
-                    ])->save();
-                    $this->records['conversions'][] = $conversion->id;
+                    $factor = (float) $from->base_factor / (float) $to->base_factor;
+                    CircleRateUnitConversion::query()->firstOrCreate(
+                        ['from_unit_id' => $from->id, 'to_unit_id' => $to->id],
+                        [
+                            'factor' => $factor,
+                            'source_note' => self::DEMO_NOTE.'; configurable sample factor only; requires administrator verification before operational use.',
+                            'is_verified' => false,
+                        ]
+                    );
                 }
             }
+
+            $roadDefinitions = [
+                ['Below 6 metres (DEMO)', 0, 5.9999, 1],
+                ['6–9 metres (DEMO)', 6, 8.9999, 2],
+                ['9–12 metres (DEMO)', 9, 11.9999, 3],
+                ['12–18 metres (DEMO)', 12, 18, 4],
+                ['Above 18 metres (DEMO)', 18.0001, null, 5],
+            ];
 
             $roadWidths = [];
-            $roadRows = [
-                ['Below 6 metres', 0, 6, 5, 50],
-                ['6–9 metres', 6, 9, null, 40],
-                ['9–12 metres', 9, 12, null, 30],
-                ['12–18 metres', 12, 18, null, 20],
-                ['Above 18 metres', 18, null, null, 10],
-            ];
-            foreach ($roadRows as [$name, $min, $max, $exact, $priority]) {
-                $slug = 'demo-road-'.Str::slug($name);
-                $roadWidths[$name] = $this->demo(CircleRateRoadWidthRange::class, ['name' => $name.' (Demo)'], [
-                    'name' => $name.' (Demo)', 'unit_id' => $units['demo-square-metre']->id,
-                    'minimum_width' => $min, 'maximum_width' => $max, 'exact_width' => $exact,
-                    'applicability' => ['demo' => true], 'adjustment_configuration' => null,
-                    'effective_from' => '2025-04-01', 'effective_until' => null,
-                    'priority' => $priority, 'is_active' => true,
-                ]);
+            foreach ($roadDefinitions as [$name, $minimum, $maximum, $priority]) {
+                $roadWidths[$priority] = CircleRateRoadWidthRange::query()->firstOrCreate(
+                    ['name' => $name],
+                    [
+                        'unit_id' => $metre->id,
+                        'minimum_width' => $minimum,
+                        'maximum_width' => $maximum,
+                        'applicability' => ['dataset' => 'DEMO'],
+                        'adjustment_configuration' => ['dataset' => 'DEMO', 'rate_multiplier' => 1],
+                        'priority' => $priority,
+                        'is_active' => true,
+                    ]
+                );
             }
 
+            $yearDefinitions = [
+                ['2025-26', '2025-04-01', '2026-03-31'],
+                ['2026-27', '2026-04-01', '2027-03-31'],
+            ];
             $years = [];
-            foreach ([['2025-26 (DEMO)', '2025-04-01', '2026-03-31'], ['2026-27 (DEMO)', '2026-04-01', '2027-03-31']] as $i => [$name, $start, $end]) {
-                $years[$i] = $this->demo(CircleRateFinancialYear::class, ['name' => $name], [
-                    'name' => $name, 'starts_on' => $start, 'ends_on' => $end,
-                    'is_current' => false, 'is_active' => true, 'show_on_frontend' => true,
+            foreach ($yearDefinitions as [$name, $startsOn, $endsOn]) {
+                $years[$name] = CircleRateFinancialYear::query()->firstOrCreate(
+                    ['name' => $name],
+                    [
+                        'starts_on' => $startsOn,
+                        'ends_on' => $endsOn,
+                        'is_current' => $name === '2026-27',
+                        'is_active' => true,
+                        'show_on_frontend' => true,
+                    ]
+                );
+            }
+
+            $source = CircleRateSource::query()
+                ->where('reference_number', 'DEMO-BAREILLY-CITY-CIRCLE-RATES')
+                ->first();
+
+            if (! $source) {
+                $source = CircleRateSource::query()->create([
+                    'title' => self::DEMO_NOTE,
+                    'reference_number' => 'DEMO-BAREILLY-CITY-CIRCLE-RATES',
+                    'document_path' => null,
+                    'document_disk' => 'public',
+                    'source_url' => null,
+                    'published_on' => null,
+                    'notes' => 'Synthetic Bareilly city test dataset generated by BareillyCityDemoSeeder. This is not an official government notification, valuation zone, source document or circle-rate schedule.',
                 ]);
             }
 
-            $source = $this->demo(CircleRateSource::class, ['reference_number' => 'DEMO-BR-CITY-2026'], [
-                'title' => self::PREFIX.' – SAMPLE RATES ONLY',
-                'reference_number' => 'DEMO-BR-CITY-2026',
-                'document_path' => null, 'document_disk' => 'public', 'source_url' => null,
-                'published_on' => null, 'notes' => 'Synthetic testing data. Not issued, approved or verified by any government authority.',
-                'uploaded_by' => null,
-            ]);
+            $locationList = array_values($locations);
+            $typeList = array_values($types);
+            $categoryList = array_values($categories);
+            $roadList = array_values($roadWidths);
+            $yearList = array_values($years);
+            $unitList = array_values($units);
+            $baseRates = [95, 1250, 1850, 1650, 2450, 720, 1380];
 
-            $fieldDefinitions = [
-                ['land_classification', 'Land Classification', 'dropdown', ['Agricultural', 'Residential', 'Commercial'], ['agricultural_land']],
-                ['plot_facing', 'Plot Facing', 'radio', ['North', 'South', 'East', 'West'], ['residential_plot', 'commercial_plot']],
-                ['corner_plot', 'Corner Plot', 'checkbox', [], ['residential_plot', 'commercial_plot']],
-                ['land_use', 'Land Use', 'select', ['Residential', 'Commercial', 'Mixed'], ['residential_plot', 'commercial_plot', 'mixed_use_property']],
-                ['construction_type', 'Construction Type', 'dropdown', ['RCC', 'Load Bearing', 'Temporary'], ['residential_building', 'commercial_building']],
-                ['building_age', 'Building Age', 'number', [], ['residential_building', 'commercial_building']],
-                ['number_of_floors', 'Number of Floors', 'number', [], ['residential_building', 'commercial_building']],
-                ['road_width', 'Road Width', 'number', [], null],
-                ['development_status', 'Property Development Status', 'radio', ['Developed', 'Undeveloped'], null],
-                ['site_notes', 'Site Notes', 'text', [], null],
-                ['possession_date', 'Possession / Reference Date', 'date', [], null],
-                ['additional_amenities', 'Additional Amenities', 'multi-select', ['Parking', 'Water', 'Electricity'], ['demo-residential-building', 'demo-commercial-building']],
-            ];
-            $fields = [];
-            foreach ($fieldDefinitions as $i => [$name, $label, $inputType, $options, $applicability]) {
-                $field = $this->demo(CircleRateCalculatorField::class, ['name' => 'demo_'.$name], [
-                    'name' => 'demo_'.$name, 'label' => $label.' (Demo)', 'input_type' => $inputType,
-                    'data_source' => null, 'placeholder' => 'DEMO value for testing',
-                    'help_text' => 'DEMO calculator field; values are for testing only.',
-                    'validation_rules' => in_array($inputType, ['number'], true) ? ['min' => 0, 'max' => 100] : [],
-                    'visibility_conditions' => $name === 'construction_type' || $name === 'building_age' || $name === 'number_of_floors'
-                        ? [['field' => 'property_type_id', 'operator' => 'in', 'value' => [$types['residential_building']->id, $types['commercial_building']->id]]]
-                        : [],
-                    'applicability' => ['property_type_ids' => $applicability ? collect($applicability)->map(fn ($slug) => $types[$slug]->id)->all() : collect($types)->pluck('id')->all(), 'demo' => true],
-                    'default_value' => null, 'is_required' => false, 'is_active' => true, 'sort_order' => 90 + $i,
-                ]);
-                $fields[$name] = $field;
-                foreach ($options as $j => $option) {
-                    $this->demo(CircleRateCalculatorFieldOption::class, ['field_id' => $field->id, 'value' => Str::slug($option)], [
-                        'field_id' => $field->id, 'label' => $option.' (Demo)', 'value' => Str::slug($option),
-                        'sort_order' => $j + 1, 'is_active' => true,
-                    ]);
-                }
-            }
+            // Fourteen representative rate records cover every property type and both
+            // financial years while rotating across all categories, road bands and units.
+            foreach ($typeList as $typeIndex => $type) {
+                foreach ($yearList as $yearIndex => $year) {
+                    $sequence = ($typeIndex * 2 + $yearIndex);
+                    $category = $categoryList[$sequence % count($categoryList)];
+                    $road = $roadList[$sequence % count($roadList)];
+                    $unit = $unitList[$sequence % count($unitList)];
+                    $location = $locationList[$sequence % count($locationList)];
 
-            $rateUnits = array_values($units);
-            $rateCount = 0;
-            foreach ($typeRows as $typeIndex => [$typeName, $typeSlug]) {
-                $categoryNames = $typeCategoryMap[$typeSlug];
-                foreach ($categoryNames as $categoryIndex => $categoryName) {
-                    foreach ($years as $yearIndex => $year) {
-                        $location = array_values($locations)[$typeIndex % count($locations)];
-                        $category = $categories[$categoryName];
-                        $road = array_values($roadWidths)[($typeIndex + $categoryIndex) % count($roadWidths)];
-                        $unit = $rateUnits[($typeIndex + $categoryIndex + $yearIndex) % count($rateUnits)];
-                        $identity = [
-                            'district_id' => $district->id, 'location_id' => $location->id,
-                            'property_type_id' => $types[$typeSlug]->id, 'category_id' => $category->id,
-                            'road_width_range_id' => $road->id, 'financial_year_id' => $year->id,
-                            'unit_id' => $unit->id, 'priority' => 100,
-                        ];
-                        $rate = CircleRate::query()->firstOrNew($identity);
-                        if ($rate->exists && ! $rate->is_demo) {
-                            throw new RuntimeException('A non-demo circle rate conflicts with the requested demo rate. No official record was changed.');
-                        }
-                        $baseAmount = [120, 185, 260, 340, 420, 95, 290][$typeIndex];
-                        $amount = $baseAmount * (1 + ($yearIndex * 0.08)) * (1 + (($categoryIndex % 4) * 0.025));
-                        $rate->forceFill($identity + [
-                            'tehsil_id' => $tehsil->id, 'area_type_id' => $urban->id,
-                            'source_id' => $source->id, 'rate' => round($amount, 4),
-                            'effective_from' => $year->starts_on->toDateString(),
-                            'effective_until' => $year->ends_on->toDateString(),
-                            'verification_status' => 'pending', 'status' => 'published',
-                            'conditions' => [['field' => 'road_width_range_id', 'operator' => 'equals', 'value' => $road->id]],
-                            'admin_notes' => 'DEMO ONLY – synthetic sample rate; never an official government circle rate.',
-                            'created_by' => null, 'verified_by' => null, 'verified_at' => null, 'is_demo' => true,
-                        ])->save();
-                        $this->records['rates'][] = $rate->id;
-                        $this->records['locations'][] = $location->id;
-                        $rateCount++;
-                        if (! $rate->versions()->where('is_demo', true)->exists()) {
-                            CircleRateVersion::query()->forceCreate([
-                                'circle_rate_id' => $rate->id, 'version_number' => 1,
-                                'snapshot' => $rate->getAttributes(), 'change_reason' => 'DEMO seed baseline version',
-                                'changed_by' => null, 'is_demo' => true,
-                            ]);
-                        }
+                    $identity = [
+                        'district_id' => $district->id,
+                        'tehsil_id' => $tehsil->id,
+                        'location_id' => $location->id,
+                        'area_type_id' => $urban->id,
+                        'property_type_id' => $type->id,
+                        'category_id' => $category->id,
+                        'road_width_range_id' => $road->id,
+                        'financial_year_id' => $year->id,
+                        'unit_id' => $unit->id,
+                        'source_id' => $source->id,
+                        'effective_from' => $year->starts_on->toDateString(),
+                    ];
+
+                    $existing = CircleRate::query()
+                        ->where($identity)
+                        ->first();
+
+                    // Do not alter or shadow an existing manually managed/imported rate.
+                    if ($existing && ! str_contains((string) $existing->admin_notes, self::DEMO_NOTE)) {
+                        continue;
                     }
+
+                    $rate = $existing ?: CircleRate::query()->create($identity + [
+                        'rate' => round($baseRates[$typeIndex] * (1 + ($yearIndex * 0.075)) * (1 + (($sequence % 4) * 0.03)), 4),
+                        'priority' => 100,
+                        'effective_until' => $year->ends_on->toDateString(),
+                        'verification_status' => 'pending',
+                        'status' => 'draft',
+                        'conditions' => [
+                            ['field' => 'category_id', 'operator' => 'equals', 'value' => $category->id],
+                            ['field' => 'road_width_range_id', 'operator' => 'equals', 'value' => $road->id],
+                        ],
+                        'admin_notes' => self::DEMO_NOTE.'; synthetic test value only; not eligible as a verified official rate.',
+                    ]);
+
+                    CircleRateVersion::query()->firstOrCreate(
+                        ['circle_rate_id' => $rate->id, 'version_number' => 1],
+                        [
+                            'snapshot' => $rate->getAttributes(),
+                            'change_reason' => self::DEMO_NOTE.'; initial sample version.',
+                        ]
+                    );
                 }
             }
 
-            $ruleRows = [
-                ['Agricultural demo valuation', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['agricultural_land']->id]], ['require_fields' => ['custom.demo_land_classification']], 100],
-                ['Residential demo valuation adjustment', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['residential_plot']->id]], ['rate_multiplier' => 1.05], 90],
-                ['Commercial demo valuation adjustment', [['field' => 'property_type_id', 'operator' => 'in', 'value' => [$types['commercial_plot']->id, $types['commercial_building']->id]]], ['rate_multiplier' => 1.12], 80],
-                ['Building demo construction input', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['residential_building']->id]], ['require_fields' => ['custom.demo_construction_type']], 70],
-                ['Road width demo priority scenario', [['field' => 'road_width_range_id', 'operator' => 'in', 'value' => collect($roadWidths)->pluck('id')->all()]], ['rate_multiplier' => 1.02], 60],
-                ['Demo unit conversion scenario', [['field' => 'area_unit_id', 'operator' => 'in', 'value' => collect($units)->pluck('id')->all()]], ['rate_multiplier' => 1.0], 65],
-                ['Category demo priority scenario', [['field' => 'category_id', 'operator' => 'in', 'value' => collect($categories)->pluck('id')->all()]], ['fixed_adjustment' => 250], 50],
-                ['Demo conditional-field rule', [['field' => 'custom.demo_corner_plot', 'operator' => 'equals', 'value' => true]], ['rate_multiplier' => 1.01], 40],
-                ['Demo lower-priority matching rule', [['field' => 'custom.demo_development_status', 'operator' => 'equals', 'value' => 'developed']], ['fixed_adjustment' => 100], 10],
-            ];
-            foreach ($ruleRows as [$name, $conditions, $actions, $priority]) {
-                $rule = $this->demo(CircleRateRule::class, ['name' => self::PREFIX.' – '.$name], [
-                    'name' => self::PREFIX.' – '.$name,
-                    'description' => 'DEMO rule used only when a DEMO rate is selected. Not an official valuation instruction.',
-                    'conditions' => $conditions, 'actions' => $actions, 'source_id' => $source->id,
-                    'is_verified' => false, 'verified_by' => null, 'verified_at' => null,
-                    'priority' => $priority, 'stop_processing' => false, 'is_active' => true,
-                    'effective_from' => '2025-04-01', 'effective_until' => '2027-03-31', 'created_by' => null,
-                ]);
-                $this->records['rules'][] = $rule->id;
-            }
+            $this->seedCalculatorFields($types);
+            $this->seedCalculationRules($source, $types, $categories, $roadWidths);
 
-            $batch = $this->demo(CircleRateImportBatch::class, ['file_hash' => hash('sha256', 'bareilly-city-circle-rate-demo-v1')], [
-                'financial_year_id' => $years[1]->id, 'source_id' => $source->id, 'uploaded_by' => null,
-                'original_filename' => 'BAREILLY-CITY-DEMO-SAMPLE.csv', 'stored_path' => null,
-                'file_hash' => hash('sha256', 'bareilly-city-circle-rate-demo-v1'), 'file_type' => 'csv',
-                'status' => 'demo_seeded', 'column_mapping' => ['demo' => true], 'total_rows' => $rateCount,
-                'valid_rows' => $rateCount, 'invalid_rows' => 0, 'conflict_rows' => 0,
-                'summary' => 'DEMO seeder-created records; not a real import and not official rates.',
-                'confirmed_at' => null,
-            ]);
-            $this->records['batch'] = $batch->id;
-
-            CircleRateAuditLog::query()->create([
-                'user_id' => auth()->id(), 'subject_type' => 'BareillyCityDemoSeeder',
-                'subject_id' => null, 'event' => 'demo_seeded',
-                'old_values' => null,
-                'new_values' => ['district_id' => $district->id, 'tehsil_id' => $tehsil->id, 'locations' => count($this->records['locations']), 'rates' => $rateCount, 'source_id' => $source->id],
-                'reason' => 'Seeded Bareilly city DEMO data only. Synthetic values; not official government circle rates.',
-                'source_id' => $source->id, 'ip_address' => null,
-            ]);
+            // An upload-history fixture only. It is not a confirmed import and has no
+            // stored source file or imported official rows.
+            $hash = hash('sha256', 'BAREILLY-CITY-DEMO-TEST-DATA-V1');
+            CircleRateImportBatch::query()->firstOrCreate(
+                ['file_hash' => $hash],
+                [
+                    'financial_year_id' => $years['2026-27']->id,
+                    'source_id' => $source->id,
+                    'original_filename' => 'DEMO-BAREILLY-CITY-TEST-DATA.csv',
+                    'stored_path' => null,
+                    'file_type' => 'csv',
+                    'status' => 'uploaded',
+                    'column_mapping' => ['dataset' => 'DEMO'],
+                    'total_rows' => 0,
+                    'valid_rows' => 0,
+                    'invalid_rows' => 0,
+                    'conflict_rows' => 0,
+                    'summary' => self::DEMO_NOTE.'; metadata-only import history fixture; no import was confirmed.',
+                ]
+            );
         });
     }
 
-    private function demo(string $modelClass, array $identity, array $attributes): Model
+    /**
+     * @param array<string, CircleRatePropertyType> $types
+     */
+    private function seedCalculatorFields(array $types): void
     {
-        /** @var Model $record */
-        $record = $modelClass::query()->firstOrNew($identity);
-        if ($record->exists && ! (bool) $record->getAttribute('is_demo')) {
-            throw new RuntimeException('Refusing to overwrite a non-demo record in '.$modelClass.'.');
+        $definitions = [
+            ['land_classification', 'Land Classification', 'dropdown', ['Agricultural', 'Residential', 'Commercial'], ['agricultural_land']],
+            ['plot_facing', 'Plot Facing', 'radio', ['North', 'South', 'East', 'West'], ['residential_plot', 'commercial_plot']],
+            ['corner_plot', 'Corner Plot', 'checkbox', ['Yes', 'No'], ['residential_plot', 'commercial_plot', 'mixed_use_property']],
+            ['land_use', 'Land Use', 'select', ['Residential', 'Commercial', 'Mixed'], ['residential_plot', 'commercial_plot', 'mixed_use_property']],
+            ['construction_type', 'Construction Type', 'dropdown', ['RCC', 'Load Bearing', 'Temporary'], ['residential_building', 'commercial_building']],
+            ['building_age', 'Building Age', 'number', [], ['residential_building', 'commercial_building']],
+            ['number_of_floors', 'Number of Floors', 'number', [], ['residential_building', 'commercial_building']],
+            ['road_width', 'Road Width (metres)', 'number', [], null],
+            ['development_status', 'Property Development Status', 'radio', ['Developed', 'Undeveloped'], null],
+            ['site_notes', 'Site Notes', 'text', [], null],
+            ['possession_date', 'Possession / Reference Date', 'date', [], null],
+            ['additional_amenities', 'Additional Amenities', 'multi-select', ['Parking', 'Water', 'Electricity'], ['residential_building', 'commercial_building']],
+        ];
+
+        foreach ($definitions as $index => [$key, $label, $inputType, $options, $applicableTypeSlugs]) {
+            $applicableIds = $applicableTypeSlugs === null
+                ? []
+                : collect($applicableTypeSlugs)->map(fn (string $slug) => $types[$slug]->id)->all();
+
+            $field = CircleRateCalculatorField::query()->firstOrCreate(
+                ['name' => 'demo_'.$key],
+                [
+                    'label' => $label.' (DEMO)',
+                    'input_type' => $inputType,
+                    'data_source' => null,
+                    'placeholder' => 'Enter '.$label,
+                    'help_text' => self::DEMO_NOTE,
+                    'validation_rules' => match ($inputType) {
+                        'number' => ['min' => 0],
+                        'text' => ['max' => 500],
+                        default => [],
+                    },
+                    'visibility_conditions' => $applicableIds
+                        ? [['field' => 'property_type_id', 'operator' => 'in', 'value' => $applicableIds]]
+                        : [],
+                    'applicability' => $applicableIds ? ['property_type_ids' => $applicableIds] : [],
+                    'default_value' => null,
+                    'is_required' => false,
+                    'is_active' => true,
+                    'sort_order' => 900 + $index,
+                ]
+            );
+
+            foreach ($options as $optionIndex => $option) {
+                $value = Str::slug($option, '_');
+                CircleRateCalculatorFieldOption::query()->firstOrCreate(
+                    ['field_id' => $field->id, 'value' => $value],
+                    [
+                        'label' => $option,
+                        'sort_order' => $optionIndex + 1,
+                        'is_active' => true,
+                    ]
+                );
+            }
         }
-        $record->forceFill($attributes + ['is_demo' => true])->save();
-        return $record;
+    }
+
+    /**
+     * @param array<string, CircleRatePropertyType> $types
+     * @param array<string, CircleRatePropertyCategory> $categories
+     * @param array<int, CircleRateRoadWidthRange> $roadWidths
+     */
+    private function seedCalculationRules(CircleRateSource $source, array $types, array $categories, array $roadWidths): void
+    {
+        $rules = [
+            ['agricultural-valuation', 'Agricultural valuation sample adjustment', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['agricultural_land']->id]], ['rate_multiplier' => 1.02], 100],
+            ['residential-valuation', 'Residential valuation sample adjustment', [['field' => 'property_type_id', 'operator' => 'in', 'value' => [$types['residential_plot']->id, $types['residential_building']->id]]], ['rate_multiplier' => 1.01], 90],
+            ['commercial-valuation', 'Commercial valuation sample adjustment', [['field' => 'property_type_id', 'operator' => 'in', 'value' => [$types['commercial_plot']->id, $types['commercial_building']->id]]], ['rate_multiplier' => 1.03], 80],
+            ['industrial-valuation', 'Industrial valuation sample adjustment', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['industrial_property']->id]], ['rate_multiplier' => 1.015], 70],
+            ['mixed-use-valuation', 'Mixed-use valuation sample adjustment', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['mixed_use_property']->id]], ['rate_multiplier' => 1.025], 60],
+            ['road-width-condition', 'Road-width condition sample rule', [['field' => 'road_width_range_id', 'operator' => 'in', 'value' => collect($roadWidths)->pluck('id')->all()]], ['rate_multiplier' => 1.0], 50],
+            ['category-condition', 'Category condition sample rule', [['field' => 'category_id', 'operator' => 'in', 'value' => collect($categories)->pluck('id')->all()]], ['rate_multiplier' => 1.0], 40],
+            ['corner-plot-condition', 'Corner plot conditional sample rule', [['field' => 'custom.corner_plot', 'operator' => 'equals', 'value' => true]], ['rate_multiplier' => 1.025], 30],
+            ['require-building-details', 'Building fields required sample rule', [['field' => 'property_type_id', 'operator' => 'in', 'value' => [$types['residential_building']->id, $types['commercial_building']->id]]], ['require_fields' => ['custom.construction_type', 'custom.building_age']], 20],
+        ];
+
+        foreach ($rules as [$slug, $description, $conditions, $actions, $priority]) {
+            CircleRateRule::query()->firstOrCreate(
+                ['name' => 'DEMO – Bareilly City – '.$slug],
+                [
+                    'description' => self::DEMO_NOTE.'; '.$description,
+                    'conditions' => $conditions,
+                    'actions' => $actions,
+                    'source_id' => $source->id,
+                    'is_verified' => false,
+                    'verified_by' => null,
+                    'verified_at' => null,
+                    'priority' => $priority,
+                    'stop_processing' => false,
+                    'is_active' => true,
+                    'effective_from' => '2025-04-01',
+                    'effective_until' => '2027-03-31',
+                ]
+            );
+        }
     }
 }
