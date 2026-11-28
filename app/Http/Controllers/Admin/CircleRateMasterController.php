@@ -363,6 +363,7 @@ class CircleRateMasterController extends Controller
             if ($name === 'unit_id' || $name === 'from_unit_id' || $name === 'to_unit_id') $base = ['required', 'integer', 'exists:circle_rate_units,id'];
             if ($name === 'field_id') $base = ['required', 'integer', 'exists:circle_rate_calculator_fields,id'];
             if ($name === 'source_id') $base = ['nullable', 'integer', 'exists:circle_rate_sources,id'];
+            if ($name === 'factor') $base = ['required', 'numeric', 'gt:0'];
             if ($name === 'property_type_ids.*') $base = ['integer', 'exists:circle_rate_property_types,id'];
             if ($name === 'location_ids.*') $base = ['integer', 'exists:circle_rate_locations,id'];
             if ($name === 'starts_on' || $name === 'ends_on') $base = ['required', 'date'];
