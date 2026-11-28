@@ -13,6 +13,7 @@ use App\Models\CircleRateLocation;
 use App\Models\CircleRatePropertyCategory;
 use App\Models\CircleRatePropertyType;
 use App\Models\CircleRateRoadWidthRange;
+use App\Models\CircleRateSource;
 use App\Models\CircleRateTehsil;
 use App\Models\CircleRateUnit;
 use App\Services\CircleRate\SpreadsheetReader;
@@ -44,6 +45,7 @@ class CircleRateImportController extends Controller
         return view('admin.circle-rates.imports.index', [
             'batches' => CircleRateImportBatch::query()->with('financialYear')->latest()->paginate(20),
             'financialYears' => CircleRateFinancialYear::query()->where('is_active', true)->orderByDesc('starts_on')->get(),
+            'sources' => CircleRateSource::query()->orderByDesc('id')->get(),
         ]);
     }
 
@@ -139,7 +141,7 @@ class CircleRateImportController extends Controller
             $district = $this->findNamed(CircleRateDistrict::class, $get('district'));
             $propertyType = $this->findNamed(CircleRatePropertyType::class, $get('property_type'));
             $unit = $this->findUnit($get('unit'));
-            $tehsil = $get('tehsil') !== '' ? $this->findNamed(CircleRateTehsil::class, $get('tehsil')) : null;
+            $tehsil = $get('tehsil') !== '' ? $this->findTehsil($get('tehsil'), $district?->id) : null;
             $areaType = $get('area_type') !== '' ? $this->findNamed(CircleRateAreaType::class, $get('area_type')) : null;
             $location = $get('location') !== '' ? $this->findLocation($get('location'), $district?->id) : null;
             $category = $get('category') !== '' ? $this->findNamed(CircleRatePropertyCategory::class, $get('category')) : null;
@@ -288,6 +290,12 @@ class CircleRateImportController extends Controller
     {
         if ($name === '') return null;
         return $model::query()->where('is_active', true)->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->first();
+    }
+
+    private function findTehsil(string $name, ?int $districtId): ?CircleRateTehsil
+    {
+        if ($name === '' || ! $districtId) return null;
+        return CircleRateTehsil::query()->where('district_id', $districtId)->where('is_active', true)->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->first();
     }
 
     private function findUnit(string $name): ?CircleRateUnit
