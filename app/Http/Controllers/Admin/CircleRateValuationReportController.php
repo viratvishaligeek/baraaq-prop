@@ -49,7 +49,7 @@ class CircleRateValuationReportController extends Controller
             $output = fopen('php://output', 'wb');
             fputcsv($output, ['Reference', 'Financial year', 'District', 'Property type', 'Area', 'Rate', 'Estimated value', 'Previous value', 'Difference', 'Valued at']);
             foreach ($query->orderBy('valued_at')->cursor() as $record) {
-                fputcsv($output, [
+                $values = [
                     $record->reference,
                     $record->financialYear?->name,
                     $record->rate?->district?->name,
@@ -60,7 +60,9 @@ class CircleRateValuationReportController extends Controller
                     $record->previous_year_value,
                     $record->difference_amount,
                     $record->valued_at?->toDateTimeString(),
-                ]);
+                ];
+                $values = array_map(fn ($value) => is_string($value) && preg_match('/^[\\s]*[=+@-]/', $value) ? "'".$value : $value, $values);
+                fputcsv($output, $values);
             }
             fclose($output);
         }, 'circle-rate-valuation-reports.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
