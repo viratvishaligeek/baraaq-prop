@@ -116,16 +116,16 @@ class CircleRateCalculatorController extends Controller
     public function calculate(Request $request, ValuationService $service)
     {
         $input = $request->validate([
-            'district_id' => ['required', 'integer'],
-            'tehsil_id' => ['nullable', 'integer'],
-            'area_type_id' => ['nullable', 'integer'],
-            'location_id' => ['nullable', 'integer'],
-            'property_type_id' => ['required', 'integer'],
-            'category_id' => ['nullable', 'integer'],
-            'road_width_range_id' => ['nullable', 'integer'],
-            'financial_year_id' => ['required', 'integer'],
+            'district_id' => ['required', 'integer', Rule::exists('circle_rate_districts', 'id')->where('is_active', true)],
+            'tehsil_id' => ['nullable', 'integer', Rule::exists('circle_rate_tehsils', 'id')->where('is_active', true)],
+            'area_type_id' => ['nullable', 'integer', Rule::exists('circle_rate_area_types', 'id')->where('is_active', true)],
+            'location_id' => ['nullable', 'integer', Rule::exists('circle_rate_locations', 'id')->where('is_active', true)],
+            'property_type_id' => ['required', 'integer', Rule::exists('circle_rate_property_types', 'id')->where('is_active', true)],
+            'category_id' => ['nullable', 'integer', Rule::exists('circle_rate_property_categories', 'id')->where('is_active', true)],
+            'road_width_range_id' => ['nullable', 'integer', Rule::exists('circle_rate_road_width_ranges', 'id')->where('is_active', true)],
+            'financial_year_id' => ['required', 'integer', Rule::exists('circle_rate_financial_years', 'id')->where('is_active', true)->where('show_on_frontend', true)],
             'area' => ['required', 'numeric', 'gt:0', 'max:'.(float) Setting::read('circle_rate.max_property_area', 100000000)],
-            'area_unit_id' => ['required', 'integer'],
+            'area_unit_id' => ['required', 'integer', Rule::exists('circle_rate_units', 'id')->where('is_active', true)->where('dimension', 'area')],
             'valuation_date' => ['required', 'date'],
             'custom' => ['nullable', 'array'],
         ]);
