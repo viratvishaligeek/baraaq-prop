@@ -11,4 +11,5 @@ class CircleRateSource extends Model
     protected function casts(): array { return ['published_on' => 'date']; }
     public function uploader() { return $this->belongsTo(User::class, 'uploaded_by'); }
     public function rates() { return $this->hasMany(CircleRate::class, 'source_id'); }
+    public function rules() { return $this->hasMany(CircleRateRule::class, 'source_id'); }
 }
