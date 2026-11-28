@@ -202,6 +202,7 @@ class CircleRateCalculatorController extends Controller
             'valued_at' => now(),
         ]);
 
+        session(['circle_rate_last_reference' => $record->reference]);
         return redirect()->route('circle-rates.result', $record->reference);
     }
 
@@ -244,6 +245,9 @@ class CircleRateCalculatorController extends Controller
 
     public function result(string $reference)
     {
+        $allowSharing = Setting::read('circle_rate.allow_public_result_sharing', true);
+        abort_unless($allowSharing || session('circle_rate_last_reference') === $reference, 404);
+
         $record = CircleRateValuationRecord::query()->with([
             'rate.district', 'rate.tehsil', 'rate.location', 'rate.propertyType',
             'rate.category', 'rate.unit', 'rate.source', 'financialYear', 'previousRate.unit', 'previousRate.financialYear',
@@ -252,7 +256,7 @@ class CircleRateCalculatorController extends Controller
         return view('frontend.circle-rates.result', [
             'record' => $record,
             'showPreviousComparison' => Setting::read('circle_rate.show_previous_year_comparison', true),
-            'allowSharing' => Setting::read('circle_rate.allow_public_result_sharing', true),
+            'allowSharing' => $allowSharing,
             'disclaimer' => Setting::read('circle_rate.valuation_disclaimer', 'This is an estimate based on published, verified circle rate records. It is not a market-price appraisal or a guarantee of the final registration assessment.'),
         ]);
     }
