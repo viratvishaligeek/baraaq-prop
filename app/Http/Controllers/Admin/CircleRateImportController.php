@@ -133,6 +133,7 @@ class CircleRateImportController extends Controller
         $year = $batch->financialYear;
         $batch->rows()->delete();
         $valid = $invalid = $conflicts = 0;
+        $seenRows = [];
 
         foreach ($spreadsheet['rows'] as $index => $row) {
             $errors = [];
@@ -189,8 +190,21 @@ class CircleRateImportController extends Controller
 
             $conflict = false;
             if (! $errors) {
+                $signature = hash('sha256', json_encode([
+                    $normalized['district_id'], $normalized['tehsil_id'], $normalized['area_type_id'],
+                    $normalized['location_id'], $normalized['property_type_id'], $normalized['category_id'],
+                    $normalized['road_width_range_id'], $normalized['financial_year_id'],
+                    $normalized['unit_id'], $normalized['effective_from'], $normalized['conditions'],
+                ]));
+                if (isset($seenRows[$signature])) {
+                    $conflict = true;
+                    $errors[] = 'This row duplicates another row in the same uploaded file.';
+                }
+                $seenRows[$signature] = true;
                 $existing = CircleRate::query()->where('district_id', $normalized['district_id'])
                     ->where('property_type_id', $normalized['property_type_id'])
+                    ->where('tehsil_id', $normalized['tehsil_id'])
+                    ->where('area_type_id', $normalized['area_type_id'])
                     ->where('financial_year_id', $normalized['financial_year_id'])
                     ->where('unit_id', $normalized['unit_id'])
                     ->where('effective_from', $normalized['effective_from'])
@@ -201,8 +215,8 @@ class CircleRateImportController extends Controller
                     ->where('category_id', $normalized['category_id'])
                     ->where('road_width_range_id', $normalized['road_width_range_id'])
                     ->exists();
-                $conflict = $existing;
-                if ($conflict) $errors[] = 'A verified rate already exists for this same location, property type, year and effective date. Manual review is required.';
+                $conflict = $conflict || $existing;
+                if ($existing) $errors[] = 'A verified rate already exists for this same location, property type, year and effective date. Manual review is required.';
             }
 
             $status = $conflict ? 'conflict' : ($errors ? 'invalid' : 'valid');
@@ -243,6 +257,8 @@ class CircleRateImportController extends Controller
                 $data = $row->normalized_data ?? [];
                 $conflict = CircleRate::query()->where('district_id', $data['district_id'])
                     ->where('property_type_id', $data['property_type_id'])
+                    ->where('tehsil_id', $data['tehsil_id'])
+                    ->where('area_type_id', $data['area_type_id'])
                     ->where('financial_year_id', $data['financial_year_id'])
                     ->where('effective_from', $data['effective_from'])
                     ->where('verification_status', 'verified')
