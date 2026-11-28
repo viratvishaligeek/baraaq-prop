@@ -171,8 +171,16 @@ class CircleRateImportController extends Controller
             $conditions = [];
             if ($get('conditions') !== '') {
                 $decoded = json_decode($get('conditions'), true);
-                if (! is_array($decoded)) $errors[] = 'Conditions must contain valid JSON.';
-                else $conditions = $decoded;
+                if (! is_array($decoded) || ! array_is_list($decoded)) $errors[] = 'Conditions must be a JSON array.';
+                else {
+                    foreach ($decoded as $condition) {
+                        if (! is_array($condition) || blank($condition['field'] ?? null) || ! array_key_exists('value', $condition) || ! in_array($condition['operator'] ?? 'equals', ['equals', 'not_equals', 'greater_than', 'less_than', 'greater_than_or_equal', 'less_than_or_equal', 'between', 'in'], true)) {
+                            $errors[] = 'Every condition needs a field, supported operator and value.';
+                            break;
+                        }
+                    }
+                    $conditions = $decoded;
+                }
             }
 
             $normalized = [
