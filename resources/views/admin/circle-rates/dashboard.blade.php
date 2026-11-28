@@ -11,6 +11,17 @@
         <span class="badge text-bg-light border">Current financial year: {{ $currentYear?->name ?? 'Not configured' }}</span>
     </div>
 
+    <form method="GET" class="card border-0 shadow-sm p-3 mb-4">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3"><label class="form-label">Financial year</label><select class="form-select" name="financial_year_id"><option value="">All years</option>@foreach($financialYears as $item)<option value="{{ $item->id }}" @selected(($filters['financial_year_id'] ?? '') == $item->id)>{{ $item->name }}</option>@endforeach</select></div>
+            <div class="col-md-2"><label class="form-label">Tehsil</label><select class="form-select" name="tehsil_id"><option value="">All tehsils</option>@foreach($tehsils as $item)<option value="{{ $item->id }}" @selected(($filters['tehsil_id'] ?? '') == $item->id)>{{ $item->name }}</option>@endforeach</select></div>
+            <div class="col-md-2"><label class="form-label">Area type</label><select class="form-select" name="area_type_id"><option value="">All areas</option>@foreach($areaTypes as $item)<option value="{{ $item->id }}" @selected(($filters['area_type_id'] ?? '') == $item->id)>{{ $item->name }}</option>@endforeach</select></div>
+            <div class="col-md-2"><label class="form-label">Property type</label><select class="form-select" name="property_type_id"><option value="">All types</option>@foreach($propertyTypes as $item)<option value="{{ $item->id }}" @selected(($filters['property_type_id'] ?? '') == $item->id)>{{ $item->name }}</option>@endforeach</select></div>
+            <div class="col-md-2"><label class="form-label">Verification</label><select class="form-select" name="verification_status"><option value="">All statuses</option>@foreach(['pending','verified','rejected'] as $status)<option value="{{ $status }}" @selected(($filters['verification_status'] ?? '') === $status)>{{ ucfirst($status) }}</option>@endforeach</select></div>
+            <div class="col-md-1"><button class="btn btn-outline-primary w-100">Go</button></div>
+        </div>
+    </form>
+
     <div class="row g-3 mb-4">
         @foreach ([
             ['Districts', $districtCount],
