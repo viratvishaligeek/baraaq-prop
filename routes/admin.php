@@ -31,7 +31,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware(['auth', 'admin.access'])->group(function () {
         Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
-        Route::get('/dashboard', DashboardController::class)->name('dashboard');
+        Route::get('/dashboard', DashboardController::class)->name('dashboard');\n        Route::get('/circle-rates', CircleRateDashboardController::class)->middleware('permission:circle-rates.view')->name('circle-rates.dashboard');
         Route::get('/analytics', [AnalyticsController::class, 'index'])->middleware('permission:analytics.view')->name('analytics.index');
 
         Route::get('/newsletters', [NewsletterController::class, 'index'])->middleware('permission:newsletters.manage')->name('newsletters.index');
