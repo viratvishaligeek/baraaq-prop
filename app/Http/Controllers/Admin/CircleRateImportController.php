@@ -18,6 +18,7 @@ use App\Models\CircleRateSource;
 use App\Models\CircleRateTehsil;
 use App\Models\CircleRateUnit;
 use App\Services\CircleRate\SpreadsheetReader;
+use App\Services\CircleRate\CircleRateCache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -299,6 +300,7 @@ class CircleRateImportController extends Controller
             return $count;
         });
 
+        if ($imported > 0) CircleRateCache::bumpVersion();
         return redirect()->route('admin.circle-rates.imports.show', $batch)->with('success', $imported.' draft rate records imported. No verified rate was overwritten.');
     }
 
