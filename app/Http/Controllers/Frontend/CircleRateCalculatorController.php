@@ -152,7 +152,7 @@ class CircleRateCalculatorController extends Controller
         $record = CircleRateValuationRecord::query()->create([
             'reference' => (string) Str::uuid(),
             'circle_rate_id' => $rate->id,
-            'previous_circle_rate_id' => null,
+            'previous_circle_rate_id' => $result['previous_year']['circle_rate_id'] ?? null,
             'financial_year_id' => $result['financial_year']->id,
             'input_data' => $input,
             'calculation_breakdown' => $result['breakdown'],
