@@ -400,6 +400,17 @@ class CircleRateMasterController extends Controller
             if (! is_array($data['conditions'] ?? null) || ! array_is_list($data['conditions'])) {
                 throw ValidationException::withMessages(['conditions' => 'Rule conditions must be a JSON array of field/operator/value objects.']);
             }
+            foreach ($data['conditions'] as $condition) {
+                if (! is_array($condition) || blank($condition['field'] ?? null) || ! array_key_exists('value', $condition) || ! in_array($condition['operator'] ?? 'equals', ['equals', 'not_equals', 'greater_than', 'less_than', 'greater_than_or_equal', 'less_than_or_equal', 'between', 'in'], true)) {
+                    throw ValidationException::withMessages(['conditions' => 'Each rule condition needs a field, supported operator and value.']);
+                }
+                if (in_array($condition['operator'] ?? '', ['between', 'in'], true) && ! is_array($condition['value'])) {
+                    throw ValidationException::withMessages(['conditions' => 'Between and In List rule conditions require an array value.']);
+                }
+                if (($condition['operator'] ?? '') === 'between' && count($condition['value']) !== 2) {
+                    throw ValidationException::withMessages(['conditions' => 'Between rule conditions require exactly two values.']);
+                }
+            }
             if (! is_array($data['actions'] ?? null)) {
                 throw ValidationException::withMessages(['actions' => 'Rule actions must be a JSON object.']);
             }
