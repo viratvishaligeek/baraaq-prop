@@ -364,7 +364,7 @@ class ValuationService
         $previousInput = array_merge($data, ['financial_year_id' => $previousYear->id]);
         try {
             $previousRate = $this->resolveRate($previousInput, $previousDate);
-            $result = $this->applyStrategy($previousRate, $area, (int) $data['area_unit_id']);
+            $result = $this->applyStrategy($previousRate, $area, (int) $data['area_unit_id'], $data);
             $result = $this->applyRules($previousInput, $result, $previousDate);
         } catch (ValidationException|RuntimeException) {
             return null;
