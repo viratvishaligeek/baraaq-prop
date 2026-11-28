@@ -14,6 +14,7 @@ use App\Services\CircleRate\SpreadsheetReader;
 use App\Services\CircleRate\ValuationService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
+use Database\Seeders\CircleRateReferenceSeeder;
 use Tests\TestCase;
 
 class CircleRateValuationTest extends TestCase
@@ -226,6 +227,23 @@ class CircleRateValuationTest extends TestCase
 
         $this->assertSame(400000.0, (float) $result['previous_year']['estimated_value']);
         $this->assertSame(25.0, (float) $result['difference_percent']);
+    }
+
+    public function test_reference_seeder_adds_six_tehsils_without_overwriting_admin_edits_or_rates(): void
+    {
+        app(CircleRateReferenceSeeder::class)->run();
+
+        $district = CircleRateDistrict::query()->where('slug', 'bareilly')->firstOrFail();
+        $this->assertSame(6, $district->tehsils()->count());
+        $this->assertSame(0, CircleRate::query()->count());
+
+        $tehsil = $district->tehsils()->where('slug', 'bareilly')->firstOrFail();
+        $tehsil->update(['name' => 'Administrator edited name']);
+
+        app(CircleRateReferenceSeeder::class)->run();
+
+        $this->assertSame('Administrator edited name', $tehsil->fresh()->name);
+        $this->assertSame(6, $district->tehsils()->count());
     }
 
     public function test_csv_reader_returns_header_mapped_rows(): void
