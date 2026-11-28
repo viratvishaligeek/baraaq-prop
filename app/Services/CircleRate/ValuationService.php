@@ -327,6 +327,7 @@ class ValuationService
             ->where('from_unit_id', $fromUnitId)
             ->where('to_unit_id', $toUnitId)
             ->where('is_verified', true)
+            ->whereNotNull('source_note')
             ->first();
 
         if ($conversion) {
