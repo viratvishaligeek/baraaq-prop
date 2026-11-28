@@ -300,8 +300,8 @@ class ValuationService
             $formulaDescription = $strategy.' : converted property area × verified circle rate';
         }
 
-        if (! is_finite($value) || $value < 0) {
-            throw ValidationException::withMessages(['area' => 'The configured valuation formula produced an invalid negative or non-finite value.']);
+        if (! is_finite($value) || $value < 0 || $value > 9999999999999999) {
+            throw ValidationException::withMessages(['area' => 'The configured valuation formula produced an invalid, negative or out-of-range value.']);
         }
 
         return [
