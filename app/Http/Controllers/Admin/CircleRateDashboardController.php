@@ -19,6 +19,7 @@ class CircleRateDashboardController extends Controller
     {
         $filters = $request->validate([
             'financial_year_id' => ['nullable', 'integer'],
+            'district_id' => ['nullable', 'integer'],
             'tehsil_id' => ['nullable', 'integer'],
             'area_type_id' => ['nullable', 'integer'],
             'property_type_id' => ['nullable', 'integer'],
@@ -27,6 +28,7 @@ class CircleRateDashboardController extends Controller
         $year = CircleRateFinancialYear::query()->where('is_current', true)->where('is_active', true)->first();
         $rateQuery = CircleRate::query()
             ->when($filters['financial_year_id'] ?? null, fn ($q, $id) => $q->where('financial_year_id', $id))
+            ->when($filters['district_id'] ?? null, fn ($q, $id) => $q->where('district_id', $id))
             ->when($filters['tehsil_id'] ?? null, fn ($q, $id) => $q->where('tehsil_id', $id))
             ->when($filters['area_type_id'] ?? null, fn ($q, $id) => $q->where('area_type_id', $id))
             ->when($filters['property_type_id'] ?? null, fn ($q, $id) => $q->where('property_type_id', $id))
@@ -45,6 +47,7 @@ class CircleRateDashboardController extends Controller
                 ->latest()->limit(8)->get(),
             'filters' => $filters,
             'financialYears' => CircleRateFinancialYear::query()->where('is_active', true)->orderByDesc('starts_on')->get(),
+            'districts' => CircleRateDistrict::query()->where('is_active', true)->orderBy('name')->get(),
             'tehsils' => CircleRateTehsil::query()->where('is_active', true)->orderBy('name')->get(),
             'areaTypes' => CircleRateAreaType::query()->where('is_active', true)->orderBy('name')->get(),
             'propertyTypes' => CircleRatePropertyType::query()->where('is_active', true)->orderBy('name')->get(),
