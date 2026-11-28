@@ -152,10 +152,10 @@ class BareillyCityDemoSeeder extends Seeder
             }
 
             $unitRows = [
-                ['Per Square Foot', 'sq ft', 'square-foot', 1.0, true],
-                ['Per Square Metre', 'sq m', 'square-metre', 10.7639, false],
-                ['Per Acre', 'acre', 'acre', 43560.0, false],
-                ['Per Hectare', 'ha', 'hectare', 107639.0, false],
+                ['Per Square Foot', 'sq ft', 'demo-square-foot', 1.0, true],
+                ['Per Square Metre', 'sq m', 'demo-square-metre', 10.7639, false],
+                ['Per Acre', 'acre', 'demo-acre', 43560.0, false],
+                ['Per Hectare', 'ha', 'demo-hectare', 107639.0, false],
                 ['Bigha (Configurable Demo)', 'bigha*', 'demo-bigha', 27000.0, false],
             ];
             $units = [];
@@ -194,7 +194,7 @@ class BareillyCityDemoSeeder extends Seeder
             foreach ($roadRows as [$name, $min, $max, $exact, $priority]) {
                 $slug = 'demo-road-'.Str::slug($name);
                 $roadWidths[$name] = $this->demo(CircleRateRoadWidthRange::class, ['name' => $name.' (Demo)'], [
-                    'name' => $name.' (Demo)', 'unit_id' => $units['square-metre']->id,
+                    'name' => $name.' (Demo)', 'unit_id' => $units['demo-square-metre']->id,
                     'minimum_width' => $min, 'maximum_width' => $max, 'exact_width' => $exact,
                     'applicability' => ['demo' => true], 'adjustment_configuration' => null,
                     'effective_from' => '2025-04-01', 'effective_until' => null,
@@ -203,7 +203,7 @@ class BareillyCityDemoSeeder extends Seeder
             }
 
             $years = [];
-            foreach ([['2025-26', '2025-04-01', '2026-03-31'], ['2026-27', '2026-04-01', '2027-03-31']] as $i => [$name, $start, $end]) {
+            foreach ([['2025-26 (DEMO)', '2025-04-01', '2026-03-31'], ['2026-27 (DEMO)', '2026-04-01', '2027-03-31']] as $i => [$name, $start, $end]) {
                 $years[$i] = $this->demo(CircleRateFinancialYear::class, ['name' => $name], [
                     'name' => $name, 'starts_on' => $start, 'ends_on' => $end,
                     'is_current' => false, 'is_active' => true, 'show_on_frontend' => true,
