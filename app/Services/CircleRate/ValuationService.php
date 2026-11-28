@@ -44,7 +44,7 @@ class ValuationService
         }
 
         $rate = $this->resolveRate($data, $date);
-        $valuation = $this->applyStrategy($rate, (float) $data['area'], (int) $data['area_unit_id']);
+        $valuation = $this->applyStrategy($rate, (float) $data['area'], (int) $data['area_unit_id'], $data);
         $valuation = $this->applyRules($data, $valuation, $date);
         $previous = $this->previousYearValuation($data, $year, (float) $data['area']);
 
@@ -267,22 +267,47 @@ class ValuationService
         return true;
     }
 
-    private function applyStrategy(CircleRate $rate, float $area, int $inputUnitId): array
+    private function applyStrategy(CircleRate $rate, float $area, int $inputUnitId, array $input): array
     {
         $strategy = $rate->propertyType->calculation_strategy;
-
         $areaStrategies = ['land_area', 'agricultural_land', 'agricultural_area', 'residential_plot', 'commercial_plot', 'industrial_plot', 'mixed_use_land', 'building_area'];
-        if (! in_array($strategy, $areaStrategies, true)) {
-            throw new RuntimeException("The '{$strategy}' valuation strategy requires a dedicated, administrator-verified formula configuration before it can be used.");
+        $formula = $rate->propertyType->formula_configuration['formula'] ?? null;
+
+        if (! in_array($strategy, $areaStrategies, true) && ! is_string($formula)) {
+            throw new RuntimeException("The '{$strategy}' valuation strategy needs an administrator-configured safe formula before it can be used.");
         }
 
         $convertedArea = $this->convertArea($area, $inputUnitId, (int) $rate->unit_id);
-        $value = round($convertedArea * (float) $rate->rate, 2);
+        $variables = [
+            'area' => $convertedArea,
+            'converted_area' => $convertedArea,
+            'input_area' => $area,
+            'rate' => (float) $rate->rate,
+        ];
+        foreach (($input['custom'] ?? []) as $field => $value) {
+            if (is_numeric($value)) $variables['custom.'.$field] = (float) $value;
+        }
+
+        if (is_string($formula) && trim($formula) !== '') {
+            try {
+                $value = app(SafeFormulaEvaluator::class)->evaluate($formula, $variables);
+            } catch (\\InvalidArgumentException $exception) {
+                throw ValidationException::withMessages(['property_type_id' => 'The configured valuation formula is invalid: '.$exception->getMessage()]);
+            }
+            $formulaDescription = $formula;
+        } else {
+            $value = $convertedArea * (float) $rate->rate;
+            $formulaDescription = $strategy.' : converted property area × verified circle rate';
+        }
+
+        if (! is_finite($value) || $value < 0) {
+            throw ValidationException::withMessages(['area' => 'The configured valuation formula produced an invalid negative or non-finite value.']);
+        }
 
         return [
             'converted_area' => $convertedArea,
-            'estimated_value' => $value,
-            'formula' => $strategy.' : converted property area × verified circle rate',
+            'estimated_value' => round($value, 2),
+            'formula' => $formulaDescription,
         ];
     }
 
