@@ -107,11 +107,11 @@ class CircleRateLocationImportController extends Controller
                 'code' => $code,
             ];
 
-            $signature = hash('sha256', json_encode([$normalized['district_id'], $normalized['parent_name'], $slug]));
+            $signature = hash('sha256', json_encode([$normalized['district_id'], $normalized['parent_name'], $slug, mb_strtolower($name)]));
             if (! $errors && isset($seen[$signature])) $errors[] = 'This location is duplicated within the uploaded file.';
             $seen[$signature] = true;
 
-            if (! $errors && CircleRateLocation::query()->where('district_id', $district->id)->where('slug', $slug)->exists()) {
+            if (! $errors && CircleRateLocation::query()->where('district_id', $district->id)->where(function ($query) use ($slug, $name) { $query->where('slug', $slug)->orWhereRaw('LOWER(name) = ?', [mb_strtolower($name)]); })->exists()) {
                 $errors[] = 'A location with this slug already exists in the selected district.';
             }
 
