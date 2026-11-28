@@ -84,16 +84,16 @@ class CircleRateLocationImportController extends Controller
             $areaType = $get('area_type') !== '' ? CircleRateAreaType::query()->where('is_active', true)->whereRaw('LOWER(name) = ?', [mb_strtolower($get('area_type'))])->first() : null;
             $level = $get('level') !== '' ? CircleRateLocationLevel::query()->where('is_active', true)->whereRaw('LOWER(name) = ?', [mb_strtolower($get('level'))])->first() : null;
             $name = $get('name');
+            $parentName = $get('parent');
             $slug = $get('slug') !== '' ? Str::slug($get('slug')) : Str::slug(implode('-', array_filter([$tehsil?->slug, $parentName !== '' ? Str::slug($parentName) : null, $name])));
             $code = $get('code') ?: null;
-            $parentName = $get('parent');
 
             if (! $district) $errors[] = 'District is missing or not found in master data.';
             if ($get('tehsil') !== '' && ! $tehsil) $errors[] = 'Tehsil does not belong to the selected district or is inactive.';
             if ($get('area_type') !== '' && ! $areaType) $errors[] = 'Area type was not found in master data.';
             if ($get('level') !== '' && ! $level) $errors[] = 'Location level was not found in master data.';
             if ($name === '') $errors[] = 'Location name is required.';
-            if ($parentName !== '' && $district && ! CircleRateLocation::query()->where('district_id', $district->id)->whereRaw('LOWER(name) = ?', [mb_strtolower($parentName)])->exists() && ! isset($seenNames[($district?->id ?? 0).':'.($tehsil?->id ?? 0).':'.mb_strtolower($parentName)])) $errors[] = 'Parent location must exist already or appear earlier in this file.';
+            if ($parentName !== '' && $district && ! CircleRateLocation::query()->where('district_id', $district->id)->where('tehsil_id', $tehsil?->id)->whereRaw('LOWER(name) = ?', [mb_strtolower($parentName)])->exists() && ! isset($seenNames[($district?->id ?? 0).':'.($tehsil?->id ?? 0).':'.mb_strtolower($parentName)])) $errors[] = 'Parent location must exist already or appear earlier in this file.';
             if ($slug === '') $errors[] = 'A valid location slug could not be generated.';
 
             $normalized = [
