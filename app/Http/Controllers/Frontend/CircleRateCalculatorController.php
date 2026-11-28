@@ -13,6 +13,7 @@ use App\Models\CircleRateTehsil;
 use App\Models\CircleRateUnit;
 use App\Models\CircleRateValuationRecord;
 use App\Models\CircleRateDistrict;
+use App\Models\Setting;
 use App\Models\CircleRateCalculatorField;
 use Illuminate\Validation\Rule;
 use App\Services\CircleRate\ValuationService;
@@ -23,6 +24,8 @@ class CircleRateCalculatorController extends Controller
 {
     public function index()
     {
+        abort_unless(Setting::read('circle_rate.calculator_enabled', true), 404);
+
         return view('frontend.circle-rates.calculator', [
             'districts' => CircleRateDistrict::query()->where('is_active', true)->orderBy('name')->get(),
             'areaTypes' => CircleRateAreaType::query()->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(),
@@ -99,7 +102,7 @@ class CircleRateCalculatorController extends Controller
             'category_id' => ['nullable', 'integer'],
             'road_width_range_id' => ['nullable', 'integer'],
             'financial_year_id' => ['required', 'integer'],
-            'area' => ['required', 'numeric', 'gt:0', 'max:100000000'],
+            'area' => ['required', 'numeric', 'gt:0', 'max:'.(float) Setting::read('circle_rate.max_property_area', 100000000)],
             'area_unit_id' => ['required', 'integer'],
             'valuation_date' => ['required', 'date'],
             'custom' => ['nullable', 'array'],
@@ -177,6 +180,11 @@ class CircleRateCalculatorController extends Controller
             'rate.category', 'rate.unit', 'rate.source', 'financialYear', 'previousRate.unit', 'previousRate.financialYear',
         ])->where('reference', $reference)->firstOrFail();
 
-        return view('frontend.circle-rates.result', compact('record'));
+        return view('frontend.circle-rates.result', [
+            'record' => $record,
+            'showPreviousComparison' => Setting::read('circle_rate.show_previous_year_comparison', true),
+            'allowSharing' => Setting::read('circle_rate.allow_public_result_sharing', true),
+            'disclaimer' => Setting::read('circle_rate.valuation_disclaimer', 'This is an estimate based on published, verified circle rate records. It is not a market-price appraisal or a guarantee of the final registration assessment.'),
+        ]);
     }
 }
