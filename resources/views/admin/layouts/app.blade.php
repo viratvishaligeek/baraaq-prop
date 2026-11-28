@@ -35,6 +35,7 @@
                 <details class="sidebar-group" @if (request()->routeIs('admin.circle-rates.*')) open @endif>
                     <summary><i class="fa-solid fa-calculator"></i> Property Circle Rate Management</summary>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.dashboard') ? 'active' : '' }}" href="{{ route('admin.circle-rates.dashboard') }}">Dashboard</a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.demo.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.demo.index') }}">Demo Data Management</a>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.rates.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.rates.index') }}">Circle rate records</a>
                     <a class="sidebar-link" href="{{ route('admin.circle-rates.rates.index', ['verification_status' => 'pending']) }}">Rate verification & approval</a>
                     <a class="sidebar-link" href="{{ route('admin.circle-rates.rates.index', ['effective_dates' => 1]) }}">Effective date management</a>
