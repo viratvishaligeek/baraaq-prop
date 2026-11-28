@@ -164,8 +164,11 @@ class ValuationService
             ->where('is_active', true)
             ->whereNotNull('source_id')
             ->where(function ($query) use ($input): void {
-                $query->where(fn ($official) => $official->where('is_verified', true)->where('is_demo', false))
-                    ->orWhere(fn ($demo) => $demo->where('is_demo', true)->where('is_verified', false)->when(empty($input['_demo_mode']), fn ($blocked) => $blocked->whereRaw('1 = 0')));
+                if (! empty($input['_demo_mode'])) {
+                    $query->where('is_demo', true)->where('is_verified', false);
+                } else {
+                    $query->where('is_demo', false)->where('is_verified', true);
+                }
             })
             ->where(fn ($q) => $q->whereNull('effective_from')->orWhereDate('effective_from', '<=', $date))
             ->where(fn ($q) => $q->whereNull('effective_until')->orWhereDate('effective_until', '>=', $date))
