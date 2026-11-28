@@ -189,8 +189,9 @@ class BareillyCityDemoSeeder extends Seeder
                     [
                         'name' => $name,
                         'description' => self::DEMO_NOTE,
-                        // Keep the district-wide catch-all below any more-specific
-            // official/manual rate. Specific demo fixtures retain high priority.
+                        // Within the demo dataset, prefer specific fixtures to the catch-all.
+            // ValuationService independently ranks every non-demo source above
+            // all synthetic demo records.
             'priority' => ($tehsil === null && $location === null && $areaType === null && $category === null && $road === null) ? 0 : 100,
                         'applicability' => ['dataset' => 'DEMO', 'property_type_slugs' => $applicableTypes],
                         'is_active' => true,
