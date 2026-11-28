@@ -338,6 +338,7 @@ class ValuationService
             ->where('from_unit_id', $toUnitId)
             ->where('to_unit_id', $fromUnitId)
             ->where('is_verified', true)
+            ->whereNotNull('source_note')
             ->first();
 
         if ($reverse && (float) $reverse->factor > 0) {
