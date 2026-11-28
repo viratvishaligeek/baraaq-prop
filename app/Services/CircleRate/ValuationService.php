@@ -6,6 +6,7 @@ use App\Models\CircleRate;
 use App\Models\CircleRateFinancialYear;
 use App\Models\CircleRateRule;
 use App\Models\CircleRateUnitConversion;
+use App\Models\CircleRateUnit;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -269,6 +270,12 @@ class ValuationService
 
     private function convertArea(float $area, int $fromUnitId, int $toUnitId): float
     {
+        $fromUnit = CircleRateUnit::query()->findOrFail($fromUnitId);
+        $toUnit = CircleRateUnit::query()->findOrFail($toUnitId);
+        if ($fromUnit->dimension !== $toUnit->dimension) {
+            throw ValidationException::withMessages(['area_unit_id' => 'The selected area unit is not compatible with the circle-rate unit.']);
+        }
+
         if ($fromUnitId === $toUnitId) {
             return $area;
         }
