@@ -13,6 +13,7 @@ class RolePermissionSeeder extends Seeder
         $permissions = [
             'dashboard.view' => 'View dashboard',
             'analytics.view' => 'View analytics',
+            'circle-rates.verify' => 'Verify and publish circle rates',
         ];
 
         $modules = [
