@@ -38,9 +38,9 @@
                 <div class="row g-3">
                     <div class="col-md-6"><strong>District:</strong> {{ $record->rate?->district?->name ?? '—' }}</div>
                     <div class="col-md-6"><strong>Tehsil:</strong> {{ $record->rate?->tehsil?->name ?? '—' }}</div>
-                    <div class="col-md-6"><strong>Location:</strong> {{ $record->rate?->location?->name ?? '—' }}</div>
+                    <div class="col-md-6"><strong>Location:</strong> {{ $record->rate?->location?->name ?? ($isDemoRate ? 'District-wide DEMO fallback for the selected location' : '—') }}</div>
                     <div class="col-md-6"><strong>Property type:</strong> {{ $record->rate?->propertyType?->name ?? '—' }}</div>
-                    <div class="col-md-6"><strong>Category:</strong> {{ $record->rate?->category?->name ?? '—' }}</div>
+                    <div class="col-md-6"><strong>Category:</strong> {{ $record->rate?->category?->name ?? ($isDemoRate ? 'General DEMO fallback' : '—') }}</div>
                     <div class="col-md-6"><strong>Property area:</strong> {{ number_format((float) $record->property_area, 4) }}</div>
                     <div class="col-md-6"><strong>Rate:</strong> {{ number_format((float) $record->applicable_rate, 2) }} / {{ $record->rate?->unit?->name ?? '—' }}</div>
                     <div class="col-md-6"><strong>Effective from:</strong> {{ $record->rate?->effective_from?->format('d M Y') ?? '—' }}</div>
