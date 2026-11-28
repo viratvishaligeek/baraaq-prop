@@ -45,7 +45,6 @@ class ValuationService
 
         $rate = $this->resolveRate($data, $date);
         $valuation = $this->applyStrategy($rate, (float) $data['area'], (int) $data['area_unit_id'], $data);
-        $data['_demo_mode'] = (bool) $rate->is_demo;
         $valuation = $this->applyRules($data, $valuation, $date);
         $previous = $this->previousYearValuation($data, $year, (float) $data['area']);
 
@@ -73,7 +72,6 @@ class ValuationService
                 'applied_rules' => $valuation['applied_rules'] ?? [],
                 'source' => $rate->source?->title,
                 'verification_status' => $rate->verification_status,
-                'is_demo' => (bool) $rate->is_demo,
                 'valuation_date' => $date,
             ],
         ];
@@ -160,16 +158,10 @@ class ValuationService
         $amount = (float) $valuation['estimated_value'];
 
         $rules = CircleRateRule::query()
-            ->with('source:id,title,document_path,source_url,is_demo')
+            ->with('source:id,title,document_path,source_url')
             ->where('is_active', true)
+            ->where('is_verified', true)
             ->whereNotNull('source_id')
-            ->where(function ($query) use ($input): void {
-                if (! empty($input['_demo_mode'])) {
-                    $query->where('is_demo', true)->where('is_verified', false);
-                } else {
-                    $query->where('is_demo', false)->where('is_verified', true);
-                }
-            })
             ->where(fn ($q) => $q->whereNull('effective_from')->orWhereDate('effective_from', '<=', $date))
             ->where(fn ($q) => $q->whereNull('effective_until')->orWhereDate('effective_until', '>=', $date))
             ->orderByDesc('priority')
@@ -178,7 +170,7 @@ class ValuationService
             ->sortByDesc(fn (CircleRateRule $rule) => [(int) $rule->priority, count($rule->conditions ?? [])]);
 
         foreach ($rules as $rule) {
-            if (! $rule->source || (! $rule->source->is_demo && ! $rule->source->document_path && ! $rule->source->source_url) || ((bool) $rule->is_demo !== (bool) $rule->source->is_demo)) {
+            if (! $rule->source || (! $rule->source->document_path && ! $rule->source->source_url)) {
                 throw new RuntimeException('A verified calculation rule is missing its official source document or URL.');
             }
             if (! $this->conditionsMatch($rule->conditions ?? [], $input)) {
@@ -285,7 +277,7 @@ class ValuationService
             throw new RuntimeException("The '{$strategy}' valuation strategy needs an administrator-configured safe formula before it can be used.");
         }
 
-        $convertedArea = $this->convertArea($area, $inputUnitId, (int) $rate->unit_id, (bool) $rate->is_demo);
+        $convertedArea = $this->convertArea($area, $inputUnitId, (int) $rate->unit_id);
         $variables = [
             'area' => $convertedArea,
             'converted_area' => $convertedArea,
@@ -319,7 +311,7 @@ class ValuationService
         ];
     }
 
-    private function convertArea(float $area, int $fromUnitId, int $toUnitId, bool $demoMode = false): float
+    private function convertArea(float $area, int $fromUnitId, int $toUnitId): float
     {
         $fromUnit = CircleRateUnit::query()->findOrFail($fromUnitId);
         $toUnit = CircleRateUnit::query()->findOrFail($toUnitId);
@@ -334,11 +326,8 @@ class ValuationService
         $conversion = CircleRateUnitConversion::query()
             ->where('from_unit_id', $fromUnitId)
             ->where('to_unit_id', $toUnitId)
+            ->where('is_verified', true)
             ->whereNotNull('source_note')
-            ->where(function ($query) use ($demoMode): void {
-                $query->where(fn ($official) => $official->where('is_verified', true)->where('is_demo', false));
-                if ($demoMode) $query->orWhere(fn ($demo) => $demo->where('is_demo', true)->where('is_verified', false));
-            })
             ->first();
 
         if ($conversion) {
@@ -365,7 +354,6 @@ class ValuationService
     {
         $previousYear = CircleRateFinancialYear::query()
             ->where('is_active', true)
-            ->where('is_demo', (bool) $year->is_demo)
             ->whereDate('ends_on', '<', $year->starts_on->toDateString())
             ->orderByDesc('ends_on')
             ->first();
