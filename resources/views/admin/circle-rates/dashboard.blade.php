@@ -89,7 +89,7 @@
                 <tbody>
                     @forelse ($recentImports as $batch)
                         <tr>
-                            <td>{{ $batch->original_filename }}</td>
+                            <td>{{ $batch->original_filename }} @if($batch->is_demo)<span class="badge text-bg-warning">DEMO</span>@endif</td>
                             <td>{{ number_format($batch->total_rows) }}</td>
                             <td>{{ number_format($batch->valid_rows) }}</td>
                             <td>{{ number_format($batch->invalid_rows) }}</td>
