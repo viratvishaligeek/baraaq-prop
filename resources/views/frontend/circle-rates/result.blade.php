@@ -32,6 +32,8 @@
                     <div class="col-md-6"><strong>Source document:</strong>
                         @if($record->rate?->source?->document_path)
                             <a href="{{ asset('storage/'.$record->rate->source->document_path) }}" target="_blank" rel="noopener">{{ $record->rate->source->title }}</a>
+                        @elseif($record->rate?->source?->source_url)
+                            <a href="{{ $record->rate->source->source_url }}" target="_blank" rel="noopener">{{ $record->rate->source->title }}</a>
                         @else{{ $record->rate?->source?->title ?? 'Not supplied' }}@endif
                     </div>
                     <div class="col-md-6"><strong>Calculation date:</strong> {{ $record->valued_at?->format('d M Y, H:i') }}</div>
