@@ -31,6 +31,12 @@
                         href="{{ route('admin.analytics.index') }}">Analytics</a>
                 @endif
             </details>
+            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('circle-rates.manage') || auth()->user()->hasPermission('circle-rates.view'))
+                <details class="sidebar-group" @if (request()->routeIs('admin.circle-rates.*')) open @endif>
+                    <summary><i class="fa-solid fa-calculator"></i> Property Circle Rate Management</summary>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.dashboard') ? 'active' : '' }}" href="{{ route('admin.circle-rates.dashboard') }}">Dashboard</a>
+                </details>
+            @endif
             @if (auth()->user()->isAdministrator() ||
                     auth()->user()->hasPermission('properties.manage') ||
                     auth()->user()->hasPermission('properties.view') ||
