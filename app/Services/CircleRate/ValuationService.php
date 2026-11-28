@@ -252,8 +252,9 @@ class ValuationService
     {
         $strategy = $rate->propertyType->calculation_strategy;
 
-        if ($strategy !== 'land_area') {
-            throw new RuntimeException("The '{$strategy}' valuation strategy is not configured for production calculations yet.");
+        $areaStrategies = ['land_area', 'agricultural_land', 'agricultural_area', 'residential_plot', 'commercial_plot', 'industrial_plot', 'mixed_use_land', 'building_area'];
+        if (! in_array($strategy, $areaStrategies, true)) {
+            throw new RuntimeException("The '{$strategy}' valuation strategy requires a dedicated, administrator-verified formula configuration before it can be used.");
         }
 
         $convertedArea = $this->convertArea($area, $inputUnitId, (int) $rate->unit_id);
@@ -262,7 +263,7 @@ class ValuationService
         return [
             'converted_area' => $convertedArea,
             'estimated_value' => $value,
-            'formula' => 'converted property area × verified circle rate',
+            'formula' => $strategy.' : converted property area × verified circle rate',
         ];
     }
 
