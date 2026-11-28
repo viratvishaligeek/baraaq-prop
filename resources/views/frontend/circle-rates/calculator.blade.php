@@ -123,7 +123,7 @@
                     </form>
 
                     <div class="alert alert-warning mt-4 mb-0">
-                        This is an estimate based on the rate records configured in this website. It is not a government registration assessment or a market-price appraisal. Actual registration valuation may depend on additional official rules.
+                        {{ $disclaimer }}
                     </div>
                 </div>
             </div>
