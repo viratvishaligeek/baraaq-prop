@@ -48,6 +48,13 @@
                                             <textarea class="form-control" name="{{ $name }}" id="field-{{ $name }}" rows="3">{{ $value }}</textarea>
                                         @elseif ($field['type'] === 'json')
                                             <textarea class="form-control font-monospace" name="{{ $name }}" id="field-{{ $name }}" rows="4" placeholder='{"key":"value"}'>{{ is_array($value) ? json_encode($value, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : $value }}</textarea>
+                                            @if($module === 'property-types' && $name === 'formula_configuration')
+                                                <small class="text-muted d-block mt-2">Safe formula variables: area, converted_area, input_area, rate and numeric custom fields such as custom.depreciation_percent. Supported operators: +, -, *, / and parentheses. Example: converted_area * rate * (1 - custom.depreciation_percent / 100). PHP, function calls and executable code are not allowed.</small>
+                                            @elseif($module === 'rules' && $name === 'conditions')
+                                                <small class="text-muted d-block mt-2">Use a JSON list of field/operator/value conditions. Operators: equals, not_equals, greater_than, less_than, greater_than_or_equal, less_than_or_equal, between, in.</small>
+                                            @elseif($module === 'rules' && $name === 'actions')
+                                                <small class="text-muted d-block mt-2">Supported source-backed actions: require_fields, deny_calculation, rate_multiplier and fixed_adjustment. Financial adjustments are applied only after verification with a source document.</small>
+                                            @endif
                                         @else
                                             <input class="form-control" type="{{ $field['type'] === 'number' ? 'number' : ($field['type'] === 'date' ? 'date' : 'text') }}" name="{{ $name }}" id="field-{{ $name }}" value="{{ $value }}" @required(!empty($field['required']) && $field['type'] !== 'number')>
                                         @endif
@@ -71,7 +78,7 @@
                 <div class="card-header bg-white d-flex justify-content-between align-items-center"><h2 class="h5 mb-0">Existing records</h2><span class="text-muted small">{{ $records->total() }} total</span></div>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead><tr><th>ID</th>@foreach ($definition['columns'] as $column)<th>{{ IlluminateSupportStr::headline($column) }}</th>@endforeach<th class="text-end">Actions</th></tr></thead>
+                        <thead><tr><th>ID</th>@foreach ($definition['columns'] as $column)<th>{{ \\Illuminate\\Support\\Str::headline($column) }}</th>@endforeach<th class="text-end">Actions</th></tr></thead>
                         <tbody>
                             @forelse ($records as $item)
                                 <tr>
@@ -80,7 +87,7 @@
                                         <td>
                                             @php($cell = $item->{$column})
                                             @if (is_bool($cell))<span class="badge {{ $cell ? 'text-bg-success' : 'text-bg-secondary' }}">{{ $cell ? 'Yes' : 'No' }}</span>
-                                            @elseif (is_array($cell))<code>{{ IlluminateSupportStr::limit(json_encode($cell), 55) }}</code>
+                                            @elseif (is_array($cell))<code>{{ \\Illuminate\\Support\\Str::limit(json_encode($cell), 55) }}</code>
                                             @else{{ IlluminateSupportStr::limit((string) ($cell ?? '—'), 55) }}@endif
                                         </td>
                                     @endforeach
