@@ -91,6 +91,7 @@ class CircleRateController extends Controller
 
     public function update(Request $request, CircleRate $circleRate)
     {
+        $request->validate(['change_reason' => ['required', 'string', 'max:2000']]);
         $data = $this->validated($request);
         $data['status'] = $circleRate->status === 'published' ? 'draft' : $circleRate->status;
         $data['verification_status'] = $circleRate->verification_status === 'verified' ? 'pending' : $circleRate->verification_status;
@@ -116,6 +117,7 @@ class CircleRateController extends Controller
 
     public function verify(Request $request, CircleRate $circleRate)
     {
+        $request->validate(['reason' => ['required', 'string', 'max:2000']]);
         abort_unless($request->user()->isAdministrator() || $request->user()->hasPermission('circle-rates.verify'), 403);
         if (! $circleRate->source_id) {
             return back()->withErrors(['source_id' => 'Attach an official source document before verifying this rate.']);
