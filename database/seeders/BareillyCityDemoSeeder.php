@@ -258,6 +258,16 @@ class BareillyCityDemoSeeder extends Seeder
                 ]);
             }
 
+            $demoCategoryMap = [
+                'agricultural_land' => ['undeveloped-area', 'agricultural-category'],
+                'residential_plot' => ['main-road', 'internal-road'],
+                'commercial_plot' => ['corner-property', 'commercial-market'],
+                'residential_building' => ['residential-colony', 'developed-area'],
+                'commercial_building' => ['main-road', 'commercial-market'],
+                'industrial_property' => ['undeveloped-area', 'developed-area'],
+                'mixed_use_property' => ['corner-property', 'residential-colony'],
+            ];
+
             $locationList = array_values($locations);
             $typeList = array_values($types);
             $categoryList = array_values($categories);
@@ -269,9 +279,11 @@ class BareillyCityDemoSeeder extends Seeder
             // Fourteen representative rate records cover every property type and both
             // financial years while rotating across all categories, road bands and units.
             foreach ($typeList as $typeIndex => $type) {
+                $typeSlug = array_keys($types)[$typeIndex];
                 foreach ($yearList as $yearIndex => $year) {
                     $sequence = ($typeIndex * 2 + $yearIndex);
-                    $category = $categoryList[$sequence % count($categoryList)];
+                    $categorySlug = $demoCategoryMap[$typeSlug][$yearIndex];
+                    $category = $categories[$categorySlug];
                     $road = $roadList[$sequence % count($roadList)];
                     $unit = $unitList[$sequence % count($unitList)];
                     $location = $locationList[$sequence % count($locationList)];
@@ -290,12 +302,17 @@ class BareillyCityDemoSeeder extends Seeder
                         'effective_from' => $year->starts_on->toDateString(),
                     ];
 
+                    $matchIdentity = $identity;
+                    unset($matchIdentity['source_id']);
                     $existing = CircleRate::query()
-                        ->where($identity)
+                        ->where($matchIdentity)
                         ->first();
 
                     // Do not alter or shadow an existing manually managed/imported rate.
-                    if ($existing && ! str_contains((string) $existing->admin_notes, self::DEMO_NOTE)) {
+                    if ($existing && (
+                        (int) $existing->source_id !== (int) $source->id
+                        || ! str_contains((string) $existing->admin_notes, self::DEMO_NOTE)
+                    )) {
                         continue;
                     }
 
@@ -356,7 +373,7 @@ class BareillyCityDemoSeeder extends Seeder
         $definitions = [
             ['land_classification', 'Land Classification', 'dropdown', ['Agricultural', 'Residential', 'Commercial'], ['agricultural_land']],
             ['plot_facing', 'Plot Facing', 'radio', ['North', 'South', 'East', 'West'], ['residential_plot', 'commercial_plot']],
-            ['corner_plot', 'Corner Plot', 'checkbox', ['Yes', 'No'], ['residential_plot', 'commercial_plot', 'mixed_use_property']],
+            ['corner_plot', 'Corner Plot', 'checkbox', [], ['residential_plot', 'commercial_plot', 'mixed_use_property']],
             ['land_use', 'Land Use', 'select', ['Residential', 'Commercial', 'Mixed'], ['residential_plot', 'commercial_plot', 'mixed_use_property']],
             ['construction_type', 'Construction Type', 'dropdown', ['RCC', 'Load Bearing', 'Temporary'], ['residential_building', 'commercial_building']],
             ['building_age', 'Building Age', 'number', [], ['residential_building', 'commercial_building']],
