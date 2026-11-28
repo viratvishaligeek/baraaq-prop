@@ -11,6 +11,10 @@ use App\Models\CircleRateLocationLevel;
 use App\Models\CircleRatePropertyCategory;
 use App\Models\CircleRatePropertyType;
 use App\Models\CircleRateRoadWidthRange;
+use App\Models\CircleRateUnitConversion;
+use App\Models\CircleRateRule;
+use App\Models\CircleRateCalculatorField;
+use App\Models\CircleRateCalculatorFieldOption;
 use App\Models\CircleRateTehsil;
 use App\Models\CircleRateUnit;
 use Illuminate\Database\Eloquent\Model;
@@ -138,6 +142,62 @@ class CircleRateMasterController extends Controller
                     ['name' => 'show_on_frontend', 'label' => 'Show on frontend', 'type' => 'boolean'],
                 ],
             ],
+            'unit-conversions' => [
+                'title' => 'Unit conversions', 'model' => CircleRateUnitConversion::class, 'table' => 'circle_rate_unit_conversions',
+                'columns' => ['from_unit_id', 'to_unit_id', 'factor', 'is_verified'],
+                'fields' => [
+                    ['name' => 'from_unit_id', 'label' => 'From unit', 'type' => 'select', 'options' => CircleRateUnit::class, 'required' => true],
+                    ['name' => 'to_unit_id', 'label' => 'To unit', 'type' => 'select', 'options' => CircleRateUnit::class, 'required' => true],
+                    ['name' => 'factor', 'label' => 'Conversion factor', 'type' => 'number', 'required' => true],
+                    ['name' => 'source_note', 'label' => 'Conversion source / evidence', 'type' => 'textarea'],
+                    ['name' => 'is_verified', 'label' => 'Verified conversion', 'type' => 'boolean'],
+                ],
+            ],
+            'rules' => [
+                'title' => 'Rate conditions and rules', 'model' => CircleRateRule::class, 'table' => 'circle_rate_rules',
+                'columns' => ['name', 'priority', 'stop_processing', 'is_active', 'effective_from', 'effective_until'],
+                'fields' => [
+                    ['name' => 'name', 'label' => 'Rule name', 'type' => 'text', 'required' => true],
+                    ['name' => 'description', 'label' => 'Description', 'type' => 'textarea'],
+                    ['name' => 'conditions', 'label' => 'Conditions JSON', 'type' => 'json', 'required' => true],
+                    ['name' => 'actions', 'label' => 'Actions JSON', 'type' => 'json', 'required' => true],
+                    ['name' => 'priority', 'label' => 'Priority', 'type' => 'number'],
+                    ['name' => 'stop_processing', 'label' => 'Stop after match', 'type' => 'boolean'],
+                    ['name' => 'is_active', 'label' => 'Active', 'type' => 'boolean'],
+                    ['name' => 'effective_from', 'label' => 'Effective from', 'type' => 'date'],
+                    ['name' => 'effective_until', 'label' => 'Effective until', 'type' => 'date'],
+                ],
+            ],
+            'calculator-fields' => [
+                'title' => 'Calculator fields', 'model' => CircleRateCalculatorField::class, 'table' => 'circle_rate_calculator_fields',
+                'columns' => ['name', 'label', 'input_type', 'is_required', 'is_active', 'sort_order'],
+                'fields' => [
+                    ['name' => 'name', 'label' => 'Field key', 'type' => 'text', 'required' => true],
+                    ['name' => 'label', 'label' => 'Field label', 'type' => 'text', 'required' => true],
+                    ['name' => 'input_type', 'label' => 'Input type', 'type' => 'text', 'required' => true],
+                    ['name' => 'data_source', 'label' => 'Data source', 'type' => 'text'],
+                    ['name' => 'placeholder', 'label' => 'Placeholder', 'type' => 'text'],
+                    ['name' => 'help_text', 'label' => 'Help text', 'type' => 'textarea'],
+                    ['name' => 'validation_rules', 'label' => 'Validation rules JSON', 'type' => 'json'],
+                    ['name' => 'visibility_conditions', 'label' => 'Visibility conditions JSON', 'type' => 'json'],
+                    ['name' => 'applicability', 'label' => 'Applicability JSON', 'type' => 'json'],
+                    ['name' => 'default_value', 'label' => 'Default value', 'type' => 'text'],
+                    ['name' => 'is_required', 'label' => 'Required', 'type' => 'boolean'],
+                    ['name' => 'is_active', 'label' => 'Active', 'type' => 'boolean'],
+                    ['name' => 'sort_order', 'label' => 'Sort order', 'type' => 'number'],
+                ],
+            ],
+            'field-options' => [
+                'title' => 'Calculator field options', 'model' => CircleRateCalculatorFieldOption::class, 'table' => 'circle_rate_calculator_field_options',
+                'columns' => ['field_id', 'label', 'value', 'sort_order', 'is_active'],
+                'fields' => [
+                    ['name' => 'field_id', 'label' => 'Calculator field', 'type' => 'select', 'options' => CircleRateCalculatorField::class, 'required' => true],
+                    ['name' => 'label', 'label' => 'Option label', 'type' => 'text', 'required' => true],
+                    ['name' => 'value', 'label' => 'Option value', 'type' => 'text', 'required' => true],
+                    ['name' => 'sort_order', 'label' => 'Sort order', 'type' => 'number'],
+                    ['name' => 'is_active', 'label' => 'Active', 'type' => 'boolean'],
+                ],
+            ],
             'road-widths' => [
                 'title' => 'Road width ranges', 'model' => CircleRateRoadWidthRange::class, 'table' => 'circle_rate_road_width_ranges',
                 'columns' => ['name', 'unit_id', 'minimum_width', 'maximum_width', 'exact_width', 'priority', 'is_active'],
@@ -247,7 +307,8 @@ class CircleRateMasterController extends Controller
             if ($name === 'area_type_id') $base = ['nullable', 'integer', 'exists:circle_rate_area_types,id'];
             if ($name === 'level_id') $base = ['nullable', 'integer', 'exists:circle_rate_location_levels,id'];
             if ($name === 'parent_id') $base = ['nullable', 'integer', 'exists:circle_rate_locations,id'];
-            if ($name === 'unit_id') $base = ['required', 'integer', 'exists:circle_rate_units,id'];
+            if ($name === 'unit_id' || $name === 'from_unit_id' || $name === 'to_unit_id') $base = ['required', 'integer', 'exists:circle_rate_units,id'];
+            if ($name === 'field_id') $base = ['required', 'integer', 'exists:circle_rate_calculator_fields,id'];
             if ($name === 'starts_on' || $name === 'ends_on') $base = ['required', 'date'];
             $rules[$name] = $base;
         }
@@ -264,6 +325,9 @@ class CircleRateMasterController extends Controller
         }
         if (isset($data['parent_id'], $data['district_id']) && ! CircleRateLocation::query()->whereKey($data['parent_id'])->where('district_id', $data['district_id'])->exists()) {
             throw ValidationException::withMessages(['parent_id' => 'The parent location must belong to the selected district.']);
+        }
+        if (array_key_exists('is_verified', $data) && $data['is_verified'] && ! request()->user()->isAdministrator() && ! request()->user()->hasPermission('circle-rates.verify')) {
+            throw ValidationException::withMessages(['is_verified' => 'Only an authorized verifier can approve unit conversions.']);
         }
         return $data;
     }
