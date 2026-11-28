@@ -157,6 +157,7 @@ class CircleRateImportController extends Controller
             $rate = $get('rate');
             $effectiveFrom = $this->parseDate($get('effective_from'));
             $effectiveUntil = $get('effective_until') !== '' ? $this->parseDate($get('effective_until')) : null;
+            $priority = $get('priority') === '' ? 0 : filter_var($get('priority'), FILTER_VALIDATE_INT);
 
             if (! $district) $errors[] = 'District was not found or is inactive.';
             if (! $propertyType) $errors[] = 'Property type was not found or is inactive.';
@@ -202,6 +203,7 @@ class CircleRateImportController extends Controller
                 'road_width_range_id' => $roadWidth?->id,
                 'financial_year_id' => $year->id,
                 'unit_id' => $unit?->id,
+                'priority' => $priority === false ? 0 : (int) $priority,
                 'source_id' => $batch->source_id,
                 'rate' => is_numeric($rate) ? (float) $rate : null,
                 'effective_from' => $effectiveFrom?->toDateString(),
