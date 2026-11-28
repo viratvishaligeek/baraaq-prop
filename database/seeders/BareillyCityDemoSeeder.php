@@ -148,7 +148,7 @@ class BareillyCityDemoSeeder extends Seeder
                 $types[$typeSlug]->categories()->syncWithoutDetaching(collect($names)->map(fn ($n) => $categories[$n]->id)->all());
             }
             foreach ($categories as $category) {
-                $category->locations()->syncWithoutDetaching(collect($locations)->take(8)->pluck('id')->all());
+                $category->locations()->syncWithoutDetaching(collect($locations)->pluck('id')->all());
             }
 
             $unitRows = [
@@ -193,7 +193,7 @@ class BareillyCityDemoSeeder extends Seeder
             ];
             foreach ($roadRows as [$name, $min, $max, $exact, $priority]) {
                 $slug = 'demo-road-'.Str::slug($name);
-                $roadWidths[$name] = $this->demo(CircleRateRoadWidthRange::class, ['name' => $slug], [
+                $roadWidths[$name] = $this->demo(CircleRateRoadWidthRange::class, ['name' => $name.' (Demo)'], [
                     'name' => $name.' (Demo)', 'unit_id' => $units['square-metre']->id,
                     'minimum_width' => $min, 'maximum_width' => $max, 'exact_width' => $exact,
                     'applicability' => ['demo' => true], 'adjustment_configuration' => null,
@@ -203,7 +203,7 @@ class BareillyCityDemoSeeder extends Seeder
             }
 
             $years = [];
-            foreach ([['2025–26', '2025-04-01', '2026-03-31'], ['2026–27', '2026-04-01', '2027-03-31']] as $i => [$name, $start, $end]) {
+            foreach ([['2025-26', '2025-04-01', '2026-03-31'], ['2026-27', '2026-04-01', '2027-03-31']] as $i => [$name, $start, $end]) {
                 $years[$i] = $this->demo(CircleRateFinancialYear::class, ['name' => $name], [
                     'name' => $name, 'starts_on' => $start, 'ends_on' => $end,
                     'is_current' => false, 'is_active' => true, 'show_on_frontend' => true,
@@ -280,7 +280,7 @@ class BareillyCityDemoSeeder extends Seeder
                         'effective_from' => $year->starts_on->toDateString(),
                         'effective_until' => $year->ends_on->toDateString(),
                         'verification_status' => 'pending', 'status' => 'published',
-                        'conditions' => [['field' => 'custom.demo_mode', 'operator' => 'equals', 'value' => 'enabled']],
+                        'conditions' => [['field' => 'road_width_range_id', 'operator' => 'equals', 'value' => $road->id]],
                         'admin_notes' => 'DEMO ONLY – synthetic sample rate; never an official government circle rate.',
                         'created_by' => null, 'verified_by' => null, 'verified_at' => null, 'is_demo' => true,
                     ])->save();
