@@ -403,6 +403,23 @@ class CircleRateMasterController extends Controller
             if (! is_array($data['actions'] ?? null)) {
                 throw ValidationException::withMessages(['actions' => 'Rule actions must be a JSON object.']);
             }
+            $actions = $data['actions'] ?? [];
+            $allowedActions = ['require_fields', 'deny_calculation', 'rate_multiplier', 'fixed_adjustment'];
+            if (array_diff(array_keys($actions), $allowedActions)) {
+                throw ValidationException::withMessages(['actions' => 'Unsupported rule action. Supported actions are require_fields, deny_calculation, rate_multiplier and fixed_adjustment.']);
+            }
+            if (isset($actions['require_fields']) && (! is_array($actions['require_fields']) || collect($actions['require_fields'])->contains(fn ($field) => ! is_string($field) || $field === ''))) {
+                throw ValidationException::withMessages(['actions' => 'require_fields must be an array of field names.']);
+            }
+            if (isset($actions['deny_calculation']) && ! is_bool($actions['deny_calculation'])) {
+                throw ValidationException::withMessages(['actions' => 'deny_calculation must be true or false.']);
+            }
+            if (isset($actions['rate_multiplier']) && (! is_numeric($actions['rate_multiplier']) || (float) $actions['rate_multiplier'] <= 0)) {
+                throw ValidationException::withMessages(['actions' => 'rate_multiplier must be a positive number.']);
+            }
+            if (isset($actions['fixed_adjustment']) && ! is_numeric($actions['fixed_adjustment'])) {
+                throw ValidationException::withMessages(['actions' => 'fixed_adjustment must be numeric.']);
+            }
         }
         if (array_key_exists('name', $data) && empty($data['slug'])) $data['slug'] = Str::slug($data['name']);
         if (isset($data['tehsil_id'], $data['district_id']) && ! CircleRateTehsil::query()->whereKey($data['tehsil_id'])->where('district_id', $data['district_id'])->exists()) {
