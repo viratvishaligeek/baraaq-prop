@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\CircleRateController;
 use App\Http\Controllers\Admin\CircleRateMasterController;
 use App\Http\Controllers\Admin\CircleRateSourceController;
 use App\Http\Controllers\Admin\CircleRateImportController;
+use App\Http\Controllers\Admin\CircleRateApiSettingsController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\ContentPreviewController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -38,6 +39,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
         Route::get('/circle-rates', CircleRateDashboardController::class)->middleware('permission:circle-rates.view')->name('circle-rates.dashboard');
+        Route::get('/circle-rates/api-settings', [CircleRateApiSettingsController::class, 'index'])->middleware('permission:circle-rates.view')->name('circle-rates.api.index');
+        Route::post('/circle-rates/api-settings', [CircleRateApiSettingsController::class, 'store'])->middleware('permission:circle-rates.manage')->name('circle-rates.api.store');
+        Route::put('/circle-rates/api-settings/{connection}', [CircleRateApiSettingsController::class, 'update'])->middleware('permission:circle-rates.manage')->name('circle-rates.api.update');
+        Route::post('/circle-rates/api-settings/{connection}/test', [CircleRateApiSettingsController::class, 'testUnavailable'])->middleware('permission:circle-rates.manage')->name('circle-rates.api.test');
         Route::get('/circle-rates/sources', [CircleRateSourceController::class, 'index'])->middleware('permission:circle-rates.view')->name('circle-rates.sources.index');
         Route::post('/circle-rates/sources', [CircleRateSourceController::class, 'store'])->middleware('permission:circle-rates.manage')->name('circle-rates.sources.store');
         Route::delete('/circle-rates/sources/{source}', [CircleRateSourceController::class, 'destroy'])->middleware('permission:circle-rates.manage')->name('circle-rates.sources.destroy');
