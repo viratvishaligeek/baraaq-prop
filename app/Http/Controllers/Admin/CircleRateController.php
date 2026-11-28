@@ -182,6 +182,68 @@ class CircleRateController extends Controller
         return back()->with('success', 'Rate archived. Historical valuation records remain linked to its rate ID.');
     }
 
+    public function bulk(Request $request)
+    {
+        $data = $request->validate([
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['required', 'integer', 'distinct', 'exists:circle_rates,id'],
+            'action' => ['required', 'in:verify,reject,archive,update_rate'],
+            'reason' => ['required', 'string', 'max:2000'],
+            'new_rate' => ['required_if:action,update_rate', 'nullable', 'numeric', 'gt:0'],
+        ]);
+
+        if ($data['action'] === 'verify') {
+            abort_unless($request->user()->isAdministrator() || $request->user()->hasPermission('circle-rates.verify'), 403);
+        }
+
+        $count = DB::transaction(function () use ($request, $data): int {
+            $rates = CircleRate::query()->whereIn('id', $data['ids'])->with('source')->lockForUpdate()->get();
+            if ($rates->count() !== count($data['ids'])) {
+                throw ValidationException::withMessages(['ids' => 'One or more selected rates are no longer available.']);
+            }
+
+            if ($data['action'] === 'verify') {
+                foreach ($rates as $rate) {
+                    if (! $rate->source || (! $rate->source->document_path && ! $rate->source->source_url)) {
+                        throw ValidationException::withMessages(['ids' => 'Every selected rate must have an official source document or URL before bulk verification.']);
+                    }
+                }
+            }
+
+            foreach ($rates as $rate) {
+                $old = $rate->getAttributes();
+
+                if ($data['action'] === 'verify') {
+                    $rate->update(['verification_status' => 'verified', 'status' => 'published', 'verified_by' => $request->user()->id, 'verified_at' => now()]);
+                    $this->audit($request, $rate, 'bulk_verified_and_published', $old, $rate->fresh()->getAttributes(), $data['reason']);
+                } elseif ($data['action'] === 'reject') {
+                    $rate->update(['verification_status' => 'rejected', 'status' => 'draft', 'verified_by' => $request->user()->id, 'verified_at' => now()]);
+                    $this->audit($request, $rate, 'bulk_rejected', $old, $rate->fresh()->getAttributes(), $data['reason']);
+                } elseif ($data['action'] === 'update_rate') {
+                    $version = ((int) $rate->versions()->max('version_number')) + 1;
+                    CircleRateVersion::query()->create([
+                        'circle_rate_id' => $rate->id,
+                        'version_number' => $version,
+                        'snapshot' => $old,
+                        'change_reason' => $data['reason'],
+                        'changed_by' => $request->user()->id,
+                    ]);
+                    $rate->update(['rate' => $data['new_rate'], 'verification_status' => 'pending', 'status' => 'draft', 'verified_by' => null, 'verified_at' => null]);
+                    $this->audit($request, $rate, 'bulk_rate_updated', $old, $rate->fresh()->getAttributes(), $data['reason']);
+                } else {
+                    $rate->delete();
+                    $this->audit($request, $rate, 'bulk_archived', $old, ['deleted_at' => now()->toDateTimeString()], $data['reason']);
+                }
+            }
+
+            return $rates->count();
+        });
+
+        CircleRateCache::bumpVersion();
+
+        return back()->with('success', $count.' circle rate record(s) processed.');
+    }
+
     private function validated(Request $request): array
     {
         $data = Validator::make($request->all(), [
