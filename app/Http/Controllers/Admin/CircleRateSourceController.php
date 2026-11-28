@@ -10,11 +10,10 @@ use Illuminate\Support\Facades\Storage;
 
 class CircleRateSourceController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $filters = $request->validate(['demo_filter' => ['nullable', 'in:demo,official']]);
-        $sources = CircleRateSource::query()->when(($filters['demo_filter'] ?? null) === 'demo', fn ($q) => $q->where('is_demo', true))->when(($filters['demo_filter'] ?? null) === 'official', fn ($q) => $q->where('is_demo', false))->withCount('rates')->latest()->paginate(20)->withQueryString();
-        return view('admin.circle-rates.sources.index', compact('sources', 'filters'));
+        $sources = CircleRateSource::query()->withCount('rates')->latest()->paginate(20);
+        return view('admin.circle-rates.sources.index', compact('sources'));
     }
 
     public function store(Request $request)
