@@ -47,8 +47,12 @@
                         'property-types' => 'Property types',
                         'categories' => 'Property categories',
                         'units' => 'Rate units',
+                        'unit-conversions' => 'Unit conversions',
                         'road-widths' => 'Road width ranges',
                         'financial-years' => 'Financial years',
+                        'rules' => 'Rate conditions & rules',
+                        'calculator-fields' => 'Calculator fields',
+                        'field-options' => 'Calculator field options',
                     ] as $circleRateModule => $circleRateLabel)
                         <a class="sidebar-link {{ request()->route('module') === $circleRateModule ? 'active' : '' }}" href="{{ route('admin.circle-rates.master.index', $circleRateModule) }}">{{ $circleRateLabel }}</a>
                     @endforeach
