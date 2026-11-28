@@ -54,7 +54,8 @@
 <script>
 $(function () {
     $('#select-all-rates').on('change', function () { $('.rate-row-checkbox').prop('checked', this.checked); });
-    $('#bulk-rate-action').on('change', function () { $('#bulk-new-rate-wrap').prop('hidden', this.value !== 'update_rate'); });
+    $('#bulk-rate-action').on('change', function () { $('#bulk-new-rate-wrap').prop('hidden', this.value !== 'update_rate');
+        $('#bulk-new-rate-wrap input').prop('required', this.value === 'update_rate'); });
 });
 </script>
 @endpush
