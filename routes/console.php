@@ -22,5 +22,5 @@ Artisan::command('bareilly:reset-demo', function () {
     $counts = app(\App\Services\CircleRate\DemoDataManagementService::class)->reset(null);
     $this->table(['Demo record type', 'Deleted before reset'], collect($counts)->map(fn ($count, $label) => [$label, $count])->values()->all());
     $this->info('Demo data reset complete. Official and manually managed records were retained.');
-    return self::SUCCESS;
+    return 0;
 })->purpose('Safely reset only Bareilly circle-rate demo records');
