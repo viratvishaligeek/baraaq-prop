@@ -176,6 +176,7 @@ class CircleRateImportController extends Controller
             if ($effectiveUntil && $effectiveUntil > $year->ends_on) $errors[] = 'Effective-until date is outside the selected financial year.';
 
             $conditions = [];
+            if ($priority === false || $priority === null) $errors[] = 'Priority must be a whole number.';
             if ($get('conditions') !== '') {
                 $decoded = json_decode($get('conditions'), true);
                 if (! is_array($decoded) || ! array_is_list($decoded)) $errors[] = 'Conditions must be a JSON array.';
@@ -214,7 +215,7 @@ class CircleRateImportController extends Controller
                     $normalized['district_id'], $normalized['tehsil_id'], $normalized['area_type_id'],
                     $normalized['location_id'], $normalized['property_type_id'], $normalized['category_id'],
                     $normalized['road_width_range_id'], $normalized['financial_year_id'],
-                    $normalized['unit_id'], $normalized['effective_from'], $normalized['conditions'],
+                    $normalized['unit_id'], $normalized['priority'], $normalized['effective_from'], $normalized['conditions'],
                 ]));
                 if (isset($seenRows[$signature])) {
                     $conflict = true;
@@ -376,6 +377,7 @@ class CircleRateImportController extends Controller
             'road_width' => ['road width', 'width range', 'road width range'],
             'rate' => ['rate', 'circle rate', 'amount', 'value'],
             'unit' => ['unit', 'rate unit', 'measurement unit'],
+            'priority' => ['priority', 'rule priority', 'rate priority'],
             'effective_from' => ['effective from', 'effective date', 'start date', 'valid from'],
             'effective_until' => ['effective until', 'expiry date', 'end date', 'valid until'],
             'conditions' => ['conditions', 'conditions json', 'rule conditions'],
@@ -408,6 +410,7 @@ class CircleRateImportController extends Controller
             ->where('area_type_id', $data['area_type_id'])
             ->where('financial_year_id', $data['financial_year_id'])
             ->where('unit_id', $data['unit_id'])
+            ->where('priority', $data['priority'] ?? 0)
             ->whereDate('effective_from', '<=', $data['effective_from'])
             ->where(fn ($q) => $q->whereNull('effective_until')->orWhereDate('effective_until', '>=', $data['effective_from']))
             ->where('location_id', $data['location_id'])
