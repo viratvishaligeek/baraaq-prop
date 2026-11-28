@@ -225,8 +225,8 @@ class ValuationService
             }
         }
 
-        if ($amount < 0) {
-            throw new RuntimeException('The configured calculation rules produced a negative valuation. Review the verified rule configuration.');
+        if (! is_finite($amount) || $amount < 0 || $amount > 9999999999999999) {
+            throw new RuntimeException('The configured calculation rules produced a negative or out-of-range valuation. Review the verified rule configuration.');
         }
 
         $valuation['estimated_value'] = round($amount, 2);
