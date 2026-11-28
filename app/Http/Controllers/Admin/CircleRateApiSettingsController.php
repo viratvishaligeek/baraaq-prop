@@ -7,6 +7,7 @@ use App\Models\CircleRateApiConnection;
 use App\Models\CircleRateApiSyncLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Validation\ValidationException;
 
 class CircleRateApiSettingsController extends Controller
 {
@@ -72,7 +73,7 @@ class CircleRateApiSettingsController extends Controller
         ]);
 
         if (! empty($data['is_enabled']) && empty($data['base_url'])) {
-            return back()->withErrors(['base_url' => 'A documented base URL is required before enabling a connection.'])->withInput()->throwResponse();
+            throw ValidationException::withMessages(['base_url' => 'A documented base URL is required before enabling a connection.']);
         }
 
         if (isset($data['configuration'])) {
