@@ -16,7 +16,8 @@ class RolePermissionSeeder extends Seeder
         ];
 
         $modules = [
-            'properties' => 'Properties',\n            'circle-rates' => 'Property circle rate management',
+            'properties' => 'Properties',
+            'circle-rates' => 'Property circle rate management',
             'posts' => 'Blog posts',
             'pages' => 'Pages',
             'categories' => 'Categories',
