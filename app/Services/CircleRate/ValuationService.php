@@ -170,6 +170,9 @@ class ValuationService
             ->sortByDesc(fn (CircleRateRule $rule) => [(int) $rule->priority, count($rule->conditions ?? [])]);
 
         foreach ($rules as $rule) {
+            if (! $rule->source || (! $rule->source->document_path && ! $rule->source->source_url)) {
+                throw new RuntimeException('A verified calculation rule is missing its official source document or URL.');
+            }
             if (! $this->conditionsMatch($rule->conditions ?? [], $input)) {
                 continue;
             }
