@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
             DefaultThemeSeeder::class,
             BuraaqhContentSeeder::class,
             BuraaqhDemoPropertySeeder::class,
+            CircleRateReferenceSeeder::class,
         ]);
     }
 }
