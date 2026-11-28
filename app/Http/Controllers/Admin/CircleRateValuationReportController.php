@@ -16,7 +16,6 @@ class CircleRateValuationReportController extends Controller
             'from' => ['nullable', 'date'],
             'until' => ['nullable', 'date', 'after_or_equal:from'],
             'reference' => ['nullable', 'string', 'max:36'],
-            'demo_filter' => ['nullable', 'in:demo,official'],
         ]);
 
         $records = CircleRateValuationRecord::query()->with(['rate.district', 'rate.propertyType', 'rate.location', 'financialYear'])
@@ -24,8 +23,6 @@ class CircleRateValuationReportController extends Controller
             ->when($filters['from'] ?? null, fn ($q, $date) => $q->whereDate('valued_at', '>=', $date))
             ->when($filters['until'] ?? null, fn ($q, $date) => $q->whereDate('valued_at', '<=', $date))
             ->when($filters['reference'] ?? null, fn ($q, $reference) => $q->where('reference', 'like', '%'.$reference.'%'))
-            ->when(($filters['demo_filter'] ?? null) === 'demo', fn ($q) => $q->where('is_demo', true))
-            ->when(($filters['demo_filter'] ?? null) === 'official', fn ($q) => $q->where('is_demo', false))
             ->latest('valued_at')->paginate(30)->withQueryString();
 
         return view('admin.circle-rates.reports.index', [
@@ -41,15 +38,12 @@ class CircleRateValuationReportController extends Controller
             'financial_year_id' => ['nullable', 'integer'],
             'from' => ['nullable', 'date'],
             'until' => ['nullable', 'date', 'after_or_equal:from'],
-            'demo_filter' => ['nullable', 'in:demo,official'],
         ]);
 
         $query = CircleRateValuationRecord::query()->with(['rate.district', 'rate.propertyType', 'financialYear'])
             ->when($filters['financial_year_id'] ?? null, fn ($q, $id) => $q->where('financial_year_id', $id))
             ->when($filters['from'] ?? null, fn ($q, $date) => $q->whereDate('valued_at', '>=', $date))
-            ->when($filters['until'] ?? null, fn ($q, $date) => $q->whereDate('valued_at', '<=', $date))
-            ->when(($filters['demo_filter'] ?? null) === 'demo', fn ($q) => $q->where('is_demo', true))
-            ->when(($filters['demo_filter'] ?? null) === 'official', fn ($q) => $q->where('is_demo', false));
+            ->when($filters['until'] ?? null, fn ($q, $date) => $q->whereDate('valued_at', '<=', $date));
 
         return response()->streamDownload(function () use ($query): void {
             $output = fopen('php://output', 'wb');
