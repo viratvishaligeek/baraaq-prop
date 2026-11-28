@@ -84,7 +84,7 @@ class CircleRateLocationImportController extends Controller
             $areaType = $get('area_type') !== '' ? CircleRateAreaType::query()->where('is_active', true)->whereRaw('LOWER(name) = ?', [mb_strtolower($get('area_type'))])->first() : null;
             $level = $get('level') !== '' ? CircleRateLocationLevel::query()->where('is_active', true)->whereRaw('LOWER(name) = ?', [mb_strtolower($get('level'))])->first() : null;
             $name = $get('name');
-            $slug = $get('slug') !== '' ? Str::slug($get('slug')) : Str::slug($name);
+            $slug = $get('slug') !== '' ? Str::slug($get('slug')) : Str::slug(implode('-', array_filter([$tehsil?->slug, $parentName !== '' ? Str::slug($parentName) : null, $name])));
             $code = $get('code') ?: null;
             $parentName = $get('parent');
 
@@ -93,7 +93,7 @@ class CircleRateLocationImportController extends Controller
             if ($get('area_type') !== '' && ! $areaType) $errors[] = 'Area type was not found in master data.';
             if ($get('level') !== '' && ! $level) $errors[] = 'Location level was not found in master data.';
             if ($name === '') $errors[] = 'Location name is required.';
-            if ($parentName !== '' && $district && ! CircleRateLocation::query()->where('district_id', $district->id)->whereRaw('LOWER(name) = ?', [mb_strtolower($parentName)])->exists() && ! isset($seenNames[($district?->id ?? 0).':'.mb_strtolower($parentName)])) $errors[] = 'Parent location must exist already or appear earlier in this file.';
+            if ($parentName !== '' && $district && ! CircleRateLocation::query()->where('district_id', $district->id)->whereRaw('LOWER(name) = ?', [mb_strtolower($parentName)])->exists() && ! isset($seenNames[($district?->id ?? 0).':'.($tehsil?->id ?? 0).':'.mb_strtolower($parentName)])) $errors[] = 'Parent location must exist already or appear earlier in this file.';
             if ($slug === '') $errors[] = 'A valid location slug could not be generated.';
 
             $normalized = [
@@ -107,18 +107,22 @@ class CircleRateLocationImportController extends Controller
                 'code' => $code,
             ];
 
-            $signature = hash('sha256', json_encode([$normalized['district_id'], $normalized['parent_name'], $slug, mb_strtolower($name)]));
+            $signature = hash('sha256', json_encode([$normalized['district_id'], $normalized['tehsil_id'], $normalized['parent_name'], $slug, mb_strtolower($name)]));
             if (! $errors && isset($seen[$signature])) $errors[] = 'This location is duplicated within the uploaded file.';
             $seen[$signature] = true;
 
-            if (! $errors && CircleRateLocation::query()->where('district_id', $district->id)->where(function ($query) use ($slug, $name) { $query->where('slug', $slug)->orWhereRaw('LOWER(name) = ?', [mb_strtolower($name)]); })->exists()) {
+            if (! $errors && (CircleRateLocation::query()->where('district_id', $district->id)->where('slug', $slug)->exists()
+                || CircleRateLocation::query()->where('district_id', $district->id)->where('tehsil_id', $tehsil?->id)
+                    ->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])
+                    ->when($parentName !== '', fn ($query) => $query->whereHas('parent', fn ($parentQuery) => $parentQuery->whereRaw('LOWER(name) = ?', [mb_strtolower($parentName)])), fn ($query) => $query->whereNull('parent_id'))
+                    ->exists())) {
                 $errors[] = 'A location with this slug already exists in the selected district.';
             }
 
             $status = ! $errors ? 'valid' : (str_contains(implode(' ', $errors), 'already exists') || str_contains(implode(' ', $errors), 'duplicated') ? 'duplicate' : 'invalid');
             if ($status === 'valid') {
                 $valid++;
-                $seenNames[($district?->id ?? 0).':'.mb_strtolower($name)] = true;
+                $seenNames[($district?->id ?? 0).':'.($tehsil?->id ?? 0).':'.mb_strtolower($name)] = true;
             } elseif ($status === 'duplicate') $duplicates++;
             else $invalid++;
 
