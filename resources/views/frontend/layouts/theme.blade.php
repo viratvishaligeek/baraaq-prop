@@ -553,6 +553,7 @@
                                                     <li><a href="{{ route('blog.index') }}">Latest News</a></li>
                                                     <li><a href="{{ route('contact') }}">Contact Us</a></li>
                                                 @endif
+                                                <li><a href="{{ route('circle-rates.calculator') }}">Property Circle Rate Calculator</a></li>
                                             </ul>
                                         </div>
                                     </div>

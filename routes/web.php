@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Frontend\ContentController as FrontendContentController;
+use App\Http\Controllers\Frontend\CircleRateCalculatorController;
 use App\Http\Controllers\Frontend\EnquiryController as FrontendEnquiryController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\LocalContentController;
@@ -12,6 +13,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 Route::get('/contact', [FrontendContentController::class, 'contact'])->name('contact');
+Route::get('/bareilly-property-circle-rate-calculator', [CircleRateCalculatorController::class, 'index'])->name('circle-rates.calculator');
+Route::get('/circle-rate-data/tehsils', [CircleRateCalculatorController::class, 'tehsils'])->middleware('throttle:120,1')->name('circle-rates.data.tehsils');
+Route::get('/circle-rate-data/locations', [CircleRateCalculatorController::class, 'locations'])->middleware('throttle:120,1')->name('circle-rates.data.locations');
+Route::get('/circle-rate-data/categories', [CircleRateCalculatorController::class, 'categories'])->middleware('throttle:120,1')->name('circle-rates.data.categories');
+Route::get('/circle-rate-data/road-widths', [CircleRateCalculatorController::class, 'roadWidths'])->middleware('throttle:120,1')->name('circle-rates.data.road-widths');
+Route::post('/bareilly-property-circle-rate-calculator', [CircleRateCalculatorController::class, 'calculate'])->middleware('throttle:10,1')->name('circle-rates.calculate');
+Route::get('/circle-rate-valuation/{reference}', [CircleRateCalculatorController::class, 'result'])->name('circle-rates.result');
 Route::get('/about', [FrontendContentController::class, 'about'])->name('about');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('/robots.txt', function () {

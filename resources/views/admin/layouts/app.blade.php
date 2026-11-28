@@ -31,6 +31,41 @@
                         href="{{ route('admin.analytics.index') }}">Analytics</a>
                 @endif
             </details>
+            @if (auth()->user()->isAdministrator() || auth()->user()->hasPermission('circle-rates.manage') || auth()->user()->hasPermission('circle-rates.view'))
+                <details class="sidebar-group" @if (request()->routeIs('admin.circle-rates.*')) open @endif>
+                    <summary><i class="fa-solid fa-calculator"></i> Property Circle Rate Management</summary>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.dashboard') ? 'active' : '' }}" href="{{ route('admin.circle-rates.dashboard') }}">Dashboard</a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.rates.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.rates.index') }}">Circle rate records</a>
+                    <a class="sidebar-link" href="{{ route('admin.circle-rates.rates.index', ['verification_status' => 'pending']) }}">Rate verification & approval</a>
+                    <a class="sidebar-link" href="{{ route('admin.circle-rates.rates.index', ['effective_dates' => 1]) }}">Effective date management</a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.sources.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.sources.index') }}">Source documents</a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.imports.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.imports.index') }}">Excel / CSV Import</a>
+                    <a class="sidebar-link" href="{{ route('admin.circle-rates.imports.index') }}">Import history</a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.locations.import.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.locations.import.index') }}">Bulk location import</a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.api.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.api.index') }}">API integration settings</a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.reports.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.reports.index') }}">Valuation reports</a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.audit.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.audit.index') }}">Audit logs</a>
+                    <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.settings.*') ? 'active' : '' }}" href="{{ route('admin.circle-rates.settings.index') }}">Calculator settings</a>
+                    @foreach ([
+                        'districts' => 'Districts',
+                        'tehsils' => 'Tehsils',
+                        'area-types' => 'Area types',
+                        'location-levels' => 'Location levels',
+                        'locations' => 'Locations',
+                        'property-types' => 'Property types',
+                        'categories' => 'Property categories',
+                        'units' => 'Rate units',
+                        'unit-conversions' => 'Unit conversions',
+                        'road-widths' => 'Road width ranges',
+                        'financial-years' => 'Financial years',
+                        'rules' => 'Rate conditions & rules',
+                        'calculator-fields' => 'Calculator fields',
+                        'field-options' => 'Calculator field options',
+                    ] as $circleRateModule => $circleRateLabel)
+                        <a class="sidebar-link {{ request()->route('module') === $circleRateModule ? 'active' : '' }}" href="{{ route('admin.circle-rates.master.index', $circleRateModule) }}">{{ $circleRateLabel }}</a>
+                    @endforeach
+                </details>
+            @endif
             @if (auth()->user()->isAdministrator() ||
                     auth()->user()->hasPermission('properties.manage') ||
                     auth()->user()->hasPermission('properties.view') ||

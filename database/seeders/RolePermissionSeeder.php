@@ -13,10 +13,13 @@ class RolePermissionSeeder extends Seeder
         $permissions = [
             'dashboard.view' => 'View dashboard',
             'analytics.view' => 'View analytics',
+            'circle-rates.verify' => 'Verify and publish circle rates',
+            'circle-rates.import' => 'Import circle rate spreadsheets',
         ];
 
         $modules = [
             'properties' => 'Properties',
+            'circle-rates' => 'Property circle rate management',
             'posts' => 'Blog posts',
             'pages' => 'Pages',
             'categories' => 'Categories',
