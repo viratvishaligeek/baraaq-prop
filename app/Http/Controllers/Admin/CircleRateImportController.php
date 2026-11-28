@@ -160,7 +160,7 @@ class CircleRateImportController extends Controller
             if (! $district) $errors[] = 'District was not found or is inactive.';
             if (! $propertyType) $errors[] = 'Property type was not found or is inactive.';
             if (! $unit) $errors[] = 'Rate unit was not found or is inactive.';
-            if ($unit && $propertyType && $unit->dimension !== 'area' && in_array($propertyType->calculation_strategy, ['land_area', 'agricultural_land', 'agricultural_area', 'residential_plot', 'commercial_plot', 'industrial_plot', 'mixed_use_land', 'building_area'], true)) $errors[] = 'Area-based property types require a rate unit with the area dimension.';
+            if ($unit && $unit->dimension !== 'area') $errors[] = 'Area-based property types require a rate unit with the area dimension.';
             if ($get('tehsil') !== '' && ! $tehsil) $errors[] = 'Tehsil was not found.';
             if ($get('area_type') !== '' && ! $areaType) $errors[] = 'Area type was not found.';
             if ($get('location') !== '' && ! $location) $errors[] = 'Location was not found under the selected district.';
