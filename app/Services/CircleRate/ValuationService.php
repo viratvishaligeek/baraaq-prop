@@ -291,7 +291,7 @@ class ValuationService
         if (is_string($formula) && trim($formula) !== '') {
             try {
                 $value = app(SafeFormulaEvaluator::class)->evaluate($formula, $variables);
-            } catch (\\InvalidArgumentException $exception) {
+            } catch (\InvalidArgumentException $exception) {
                 throw ValidationException::withMessages(['property_type_id' => 'The configured valuation formula is invalid: '.$exception->getMessage()]);
             }
             $formulaDescription = $formula;
