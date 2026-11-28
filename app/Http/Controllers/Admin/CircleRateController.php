@@ -16,6 +16,7 @@ use App\Models\CircleRateSource;
 use App\Models\CircleRateTehsil;
 use App\Models\CircleRateUnit;
 use App\Models\CircleRateVersion;
+use App\Services\CircleRate\CircleRateCache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -81,6 +82,7 @@ class CircleRateController extends Controller
             return $rate;
         });
 
+        CircleRateCache::bumpVersion();
         return redirect()->route('admin.circle-rates.rates.index')->with('success', 'Rate saved as a draft. It must be verified before it can be used by the public calculator.');
     }
 
@@ -112,6 +114,7 @@ class CircleRateController extends Controller
             $this->audit($request, $circleRate, 'updated', $old, $circleRate->fresh()->getAttributes(), $request->input('change_reason'));
         });
 
+        CircleRateCache::bumpVersion();
         return redirect()->route('admin.circle-rates.rates.index')->with('success', 'Rate updated. Previous values were preserved in rate history; the changed record requires verification again.');
     }
 
@@ -134,6 +137,7 @@ class CircleRateController extends Controller
             $this->audit($request, $circleRate, 'verified_and_published', $old, $circleRate->fresh()->getAttributes(), $request->input('reason'));
         });
 
+        CircleRateCache::bumpVersion();
         return back()->with('success', 'Rate verified and published.');
     }
 
@@ -148,6 +152,7 @@ class CircleRateController extends Controller
             $this->audit($request, $circleRate, 'rejected', $old, $circleRate->fresh()->getAttributes(), $data['reason']);
         });
 
+        CircleRateCache::bumpVersion();
         return back()->with('success', 'Rate rejected and kept out of public calculations.');
     }
 
@@ -162,6 +167,7 @@ class CircleRateController extends Controller
         $copy->save();
         $this->audit($request, $copy, 'duplicated', null, $copy->getAttributes(), 'Duplicated from rate #'.$circleRate->id);
 
+        CircleRateCache::bumpVersion();
         return redirect()->route('admin.circle-rates.rates.edit', $copy)->with('success', 'Rate duplicated as an unverified draft.');
     }
 
@@ -171,6 +177,7 @@ class CircleRateController extends Controller
         $circleRate->delete();
         $this->audit($request, $circleRate, 'archived', $old, ['deleted_at' => now()->toDateTimeString()], $request->input('reason'));
 
+        CircleRateCache::bumpVersion();
         return back()->with('success', 'Rate archived. Historical valuation records remain linked to its rate ID.');
     }
 
