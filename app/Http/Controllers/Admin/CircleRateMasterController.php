@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -265,11 +266,17 @@ class CircleRateMasterController extends Controller
         $propertyTypeIds = $data['property_type_ids'] ?? null;
         $locationIds = $data['location_ids'] ?? null;
         unset($data['property_type_ids'], $data['location_ids']);
-        $record = $model::query()->create($data);
-        if ($module === 'categories') {
-            $record->propertyTypes()->sync($propertyTypeIds ?? []);
-            $record->locations()->sync($locationIds ?? []);
-        }
+        $record = DB::transaction(function () use ($model, $data, $module, $propertyTypeIds, $locationIds) {
+            $created = $model::query()->create($data);
+            if ($module === 'categories') {
+                $created->propertyTypes()->sync($propertyTypeIds ?? []);
+                $created->locations()->sync($locationIds ?? []);
+            }
+            if ($created instanceof CircleRateFinancialYear && $created->is_current) {
+                CircleRateFinancialYear::query()->whereKeyNot($created->id)->update(['is_current' => false]);
+            }
+            return $created;
+        });
         $this->audit($request, $record, 'created', null, $record->getAttributes());
 
         return redirect()->route('admin.circle-rates.master.index', $module)->with('success', $definition['title'].' record created.');
@@ -285,11 +292,16 @@ class CircleRateMasterController extends Controller
         $propertyTypeIds = $data['property_type_ids'] ?? null;
         $locationIds = $data['location_ids'] ?? null;
         unset($data['property_type_ids'], $data['location_ids']);
-        $record->update($data);
-        if ($module === 'categories') {
-            $record->propertyTypes()->sync($propertyTypeIds ?? []);
-            $record->locations()->sync($locationIds ?? []);
-        }
+        DB::transaction(function () use ($record, $data, $module, $propertyTypeIds, $locationIds): void {
+            $record->update($data);
+            if ($module === 'categories') {
+                $record->propertyTypes()->sync($propertyTypeIds ?? []);
+                $record->locations()->sync($locationIds ?? []);
+            }
+            if ($record instanceof CircleRateFinancialYear && $record->is_current) {
+                CircleRateFinancialYear::query()->whereKeyNot($record->id)->update(['is_current' => false]);
+            }
+        });
         $this->audit($request, $record, 'updated', $oldValues, $record->fresh()->getAttributes());
 
         return redirect()->route('admin.circle-rates.master.index', $module)->with('success', $definition['title'].' record updated.');
@@ -381,6 +393,12 @@ class CircleRateMasterController extends Controller
         if (array_key_exists('name', $data) && empty($data['slug'])) $data['slug'] = Str::slug($data['name']);
         if (isset($data['tehsil_id'], $data['district_id']) && ! CircleRateTehsil::query()->whereKey($data['tehsil_id'])->where('district_id', $data['district_id'])->exists()) {
             throw ValidationException::withMessages(['tehsil_id' => 'The selected tehsil does not belong to the selected district.']);
+        }
+        if (isset($data['starts_on'], $data['ends_on']) && $data['starts_on'] >= $data['ends_on']) {
+            throw ValidationException::withMessages(['ends_on' => 'The financial year end date must be after its start date.']);
+        }
+        if ($record && isset($data['parent_id']) && (int) $data['parent_id'] === (int) $record->id) {
+            throw ValidationException::withMessages(['parent_id' => 'A location cannot be its own parent.']);
         }
         if (isset($data['parent_id'], $data['district_id']) && ! CircleRateLocation::query()->whereKey($data['parent_id'])->where('district_id', $data['district_id'])->exists()) {
             throw ValidationException::withMessages(['parent_id' => 'The parent location must belong to the selected district.']);
