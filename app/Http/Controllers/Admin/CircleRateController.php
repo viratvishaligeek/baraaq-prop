@@ -294,6 +294,17 @@ class CircleRateController extends Controller
         return $data;
     }
 
+    private function locationMatchesIds(CircleRateLocation $location, array $allowedIds): bool
+    {
+        $allowed = array_map('strval', $allowedIds);
+        $current = $location;
+        while ($current) {
+            if (in_array((string) $current->id, $allowed, true)) return true;
+            $current = $current->parent;
+        }
+        return false;
+    }
+
     private function validateRelationships(array $data): void
     {
         $district = CircleRateDistrict::query()->findOrFail($data['district_id']);
@@ -331,7 +342,7 @@ class CircleRateController extends Controller
             if ($category->propertyTypes()->exists() && ! $category->propertyTypes()->whereKey($propertyType->id)->exists()) {
                 throw ValidationException::withMessages(['category_id' => 'The selected category is not assigned to this property type.']);
             }
-            if ($category->locations()->exists() && (! $location || ! $category->locations()->whereKey($location->id)->exists())) {
+            if ($category->locations()->exists() && (! $location || ! $this->locationMatchesIds($location, $category->locations()->pluck('circle_rate_locations.id')->all()))) {
                 throw ValidationException::withMessages(['category_id' => 'The selected category is not assigned to this location.']);
             }
         }
@@ -342,7 +353,7 @@ class CircleRateController extends Controller
             if (! empty($applicability['property_type_ids']) && ! in_array((string) $propertyType->id, array_map('strval', $applicability['property_type_ids']), true)) {
                 throw ValidationException::withMessages(['road_width_range_id' => 'The selected road-width range is not applicable to this property type.']);
             }
-            if (! empty($applicability['location_ids']) && (! $location || ! in_array((string) $location->id, array_map('strval', $applicability['location_ids']), true))) {
+            if (! empty($applicability['location_ids']) && (! $location || ! $this->locationMatchesIds($location, $applicability['location_ids']))) {
                 throw ValidationException::withMessages(['road_width_range_id' => 'The selected road-width range is not applicable to this location.']);
             }
         }
