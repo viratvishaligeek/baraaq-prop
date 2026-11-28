@@ -78,7 +78,7 @@
                 <div class="card-header bg-white d-flex justify-content-between align-items-center"><h2 class="h5 mb-0">Existing records</h2><span class="text-muted small">{{ $records->total() }} total</span></div>
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead><tr><th>ID</th>@foreach ($definition['columns'] as $column)<th>{{ \\Illuminate\\Support\\Str::headline($column) }}</th>@endforeach<th class="text-end">Actions</th></tr></thead>
+                        <thead><tr><th>ID</th>@foreach ($definition['columns'] as $column)<th>{{ \Illuminate\Support\Str::headline($column) }}</th>@endforeach<th class="text-end">Actions</th></tr></thead>
                         <tbody>
                             @forelse ($records as $item)
                                 <tr>
@@ -88,7 +88,7 @@
                                             @php($cell = $item->{$column})
                                             @if (is_bool($cell))<span class="badge {{ $cell ? 'text-bg-success' : 'text-bg-secondary' }}">{{ $cell ? 'Yes' : 'No' }}</span>
                                             @elseif (is_array($cell))<code>{{ \\Illuminate\\Support\\Str::limit(json_encode($cell), 55) }}</code>
-                                            @else{{ IlluminateSupportStr::limit((string) ($cell ?? '—'), 55) }}@endif
+                                            @else{{ \Illuminate\Support\Str::limit((string) ($cell ?? '—'), 55) }}@endif
                                         </td>
                                     @endforeach
                                     <td class="text-end text-nowrap">
