@@ -111,6 +111,7 @@ class CircleRateImportController extends Controller
             'rows' => $batch->rows()->orderBy('row_number')->paginate(30),
             'previewRows' => $spreadsheet['rows'],
             'validCount' => $batch->rows()->where('status', 'valid')->count(),
+            'duplicateCount' => $batch->rows()->where('status', 'duplicate')->count(),
         ]);
     }
 
@@ -336,7 +337,7 @@ class CircleRateImportController extends Controller
         return response()->streamDownload(function () use ($batch): void {
             $output = fopen('php://output', 'wb');
             fputcsv($output, ['Row', 'Status', 'Errors', 'Original data']);
-            foreach ($batch->rows()->whereIn('status', ['invalid', 'conflict'])->orderBy('row_number')->cursor() as $row) {
+            foreach ($batch->rows()->whereIn('status', ['invalid', 'conflict', 'duplicate'])->orderBy('row_number')->cursor() as $row) {
                 fputcsv($output, [$row->row_number, $row->status, implode(' | ', $row->validation_errors ?? []), json_encode($row->original_data)]);
             }
             fclose($output);
