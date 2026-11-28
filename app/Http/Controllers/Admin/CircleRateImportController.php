@@ -44,12 +44,10 @@ class CircleRateImportController extends Controller
         'conditions' => 'Conditions JSON',
     ];
 
-    public function index(Request $request)
+    public function index()
     {
-        $filters = $request->validate(['demo_filter' => ['nullable', 'in:demo,official']]);
         return view('admin.circle-rates.imports.index', [
-            'filters' => $filters,
-            'batches' => CircleRateImportBatch::query()->where('status', 'not like', 'location_%')->when(($filters['demo_filter'] ?? null) === 'demo', fn ($q) => $q->where('is_demo', true))->when(($filters['demo_filter'] ?? null) === 'official', fn ($q) => $q->where('is_demo', false))->with('financialYear')->latest()->paginate(20)->withQueryString(),
+            'batches' => CircleRateImportBatch::query()->where('status', 'not like', 'location_%')->with('financialYear')->latest()->paginate(20),
             'financialYears' => CircleRateFinancialYear::query()->where('is_active', true)->orderByDesc('starts_on')->get(),
             'sources' => CircleRateSource::query()->orderByDesc('id')->get(),
         ]);
