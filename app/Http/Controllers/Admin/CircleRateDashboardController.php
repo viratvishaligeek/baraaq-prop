@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\CircleRate;
 use App\Models\CircleRateDistrict;
 use App\Models\CircleRateAreaType;
+use App\Models\CircleRateApiConnection;
+use App\Models\CircleRateApiSyncLog;
 use App\Models\CircleRateFinancialYear;
 use App\Models\CircleRateImportBatch;
 use App\Models\CircleRateLocation;
@@ -52,6 +54,10 @@ class CircleRateDashboardController extends Controller
             'areaTypes' => CircleRateAreaType::query()->where('is_active', true)->orderBy('name')->get(),
             'propertyTypes' => CircleRatePropertyType::query()->where('is_active', true)->orderBy('name')->get(),
             'recentImports' => CircleRateImportBatch::query()->latest()->limit(5)->get(),
+            'importErrorCount' => (int) CircleRateImportBatch::query()->sum('invalid_rows') + (int) CircleRateImportBatch::query()->sum('conflict_rows'),
+            'lastSuccessfulImport' => CircleRateImportBatch::query()->where('status', 'imported')->latest()->first(),
+            'enabledApiConnections' => CircleRateApiConnection::query()->where('is_enabled', true)->count(),
+            'lastApiLog' => CircleRateApiSyncLog::query()->latest()->first(),
         ]);
     }
 }
