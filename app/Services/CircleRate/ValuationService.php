@@ -315,7 +315,9 @@ class ValuationService
             }
         } else {
             $value = $convertedArea * (float) $rate->rate;
-            $formulaDescription = $strategy.' : converted property area × verified circle rate';
+            $formulaDescription = $isDemoRate
+                ? 'DEMO: converted property area × synthetic test rate'
+                : $strategy.' : converted property area × verified circle rate';
         }
 
         if (! is_finite($value) || $value < 0 || $value > 9999999999999999) {
