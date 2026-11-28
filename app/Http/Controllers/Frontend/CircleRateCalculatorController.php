@@ -67,12 +67,13 @@ class CircleRateCalculatorController extends Controller
             'location_id' => ['nullable', 'integer', 'exists:circle_rate_locations,id'],
         ]);
 
+        $locationIds = $this->locationAndAncestorIds($data['location_id'] ?? null);
         $categories = CircleRatePropertyCategory::query()
             ->where('is_active', true)
             ->whereHas('propertyTypes', fn ($q) => $q->whereKey($data['property_type_id']))
-            ->when($data['location_id'] ?? null, function ($q, $locationId): void {
-                $q->where(function ($match) use ($locationId): void {
-                    $match->whereDoesntHave('locations')->orWhereHas('locations', fn ($locations) => $locations->whereKey($locationId));
+            ->when($locationIds, function ($q) use ($locationIds): void {
+                $q->where(function ($match) use ($locationIds): void {
+                    $match->whereDoesntHave('locations')->orWhereHas('locations', fn ($locations) => $locations->whereIn('circle_rate_locations.id', $locationIds));
                 });
             })
             ->orderByDesc('priority')->orderBy('name')->get(['id', 'name']);
@@ -95,11 +96,15 @@ class CircleRateCalculatorController extends Controller
             ->where(fn ($q) => $q->whereNull('effective_until')->orWhereDate('effective_until', '>=', $today))
             ->orderByDesc('priority')->orderBy('name')->get();
 
-        $ranges = $ranges->filter(function (CircleRateRoadWidthRange $range) use ($data): bool {
+        $locationIds = $this->locationAndAncestorIds($data['location_id'] ?? null);
+        $ranges = $ranges->filter(function (CircleRateRoadWidthRange $range) use ($data, $locationIds): bool {
             $applicability = $range->applicability ?? [];
             foreach (['property_type_ids' => 'property_type_id', 'location_ids' => 'location_id', 'district_ids' => 'district_id'] as $configured => $selected) {
-                if (! empty($applicability[$configured]) && ! in_array((string) ($data[$selected] ?? ''), array_map('strval', $applicability[$configured]), true)) {
-                    return false;
+                if (! empty($applicability[$configured])) {
+                    $matches = $selected === 'location_id' ? array_intersect(array_map('strval', $locationIds), array_map('strval', $applicability[$configured])) : (in_array((string) ($data[$selected] ?? ''), array_map('strval', $applicability[$configured]), true) ? [true] : []);
+                    if (! $matches) {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -198,6 +203,17 @@ class CircleRateCalculatorController extends Controller
         ]);
 
         return redirect()->route('circle-rates.result', $record->reference);
+    }
+
+    private function locationAndAncestorIds(?int $locationId): array
+    {
+        $ids = [];
+        $location = $locationId ? CircleRateLocation::query()->with('parent')->find($locationId) : null;
+        while ($location) {
+            $ids[] = $location->id;
+            $location = $location->parent;
+        }
+        return $ids;
     }
 
     private function customFieldVisible(array $conditions, array $input): bool
