@@ -174,7 +174,7 @@ class CircleRateCalculatorController extends Controller
     {
         $record = CircleRateValuationRecord::query()->with([
             'rate.district', 'rate.tehsil', 'rate.location', 'rate.propertyType',
-            'rate.category', 'rate.unit', 'rate.source', 'financialYear',
+            'rate.category', 'rate.unit', 'rate.source', 'financialYear', 'previousRate.unit', 'previousRate.financialYear',
         ])->where('reference', $reference)->firstOrFail();
 
         return view('frontend.circle-rates.result', compact('record'));
