@@ -45,6 +45,7 @@ class ValuationService
 
         $rate = $this->resolveRate($data, $date);
         $valuation = $this->applyStrategy($rate, (float) $data['area'], (int) $data['area_unit_id'], $data);
+        $data['_demo_mode'] = (bool) $rate->is_demo;
         $valuation = $this->applyRules($data, $valuation, $date);
         $previous = $this->previousYearValuation($data, $year, (float) $data['area']);
 
@@ -72,6 +73,7 @@ class ValuationService
                 'applied_rules' => $valuation['applied_rules'] ?? [],
                 'source' => $rate->source?->title,
                 'verification_status' => $rate->verification_status,
+                'is_demo' => (bool) $rate->is_demo,
                 'valuation_date' => $date,
             ],
         ];
@@ -158,10 +160,13 @@ class ValuationService
         $amount = (float) $valuation['estimated_value'];
 
         $rules = CircleRateRule::query()
-            ->with('source:id,title,document_path,source_url')
+            ->with('source:id,title,document_path,source_url,is_demo')
             ->where('is_active', true)
-            ->where('is_verified', true)
             ->whereNotNull('source_id')
+            ->where(function ($query) use ($input): void {
+                $query->where(fn ($official) => $official->where('is_verified', true)->where('is_demo', false))
+                    ->orWhere(fn ($demo) => $demo->where('is_demo', true)->where('is_verified', false)->when(empty($input['_demo_mode']), fn ($blocked) => $blocked->whereRaw('1 = 0')));
+            })
             ->where(fn ($q) => $q->whereNull('effective_from')->orWhereDate('effective_from', '<=', $date))
             ->where(fn ($q) => $q->whereNull('effective_until')->orWhereDate('effective_until', '>=', $date))
             ->orderByDesc('priority')
@@ -170,7 +175,7 @@ class ValuationService
             ->sortByDesc(fn (CircleRateRule $rule) => [(int) $rule->priority, count($rule->conditions ?? [])]);
 
         foreach ($rules as $rule) {
-            if (! $rule->source || (! $rule->source->document_path && ! $rule->source->source_url)) {
+            if (! $rule->source || (! $rule->source->is_demo && ! $rule->source->document_path && ! $rule->source->source_url) || ((bool) $rule->is_demo !== (bool) $rule->source->is_demo)) {
                 throw new RuntimeException('A verified calculation rule is missing its official source document or URL.');
             }
             if (! $this->conditionsMatch($rule->conditions ?? [], $input)) {
