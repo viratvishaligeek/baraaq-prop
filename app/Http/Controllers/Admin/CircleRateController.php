@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CircleRate;
+use App\Models\CircleRateAreaType;
 use App\Models\CircleRateAuditLog;
 use App\Models\CircleRateDistrict;
 use App\Models\CircleRateFinancialYear;
@@ -18,7 +19,7 @@ use App\Models\CircleRateVersion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class CircleRateController extends Controller
 {
@@ -27,6 +28,7 @@ class CircleRateController extends Controller
         return [
             'districts' => CircleRateDistrict::query()->where('is_active', true)->orderBy('name')->get(),
             'tehsils' => CircleRateTehsil::query()->where('is_active', true)->orderBy('name')->get(),
+            'areaTypes' => CircleRateAreaType::query()->where('is_active', true)->orderBy('name')->get(),
             'locations' => CircleRateLocation::query()->where('is_active', true)->orderBy('name')->get(),
             'propertyTypes' => CircleRatePropertyType::query()->where('is_active', true)->orderBy('name')->get(),
             'categories' => CircleRatePropertyCategory::query()->where('is_active', true)->orderBy('name')->get(),
