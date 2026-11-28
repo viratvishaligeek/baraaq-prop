@@ -122,8 +122,9 @@ class CircleRateController extends Controller
     {
         $request->validate(['reason' => ['required', 'string', 'max:2000']]);
         abort_unless($request->user()->isAdministrator() || $request->user()->hasPermission('circle-rates.verify'), 403);
-        if (! $circleRate->source_id) {
-            return back()->withErrors(['source_id' => 'Attach an official source document before verifying this rate.']);
+        $source = $circleRate->source;
+        if (! $source || (! $source->document_path && ! $source->source_url)) {
+            return back()->withErrors(['source_id' => 'Attach an official source document or documented official source URL before verifying this rate.']);
         }
 
         DB::transaction(function () use ($request, $circleRate): void {
