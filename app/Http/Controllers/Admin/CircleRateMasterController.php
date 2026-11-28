@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -219,6 +220,10 @@ class CircleRateMasterController extends Controller
 
     private function validated(Request $request, array $definition, ?Model $record = null): array
     {
+        if ($request->filled('name') && ! $request->filled('slug')) {
+            $request->merge(['slug' => Str::slug($request->input('name'))]);
+        }
+
         $rules = [];
         foreach ($definition['fields'] as $field) {
             $name = $field['name'];
@@ -254,6 +259,12 @@ class CircleRateMasterController extends Controller
             if ($field['type'] === 'json' && isset($data[$name])) $data[$name] = json_decode($data[$name], true, 512, JSON_THROW_ON_ERROR);
         }
         if (array_key_exists('name', $data) && empty($data['slug'])) $data['slug'] = Str::slug($data['name']);
+        if (isset($data['tehsil_id'], $data['district_id']) && ! CircleRateTehsil::query()->whereKey($data['tehsil_id'])->where('district_id', $data['district_id'])->exists()) {
+            throw \\Illuminate\\Validation\\ValidationException::withMessages(['tehsil_id' => 'The selected tehsil does not belong to the selected district.']);
+        }
+        if (isset($data['parent_id'], $data['district_id']) && ! CircleRateLocation::query()->whereKey($data['parent_id'])->where('district_id', $data['district_id'])->exists()) {
+            throw \\Illuminate\\Validation\\ValidationException::withMessages(['parent_id' => 'The parent location must belong to the selected district.']);
+        }
         return $data;
     }
 }
