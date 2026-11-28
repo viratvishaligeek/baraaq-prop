@@ -32,6 +32,8 @@
             ['Rate records', $rateCount],
             ['Verified & published', $verifiedRateCount],
             ['Pending verification', $pendingRateCount],
+            ['Import errors', $importErrorCount],
+            ['Enabled API connections', $enabledApiConnections],
         ] as [$label, $value])
             <div class="col-6 col-md-4 col-xl-3">
                 <div class="card h-100 border-0 shadow-sm">
@@ -71,6 +73,11 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6"><div class="card border-0 shadow-sm h-100"><div class="card-body"><div class="small text-muted">Last successful import</div><strong>{{ $lastSuccessfulImport?->original_filename ?? 'No completed import' }}</strong><div class="small text-muted">{{ $lastSuccessfulImport?->created_at?->format('d M Y H:i') ?? '—' }}</div></div></div></div>
+        <div class="col-md-6"><div class="card border-0 shadow-sm h-100"><div class="card-body"><div class="small text-muted">Last API synchronization status</div><strong>{{ $lastApiLog?->status ?? 'No API activity' }}</strong><div class="small text-muted">{{ $lastApiLog?->error_message ?? 'No sync has been attempted.' }}</div></div></div></div>
     </div>
 
     <div class="card border-0 shadow-sm">
