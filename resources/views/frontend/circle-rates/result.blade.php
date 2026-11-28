@@ -22,9 +22,12 @@
                 <h1 class="h2">Property Circle Rate Result</h1>
                 <p class="text-muted">Reference: {{ $record->reference }}</p>
             </div>
+            @if($record->is_demo || $record->rate?->is_demo)
+                <div class="alert alert-danger text-center fw-bold" role="alert">DEMO MODE – This result is calculated using sample testing data and is NOT an official government circle-rate valuation.</div>
+            @endif
             <div class="card border-0 shadow-sm p-4 mb-4">
                 <div class="text-center">
-                    <div class="text-muted">Estimated government circle-rate value</div>
+                    <div class="text-muted">{{ ($record->is_demo || $record->rate?->is_demo) ? 'DEMO estimated sample value' : 'Estimated government circle-rate value' }}</div>
                     <div class="display-5 fw-bold">₹{{ number_format((float) $record->estimated_value, 2) }}</div>
                     <div class="small text-muted mt-1">Financial year {{ $record->financialYear?->name ?? '—' }}</div>
                 </div>
@@ -38,7 +41,7 @@
                     <div class="col-md-6"><strong>Property area:</strong> {{ number_format((float) $record->property_area, 4) }}</div>
                     <div class="col-md-6"><strong>Rate:</strong> {{ number_format((float) $record->applicable_rate, 2) }} / {{ $record->rate?->unit?->name ?? '—' }}</div>
                     <div class="col-md-6"><strong>Effective from:</strong> {{ $record->rate?->effective_from?->format('d M Y') ?? '—' }}</div>
-                    <div class="col-md-6"><strong>Verification:</strong> {{ ucfirst($record->rate?->verification_status ?? 'unknown') }}</div>
+                    <div class="col-md-6"><strong>Verification:</strong> {{ $record->rate?->is_demo ? 'Pending – DEMO' : ucfirst($record->rate?->verification_status ?? 'unknown') }}</div>
                     <div class="col-md-6"><strong>Source document:</strong>
                         @if($record->rate?->source?->document_path)
                             <a href="{{ asset('storage/'.$record->rate->source->document_path) }}" target="_blank" rel="noopener">{{ $record->rate->source->title }}</a>
