@@ -415,6 +415,25 @@ class BareillyCityDemoSeeder extends Seeder
                 }
             }
 
+            // Existing active property types outside this demo fixture also get
+            // a generic district-wide test rate, so the public selector never
+            // exposes a type that cannot be calculated in the Bareilly QA dataset.
+            $demoTypeIds = collect($types)->pluck('id')->map(fn ($id) => (int) $id)->all();
+            foreach (CircleRatePropertyType::query()->where('is_active', true)->get() as $otherType) {
+                if (in_array((int) $otherType->id, $demoTypeIds, true)) {
+                    continue;
+                }
+
+                foreach (array_values($years) as $yearIndex => $year) {
+                    $this->seedRate(
+                        $district, null, null, null, $otherType, null, null,
+                        $year, $units['square-foot'],
+                        $source, $actor, 500.0, 0, $yearIndex
+                    );
+                    $rateCount++;
+                }
+            }
+
             $this->seedCalculatorFields($types);
             $this->seedCalculationRules($source, $actor, $types, $categories, $roadWidths);
 
