@@ -272,6 +272,9 @@ $(function () {
                     else if (operator === 'in') matched = Array.isArray(expected) && expected.map(String).includes(String(actual || ''));
                     else if (operator === 'greater_than') matched = Number(actual) > Number(expected);
                     else if (operator === 'less_than') matched = Number(actual) < Number(expected);
+                    else if (operator === 'greater_than_or_equal') matched = Number(actual) >= Number(expected);
+                    else if (operator === 'less_than_or_equal') matched = Number(actual) <= Number(expected);
+                    else if (operator === 'between') matched = Array.isArray(expected) && Number(actual) >= Number(expected[0]) && Number(actual) <= Number(expected[1]);
                     if (!matched) visible = false;
                 });
             }
