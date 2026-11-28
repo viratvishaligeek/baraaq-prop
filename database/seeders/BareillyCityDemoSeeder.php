@@ -240,7 +240,7 @@ class BareillyCityDemoSeeder extends Seeder
                 ['land_use', 'Land Use', 'select', ['Residential', 'Commercial', 'Mixed'], ['residential_plot', 'commercial_plot', 'mixed_use_property']],
                 ['construction_type', 'Construction Type', 'dropdown', ['RCC', 'Load Bearing', 'Temporary'], ['residential_building', 'commercial_building']],
                 ['building_age', 'Building Age', 'number', [], ['residential_building', 'commercial_building']],
-                ['number_of_floors', 'Number of Floors', 'number', [], ['demo-residential-building', 'demo-commercial-building']],
+                ['number_of_floors', 'Number of Floors', 'number', [], ['residential_building', 'commercial_building']],
                 ['road_width', 'Road Width', 'number', [], null],
                 ['development_status', 'Property Development Status', 'radio', ['Developed', 'Undeveloped'], null],
                 ['site_notes', 'Site Notes', 'text', [], null],
