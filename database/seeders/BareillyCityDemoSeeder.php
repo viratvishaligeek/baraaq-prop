@@ -471,6 +471,10 @@ class BareillyCityDemoSeeder extends Seeder
         ];
 
         $manualMatch = CircleRate::query()
+            ->with('source')
+            ->where('status', 'published')
+            ->where('verification_status', 'verified')
+            ->whereHas('source', fn ($query) => $query->whereNotNull('document_path')->orWhereNotNull('source_url'))
             ->where('district_id', $district->id)
             ->where('tehsil_id', $tehsil?->id)
             ->where('location_id', $location?->id)
