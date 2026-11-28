@@ -221,10 +221,10 @@ class BareillyCityDemoSeeder extends Seeder
             $fieldDefinitions = [
                 ['land_classification', 'Land Classification', 'dropdown', ['Agricultural', 'Residential', 'Commercial'], ['agricultural_land']],
                 ['plot_facing', 'Plot Facing', 'radio', ['North', 'South', 'East', 'West'], ['residential_plot', 'commercial_plot']],
-                ['corner_plot', 'Corner Plot', 'checkbox', [], ['demo-residential-plot', 'demo-commercial-plot']],
+                ['corner_plot', 'Corner Plot', 'checkbox', [], ['residential_plot', 'commercial_plot']],
                 ['land_use', 'Land Use', 'select', ['Residential', 'Commercial', 'Mixed'], ['residential_plot', 'commercial_plot', 'mixed_use_property']],
                 ['construction_type', 'Construction Type', 'dropdown', ['RCC', 'Load Bearing', 'Temporary'], ['residential_building', 'commercial_building']],
-                ['building_age', 'Building Age', 'number', [], ['demo-residential-building', 'demo-commercial-building']],
+                ['building_age', 'Building Age', 'number', [], ['residential_building', 'commercial_building']],
                 ['number_of_floors', 'Number of Floors', 'number', [], ['demo-residential-building', 'demo-commercial-building']],
                 ['road_width', 'Road Width', 'number', [], null],
                 ['development_status', 'Property Development Status', 'radio', ['Developed', 'Undeveloped'], null],
@@ -288,7 +288,7 @@ class BareillyCityDemoSeeder extends Seeder
                     $this->records['locations'][] = $location->id;
                     $rateCount++;
                     if (! $rate->versions()->where('is_demo', true)->exists()) {
-                        $version = CircleRateVersion::query()->create([
+                        $version = CircleRateVersion::query()->forceCreate([
                             'circle_rate_id' => $rate->id, 'version_number' => 1,
                             'snapshot' => $rate->getAttributes(), 'change_reason' => 'DEMO seed baseline version',
                             'changed_by' => null, 'is_demo' => true,
