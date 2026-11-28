@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CircleRateAreaType;
+use App\Models\CircleRateAuditLog;
 use App\Models\CircleRateDistrict;
 use App\Models\CircleRateFinancialYear;
 use App\Models\CircleRateLocation;
@@ -269,6 +270,7 @@ class CircleRateMasterController extends Controller
             $record->propertyTypes()->sync($propertyTypeIds ?? []);
             $record->locations()->sync($locationIds ?? []);
         }
+        $this->audit($request, $record, 'created', null, $record->getAttributes());
 
         return redirect()->route('admin.circle-rates.master.index', $module)->with('success', $definition['title'].' record created.');
     }
@@ -279,6 +281,7 @@ class CircleRateMasterController extends Controller
         $model = $definition['model'];
         $record = $model::query()->findOrFail($id);
         $data = $this->validated($request, $definition, $record);
+        $oldValues = $record->getAttributes();
         $propertyTypeIds = $data['property_type_ids'] ?? null;
         $locationIds = $data['location_ids'] ?? null;
         unset($data['property_type_ids'], $data['location_ids']);
@@ -287,23 +290,42 @@ class CircleRateMasterController extends Controller
             $record->propertyTypes()->sync($propertyTypeIds ?? []);
             $record->locations()->sync($locationIds ?? []);
         }
+        $this->audit($request, $record, 'updated', $oldValues, $record->fresh()->getAttributes());
 
         return redirect()->route('admin.circle-rates.master.index', $module)->with('success', $definition['title'].' record updated.');
     }
 
-    public function destroy(string $module, int $id)
+    public function destroy(Request $request, string $module, int $id)
     {
         $definition = $this->definition($module);
         $model = $definition['model'];
         $record = $model::query()->findOrFail($id);
 
+        $oldValues = $record->getAttributes();
         try {
             $record->delete();
         } catch (QueryException) {
             return back()->withErrors(['delete' => 'This record is referenced by other circle-rate data and cannot be deleted. Deactivate it instead.']);
         }
 
+        $this->audit($request, $record, 'deleted', $oldValues, ['deleted_at' => now()->toDateTimeString()]);
+
         return redirect()->route('admin.circle-rates.master.index', $module)->with('success', $definition['title'].' record deleted.');
+    }
+
+    private function audit(Request $request, Model $record, string $event, ?array $old, ?array $new): void
+    {
+        CircleRateAuditLog::query()->create([
+            'user_id' => $request->user()->id,
+            'subject_type' => $record::class,
+            'subject_id' => $record->getKey(),
+            'event' => 'master_'.$event,
+            'old_values' => $old,
+            'new_values' => $new,
+            'reason' => $request->input('change_reason'),
+            'source_id' => $record->getAttribute('source_id'),
+            'ip_address' => $request->ip(),
+        ]);
     }
 
     private function validated(Request $request, array $definition, ?Model $record = null): array
