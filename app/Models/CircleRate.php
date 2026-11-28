@@ -17,7 +17,7 @@ class CircleRate extends Model
         'financial_year_id', 'unit_id', 'source_id', 'rate', 'priority',
         'effective_from', 'effective_until', 'verification_status',
         'status', 'conditions', 'admin_notes', 'created_by',
-        'verified_by', 'verified_at',
+        'verified_by', 'verified_at', 'is_demo',
     ];
 
     protected function casts(): array
@@ -28,6 +28,7 @@ class CircleRate extends Model
             'effective_from' => 'date',
             'effective_until' => 'date',
             'verified_at' => 'datetime',
+            'is_demo' => 'boolean',
         ];
     }
 
@@ -45,7 +46,16 @@ class CircleRate extends Model
 
     public function scopePublishedAndVerified($query)
     {
-        return $query->where('status', 'published')->where('verification_status', 'verified')
-            ->whereHas('source', fn ($source) => $source->whereNotNull('document_path')->orWhereNotNull('source_url'));
+        return $query->where('status', 'published')->where(function ($scope): void {
+            $scope->where(function ($official): void {
+                $official->where('verification_status', 'verified')
+                    ->where('is_demo', false)
+                    ->whereHas('source', fn ($source) => $source->where('is_demo', false)
+                        ->where(fn ($document) => $document->whereNotNull('document_path')->orWhereNotNull('source_url')));
+            })->orWhere(function ($demo): void {
+                $demo->where('is_demo', true)->where('verification_status', 'pending')
+                    ->whereHas('source', fn ($source) => $source->where('is_demo', true));
+            });
+        });
     }
 }
