@@ -375,7 +375,7 @@ class BareillyCityDemoSeeder extends Seeder
                     ->values();
 
                 foreach (array_values($locations) as $locationIndex => $location) {
-                    foreach ($years as $yearIndex => $year) {
+                    foreach (array_values($years) as $yearIndex => $year) {
                         // General fallback makes the type/location/year calculable
                         // even when category and road-width are not selected.
                         $this->seedRate(
