@@ -415,6 +415,19 @@ class CircleRateMasterController extends Controller
         if ($definition['model'] === CircleRateRule::class && ! empty($data['is_verified']) && empty($data['source_id'])) {
             throw ValidationException::withMessages(['source_id' => 'Attach an official source document before verifying this rule.']);
         }
+        if ($definition['model'] === CircleRateUnitConversion::class) {
+            if (($data['from_unit_id'] ?? null) === ($data['to_unit_id'] ?? null)) {
+                throw ValidationException::withMessages(['to_unit_id' => 'Choose two different units for a conversion.']);
+            }
+            $fromUnit = CircleRateUnit::query()->find($data['from_unit_id'] ?? null);
+            $toUnit = CircleRateUnit::query()->find($data['to_unit_id'] ?? null);
+            if ($fromUnit && $toUnit && $fromUnit->dimension !== $toUnit->dimension) {
+                throw ValidationException::withMessages(['to_unit_id' => 'Unit conversions must use units from the same dimension.']);
+            }
+            if (! empty($data['is_verified']) && blank($data['source_note'] ?? null)) {
+                throw ValidationException::withMessages(['source_note' => 'Add the official conversion source or evidence before verifying this conversion.']);
+            }
+        }
         if (array_key_exists('is_verified', $data)) {
             $data['verified_by'] = $data['is_verified'] ? request()->user()->id : null;
             $data['verified_at'] = $data['is_verified'] ? now() : null;
