@@ -290,6 +290,7 @@ class CircleRateImportController extends Controller
 
                 if ($existingRate) {
                     $old = $existingRate->getAttributes();
+                    if (empty($data['source_id'])) $data['source_id'] = $existingRate->source_id;
                     $version = ((int) $existingRate->versions()->max('version_number')) + 1;
                     CircleRateVersion::query()->create([
                         'circle_rate_id' => $existingRate->id,
