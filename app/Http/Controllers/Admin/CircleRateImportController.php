@@ -160,10 +160,14 @@ class CircleRateImportController extends Controller
             if (! $district) $errors[] = 'District was not found or is inactive.';
             if (! $propertyType) $errors[] = 'Property type was not found or is inactive.';
             if (! $unit) $errors[] = 'Rate unit was not found or is inactive.';
+            if ($unit && $propertyType && $unit->dimension !== 'area' && in_array($propertyType->calculation_strategy, ['land_area', 'agricultural_land', 'agricultural_area', 'residential_plot', 'commercial_plot', 'industrial_plot', 'mixed_use_land', 'building_area'], true)) $errors[] = 'Area-based property types require a rate unit with the area dimension.';
             if ($get('tehsil') !== '' && ! $tehsil) $errors[] = 'Tehsil was not found.';
             if ($get('area_type') !== '' && ! $areaType) $errors[] = 'Area type was not found.';
             if ($get('location') !== '' && ! $location) $errors[] = 'Location was not found under the selected district.';
-            if ($get('category') !== '' && ! $category) $errors[] = 'Property category was not found.';
+            if ($location && $tehsil && $location->tehsil_id && (int) $location->tehsil_id !== (int) $tehsil->id) $errors[] = 'Location does not belong to the selected tehsil.';
+            if ($location && $areaType && $location->area_type_id && (int) $location->area_type_id !== (int) $areaType->id) $errors[] = 'Location does not match the selected urban/rural area type.';
+            if ($get('category') !== '' && ! $category) $errors[] = 'Property category was not found or is not assigned to the selected property type.';
+            if ($category && $category->locations()->exists() && (! $location || ! $this->locationMatchesIds($location, $category->locations()->pluck('circle_rate_locations.id')->all()))) $errors[] = 'Property category is not assigned to the selected location or its parent locations.';
             if ($get('road_width') !== '' && ! $roadWidth) $errors[] = 'Road width range was not found.';
             if (! is_numeric($rate) || (float) $rate <= 0) $errors[] = 'Rate must be a positive numeric value.';
             if (! $effectiveFrom) $errors[] = 'Effective-from date is missing or invalid.';
