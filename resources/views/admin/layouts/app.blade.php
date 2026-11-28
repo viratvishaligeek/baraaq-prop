@@ -35,6 +35,20 @@
                 <details class="sidebar-group" @if (request()->routeIs('admin.circle-rates.*')) open @endif>
                     <summary><i class="fa-solid fa-calculator"></i> Property Circle Rate Management</summary>
                     <a class="sidebar-link {{ request()->routeIs('admin.circle-rates.dashboard') ? 'active' : '' }}" href="{{ route('admin.circle-rates.dashboard') }}">Dashboard</a>
+                    @foreach ([
+                        'districts' => 'Districts',
+                        'tehsils' => 'Tehsils',
+                        'area-types' => 'Area types',
+                        'location-levels' => 'Location levels',
+                        'locations' => 'Locations',
+                        'property-types' => 'Property types',
+                        'categories' => 'Property categories',
+                        'units' => 'Rate units',
+                        'road-widths' => 'Road width ranges',
+                        'financial-years' => 'Financial years',
+                    ] as $circleRateModule => $circleRateLabel)
+                        <a class="sidebar-link {{ request()->route('module') === $circleRateModule ? 'active' : '' }}" href="{{ route('admin.circle-rates.master.index', $circleRateModule) }}">{{ $circleRateLabel }}</a>
+                    @endforeach
                 </details>
             @endif
             @if (auth()->user()->isAdministrator() ||
