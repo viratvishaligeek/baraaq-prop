@@ -18,6 +18,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use Database\Seeders\CircleRateReferenceSeeder;
 use Tests\TestCase;
+use InvalidArgumentException;
 
 class CircleRateValuationTest extends TestCase
 {
@@ -263,7 +264,7 @@ class CircleRateValuationTest extends TestCase
 
     public function test_safe_formula_evaluator_rejects_function_calls_and_code_injection(): void
     {
-        $this->expectException(\\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         app(SafeFormulaEvaluator::class)->validate('system("id")');
     }
 
