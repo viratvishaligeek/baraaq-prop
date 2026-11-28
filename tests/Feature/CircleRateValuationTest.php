@@ -151,6 +151,42 @@ class CircleRateValuationTest extends TestCase
         $this->assertSame('Verified source adjustment', $result['breakdown']['applied_rules'][0]['name']);
     }
 
+    public function test_custom_property_strategy_uses_safe_admin_formula_and_custom_fields(): void
+    {
+        [$district, , $year, $unit, $source] = $this->makeMasterData();
+        $propertyType = CircleRatePropertyType::query()->create([
+            'name' => 'Custom Building',
+            'slug' => 'custom-building',
+            'calculation_strategy' => 'custom_building',
+            'formula_configuration' => ['formula' => 'converted_area * rate * (1 - custom.depreciation_percent / 100)'],
+            'is_active' => true,
+        ]);
+        CircleRate::query()->create([
+            'district_id' => $district->id,
+            'property_type_id' => $propertyType->id,
+            'financial_year_id' => $year->id,
+            'unit_id' => $unit->id,
+            'source_id' => $source->id,
+            'rate' => 5000,
+            'effective_from' => '2026-04-01',
+            'verification_status' => 'verified',
+            'status' => 'published',
+        ]);
+
+        $result = app(ValuationService::class)->calculate([
+            'district_id' => $district->id,
+            'property_type_id' => $propertyType->id,
+            'financial_year_id' => $year->id,
+            'area' => 100,
+            'area_unit_id' => $unit->id,
+            'valuation_date' => '2026-08-01',
+            'custom' => ['depreciation_percent' => 10],
+        ]);
+
+        $this->assertSame(450000.0, (float) $result['estimated_value']);
+        $this->assertSame('converted_area * rate * (1 - custom.depreciation_percent / 100)', $result['breakdown']['formula']);
+    }
+
     public function test_area_is_converted_only_with_verified_unit_conversion(): void
     {
         [$district, $propertyType, $year, $squareMetre, $source] = $this->makeMasterData();
