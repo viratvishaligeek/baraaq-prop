@@ -290,7 +290,62 @@ class CircleRateController extends Controller
 
         unset($data['change_reason']);
         $data['priority'] = $data['priority'] ?? 0;
+        $this->validateRelationships($data);
         return $data;
+    }
+
+    private function validateRelationships(array $data): void
+    {
+        $district = CircleRateDistrict::query()->findOrFail($data['district_id']);
+        $tehsil = ! empty($data['tehsil_id']) ? CircleRateTehsil::query()->findOrFail($data['tehsil_id']) : null;
+        $location = ! empty($data['location_id']) ? CircleRateLocation::query()->findOrFail($data['location_id']) : null;
+        $areaType = ! empty($data['area_type_id']) ? CircleRateAreaType::query()->findOrFail($data['area_type_id']) : null;
+        $propertyType = CircleRatePropertyType::query()->findOrFail($data['property_type_id']);
+        $financialYear = CircleRateFinancialYear::query()->findOrFail($data['financial_year_id']);
+        $unit = CircleRateUnit::query()->findOrFail($data['unit_id']);
+
+        if ($tehsil && (int) $tehsil->district_id !== (int) $district->id) {
+            throw ValidationException::withMessages(['tehsil_id' => 'The selected tehsil does not belong to the selected district.']);
+        }
+        if ($location && (int) $location->district_id !== (int) $district->id) {
+            throw ValidationException::withMessages(['location_id' => 'The selected location does not belong to the selected district.']);
+        }
+        if ($location && $tehsil && $location->tehsil_id && (int) $location->tehsil_id !== (int) $tehsil->id) {
+            throw ValidationException::withMessages(['location_id' => 'The selected location does not belong to the selected tehsil.']);
+        }
+        if ($location && $areaType && $location->area_type_id && (int) $location->area_type_id !== (int) $areaType->id) {
+            throw ValidationException::withMessages(['area_type_id' => 'The selected area type does not match the selected location.']);
+        }
+        if ($data['effective_from'] < $financialYear->starts_on->toDateString() || $data['effective_from'] > $financialYear->ends_on->toDateString()) {
+            throw ValidationException::withMessages(['effective_from' => 'The effective date must fall within the selected financial year.']);
+        }
+        if (! empty($data['effective_until']) && $data['effective_until'] > $financialYear->ends_on->toDateString()) {
+            throw ValidationException::withMessages(['effective_until' => 'The expiry date cannot extend beyond the selected financial year.']);
+        }
+        if ($unit->dimension !== 'area' && in_array($propertyType->calculation_strategy, ['land_area', 'agricultural_land', 'agricultural_area', 'residential_plot', 'commercial_plot', 'industrial_plot', 'mixed_use_land', 'building_area'], true)) {
+            throw ValidationException::withMessages(['unit_id' => 'Area-based property types require a rate unit with the area dimension.']);
+        }
+
+        if (! empty($data['category_id'])) {
+            $category = CircleRatePropertyCategory::query()->findOrFail($data['category_id']);
+            if ($category->propertyTypes()->exists() && ! $category->propertyTypes()->whereKey($propertyType->id)->exists()) {
+                throw ValidationException::withMessages(['category_id' => 'The selected category is not assigned to this property type.']);
+            }
+            if ($category->locations()->exists() && (! $location || ! $category->locations()->whereKey($location->id)->exists())) {
+                throw ValidationException::withMessages(['category_id' => 'The selected category is not assigned to this location.']);
+            }
+        }
+
+        if (! empty($data['road_width_range_id'])) {
+            $range = CircleRateRoadWidthRange::query()->findOrFail($data['road_width_range_id']);
+            $applicability = $range->applicability ?? [];
+            if (! empty($applicability['property_type_ids']) && ! in_array((string) $propertyType->id, array_map('strval', $applicability['property_type_ids']), true)) {
+                throw ValidationException::withMessages(['road_width_range_id' => 'The selected road-width range is not applicable to this property type.']);
+            }
+            if (! empty($applicability['location_ids']) && (! $location || ! in_array((string) $location->id, array_map('strval', $applicability['location_ids']), true))) {
+                throw ValidationException::withMessages(['road_width_range_id' => 'The selected road-width range is not applicable to this location.']);
+            }
+        }
     }
 
     private function audit(Request $request, CircleRate $rate, string $event, ?array $old, ?array $new, ?string $reason): void
