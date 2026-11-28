@@ -48,7 +48,6 @@
                     <ul class="mb-0">@foreach($record->calculation_breakdown['applied_rules'] as $rule)<li>{{ $rule['name'] }} — {{ $rule['source'] ?? 'Source not named' }}</li>@endforeach</ul>
                 @endif
             </div>
-            @if($showPreviousComparison)
             <div class="card border-0 shadow-sm p-4 mb-4">
                 <h2 class="h5">Year-on-year comparison</h2>
                 @if ($record->previous_year_value !== null)
@@ -61,12 +60,12 @@
                     <p class="text-muted mb-0">A comparable verified rate for the previous financial year was not available.</p>
                 @endif
             </div>
-            @endif
-            <div class="alert alert-warning">{{ $disclaimer }}</div>
+            <div class="alert alert-warning">
+                This is an estimate derived from the verified rate record shown above. It is not a market-price estimate or a guarantee of the final registration assessment. Confirm the applicable official valuation rules with the relevant authority.
+            </div>
             <div class="d-flex flex-wrap gap-2 justify-content-center">
                 <a class="th-btn" href="{{ route('circle-rates.calculator') }}">Recalculate</a>
-                <button class="th-btn style2" type="button" onclick="window.print()">Print / Save PDF</button>
-                @if($allowSharing)<button class="th-btn style2" type="button" onclick="navigator.clipboard.writeText(window.location.href).then(() => alert('Result link copied.'))">Copy share link</button>@endif
+                <button class="th-btn style2" type="button" onclick="window.print()">Print report</button>
             </div>
         </div></div>
     </div>
