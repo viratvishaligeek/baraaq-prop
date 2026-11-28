@@ -89,6 +89,37 @@ class BareillyCityDemoSeeder extends Seeder
                 $this->assertDemoMarker(($locations[$name]->attributes['dataset'] ?? null) === 'DEMO', 'location '.$name);
             }
 
+            $mohallaLevel = CircleRateLocationLevel::query()->firstOrCreate(
+                ['slug' => 'mohalla'],
+                ['name' => 'Mohalla', 'description' => 'Urban mohalla level.', 'is_required' => false, 'is_active' => true, 'sort_order' => 2]
+            );
+            $wardLevel = CircleRateLocationLevel::query()->firstOrCreate(
+                ['slug' => 'ward'],
+                ['name' => 'Ward', 'description' => 'Urban ward level.', 'is_required' => false, 'is_active' => true, 'sort_order' => 3]
+            );
+
+            $childLocations = [
+                ['Civil Lines', 'Civil Lines Central Mohalla', 'mohalla', $mohallaLevel],
+                ['Prem Nagar', 'Prem Nagar Extension', 'mohalla', $mohallaLevel],
+                ['Rajendra Nagar', 'Rajendra Nagar Ward 1', 'ward', $wardLevel],
+                ['Model Town', 'Model Town Ward 2', 'ward', $wardLevel],
+            ];
+            foreach ($childLocations as [$parentName, $childName, $kind, $level]) {
+                $parent = $locations[$parentName];
+                $child = CircleRateLocation::query()->firstOrCreate(
+                    ['district_id' => $district->id, 'parent_id' => $parent->id, 'slug' => 'demo-'.Str::slug($childName)],
+                    [
+                        'tehsil_id' => $tehsil->id,
+                        'area_type_id' => $urban->id,
+                        'level_id' => $level->id,
+                        'name' => $childName.' (DEMO)',
+                        'attributes' => ['dataset' => 'DEMO', 'location_kind' => $kind],
+                        'is_active' => true,
+                    ]
+                );
+                $this->assertDemoMarker(($child->attributes['dataset'] ?? null) === 'DEMO', 'child location '.$childName);
+            }
+
             $typeDefinitions = [
                 ['agricultural_land', 'Agricultural Land (DEMO)', 'agricultural_land'],
                 ['residential_plot', 'Residential Plot (DEMO)', 'residential_plot'],
