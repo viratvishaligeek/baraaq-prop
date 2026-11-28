@@ -374,6 +374,20 @@ class BareillyCityDemoSeeder extends Seeder
                     ->map(fn (string $slug) => $categories[$slug])
                     ->values();
 
+                // District-wide DEMO fallback: this row intentionally has no
+                // tehsil, location, area type, category or road-width restriction.
+                // The calculator resolver treats null optional dimensions as a
+                // wildcard, so every valid Bareilly form combination can still
+                // calculate when no more-specific sample rate exists.
+                foreach (array_values($years) as $yearIndex => $year) {
+                    $this->seedRate(
+                        $district, null, null, null, $type, null, null,
+                        $year, $units['square-foot'],
+                        $source, $actor, $baseRates[$typeSlug], 0, $yearIndex
+                    );
+                    $rateCount++;
+                }
+
                 foreach (array_values($locations) as $locationIndex => $location) {
                     foreach (array_values($years) as $yearIndex => $year) {
                         // General fallback makes the type/location/year calculable
@@ -428,9 +442,9 @@ class BareillyCityDemoSeeder extends Seeder
 
     private function seedRate(
         CircleRateDistrict $district,
-        CircleRateTehsil $tehsil,
-        CircleRateAreaType $areaType,
-        CircleRateLocation $location,
+        ?CircleRateTehsil $tehsil,
+        ?CircleRateAreaType $areaType,
+        ?CircleRateLocation $location,
         CircleRatePropertyType $type,
         ?CircleRatePropertyCategory $category,
         ?CircleRateRoadWidthRange $road,
@@ -458,9 +472,9 @@ class BareillyCityDemoSeeder extends Seeder
 
         $manualMatch = CircleRate::query()
             ->where('district_id', $district->id)
-            ->where('tehsil_id', $tehsil->id)
-            ->where('location_id', $location->id)
-            ->where('area_type_id', $areaType->id)
+            ->where('tehsil_id', $tehsil?->id)
+            ->where('location_id', $location?->id)
+            ->where('area_type_id', $areaType?->id)
             ->where('property_type_id', $type->id)
             ->where('category_id', $category?->id)
             ->where('road_width_range_id', $road?->id)
