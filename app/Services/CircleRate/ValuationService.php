@@ -7,7 +7,9 @@ use App\Models\CircleRateFinancialYear;
 use App\Models\CircleRateRule;
 use App\Models\CircleRateUnitConversion;
 use App\Models\CircleRateUnit;
+use App\Models\Setting;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -77,6 +79,14 @@ class ValuationService
 
     private function resolveRate(array $data, string $date): CircleRate
     {
+        $cacheMinutes = max(0, (int) Setting::read('circle_rate.rate_cache_minutes', 0));
+        $cacheKey = 'circle-rate:match:'.CircleRateCache::version().':'.hash('sha256', json_encode([$data, $date]));
+        if ($cacheMinutes > 0 && ($cachedId = Cache::get($cacheKey))) {
+            $cachedRate = CircleRate::query()->with(['unit', 'source'])->publishedAndVerified()->find($cachedId);
+            if ($cachedRate) return $cachedRate;
+            Cache::forget($cacheKey);
+        }
+
         $optionalDimensions = [
             'tehsil_id', 'location_id', 'area_type_id',
             'category_id', 'road_width_range_id',
@@ -111,9 +121,10 @@ class ValuationService
                     }
                 }
                 $rate->setAttribute('_match_specificity', $specificity);
+                $rate->setAttribute('_condition_specificity', count($rate->conditions ?? []));
                 return $rate;
             })
-            ->sortByDesc(fn (CircleRate $rate) => [(int) $rate->priority, (int) $rate->getAttribute('_match_specificity')])
+            ->sortByDesc(fn (CircleRate $rate) => [(int) $rate->priority, (int) $rate->getAttribute('_match_specificity'), (int) $rate->getAttribute('_condition_specificity')])
             ->values();
 
         if ($candidates->isEmpty()) {
@@ -126,6 +137,7 @@ class ValuationService
         $top = $candidates->filter(fn (CircleRate $rate) =>
             (int) $rate->priority === (int) $first->priority
             && (int) $rate->getAttribute('_match_specificity') === (int) $first->getAttribute('_match_specificity')
+            && (int) $rate->getAttribute('_condition_specificity') === (int) $first->getAttribute('_condition_specificity')
         );
 
         if ($top->count() > 1) {
@@ -133,6 +145,8 @@ class ValuationService
                 'property_type_id' => 'More than one equally specific verified rate matches. An administrator must resolve the conflicting rate records.',
             ]);
         }
+
+        if ($cacheMinutes > 0) Cache::put($cacheKey, $first->id, now()->addMinutes($cacheMinutes));
 
         return $first;
     }
