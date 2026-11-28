@@ -200,6 +200,7 @@ class CircleRateCalculatorController extends Controller
             'difference_percent' => $result['difference_percent'],
             'result_status' => 'calculated',
             'valued_at' => now(),
+            'is_demo' => (bool) $rate->is_demo,
         ]);
 
         session(['circle_rate_last_reference' => $record->reference]);
