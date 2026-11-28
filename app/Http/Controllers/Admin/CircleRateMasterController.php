@@ -114,6 +114,8 @@ class CircleRateMasterController extends Controller
                     ['name' => 'description', 'label' => 'Description', 'type' => 'textarea'],
                     ['name' => 'priority', 'label' => 'Matching priority', 'type' => 'number'],
                     ['name' => 'applicability', 'label' => 'Applicability (JSON)', 'type' => 'json'],
+                    ['name' => 'property_type_ids', 'label' => 'Applicable property types', 'type' => 'multi-select', 'options' => CircleRatePropertyType::class],
+                    ['name' => 'location_ids', 'label' => 'Applicable locations', 'type' => 'multi-select', 'options' => CircleRateLocation::class],
                     ['name' => 'is_active', 'label' => 'Active', 'type' => 'boolean'],
                 ],
             ],
@@ -229,6 +231,10 @@ class CircleRateMasterController extends Controller
         $definition = $this->definition($module);
         $model = $definition['model'];
         $record = request()->filled('edit') ? $model::query()->findOrFail((int) request('edit')) : null;
+        if ($record && $module === 'categories') {
+            $record->setAttribute('property_type_ids', $record->propertyTypes()->pluck('circle_rate_property_types.id')->all());
+            $record->setAttribute('location_ids', $record->locations()->pluck('circle_rate_locations.id')->all());
+        }
         $options = [];
 
         foreach ($definition['fields'] as $field) {
@@ -248,7 +254,14 @@ class CircleRateMasterController extends Controller
         $definition = $this->definition($module);
         $model = $definition['model'];
         $data = $this->validated($request, $definition);
-        $model::query()->create($data);
+        $propertyTypeIds = $data['property_type_ids'] ?? null;
+        $locationIds = $data['location_ids'] ?? null;
+        unset($data['property_type_ids'], $data['location_ids']);
+        $record = $model::query()->create($data);
+        if ($module === 'categories') {
+            $record->propertyTypes()->sync($propertyTypeIds ?? []);
+            $record->locations()->sync($locationIds ?? []);
+        }
 
         return redirect()->route('admin.circle-rates.master.index', $module)->with('success', $definition['title'].' record created.');
     }
@@ -258,7 +271,15 @@ class CircleRateMasterController extends Controller
         $definition = $this->definition($module);
         $model = $definition['model'];
         $record = $model::query()->findOrFail($id);
-        $record->update($this->validated($request, $definition, $record));
+        $data = $this->validated($request, $definition, $record);
+        $propertyTypeIds = $data['property_type_ids'] ?? null;
+        $locationIds = $data['location_ids'] ?? null;
+        unset($data['property_type_ids'], $data['location_ids']);
+        $record->update($data);
+        if ($module === 'categories') {
+            $record->propertyTypes()->sync($propertyTypeIds ?? []);
+            $record->locations()->sync($locationIds ?? []);
+        }
 
         return redirect()->route('admin.circle-rates.master.index', $module)->with('success', $definition['title'].' record updated.');
     }
@@ -293,6 +314,7 @@ class CircleRateMasterController extends Controller
                 'date' => ['nullable', 'date'],
                 'select' => ['nullable', 'integer'],
                 'json' => ['nullable', 'json'],
+                'multi-select' => ['nullable', 'array'],
                 'textarea' => ['nullable', 'string', 'max:10000'],
                 default => ['nullable', 'string', 'max:1000'],
             };
@@ -307,10 +329,16 @@ class CircleRateMasterController extends Controller
             if ($name === 'area_type_id') $base = ['nullable', 'integer', 'exists:circle_rate_area_types,id'];
             if ($name === 'level_id') $base = ['nullable', 'integer', 'exists:circle_rate_location_levels,id'];
             if ($name === 'parent_id') $base = ['nullable', 'integer', 'exists:circle_rate_locations,id'];
+            if ($name === 'property_type_ids') $base = ['nullable', 'array'];
+            if ($name === 'location_ids') $base = ['nullable', 'array'];
             if ($name === 'unit_id' || $name === 'from_unit_id' || $name === 'to_unit_id') $base = ['required', 'integer', 'exists:circle_rate_units,id'];
             if ($name === 'field_id') $base = ['required', 'integer', 'exists:circle_rate_calculator_fields,id'];
+            if ($name === 'property_type_ids.*') $base = ['integer', 'exists:circle_rate_property_types,id'];
+            if ($name === 'location_ids.*') $base = ['integer', 'exists:circle_rate_locations,id'];
             if ($name === 'starts_on' || $name === 'ends_on') $base = ['required', 'date'];
             $rules[$name] = $base;
+            if ($name === 'property_type_ids') $rules['property_type_ids.*'] = ['integer', 'exists:circle_rate_property_types,id'];
+            if ($name === 'location_ids') $rules['location_ids.*'] = ['integer', 'exists:circle_rate_locations,id'];
         }
 
         $data = Validator::make($request->all(), $rules)->validate();
