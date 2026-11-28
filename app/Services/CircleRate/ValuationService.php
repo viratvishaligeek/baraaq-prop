@@ -166,7 +166,8 @@ class ValuationService
             ->where(fn ($q) => $q->whereNull('effective_until')->orWhereDate('effective_until', '>=', $date))
             ->orderByDesc('priority')
             ->orderBy('id')
-            ->get();
+            ->get()
+            ->sortByDesc(fn (CircleRateRule $rule) => [(int) $rule->priority, count($rule->conditions ?? [])]);
 
         foreach ($rules as $rule) {
             if (! $this->conditionsMatch($rule->conditions ?? [], $input)) {
