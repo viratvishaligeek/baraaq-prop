@@ -197,6 +197,7 @@ $(function () {
             })
             .fail(function () { $wrap.remove(); });
         $select.on('change', function () {
+            $wrap.children('.mt-2').remove();
             $wrap.nextAll().remove();
             if ($(this).val()) {
                 $locationId.val($(this).val());
@@ -204,7 +205,7 @@ $(function () {
                 appendChildLocations($(this).val(), $wrap);
             } else {
                 const parentSelect = $wrap.prev().find('select').last();
-                $locationId.val(parentSelect.length ? parentSelect.val() : $root.val());
+                $locationId.val(parentId);
                 loadCategories();
             }
         });
