@@ -105,9 +105,9 @@ class CircleRateController extends Controller
     public function update(Request $request, CircleRate $circleRate)
     {
         $request->validate(['change_reason' => ['required', 'string', 'max:2000']]);
-        $data = $this->validated($request);
-        $data['status'] = $circleRate->status === 'published' ? 'draft' : $circleRate->status;
-        $data['verification_status'] = $circleRate->verification_status === 'verified' ? 'pending' : $circleRate->verification_status;
+        $data = $this->validated($request, $circleRate);
+        $data['status'] = 'draft';
+        $data['verification_status'] = 'pending';
         $data['verified_by'] = null;
         $data['verified_at'] = null;
 
