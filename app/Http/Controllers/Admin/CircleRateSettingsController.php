@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Services\CircleRate\CircleRateCache;
 use Illuminate\Http\Request;
 
 class CircleRateSettingsController extends Controller
@@ -39,6 +40,7 @@ class CircleRateSettingsController extends Controller
         Setting::write('circle_rate.max_property_area', $data['max_property_area'], 'circle_rate', 'string');
         Setting::write('circle_rate.rate_cache_minutes', $data['rate_cache_minutes'], 'circle_rate', 'string');
         Setting::write('circle_rate.valuation_disclaimer', $data['valuation_disclaimer'], 'circle_rate', 'string');
+        CircleRateCache::bumpVersion();
 
         return back()->with('success', 'Circle rate calculator settings saved.');
     }
