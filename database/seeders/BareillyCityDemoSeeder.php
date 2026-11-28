@@ -20,7 +20,6 @@ use App\Models\CircleRateTehsil;
 use App\Models\CircleRateUnit;
 use App\Models\CircleRateUnitConversion;
 use App\Models\CircleRateVersion;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
