@@ -95,7 +95,7 @@
                                     @if (in_array($field->input_type, ['select', 'dropdown']))
                                         <select class="form-select" name="{{ $fieldName }}" @required($field->is_required)>
                                             <option value="">{{ $field->placeholder ?: 'Select '.$field->label }}</option>
-                                            @foreach ($field->options as $option)<option value="{{ $option->value }}">{{ $option->label }}</option>@endforeach
+                                            @foreach ($field->options as $option)<option value="{{ $option->value }}" @selected(old($fieldName, $field->default_value) == $option->value)>{{ $option->label }}</option>@endforeach
                                         </select>
                                     @elseif ($field->input_type === 'multi-select')
                                         <select class="form-select" name="{{ $fieldName }}[]" multiple @required($field->is_required)>
@@ -104,7 +104,7 @@
                                     @elseif ($field->input_type === 'radio')
                                         <div class="d-flex flex-wrap gap-3">@foreach ($field->options as $option)<label class="form-check"><input class="form-check-input" type="radio" name="{{ $fieldName }}" value="{{ $option->value }}" @required($field->is_required)> <span class="form-check-label">{{ $option->label }}</span></label>@endforeach</div>
                                     @elseif ($field->input_type === 'checkbox')
-                                        <input class="form-check-input" type="checkbox" name="{{ $fieldName }}" value="1">
+                                        <input class="form-check-input" type="checkbox" name="{{ $fieldName }}" value="1" @checked(old($fieldName, $field->default_value) == '1')>
                                     @elseif ($field->input_type === 'date')
                                         <input class="form-control" type="date" name="{{ $fieldName }}" @required($field->is_required)>
                                     @elseif ($field->input_type === 'number' || $field->input_type === 'range')
@@ -261,7 +261,8 @@ $(function () {
             if (visible && Array.isArray(visibility)) {
                 visibility.forEach(function (condition) {
                     const fieldName = condition.field || '';
-                    const $target = $('[name="' + fieldName + '"], [name="custom[' + fieldName + ']"]');
+                    const normalizedName = fieldName.replace(/^custom\\./, '');
+                    const $target = $('[name="' + fieldName + '"], [name="custom[' + normalizedName + ']"], [name="custom[' + normalizedName + '][]"]');
                     const actual = $target.length ? $target.first().val() : selected[fieldName];
                     const expected = condition.value;
                     const operator = condition.operator || 'equals';
