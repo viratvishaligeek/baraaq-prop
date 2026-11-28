@@ -39,7 +39,7 @@ class CircleRateCalculatorController extends Controller
 
     public function tehsils(Request $request)
     {
-        $data = $request->validate(['district_id' => ['required', 'integer', 'exists:circle_rate_districts,id']]);
+        $data = $request->validate(['district_id' => ['required', 'integer', Rule::exists('circle_rate_districts', 'id')->where('is_active', true)]]);
         return response()->json(CircleRateTehsil::query()->where('district_id', $data['district_id'])->where('is_active', true)->orderBy('name')->get(['id', 'name']));
     }
 
@@ -47,8 +47,8 @@ class CircleRateCalculatorController extends Controller
     {
         $data = $request->validate([
             'district_id' => ['required', 'integer', 'exists:circle_rate_districts,id'],
-            'tehsil_id' => ['nullable', 'integer', 'exists:circle_rate_tehsils,id'],
-            'area_type_id' => ['nullable', 'integer', 'exists:circle_rate_area_types,id'],
+            'tehsil_id' => ['nullable', 'integer', Rule::exists('circle_rate_tehsils', 'id')->where('is_active', true)],
+            'area_type_id' => ['nullable', 'integer', Rule::exists('circle_rate_area_types', 'id')->where('is_active', true)],
             'parent_id' => ['nullable', 'integer', 'exists:circle_rate_locations,id'],
         ]);
 
@@ -63,8 +63,8 @@ class CircleRateCalculatorController extends Controller
     public function categories(Request $request)
     {
         $data = $request->validate([
-            'property_type_id' => ['required', 'integer', 'exists:circle_rate_property_types,id'],
-            'location_id' => ['nullable', 'integer', 'exists:circle_rate_locations,id'],
+            'property_type_id' => ['required', 'integer', Rule::exists('circle_rate_property_types', 'id')->where('is_active', true)],
+            'location_id' => ['nullable', 'integer', Rule::exists('circle_rate_locations', 'id')->where('is_active', true)],
         ]);
 
         $locationIds = $this->locationAndAncestorIds($data['location_id'] ?? null);
