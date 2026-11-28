@@ -28,7 +28,7 @@
         <div class="col-6 col-lg-3"><div class="card border-0 shadow-sm"><div class="card-body"><div class="small text-muted">Conflicts</div><div class="fs-4 fw-semibold text-warning">{{ $batch->conflict_rows }}</div></div></div></div>
     </div>
 
-    @if($batch->status === 'previewed' && ($validCount + $duplicateCount) > 0)
+    @if(in_array($batch->status, ['previewed', 'review_required'], true) && ($validCount + $duplicateCount) > 0)
         <form method="POST" action="{{ route('admin.circle-rates.imports.confirm', $batch) }}" class="card border-0 shadow-sm p-3 mb-4">@csrf
             <div class="form-check mb-3"><input class="form-check-input" type="checkbox" name="confirm" value="1" id="confirm-import" required><label class="form-check-label" for="confirm-import">I reviewed the preview and confirm importing {{ $validCount }} new rows as unverified drafts. Existing verified rates will not be overwritten.</label></div>
             @if($duplicateCount > 0)
