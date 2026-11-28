@@ -147,8 +147,8 @@ class CircleRateImportController extends Controller
             $tehsil = $get('tehsil') !== '' ? $this->findTehsil($get('tehsil'), $district?->id) : null;
             $areaType = $get('area_type') !== '' ? $this->findNamed(CircleRateAreaType::class, $get('area_type')) : null;
             $location = $get('location') !== '' ? $this->findLocation($get('location'), $district?->id) : null;
-            $category = $get('category') !== '' ? $this->findNamed(CircleRatePropertyCategory::class, $get('category')) : null;
-            $roadWidth = $get('road_width') !== '' ? $this->findNamed(CircleRateRoadWidthRange::class, $get('road_width')) : null;
+            $category = $get('category') !== '' ? $this->findCategory($get('category'), $propertyType?->id) : null;
+            $roadWidth = $get('road_width') !== '' ? $this->findRoadWidth($get('road_width'), $propertyType?->id, $location?->id, $district?->id) : null;
             $rate = $get('rate');
             $effectiveFrom = $this->parseDate($get('effective_from'));
             $effectiveUntil = $get('effective_until') !== '' ? $this->parseDate($get('effective_until')) : null;
@@ -320,6 +320,28 @@ class CircleRateImportController extends Controller
     {
         if ($name === '') return null;
         return $model::query()->where('is_active', true)->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->first();
+    }
+
+    private function findCategory(string $name, ?int $propertyTypeId): ?CircleRatePropertyCategory
+    {
+        if ($name === '') return null;
+        $query = CircleRatePropertyCategory::query()->where('is_active', true)->whereRaw('LOWER(name) = ?', [mb_strtolower($name)]);
+        if ($propertyTypeId) {
+            $query->whereHas('propertyTypes', fn ($q) => $q->whereKey($propertyTypeId));
+        }
+        return $query->first();
+    }
+
+    private function findRoadWidth(string $name, ?int $propertyTypeId, ?int $locationId, ?int $districtId): ?CircleRateRoadWidthRange
+    {
+        if ($name === '') return null;
+        $range = CircleRateRoadWidthRange::query()->where('is_active', true)->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->first();
+        if (! $range) return null;
+        $applicability = $range->applicability ?? [];
+        foreach (['property_type_ids' => $propertyTypeId, 'location_ids' => $locationId, 'district_ids' => $districtId] as $key => $selected) {
+            if (! empty($applicability[$key]) && ! in_array((string) $selected, array_map('strval', $applicability[$key]), true)) return null;
+        }
+        return $range;
     }
 
     private function findTehsil(string $name, ?int $districtId): ?CircleRateTehsil
