@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CircleRate;
+use App\Models\CircleRateAuditLog;
 use App\Models\CircleRateAreaType;
 use App\Models\CircleRateDistrict;
 use App\Models\CircleRateFinancialYear;
@@ -280,6 +281,17 @@ class CircleRateImportController extends Controller
                     'created_by' => $request->user()->id,
                 ]));
                 $row->update(['status' => 'imported', 'circle_rate_id' => $rate->id]);
+                CircleRateAuditLog::query()->create([
+                    'user_id' => $request->user()->id,
+                    'subject_type' => CircleRate::class,
+                    'subject_id' => $rate->id,
+                    'event' => 'imported_as_draft',
+                    'old_values' => null,
+                    'new_values' => $rate->getAttributes(),
+                    'reason' => 'Imported from batch #'.$batch->id.' row #'.$row->row_number,
+                    'source_id' => $rate->source_id,
+                    'ip_address' => $request->ip(),
+                ]);
                 $count++;
             }
 
