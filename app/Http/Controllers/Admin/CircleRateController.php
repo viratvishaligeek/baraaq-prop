@@ -268,8 +268,8 @@ class CircleRateController extends Controller
 
         if (! empty($data['conditions'])) {
             $data['conditions'] = json_decode($data['conditions'], true, 512, JSON_THROW_ON_ERROR);
-            if (! is_array($data['conditions'])) {
-                throw ValidationException::withMessages(['conditions' => 'Conditions must be a JSON array or object.']);
+            if (! is_array($data['conditions']) || ! array_is_list($data['conditions'])) {
+                throw ValidationException::withMessages(['conditions' => 'Conditions must be a JSON array of field/operator/value objects.']);
             }
         }
 
