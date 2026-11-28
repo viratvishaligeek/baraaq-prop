@@ -38,7 +38,7 @@ class BareillyCityDemoSeederTest extends TestCase
         $this->assertSame(46, CircleRate::query()->where('is_demo', true)->count());
         $this->assertSame(46, \App\Models\CircleRateVersion::query()->where('is_demo', true)->count());
         $this->assertSame(20, \App\Models\CircleRateUnitConversion::query()->where('is_demo', true)->count());
-        $this->assertSame(8, \App\Models\CircleRateRule::query()->where('is_demo', true)->count());
+        $this->assertSame(9, \App\Models\CircleRateRule::query()->where('is_demo', true)->count());
         $this->assertSame(12, \App\Models\CircleRateCalculatorField::query()->where('is_demo', true)->count());
         $this->assertGreaterThan(0, \App\Models\CircleRateCalculatorFieldOption::query()->where('is_demo', true)->count());
         $this->assertSame(1, \App\Models\CircleRateImportBatch::query()->where('is_demo', true)->count());
