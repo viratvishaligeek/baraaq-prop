@@ -325,7 +325,7 @@ class CircleRateImportController extends Controller
                 $count++;
             }
             $pendingReview = $batch->rows()->whereIn('status', ['valid', 'duplicate'])->exists();
-            $batch->update(['status' => $pendingReview ? 'review_required' : ($count > 0 ? 'imported' : 'review_required'), 'summary' => $count.' draft rates imported. '.($pendingReview ? 'Unverified duplicate rows remain available for explicit review.' : 'All eligible rows have been processed.').' Imported rates still require source verification and publication.']);
+            $batch->update(['status' => $pendingReview ? 'review_required' : ($count > 0 ? 'imported' : 'review_required'), 'summary' => $count.' draft rates imported. '.($pendingReview ? 'Unverified duplicate rows remain available for explicit review.' : 'All eligible rows have been processed.').' Imported rates still require source verification and publication.', 'confirmed_at' => $count > 0 ? now() : $batch->confirmed_at]);
             return $count;
         });
 
