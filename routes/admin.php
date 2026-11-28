@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AppearanceController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\CircleRateDashboardController;
+use App\Http\Controllers\Admin\CircleRateDemoDataController;
 use App\Http\Controllers\Admin\CircleRateController;
 use App\Http\Controllers\Admin\CircleRateMasterController;
 use App\Http\Controllers\Admin\CircleRateSourceController;
@@ -42,6 +43,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware(['auth', 'admin.access'])->group(function () {
         Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
+        Route::get('/circle-rates/demo-data', [CircleRateDemoDataController::class, 'index'])->middleware('permission:circle-rates.view')->name('circle-rates.demo.index');
+        Route::post('/circle-rates/demo-data/seed', [CircleRateDemoDataController::class, 'seed'])->middleware('permission:circle-rates.manage')->name('circle-rates.demo.seed');
+        Route::post('/circle-rates/demo-data/reset', [CircleRateDemoDataController::class, 'reset'])->middleware('permission:circle-rates.manage')->name('circle-rates.demo.reset');
         Route::get('/circle-rates', CircleRateDashboardController::class)->middleware('permission:circle-rates.view')->name('circle-rates.dashboard');
         Route::get('/circle-rates/settings', [CircleRateSettingsController::class, 'index'])->middleware('permission:circle-rates.view')->name('circle-rates.settings.index');
         Route::put('/circle-rates/settings', [CircleRateSettingsController::class, 'update'])->middleware('permission:circle-rates.manage')->name('circle-rates.settings.update');
