@@ -4,6 +4,7 @@ namespace App\Services\CircleRate;
 
 use App\Models\CircleRate;
 use App\Models\CircleRateFinancialYear;
+use App\Models\CircleRateRule;
 use App\Models\CircleRateUnitConversion;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -41,6 +42,7 @@ class ValuationService
 
         $rate = $this->resolveRate($data, $date);
         $valuation = $this->applyStrategy($rate, (float) $data['area'], (int) $data['area_unit_id']);
+        $valuation = $this->applyRules($data, $valuation, $date);
         $previous = $this->previousYearValuation($data, $year, (float) $data['area']);
 
         $previousValue = $previous['estimated_value'] ?? null;
@@ -64,6 +66,7 @@ class ValuationService
                 'rate' => (float) $rate->rate,
                 'rate_unit' => $rate->unit->name,
                 'applied_conditions' => $rate->conditions ?? [],
+                'applied_rules' => $valuation['applied_rules'] ?? [],
                 'source' => $rate->source?->title,
                 'verification_status' => $rate->verification_status,
                 'valuation_date' => $date,
@@ -131,6 +134,86 @@ class ValuationService
         }
 
         return $first;
+    }
+
+
+    private function applyRules(array $input, array $valuation, string $date): array
+    {
+        $applied = [];
+        $amount = (float) $valuation['estimated_value'];
+
+        $rules = CircleRateRule::query()
+            ->with('source:id,title')
+            ->where('is_active', true)
+            ->where('is_verified', true)
+            ->whereNotNull('source_id')
+            ->where(fn ($q) => $q->whereNull('effective_from')->orWhereDate('effective_from', '<=', $date))
+            ->where(fn ($q) => $q->whereNull('effective_until')->orWhereDate('effective_until', '>=', $date))
+            ->orderByDesc('priority')
+            ->orderBy('id')
+            ->get();
+
+        foreach ($rules as $rule) {
+            if (! $this->conditionsMatch($rule->conditions ?? [], $input)) {
+                continue;
+            }
+
+            $actions = $rule->actions ?? [];
+            foreach (($actions['require_fields'] ?? []) as $field) {
+                if (blank(data_get($input, $field))) {
+                    throw ValidationException::withMessages([
+                        'property_type_id' => 'Additional information is required by the verified rule: '.$rule->name.' ('.$field.').',
+                    ]);
+                }
+            }
+
+            if (! empty($actions['deny_calculation'])) {
+                throw ValidationException::withMessages([
+                    'property_type_id' => 'The selected property matches a restriction rule: '.$rule->name.'.',
+                ]);
+            }
+
+            $change = [];
+            if (array_key_exists('rate_multiplier', $actions)) {
+                $multiplier = $actions['rate_multiplier'];
+                if (! is_numeric($multiplier) || (float) $multiplier <= 0) {
+                    throw new RuntimeException('A verified calculation rule contains an invalid rate multiplier.');
+                }
+                $amount *= (float) $multiplier;
+                $change['rate_multiplier'] = (float) $multiplier;
+            }
+
+            if (array_key_exists('fixed_adjustment', $actions)) {
+                if (! is_numeric($actions['fixed_adjustment'])) {
+                    throw new RuntimeException('A verified calculation rule contains an invalid fixed adjustment.');
+                }
+                $amount += (float) $actions['fixed_adjustment'];
+                $change['fixed_adjustment'] = (float) $actions['fixed_adjustment'];
+            }
+
+            if ($change || ! empty($actions['require_fields'])) {
+                $applied[] = [
+                    'rule_id' => $rule->id,
+                    'name' => $rule->name,
+                    'source' => $rule->source?->title,
+                    'changes' => $change,
+                    'required_fields' => $actions['require_fields'] ?? [],
+                ];
+            }
+
+            if ($rule->stop_processing) {
+                break;
+            }
+        }
+
+        if ($amount < 0) {
+            throw new RuntimeException('The configured calculation rules produced a negative valuation. Review the verified rule configuration.');
+        }
+
+        $valuation['estimated_value'] = round($amount, 2);
+        $valuation['applied_rules'] = $applied;
+
+        return $valuation;
     }
 
     private function conditionsMatch(array $conditions, array $input): bool
@@ -231,6 +314,7 @@ class ValuationService
         try {
             $previousRate = $this->resolveRate($previousInput, $previousDate);
             $result = $this->applyStrategy($previousRate, $area, (int) $data['area_unit_id']);
+            $result = $this->applyRules($previousInput, $result, $previousDate);
         } catch (ValidationException|RuntimeException) {
             return null;
         }
