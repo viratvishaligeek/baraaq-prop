@@ -358,13 +358,13 @@ class BareillyCityDemoSeeder extends Seeder
                     ->map(fn (string $slug) => $categories[$slug])
                     ->values();
 
-                foreach ($locations as $locationIndex => $location) {
+                foreach (array_values($locations) as $locationIndex => $location) {
                     foreach ($years as $yearIndex => $year) {
                         // General fallback makes the type/location/year calculable
                         // even when category and road-width are not selected.
                         $this->seedRate(
                             $district, $tehsil, $urban, $location, $type, null, null,
-                            $year, $units['demo-square-foot'] ?? $units['square-foot'],
+                            $year, $units['square-foot'],
                             $source, $actor, $baseRates[$typeSlug], $locationIndex, $yearIndex
                         );
                         $rateCount++;
