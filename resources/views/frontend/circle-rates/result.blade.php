@@ -31,7 +31,7 @@
                     <div class="col-md-6"><strong>Verification:</strong> {{ ucfirst($record->rate?->verification_status ?? 'unknown') }}</div>
                     <div class="col-md-6"><strong>Source document:</strong>
                         @if($record->rate?->source?->document_path)
-                            <a href="{{ \\Illuminate\\Support\\Facades\\Storage::disk($record->rate->source->document_disk)->url($record->rate->source->document_path) }}" target="_blank" rel="noopener">{{ $record->rate->source->title }}</a>
+                            <a href="{{ asset('storage/'.$record->rate->source->document_path) }}" target="_blank" rel="noopener">{{ $record->rate->source->title }}</a>
                         @else{{ $record->rate?->source?->title ?? 'Not supplied' }}@endif
                     </div>
                     <div class="col-md-6"><strong>Calculation date:</strong> {{ $record->valued_at?->format('d M Y, H:i') }}</div>
