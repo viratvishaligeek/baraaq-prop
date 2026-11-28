@@ -36,6 +36,11 @@ class BareillyCityDemoSeederTest extends TestCase
         $this->assertSame(2, CircleRateFinancialYear::query()->where('is_demo', true)->count());
         $this->assertSame(7, CircleRate::query()->where('is_demo', true)->distinct('property_type_id')->count('property_type_id'));
         $this->assertSame(46, CircleRate::query()->where('is_demo', true)->count());
+        $this->assertSame(5, CircleRate::query()->where('is_demo', true)->distinct()->count('unit_id'));
+        $this->assertSame(8, CircleRate::query()->where('is_demo', true)->distinct()->count('category_id'));
+        $this->assertSame(5, CircleRate::query()->where('is_demo', true)->distinct()->count('road_width_range_id'));
+        $this->assertSame(23, CircleRate::query()->where('is_demo', true)->whereHas('financialYear', fn ($q) => $q->where('name', '2025-26 (DEMO)'))->count());
+        $this->assertSame(23, CircleRate::query()->where('is_demo', true)->whereHas('financialYear', fn ($q) => $q->where('name', '2026-27 (DEMO)'))->count());
         $this->assertSame(46, \App\Models\CircleRateVersion::query()->where('is_demo', true)->count());
         $this->assertSame(20, \App\Models\CircleRateUnitConversion::query()->where('is_demo', true)->count());
         $this->assertSame(9, \App\Models\CircleRateRule::query()->where('is_demo', true)->count());
@@ -85,7 +90,8 @@ class BareillyCityDemoSeederTest extends TestCase
         $this->assertTrue($result['breakdown']['is_demo']);
         $this->assertSame('pending', $result['breakdown']['verification_status']);
         $this->assertNotNull($result['previous_year']);
-        $this->assertNotEmpty($result['breakdown']['applied_rules']);
+        $this->assertGreaterThanOrEqual(4, count($result['breakdown']['applied_rules']));
+        $this->assertSame('DEMO – Bareilly City – Residential demo valuation adjustment', $result['breakdown']['applied_rules'][0]['name']);
     }
 
     public function test_demo_reset_preserves_official_and_manually_managed_records(): void
