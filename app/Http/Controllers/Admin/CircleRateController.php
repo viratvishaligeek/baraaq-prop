@@ -340,7 +340,7 @@ class CircleRateController extends Controller
         if (! empty($data['effective_until']) && $data['effective_until'] > $financialYear->ends_on->toDateString()) {
             throw ValidationException::withMessages(['effective_until' => 'The expiry date cannot extend beyond the selected financial year.']);
         }
-        if ($unit->dimension !== 'area' && in_array($propertyType->calculation_strategy, ['land_area', 'agricultural_land', 'agricultural_area', 'residential_plot', 'commercial_plot', 'industrial_plot', 'mixed_use_land', 'building_area'], true)) {
+        if ($unit->dimension !== 'area') {
             throw ValidationException::withMessages(['unit_id' => 'Area-based property types require a rate unit with the area dimension.']);
         }
 
