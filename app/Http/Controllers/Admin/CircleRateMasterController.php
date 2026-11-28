@@ -396,6 +396,21 @@ class CircleRateMasterController extends Controller
             if ($field['type'] === 'boolean') $data[$name] = $request->boolean($name);
             if ($field['type'] === 'json' && isset($data[$name])) $data[$name] = json_decode($data[$name], true, 512, JSON_THROW_ON_ERROR);
         }
+        if ($definition['model'] === CircleRatePropertyType::class) {
+            $formula = $data['formula_configuration']['formula'] ?? null;
+            $supportedStrategies = ['land_area', 'agricultural_land', 'agricultural_area', 'residential_plot', 'commercial_plot', 'industrial_plot', 'mixed_use_land', 'building_area'];
+            if (! in_array($data['calculation_strategy'] ?? '', $supportedStrategies, true) && (! is_string($formula) || trim($formula) === '')) {
+                throw ValidationException::withMessages(['formula_configuration' => 'A safe formula is required for a custom calculation strategy.']);
+            }
+            if (is_string($formula) && trim($formula) !== '') {
+                try {
+                    app(\\App\\Services\\CircleRate\\SafeFormulaEvaluator::class)->validate($formula);
+                } catch (\\InvalidArgumentException $exception) {
+                    throw ValidationException::withMessages(['formula_configuration' => $exception->getMessage()]);
+                }
+            }
+        }
+
         if ($definition['model'] === CircleRateRule::class) {
             if (! is_array($data['conditions'] ?? null) || ! array_is_list($data['conditions'])) {
                 throw ValidationException::withMessages(['conditions' => 'Rule conditions must be a JSON array of field/operator/value objects.']);
