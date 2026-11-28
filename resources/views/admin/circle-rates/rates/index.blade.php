@@ -29,7 +29,7 @@
                         <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.circle-rates.rates.edit', $rate) }}">Edit</a>
                         <form class="d-inline" method="POST" action="{{ route('admin.circle-rates.rates.duplicate', $rate) }}">@csrf<button class="btn btn-sm btn-outline-secondary">Duplicate</button></form>
                         @if($rate->verification_status === 'pending' && $rate->source_id)
-                            <form class="d-inline" method="POST" action="{{ route('admin.circle-rates.rates.verify', $rate) }}">@csrf @method('PATCH')<button class="btn btn-sm btn-success" onclick="return confirm('Verify and publish this rate?')">Verify</button></form>
+                            <form class="d-inline-flex align-items-center gap-1" method="POST" action="{{ route('admin.circle-rates.rates.verify', $rate) }}">@csrf @method('PATCH')<input class="form-control form-control-sm" style="max-width:150px" name="reason" placeholder="Verification reason" required><button class="btn btn-sm btn-success" onclick="return confirm('Verify and publish this rate?')">Verify</button></form>
                         @endif
                         <form class="d-inline" method="POST" action="{{ route('admin.circle-rates.rates.destroy', $rate) }}">@csrf @method('DELETE')<button class="btn btn-sm btn-outline-danger" onclick="return confirm('Archive this rate?')">Archive</button></form>
                     </td>
