@@ -93,7 +93,7 @@ class CircleRateLocationImportController extends Controller
             if ($get('area_type') !== '' && ! $areaType) $errors[] = 'Area type was not found in master data.';
             if ($get('level') !== '' && ! $level) $errors[] = 'Location level was not found in master data.';
             if ($name === '') $errors[] = 'Location name is required.';
-            if ($parentName !== '' && $district && ! CircleRateLocation::query()->where('district_id', $district->id)->whereRaw('LOWER(name) = ?', [mb_strtolower($parentName)])->exists() && ! isset($seenNames[mb_strtolower($parentName)])) $errors[] = 'Parent location must exist already or appear earlier in this file.';
+            if ($parentName !== '' && $district && ! CircleRateLocation::query()->where('district_id', $district->id)->whereRaw('LOWER(name) = ?', [mb_strtolower($parentName)])->exists() && ! isset($seenNames[($district?->id ?? 0).':'.mb_strtolower($parentName)])) $errors[] = 'Parent location must exist already or appear earlier in this file.';
             if ($slug === '') $errors[] = 'A valid location slug could not be generated.';
 
             $normalized = [
@@ -118,7 +118,7 @@ class CircleRateLocationImportController extends Controller
             $status = ! $errors ? 'valid' : (str_contains(implode(' ', $errors), 'already exists') || str_contains(implode(' ', $errors), 'duplicated') ? 'duplicate' : 'invalid');
             if ($status === 'valid') {
                 $valid++;
-                $seenNames[mb_strtolower($name)] = true;
+                $seenNames[($district?->id ?? 0).':'.mb_strtolower($name)] = true;
             } elseif ($status === 'duplicate') $duplicates++;
             else $invalid++;
 
