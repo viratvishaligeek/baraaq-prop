@@ -10,6 +10,7 @@ use App\Models\CircleRateDistrict;
 use App\Models\CircleRateFinancialYear;
 use App\Models\CircleRateImportBatch;
 use App\Models\CircleRateImportRow;
+use App\Models\CircleRateVersion;
 use App\Models\CircleRateLocation;
 use App\Models\CircleRatePropertyCategory;
 use App\Models\CircleRatePropertyType;
@@ -134,7 +135,7 @@ class CircleRateImportController extends Controller
 
         $year = $batch->financialYear;
         $batch->rows()->delete();
-        $valid = $invalid = $conflicts = 0;
+        $valid = $invalid = $conflicts = $duplicates = 0;
         $seenRows = [];
 
         foreach ($spreadsheet['rows'] as $index => $row) {
@@ -191,6 +192,7 @@ class CircleRateImportController extends Controller
             ];
 
             $conflict = false;
+            $duplicate = false;
             if (! $errors) {
                 $signature = hash('sha256', json_encode([
                     $normalized['district_id'], $normalized['tehsil_id'], $normalized['area_type_id'],
@@ -203,26 +205,23 @@ class CircleRateImportController extends Controller
                     $errors[] = 'This row duplicates another row in the same uploaded file.';
                 }
                 $seenRows[$signature] = true;
-                $existing = CircleRate::query()->where('district_id', $normalized['district_id'])
-                    ->where('property_type_id', $normalized['property_type_id'])
-                    ->where('tehsil_id', $normalized['tehsil_id'])
-                    ->where('area_type_id', $normalized['area_type_id'])
-                    ->where('financial_year_id', $normalized['financial_year_id'])
-                    ->where('unit_id', $normalized['unit_id'])
-                    ->whereDate('effective_from', '<=', $normalized['effective_from'])
-                    ->where(fn ($q) => $q->whereNull('effective_until')->orWhereDate('effective_until', '>=', $normalized['effective_from']))
-                    ->where('verification_status', 'verified')
-                    ->where('status', 'published')
-                    ->whereNull('deleted_at')
-                    ->where('location_id', $normalized['location_id'])
-                    ->where('category_id', $normalized['category_id'])
-                    ->where('road_width_range_id', $normalized['road_width_range_id'])
-                    ->exists();
-                $conflict = $conflict || $existing;
-                if ($existing) $errors[] = 'A verified rate already exists for this same location, property type, year and effective date. Manual review is required.';
+
+                $existingRecords = $this->matchingRates($normalized);
+                $verifiedConflict = $existingRecords->contains(fn (CircleRate $existingRate) => $existingRate->verification_status === 'verified' && $existingRate->status === 'published');
+                if ($verifiedConflict) {
+                    $conflict = true;
+                    $errors[] = 'A verified rate already exists for an overlapping effective date. It cannot be overwritten.';
+                } elseif ($existingRecords->count() > 1) {
+                    $conflict = true;
+                    $errors[] = 'Multiple existing rates match this record. Manual review is required.';
+                } elseif ($existingRecords->count() === 1) {
+                    $duplicate = true;
+                    $normalized['existing_rate_id'] = $existingRecords->first()->id;
+                    $errors[] = 'An unverified rate already exists. Select the explicit update option during confirmation to create a historical version and replace it.';
+                }
             }
 
-            $status = $conflict ? 'conflict' : ($errors ? 'invalid' : 'valid');
+            $status = $conflict ? 'conflict' : ($duplicate ? 'duplicate' : ($errors ? 'invalid' : 'valid'));
             $batch->rows()->create([
                 'row_number' => $index + 2,
                 'original_data' => $row,
@@ -233,6 +232,7 @@ class CircleRateImportController extends Controller
 
             if ($status === 'valid') $valid++;
             elseif ($status === 'conflict') $conflicts++;
+            elseif ($status === 'duplicate') $duplicates++;
             else $invalid++;
         }
 
@@ -243,7 +243,7 @@ class CircleRateImportController extends Controller
             'valid_rows' => $valid,
             'invalid_rows' => $invalid,
             'conflict_rows' => $conflicts,
-            'summary' => 'Preview completed. No rates have been written to the published rate table.',
+            'summary' => 'Preview completed. '.$valid.' new rows, '.$duplicates.' existing unverified rows, '.$invalid.' invalid rows and '.$conflicts.' conflicts. Nothing has been published.',
         ]);
 
         return redirect()->route('admin.circle-rates.imports.show', $batch)->with('success', 'Import preview generated. Review every warning before confirming.');
@@ -251,45 +251,71 @@ class CircleRateImportController extends Controller
 
     public function confirm(Request $request, CircleRateImportBatch $batch)
     {
-        $request->validate(['confirm' => ['accepted']]);
+        $request->validate(['confirm' => ['accepted'], 'update_unverified' => ['nullable', 'boolean']]);
+        $updateUnverified = $request->boolean('update_unverified');
         abort_unless($batch->status === 'previewed', 422, 'This import batch is not ready for confirmation.');
 
-        $imported = DB::transaction(function () use ($request, $batch): int {
+        $imported = DB::transaction(function () use ($request, $batch, $updateUnverified): int {
             $count = 0;
-            foreach ($batch->rows()->where('status', 'valid')->orderBy('row_number')->lockForUpdate()->get() as $row) {
+            $statuses = $updateUnverified ? ['valid', 'duplicate'] : ['valid'];
+            foreach ($batch->rows()->whereIn('status', $statuses)->orderBy('row_number')->lockForUpdate()->get() as $row) {
                 $data = $row->normalized_data ?? [];
-                $conflict = CircleRate::query()->where('district_id', $data['district_id'])
-                    ->where('property_type_id', $data['property_type_id'])
-                    ->where('tehsil_id', $data['tehsil_id'])
-                    ->where('area_type_id', $data['area_type_id'])
-                    ->where('financial_year_id', $data['financial_year_id'])
-                    ->whereDate('effective_from', '<=', $data['effective_from'])
-                    ->where(fn ($q) => $q->whereNull('effective_until')->orWhereDate('effective_until', '>=', $data['effective_from']))
-                    ->where('verification_status', 'verified')
-                    ->where('status', 'published')
-                    ->whereNull('deleted_at')
-                    ->where('location_id', $data['location_id'])
-                    ->where('category_id', $data['category_id'])
-                    ->where('road_width_range_id', $data['road_width_range_id'])
-                    ->exists();
+                $matches = $this->matchingRates($data);
+                $verifiedConflict = $matches->contains(fn (CircleRate $existingRate) => $existingRate->verification_status === 'verified' && $existingRate->status === 'published');
 
-                if ($conflict) {
-                    $row->update(['status' => 'conflict', 'validation_errors' => ['A verified rate appeared after preview; no data was overwritten.']]);
+                if ($verifiedConflict || $matches->count() > 1) {
+                    $row->update(['status' => 'conflict', 'validation_errors' => ['A conflicting or verified rate exists at confirmation time. No verified rate was overwritten.']]);
                     continue;
                 }
 
-                $rate = CircleRate::query()->create(array_merge($data, [
-                    'status' => 'draft',
-                    'verification_status' => 'pending',
-                    'created_by' => $request->user()->id,
-                ]));
+                $existingRate = $matches->first();
+                if ($existingRate && ! $updateUnverified) {
+                    $row->update([
+                        'status' => 'duplicate',
+                        'normalized_data' => array_merge($data, ['existing_rate_id' => $existingRate->id]),
+                        'validation_errors' => ['An unverified rate now exists. Confirm again with the explicit update option to replace it safely.'],
+                    ]);
+                    continue;
+                }
+
+                if ($existingRate) {
+                    $old = $existingRate->getAttributes();
+                    $version = ((int) $existingRate->versions()->max('version_number')) + 1;
+                    CircleRateVersion::query()->create([
+                        'circle_rate_id' => $existingRate->id,
+                        'version_number' => $version,
+                        'snapshot' => $old,
+                        'change_reason' => 'Updated from import batch #'.$batch->id.' row #'.$row->row_number,
+                        'changed_by' => $request->user()->id,
+                    ]);
+                    unset($data['existing_rate_id']);
+                    $existingRate->update(array_merge($data, [
+                        'status' => 'draft',
+                        'verification_status' => 'pending',
+                        'verified_by' => null,
+                        'verified_at' => null,
+                    ]));
+                    $rate = $existingRate->fresh();
+                    $event = 'import_updated_existing_draft';
+                    $oldValues = $old;
+                } else {
+                    unset($data['existing_rate_id']);
+                    $rate = CircleRate::query()->create(array_merge($data, [
+                        'status' => 'draft',
+                        'verification_status' => 'pending',
+                        'created_by' => $request->user()->id,
+                    ]));
+                    $event = 'imported_as_draft';
+                    $oldValues = null;
+                }
+
                 $row->update(['status' => 'imported', 'circle_rate_id' => $rate->id]);
                 CircleRateAuditLog::query()->create([
                     'user_id' => $request->user()->id,
                     'subject_type' => CircleRate::class,
                     'subject_id' => $rate->id,
-                    'event' => 'imported_as_draft',
-                    'old_values' => null,
+                    'event' => $event,
+                    'old_values' => $oldValues,
                     'new_values' => $rate->getAttributes(),
                     'reason' => 'Imported from batch #'.$batch->id.' row #'.$row->row_number,
                     'source_id' => $rate->source_id,
@@ -297,7 +323,6 @@ class CircleRateImportController extends Controller
                 ]);
                 $count++;
             }
-
             $batch->update(['status' => $count > 0 ? 'imported' : 'review_required', 'summary' => $count.' draft rates imported. They still require source verification and publication.']);
             return $count;
         });
@@ -316,6 +341,23 @@ class CircleRateImportController extends Controller
             }
             fclose($output);
         }, 'circle-rate-import-errors-'.$batch->id.'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    private function matchingRates(array $data)
+    {
+        return CircleRate::query()
+            ->where('district_id', $data['district_id'])
+            ->where('property_type_id', $data['property_type_id'])
+            ->where('tehsil_id', $data['tehsil_id'])
+            ->where('area_type_id', $data['area_type_id'])
+            ->where('financial_year_id', $data['financial_year_id'])
+            ->where('unit_id', $data['unit_id'])
+            ->whereDate('effective_from', '<=', $data['effective_from'])
+            ->where(fn ($q) => $q->whereNull('effective_until')->orWhereDate('effective_until', '>=', $data['effective_from']))
+            ->where('location_id', $data['location_id'])
+            ->where('category_id', $data['category_id'])
+            ->where('road_width_range_id', $data['road_width_range_id'])
+            ->get();
     }
 
     private function findNamed(string $model, string $name): ?object
