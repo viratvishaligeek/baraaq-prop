@@ -26,6 +26,7 @@ class CircleRateDashboardController extends Controller
             'area_type_id' => ['nullable', 'integer'],
             'property_type_id' => ['nullable', 'integer'],
             'verification_status' => ['nullable', 'in:pending,verified,rejected'],
+            'demo_filter' => ['nullable', 'in:demo,official'],
         ]);
         $year = CircleRateFinancialYear::query()->where('is_current', true)->where('is_active', true)->first();
         $rateQuery = CircleRate::query()
@@ -34,7 +35,9 @@ class CircleRateDashboardController extends Controller
             ->when($filters['tehsil_id'] ?? null, fn ($q, $id) => $q->where('tehsil_id', $id))
             ->when($filters['area_type_id'] ?? null, fn ($q, $id) => $q->where('area_type_id', $id))
             ->when($filters['property_type_id'] ?? null, fn ($q, $id) => $q->where('property_type_id', $id))
-            ->when($filters['verification_status'] ?? null, fn ($q, $status) => $q->where('verification_status', $status));
+            ->when($filters['verification_status'] ?? null, fn ($q, $status) => $q->where('verification_status', $status))
+            ->when(($filters['demo_filter'] ?? null) === 'demo', fn ($q) => $q->where('is_demo', true))
+            ->when(($filters['demo_filter'] ?? null) === 'official', fn ($q) => $q->where('is_demo', false));
 
         return view('admin.circle-rates.dashboard', [
             'currentYear' => $year,
