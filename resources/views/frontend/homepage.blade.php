@@ -175,14 +175,26 @@
             <div class="row gy-4 justify-content-center">
                 @forelse ($featuredServices as $service)
                     <div class="col-xxl-3 col-xl-4 col-lg-4 col-md-6">
-                        <div class="service-card-2">
-                            <div class="box-icon">
-                                <img src="{{ asset('theme-assets/img/icon/service_card_2_1.svg') }}" alt="Icon">
+                         <div class="service-card">
+                            <div class="box-thumb"><a href="{{ route('services.show', $service) }}">
+                                    @if ($service->featured_image)
+                                        <img src="{{ Storage::disk('public')->url($service->featured_image) }}"
+                                        alt="{{ $service->title }}">@else<div
+                                            class="service-image-placeholder bg-smoke d-flex align-items-center justify-content-center">
+                                            <span class="text-muted">Image pending</span></div>
+                                    @endif
+                                </a>
                             </div>
                             <div class="box-content">
-                                <h3 class="box-title">
-                                    <a href="{{ route('services.show', $service) }}">{{ $service->title }}</a>
-                                </h3>
+                                <div class="icon-wrap">
+                                    <div class="icon"><img src="{{ asset('theme-assets/img/icon/why-icon-1-1.svg') }}"
+                                            alt="img"></div>
+                                    <div class="number">
+                                        <h3>{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</h3>
+                                    </div>
+                                </div>
+                                <h3 class="box-title"><a
+                                        href="{{ route('services.show', $service) }}">{{ $service->title }}</a></h3>
                                 <p class="box-text">{{ $service->excerpt }}</p>
                             </div>
                         </div>
@@ -321,12 +333,12 @@
                                         <div class="icon">
                                             <img src="{{ asset('theme-assets/img/icon/sqft.svg') }}" alt="icon">
                                         </div>
-                                        {{ $property->area ? number_format((float)$property->area) . ' ' . ($property->area_unit ?? 'sqft') : '—' }}
+                                        {{ $property->area ? number_format((float) $property->area) . ' ' . ($property->area_unit ?? 'sqft') : '—' }}
                                     </li>
                                 </ul>
                                 <div class="property-bottom">
                                     <h6 class="box-title price-red-shine">
-                                        {{ $property->price ? '₹ '.number_format((float) $property->price, 2) : $property->price_label ?? 'Price on request' }}
+                                        {{ $property->price ? '₹ ' . number_format((float) $property->price, 2) : $property->price_label ?? 'Price on request' }}
                                     </h6>
                                     <a class="th-btn sm style3 pill"
                                         href="{{ route('properties.show', $property) }}">View More</a>
@@ -580,14 +592,17 @@
                         <div class="testi-bottom-item">
                             <div class="trust-content">
                                 <div class="icon">
-                                    <img src="{{ asset('theme-assets/img/icon/star-icon.svg') }}" alt="img">
+                                    @if (!empty($sectionConfig['star_icon_image']))
+                                        <img src="{{ $sectionConfig['star_icon_image'] }}" alt="Star">
+                                    @endif
                                 </div>
-                                <h4 class="box-title">{{ $testimonialsConfig['trust_brand'] ?? 'Client reviews' }}</h4>
+                                <h4 class="box-title">{{ $sectionConfig['trust_brand'] ?? '' }}</h4>
                             </div>
                             <div class="bottom">
                                 <div class="avatar">
-                                    <img src="{{ asset('theme-assets/img/hero/heror-1-avator-group.png') }}"
-                                        alt="img">
+                                    @if (!empty($sectionConfig['avatar_group_image']))
+                                        <img src="{{ $sectionConfig['avatar_group_image'] }}" alt="Reviewers">
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -641,7 +656,7 @@
 
                                                                 </i>
                                                                 <div class="rating">
-                                                                    <span>{{ $testimonial->rating ? number_format((float)$testimonial->rating, 1) : '—' }}</span>
+                                                                    <span>{{ $testimonial->rating ? number_format((float) $testimonial->rating, 1) : '—' }}</span>
                                                                 </div>
                                                             </div>
                                                         </div>

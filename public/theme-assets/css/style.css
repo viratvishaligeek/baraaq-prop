@@ -8491,7 +8491,7 @@ ol.wp-block-rss {
 .footer-widget.widget_archive a::before,
 .footer-widget.widget_categories a::before,
 .footer-widget.widget_nav_menu a::before {
-    content: "";
+    content: "☆";
     position: absolute;
     font-weight: 400;
     font-family: var(--icon-font);
@@ -8500,13 +8500,13 @@ ol.wp-block-rss {
     opacity: 1;
     -webkit-transform: translateY(0);
     transform: translateY(0);
-    font-size: 16px;
+    font-size: 18px;
     background-color: rgba(0, 0, 0, 0);
     border: none;
-    color: #99a4a3;
+    color: yellow;
     -webkit-transition: .4s;
     transition: .4s;
-    color: var(--theme-color)
+    /* color: var(--theme-color) */
 }
 
 .footer-widget.widget_meta li>span,

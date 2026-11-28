@@ -90,6 +90,7 @@
             isolation: isolate;
             color: darkred !important;
         }
+
         .price-red-shine::after {
             content: "";
             position: absolute;
@@ -114,6 +115,7 @@
 
             animation: flashShine 2.2s ease-in-out infinite;
         }
+
         .shine-heading {
             position: relative;
             display: inline-block;
@@ -242,7 +244,7 @@
         <button class="th-btn preloaderCls">Cancel Preloader</button>
         <div id="preloader" class="preloader-inner">
             <div class="txt-loading" aria-label="{{ 'Buraaqh' }}">
-                @foreach (mb_str_split((string) ('Buraaqh')) as $letter)
+                @foreach (mb_str_split((string) 'Buraaqh') as $letter)
                     <span data-text-preloader="{{ e($letter) }}" class="letters-loading">{{ $letter }}</span>
                 @endforeach
             </div>
