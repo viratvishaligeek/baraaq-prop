@@ -118,6 +118,7 @@ class CircleRateImportController extends Controller
 
     public function preview(Request $request, CircleRateImportBatch $batch, SpreadsheetReader $reader)
     {
+        abort_unless(! str_starts_with($batch->status, 'location_'), 404);
         $mapping = $request->validate([
             'mapping' => ['required', 'array'],
             'mapping.district' => ['required', 'string', 'max:180'],
@@ -261,6 +262,7 @@ class CircleRateImportController extends Controller
 
     public function confirm(Request $request, CircleRateImportBatch $batch)
     {
+        abort_unless(! str_starts_with($batch->status, 'location_'), 404);
         $request->validate(['confirm' => ['accepted'], 'update_unverified' => ['nullable', 'boolean']]);
         $updateUnverified = $request->boolean('update_unverified');
         abort_unless(in_array($batch->status, ['previewed', 'review_required'], true), 422, 'This import batch is not ready for confirmation.');
