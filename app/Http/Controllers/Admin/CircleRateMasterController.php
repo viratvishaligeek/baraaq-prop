@@ -412,8 +412,11 @@ class CircleRateMasterController extends Controller
         if (array_key_exists('is_verified', $data) && $data['is_verified'] && ! request()->user()->isAdministrator() && ! request()->user()->hasPermission('circle-rates.verify')) {
             throw ValidationException::withMessages(['is_verified' => 'Only an authorized verifier can approve conversions or calculation rules.']);
         }
-        if ($definition['model'] === CircleRateRule::class && ! empty($data['is_verified']) && empty($data['source_id'])) {
-            throw ValidationException::withMessages(['source_id' => 'Attach an official source document before verifying this rule.']);
+        if ($definition['model'] === CircleRateRule::class && ! empty($data['is_verified'])) {
+            $ruleSource = CircleRateSource::query()->find($data['source_id'] ?? null);
+            if (! $ruleSource || (! $ruleSource->document_path && ! $ruleSource->source_url)) {
+                throw ValidationException::withMessages(['source_id' => 'Attach an official source document or documented official source URL before verifying this rule.']);
+            }
         }
         if ($definition['model'] === CircleRateUnitConversion::class) {
             if (($data['from_unit_id'] ?? null) === ($data['to_unit_id'] ?? null)) {
