@@ -176,6 +176,12 @@ class BareillyCityDemoSeeder extends Seeder
                 );
             }
 
+            // Make every demo category selectable for each seeded city locality.
+            $demoLocationIds = collect($locations)->pluck('id')->all();
+            foreach ($categories as $category) {
+                $category->locations()->syncWithoutDetaching($demoLocationIds);
+            }
+
             // Square-foot base factors. Bigha is intentionally configurable demo data,
             // not an asserted local statutory conversion.
             $unitDefinitions = [
