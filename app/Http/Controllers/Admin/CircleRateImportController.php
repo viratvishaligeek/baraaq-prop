@@ -254,7 +254,7 @@ class CircleRateImportController extends Controller
     {
         $request->validate(['confirm' => ['accepted'], 'update_unverified' => ['nullable', 'boolean']]);
         $updateUnverified = $request->boolean('update_unverified');
-        abort_unless($batch->status === 'previewed', 422, 'This import batch is not ready for confirmation.');
+        abort_unless(in_array($batch->status, ['previewed', 'review_required'], true), 422, 'This import batch is not ready for confirmation.');
 
         $imported = DB::transaction(function () use ($request, $batch, $updateUnverified): int {
             $count = 0;
@@ -324,7 +324,8 @@ class CircleRateImportController extends Controller
                 ]);
                 $count++;
             }
-            $batch->update(['status' => $count > 0 ? 'imported' : 'review_required', 'summary' => $count.' draft rates imported. They still require source verification and publication.']);
+            $pendingReview = $batch->rows()->whereIn('status', ['valid', 'duplicate'])->exists();
+            $batch->update(['status' => $pendingReview ? 'review_required' : ($count > 0 ? 'imported' : 'review_required'), 'summary' => $count.' draft rates imported. '.($pendingReview ? 'Unverified duplicate rows remain available for explicit review.' : 'All eligible rows have been processed.').' Imported rates still require source verification and publication.']);
             return $count;
         });
 
