@@ -202,7 +202,7 @@ return new class extends Migration
             $table->json('normalized_data')->nullable();
             $table->json('validation_errors')->nullable();
             $table->string('status', 30)->default('pending')->index();
-            $table->foreignId('circle_rate_id')->nullable()->constrained('circle_rates')->nullOnDelete();
+            $table->unsignedBigInteger('circle_rate_id')->nullable();
             $table->timestamps();
             $table->unique(['batch_id', 'row_number']);
         });
