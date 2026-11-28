@@ -346,6 +346,18 @@ class BareillyCityDemoSeeder extends Seeder
                 $source->forceFill(['document_path' => $documentPath, 'document_disk' => 'public'])->save();
             }
 
+            // Retire only the old pending/draft demo rates created by V1 of this
+            // same seeder. Keep their version history; never touch manual/imported rates.
+            CircleRate::query()
+                ->where('source_id', $source->id)
+                ->where('admin_notes', 'like', '%'.self::DEMO_NOTE.'%')
+                ->where(function ($query): void {
+                    $query->where('status', '!=', 'published')
+                        ->orWhere('verification_status', '!=', 'verified');
+                })
+                ->get()
+                ->each(fn (CircleRate $legacyRate) => $legacyRate->delete());
+
             $baseRates = collect($typeDefinitions)->mapWithKeys(
                 fn (array $definition, string $slug) => [$slug => (float) $definition[2]]
             )->all();
@@ -556,13 +568,17 @@ class BareillyCityDemoSeeder extends Seeder
         array $roadWidths
     ): void {
         $definitions = [
-            ['agricultural', 'Agricultural sample multiplier', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['agricultural_land']->id]], ['rate_multiplier' => 1.02], 100],
-            ['residential', 'Residential sample multiplier', [['field' => 'property_type_id', 'operator' => 'in', 'value' => [$types['residential_plot']->id, $types['residential_building']->id]]], ['rate_multiplier' => 1.01], 90],
-            ['commercial', 'Commercial sample multiplier', [['field' => 'property_type_id', 'operator' => 'in', 'value' => [$types['commercial_plot']->id, $types['commercial_building']->id]]], ['rate_multiplier' => 1.03], 80],
-            ['industrial', 'Industrial sample multiplier', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['industrial_property']->id]], ['rate_multiplier' => 1.015], 70],
-            ['mixed-use', 'Mixed-use sample multiplier', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['mixed_use_property']->id]], ['rate_multiplier' => 1.025], 60],
-            ['road-width', 'Road-width sample condition', [['field' => 'road_width_range_id', 'operator' => 'in', 'value' => collect($roadWidths)->pluck('id')->all()]], ['rate_multiplier' => 1.0], 50],
-            ['category', 'Category sample condition', [['field' => 'category_id', 'operator' => 'in', 'value' => collect($categories)->pluck('id')->all()]], ['rate_multiplier' => 1.0], 40],
+            ['agricultural-valuation', 'Agricultural sample multiplier', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['agricultural_land']->id]], ['rate_multiplier' => 1.02], 100],
+            ['residential-valuation', 'Residential sample multiplier', [['field' => 'property_type_id', 'operator' => 'in', 'value' => [$types['residential_plot']->id, $types['residential_building']->id]]], ['rate_multiplier' => 1.01], 90],
+            ['commercial-valuation', 'Commercial sample multiplier', [['field' => 'property_type_id', 'operator' => 'in', 'value' => [$types['commercial_plot']->id, $types['commercial_building']->id]]], ['rate_multiplier' => 1.03], 80],
+            ['industrial-valuation', 'Industrial sample multiplier', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['industrial_property']->id]], ['rate_multiplier' => 1.015], 70],
+            ['mixed-use-valuation', 'Mixed-use sample multiplier', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['mixed_use_property']->id]], ['rate_multiplier' => 1.025], 60],
+            ['road-width-condition', 'Road-width sample condition', [['field' => 'road_width_range_id', 'operator' => 'in', 'value' => collect($roadWidths)->pluck('id')->all()]], ['rate_multiplier' => 1.0], 50],
+            ['category-condition', 'Category sample condition', [['field' => 'category_id', 'operator' => 'in', 'value' => collect($categories)->pluck('id')->all()]], ['rate_multiplier' => 1.0], 40],
+            ['corner-plot-condition', 'Corner plot sample condition', [['field' => 'custom.demo_corner_plot', 'operator' => 'equals', 'value' => true]], ['rate_multiplier' => 1.025], 30],
+            // Keep the historical rule identity, but do not require custom input:
+            // the calculator scenarios must remain valid with optional fields omitted.
+            ['require-building-details', 'Building details optional sample rule', [['field' => 'property_type_id', 'operator' => 'in', 'value' => [$types['residential_building']->id, $types['commercial_building']->id]]], ['rate_multiplier' => 1.0], 20],
         ];
 
         foreach ($definitions as [$slug, $description, $conditions, $actions, $priority]) {
