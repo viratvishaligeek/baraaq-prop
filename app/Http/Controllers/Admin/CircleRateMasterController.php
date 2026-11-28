@@ -260,10 +260,10 @@ class CircleRateMasterController extends Controller
         }
         if (array_key_exists('name', $data) && empty($data['slug'])) $data['slug'] = Str::slug($data['name']);
         if (isset($data['tehsil_id'], $data['district_id']) && ! CircleRateTehsil::query()->whereKey($data['tehsil_id'])->where('district_id', $data['district_id'])->exists()) {
-            throw \\Illuminate\\Validation\\ValidationException::withMessages(['tehsil_id' => 'The selected tehsil does not belong to the selected district.']);
+            throw ValidationException::withMessages(['tehsil_id' => 'The selected tehsil does not belong to the selected district.']);
         }
         if (isset($data['parent_id'], $data['district_id']) && ! CircleRateLocation::query()->whereKey($data['parent_id'])->where('district_id', $data['district_id'])->exists()) {
-            throw \\Illuminate\\Validation\\ValidationException::withMessages(['parent_id' => 'The parent location must belong to the selected district.']);
+            throw ValidationException::withMessages(['parent_id' => 'The parent location must belong to the selected district.']);
         }
         return $data;
     }
