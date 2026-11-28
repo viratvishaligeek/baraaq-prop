@@ -74,7 +74,7 @@ class CircleRateImportController extends Controller
 
         $hash = hash_file('sha256', $file->getRealPath());
         $duplicate = CircleRateImportBatch::query()->where('file_hash', $hash)->latest('id')->first();
-        $storedPath = $file->store('circle-rate-imports', 'public');
+        $storedPath = $file->store('circle-rate-imports', 'local');
 
         $batch = CircleRateImportBatch::query()->create([
             'financial_year_id' => $data['financial_year_id'],
@@ -94,7 +94,7 @@ class CircleRateImportController extends Controller
 
     public function show(CircleRateImportBatch $batch, SpreadsheetReader $reader)
     {
-        $path = Storage::disk('public')->path($batch->stored_path);
+        $path = Storage::disk('local')->path($batch->stored_path);
         abort_unless(is_file($path), 404, 'The original import file is missing.');
 
         try {
