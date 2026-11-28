@@ -359,7 +359,9 @@ class CircleRateImportController extends Controller
             ->where('location_id', $data['location_id'])
             ->where('category_id', $data['category_id'])
             ->where('road_width_range_id', $data['road_width_range_id'])
-            ->get();
+            ->get()
+            ->filter(fn (CircleRate $rate) => ($rate->conditions ?? []) == ($data['conditions'] ?? []))
+            ->values();
     }
 
     private function findNamed(string $model, string $name): ?object
