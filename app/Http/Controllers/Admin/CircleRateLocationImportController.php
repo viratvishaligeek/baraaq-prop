@@ -51,7 +51,7 @@ class CircleRateLocationImportController extends Controller
         return redirect()->route('admin.circle-rates.locations.import.show', $batch);
     }
 
-    public function show(CircleRateImportBatch $batch)
+    public function show(CircleRateImportBatch $batch, SpreadsheetReader $reader)
     {
         abort_unless(str_starts_with($batch->status, 'location_'), 404);
 
@@ -60,6 +60,7 @@ class CircleRateLocationImportController extends Controller
             'rows' => $batch->rows()->orderBy('row_number')->paginate(30),
             'validCount' => $batch->rows()->where('status', 'valid')->count(),
             'duplicateCount' => $batch->rows()->where('status', 'duplicate')->count(),
+            'headers' => $reader->read(Storage::disk('local')->path($batch->stored_path), $batch->file_type)['headers'],
         ]);
     }
 
@@ -73,6 +74,7 @@ class CircleRateLocationImportController extends Controller
 
         $valid = $invalid = $duplicates = 0;
         $seen = [];
+        $seenNames = [];
 
         foreach ($preview['rows'] as $index => $row) {
             $get = fn (string $field): string => trim((string) ($row[$mapping[$field] ?? '__missing__'] ?? ''));
@@ -91,6 +93,7 @@ class CircleRateLocationImportController extends Controller
             if ($get('area_type') !== '' && ! $areaType) $errors[] = 'Area type was not found in master data.';
             if ($get('level') !== '' && ! $level) $errors[] = 'Location level was not found in master data.';
             if ($name === '') $errors[] = 'Location name is required.';
+            if ($parentName !== '' && $district && ! CircleRateLocation::query()->where('district_id', $district->id)->whereRaw('LOWER(name) = ?', [mb_strtolower($parentName)])->exists() && ! isset($seenNames[mb_strtolower($parentName)])) $errors[] = 'Parent location must exist already or appear earlier in this file.';
             if ($slug === '') $errors[] = 'A valid location slug could not be generated.';
 
             $normalized = [
@@ -113,8 +116,10 @@ class CircleRateLocationImportController extends Controller
             }
 
             $status = ! $errors ? 'valid' : (str_contains(implode(' ', $errors), 'already exists') || str_contains(implode(' ', $errors), 'duplicated') ? 'duplicate' : 'invalid');
-            if ($status === 'valid') $valid++;
-            elseif ($status === 'duplicate') $duplicates++;
+            if ($status === 'valid') {
+                $valid++;
+                $seenNames[mb_strtolower($name)] = true;
+            } elseif ($status === 'duplicate') $duplicates++;
             else $invalid++;
 
             $batch->rows()->create([
