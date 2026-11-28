@@ -11,7 +11,6 @@
             <div class="col-md-3"><label class="form-label">District</label><select class="form-select" name="district_id"><option value="">All districts</option>@foreach($districts as $district)<option value="{{ $district->id }}" @selected(($filters['district_id'] ?? '') == $district->id)>{{ $district->name }}</option>@endforeach</select></div>
             <div class="col-md-2"><label class="form-label">Verification</label><select class="form-select" name="verification_status"><option value="">All</option>@foreach(['pending','verified','rejected'] as $status)<option value="{{ $status }}" @selected(($filters['verification_status'] ?? '') === $status)>{{ ucfirst($status) }}</option>@endforeach</select></div>
             <div class="col-md-2"><label class="form-label">Publication</label><select class="form-select" name="status"><option value="">All</option>@foreach(['draft','published','archived'] as $status)<option value="{{ $status }}" @selected(($filters['status'] ?? '') === $status)>{{ ucfirst($status) }}</option>@endforeach</select></div>
-            <div class="col-md-2"><label class="form-label">Data type</label><select class="form-select" name="demo_filter"><option value="">All records</option><option value="demo" @selected(($filters['demo_filter'] ?? '') === 'demo')>DEMO only</option><option value="official" @selected(($filters['demo_filter'] ?? '') === 'official')>Official / managed</option></select></div>
             <div class="col-md-2"><button class="btn btn-outline-primary w-100">Filter</button></div>
         </div>
     </form>
@@ -24,14 +23,14 @@
                 <tr>
                     <td><input type="checkbox" form="bulk-rate-form" name="ids[]" value="{{ $rate->id }}" class="rate-row-checkbox" aria-label="Select rate {{ $rate->id }}"></td>
                     <td>{{ $rate->location?->name ?? $rate->district?->name }}<div class="small text-muted">{{ $rate->tehsil?->name }}</div></td>
-                    <td>{{ $rate->propertyType?->name }} @if($rate->is_demo)<span class="badge text-bg-warning">DEMO</span>@endif</td><td>{{ $rate->financialYear?->name }}</td>
+                    <td>{{ $rate->propertyType?->name }}</td><td>{{ $rate->financialYear?->name }}</td>
                     <td>{{ number_format((float)$rate->rate, 2) }} / {{ $rate->unit?->name }}</td>
                     <td><span class="badge {{ $rate->verification_status === 'verified' ? 'text-bg-success' : ($rate->verification_status === 'rejected' ? 'text-bg-danger' : 'text-bg-warning') }}">{{ ucfirst($rate->verification_status) }}</span></td>
-                    <td>{{ $rate->is_demo ? 'DEMO – pending' : ucfirst($rate->status) }}</td>
+                    <td>{{ ucfirst($rate->status) }}</td>
                     <td class="text-end text-nowrap">
                         <a class="btn btn-sm btn-outline-primary" href="{{ route('admin.circle-rates.rates.edit', $rate) }}">Edit</a>
                         <form class="d-inline" method="POST" action="{{ route('admin.circle-rates.rates.duplicate', $rate) }}">@csrf<button class="btn btn-sm btn-outline-secondary">Duplicate</button></form>
-                        @if(! $rate->is_demo && $rate->verification_status === 'pending' && $rate->source_id)
+                        @if($rate->verification_status === 'pending' && $rate->source_id)
                             <form class="d-inline-flex align-items-center gap-1" method="POST" action="{{ route('admin.circle-rates.rates.verify', $rate) }}">@csrf @method('PATCH')<input class="form-control form-control-sm" style="max-width:150px" name="reason" placeholder="Verification reason" required><button class="btn btn-sm btn-success" onclick="return confirm('Verify and publish this rate?')">Verify</button></form>
                             <form class="d-inline-flex align-items-center gap-1" method="POST" action="{{ route('admin.circle-rates.rates.reject', $rate) }}">@csrf @method('PATCH')<input class="form-control form-control-sm" style="max-width:130px" name="reason" placeholder="Rejection reason" required><button class="btn btn-sm btn-outline-danger">Reject</button></form>
                         @endif
