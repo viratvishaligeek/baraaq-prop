@@ -219,11 +219,11 @@ class BareillyCityDemoSeeder extends Seeder
             ]);
 
             $fieldDefinitions = [
-                ['land_classification', 'Land Classification', 'dropdown', ['Agricultural', 'Residential', 'Commercial'], ['demo-agricultural']],
-                ['plot_facing', 'Plot Facing', 'radio', ['North', 'South', 'East', 'West'], ['demo-residential-plot', 'demo-commercial-plot']],
+                ['land_classification', 'Land Classification', 'dropdown', ['Agricultural', 'Residential', 'Commercial'], ['agricultural_land']],
+                ['plot_facing', 'Plot Facing', 'radio', ['North', 'South', 'East', 'West'], ['residential_plot', 'commercial_plot']],
                 ['corner_plot', 'Corner Plot', 'checkbox', [], ['demo-residential-plot', 'demo-commercial-plot']],
-                ['land_use', 'Land Use', 'select', ['Residential', 'Commercial', 'Mixed'], ['demo-residential-plot', 'demo-commercial-plot', 'demo-mixed-use-property']],
-                ['construction_type', 'Construction Type', 'dropdown', ['RCC', 'Load Bearing', 'Temporary'], ['demo-residential-building', 'demo-commercial-building']],
+                ['land_use', 'Land Use', 'select', ['Residential', 'Commercial', 'Mixed'], ['residential_plot', 'commercial_plot', 'mixed_use_property']],
+                ['construction_type', 'Construction Type', 'dropdown', ['RCC', 'Load Bearing', 'Temporary'], ['residential_building', 'commercial_building']],
                 ['building_age', 'Building Age', 'number', [], ['demo-residential-building', 'demo-commercial-building']],
                 ['number_of_floors', 'Number of Floors', 'number', [], ['demo-residential-building', 'demo-commercial-building']],
                 ['road_width', 'Road Width', 'number', [], null],
@@ -258,10 +258,10 @@ class BareillyCityDemoSeeder extends Seeder
             $rateCount = 0;
             foreach ($typeRows as $typeIndex => [$typeName, $typeSlug]) {
                 foreach ($years as $yearIndex => $year) {
-                    $location = array_values($locations)[($typeIndex * 2 + $yearIndex) % count($locations)];
+                    $location = array_values($locations)[$typeIndex % count($locations)];
                     $categoryNames = $typeCategoryMap[$typeSlug];
-                    $category = $categories[$categoryNames[$yearIndex % count($categoryNames)]];
-                    $road = array_values($roadWidths)[($typeIndex + $yearIndex) % count($roadWidths)];
+                    $category = $categories[$categoryNames[0]];
+                    $road = array_values($roadWidths)[$typeIndex % count($roadWidths)];
                     $unit = $rateUnits[($typeIndex + $yearIndex) % count($rateUnits)];
                     $identity = [
                         'district_id' => $district->id, 'location_id' => $location->id,
