@@ -270,7 +270,6 @@ class BareillyCityDemoSeeder extends Seeder
 
             $locationList = array_values($locations);
             $typeList = array_values($types);
-            $categoryList = array_values($categories);
             $roadList = array_values($roadWidths);
             $yearList = array_values($years);
             $unitList = array_values($units);
@@ -443,8 +442,8 @@ class BareillyCityDemoSeeder extends Seeder
             ['mixed-use-valuation', 'Mixed-use valuation sample adjustment', [['field' => 'property_type_id', 'operator' => 'equals', 'value' => $types['mixed_use_property']->id]], ['rate_multiplier' => 1.025], 60],
             ['road-width-condition', 'Road-width condition sample rule', [['field' => 'road_width_range_id', 'operator' => 'in', 'value' => collect($roadWidths)->pluck('id')->all()]], ['rate_multiplier' => 1.0], 50],
             ['category-condition', 'Category condition sample rule', [['field' => 'category_id', 'operator' => 'in', 'value' => collect($categories)->pluck('id')->all()]], ['rate_multiplier' => 1.0], 40],
-            ['corner-plot-condition', 'Corner plot conditional sample rule', [['field' => 'custom.corner_plot', 'operator' => 'equals', 'value' => true]], ['rate_multiplier' => 1.025], 30],
-            ['require-building-details', 'Building fields required sample rule', [['field' => 'property_type_id', 'operator' => 'in', 'value' => [$types['residential_building']->id, $types['commercial_building']->id]]], ['require_fields' => ['custom.construction_type', 'custom.building_age']], 20],
+            ['corner-plot-condition', 'Corner plot conditional sample rule', [['field' => 'custom.demo_corner_plot', 'operator' => 'equals', 'value' => true]], ['rate_multiplier' => 1.025], 30],
+            ['require-building-details', 'Building fields required sample rule', [['field' => 'property_type_id', 'operator' => 'in', 'value' => [$types['residential_building']->id, $types['commercial_building']->id]]], ['require_fields' => ['custom.demo_construction_type', 'custom.demo_building_age']], 20],
         ];
 
         foreach ($rules as [$slug, $description, $conditions, $actions, $priority]) {
