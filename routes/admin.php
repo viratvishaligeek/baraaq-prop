@@ -63,6 +63,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/circle-rates/rates', [CircleRateController::class, 'index'])->middleware('permission:circle-rates.view')->name('circle-rates.rates.index');
         Route::get('/circle-rates/rates/create', [CircleRateController::class, 'create'])->middleware('permission:circle-rates.manage')->name('circle-rates.rates.create');
         Route::post('/circle-rates/rates', [CircleRateController::class, 'store'])->middleware('permission:circle-rates.manage')->name('circle-rates.rates.store');
+        Route::post('/circle-rates/rates/bulk', [CircleRateController::class, 'bulk'])->middleware('permission:circle-rates.manage')->name('circle-rates.rates.bulk');
         Route::get('/circle-rates/rates/{circleRate}/edit', [CircleRateController::class, 'edit'])->middleware('permission:circle-rates.view')->name('circle-rates.rates.edit');
         Route::put('/circle-rates/rates/{circleRate}', [CircleRateController::class, 'update'])->middleware('permission:circle-rates.manage')->name('circle-rates.rates.update');
         Route::patch('/circle-rates/rates/{circleRate}/verify', [CircleRateController::class, 'verify'])->middleware('permission:circle-rates.verify')->name('circle-rates.rates.verify');
