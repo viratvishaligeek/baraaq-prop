@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Frontend\ContentController as FrontendContentController;
+use App\Http\Controllers\Frontend\CircleRateCalculatorController;
 use App\Http\Controllers\Frontend\EnquiryController as FrontendEnquiryController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\LocalContentController;
