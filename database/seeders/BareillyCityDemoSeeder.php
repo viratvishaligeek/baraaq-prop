@@ -257,43 +257,45 @@ class BareillyCityDemoSeeder extends Seeder
             $rateUnits = array_values($units);
             $rateCount = 0;
             foreach ($typeRows as $typeIndex => [$typeName, $typeSlug]) {
-                foreach ($years as $yearIndex => $year) {
-                    $location = array_values($locations)[$typeIndex % count($locations)];
-                    $categoryNames = $typeCategoryMap[$typeSlug];
-                    $category = $categories[$categoryNames[0]];
-                    $road = array_values($roadWidths)[$typeIndex % count($roadWidths)];
-                    $unit = $rateUnits[($typeIndex + $yearIndex) % count($rateUnits)];
-                    $identity = [
-                        'district_id' => $district->id, 'location_id' => $location->id,
-                        'property_type_id' => $types[$typeSlug]->id, 'category_id' => $category->id,
-                        'road_width_range_id' => $road->id, 'financial_year_id' => $year->id,
-                        'unit_id' => $unit->id, 'priority' => 100,
-                    ];
-                    $rate = CircleRate::query()->firstOrNew($identity);
-                    if ($rate->exists && ! $rate->is_demo) {
-                        throw new RuntimeException('A non-demo circle rate conflicts with the requested demo rate. No official record was changed.');
-                    }
-                    $amount = [120, 185, 260, 340, 420, 95, 290][$typeIndex] * (1 + ($yearIndex * 0.08)) * (1 + (($typeIndex % 3) * 0.03));
-                    $rate->forceFill($identity + [
-                        'tehsil_id' => $tehsil->id, 'area_type_id' => $urban->id,
-                        'source_id' => $source->id, 'rate' => round($amount, 4),
-                        'effective_from' => $year->starts_on->toDateString(),
-                        'effective_until' => $year->ends_on->toDateString(),
-                        'verification_status' => 'pending', 'status' => 'published',
-                        'conditions' => [['field' => 'road_width_range_id', 'operator' => 'equals', 'value' => $road->id]],
-                        'admin_notes' => 'DEMO ONLY – synthetic sample rate; never an official government circle rate.',
-                        'created_by' => null, 'verified_by' => null, 'verified_at' => null, 'is_demo' => true,
-                    ])->save();
-                    $this->records['rates'][] = $rate->id;
-                    $this->records['locations'][] = $location->id;
-                    $rateCount++;
-                    if (! $rate->versions()->where('is_demo', true)->exists()) {
-                        $version = CircleRateVersion::query()->forceCreate([
-                            'circle_rate_id' => $rate->id, 'version_number' => 1,
-                            'snapshot' => $rate->getAttributes(), 'change_reason' => 'DEMO seed baseline version',
-                            'changed_by' => null, 'is_demo' => true,
-                        ]);
-                        $this->records['versions'][] = $version->id;
+                $categoryNames = $typeCategoryMap[$typeSlug];
+                foreach ($categoryNames as $categoryIndex => $categoryName) {
+                    foreach ($years as $yearIndex => $year) {
+                        $location = array_values($locations)[$typeIndex % count($locations)];
+                        $category = $categories[$categoryName];
+                        $road = array_values($roadWidths)[($typeIndex + $categoryIndex) % count($roadWidths)];
+                        $unit = $rateUnits[($typeIndex + $categoryIndex + $yearIndex) % count($rateUnits)];
+                        $identity = [
+                            'district_id' => $district->id, 'location_id' => $location->id,
+                            'property_type_id' => $types[$typeSlug]->id, 'category_id' => $category->id,
+                            'road_width_range_id' => $road->id, 'financial_year_id' => $year->id,
+                            'unit_id' => $unit->id, 'priority' => 100,
+                        ];
+                        $rate = CircleRate::query()->firstOrNew($identity);
+                        if ($rate->exists && ! $rate->is_demo) {
+                            throw new RuntimeException('A non-demo circle rate conflicts with the requested demo rate. No official record was changed.');
+                        }
+                        $baseAmount = [120, 185, 260, 340, 420, 95, 290][$typeIndex];
+                        $amount = $baseAmount * (1 + ($yearIndex * 0.08)) * (1 + (($categoryIndex % 4) * 0.025));
+                        $rate->forceFill($identity + [
+                            'tehsil_id' => $tehsil->id, 'area_type_id' => $urban->id,
+                            'source_id' => $source->id, 'rate' => round($amount, 4),
+                            'effective_from' => $year->starts_on->toDateString(),
+                            'effective_until' => $year->ends_on->toDateString(),
+                            'verification_status' => 'pending', 'status' => 'published',
+                            'conditions' => [['field' => 'road_width_range_id', 'operator' => 'equals', 'value' => $road->id]],
+                            'admin_notes' => 'DEMO ONLY – synthetic sample rate; never an official government circle rate.',
+                            'created_by' => null, 'verified_by' => null, 'verified_at' => null, 'is_demo' => true,
+                        ])->save();
+                        $this->records['rates'][] = $rate->id;
+                        $this->records['locations'][] = $location->id;
+                        $rateCount++;
+                        if (! $rate->versions()->where('is_demo', true)->exists()) {
+                            CircleRateVersion::query()->forceCreate([
+                                'circle_rate_id' => $rate->id, 'version_number' => 1,
+                                'snapshot' => $rate->getAttributes(), 'change_reason' => 'DEMO seed baseline version',
+                                'changed_by' => null, 'is_demo' => true,
+                            ]);
+                        }
                     }
                 }
             }
