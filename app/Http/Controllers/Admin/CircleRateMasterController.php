@@ -396,6 +396,14 @@ class CircleRateMasterController extends Controller
             if ($field['type'] === 'boolean') $data[$name] = $request->boolean($name);
             if ($field['type'] === 'json' && isset($data[$name])) $data[$name] = json_decode($data[$name], true, 512, JSON_THROW_ON_ERROR);
         }
+        if ($definition['model'] === CircleRateRule::class) {
+            if (! is_array($data['conditions'] ?? null) || ! array_is_list($data['conditions'])) {
+                throw ValidationException::withMessages(['conditions' => 'Rule conditions must be a JSON array of field/operator/value objects.']);
+            }
+            if (! is_array($data['actions'] ?? null)) {
+                throw ValidationException::withMessages(['actions' => 'Rule actions must be a JSON object.']);
+            }
+        }
         if (array_key_exists('name', $data) && empty($data['slug'])) $data['slug'] = Str::slug($data['name']);
         if (isset($data['tehsil_id'], $data['district_id']) && ! CircleRateTehsil::query()->whereKey($data['tehsil_id'])->where('district_id', $data['district_id'])->exists()) {
             throw ValidationException::withMessages(['tehsil_id' => 'The selected tehsil does not belong to the selected district.']);
