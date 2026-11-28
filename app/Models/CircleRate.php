@@ -14,7 +14,7 @@ class CircleRate extends Model
     protected $fillable = [
         'district_id', 'tehsil_id', 'location_id', 'area_type_id',
         'property_type_id', 'category_id', 'road_width_range_id',
-        'financial_year_id', 'unit_id', 'source_id', 'rate',
+        'financial_year_id', 'unit_id', 'source_id', 'rate', 'priority',
         'effective_from', 'effective_until', 'verification_status',
         'status', 'conditions', 'admin_notes', 'created_by',
         'verified_by', 'verified_at',
