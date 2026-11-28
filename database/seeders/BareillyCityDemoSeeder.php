@@ -192,7 +192,7 @@ class BareillyCityDemoSeeder extends Seeder
                     $conversion->forceFill([
                         'factor' => (float) $from->base_factor / (float) $to->base_factor,
                         'source_note' => 'DEMO ONLY: configurable testing factor; not an official land-measure conversion.',
-                        'is_verified' => true, 'is_demo' => true,
+                        'is_verified' => false, 'is_demo' => true,
                     ])->save();
                     $this->records['conversions'][] = $conversion->id;
                 }
