@@ -28,8 +28,9 @@
                         <div class="col-12"><label class="form-label">Configuration JSON</label><textarea class="form-control font-monospace" name="configuration" rows="2">{{ json_encode($connection->configuration ?? [], JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) }}</textarea></div>
                         <div class="col-12"><div class="form-check"><input class="form-check-input" type="checkbox" name="is_enabled" value="1" @checked($connection->is_enabled) id="connection-{{ $connection->id }}"><label class="form-check-label" for="connection-{{ $connection->id }}">Enable configuration</label></div></div>
                     </div>
-                    <div class="mt-3 d-flex gap-2"><button class="btn btn-sm btn-primary">Save settings</button></div>
+                    <div class="mt-3 d-flex flex-wrap gap-2"><button class="btn btn-sm btn-primary">Save settings</button></div>
                 </form>
+                <form method="POST" action="{{ route('admin.circle-rates.api.test', $connection) }}" class="mb-3">@csrf<button class="btn btn-sm btn-outline-secondary">Record safe connectivity status</button><small class="text-muted ms-2">Does not call an undocumented endpoint.</small></form>
             @empty<p class="text-muted mb-0">No API connections configured.</p>@endforelse
         </div></div></div>
     </div>
