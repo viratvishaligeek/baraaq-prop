@@ -185,8 +185,9 @@ class CircleRateMasterController extends Controller
     public function store(Request $request, string $module)
     {
         $definition = $this->definition($module);
+        $model = $definition['model'];
         $data = $this->validated($request, $definition);
-        $definition['model']::query()->create($data);
+        $model::query()->create($data);
 
         return redirect()->route('admin.circle-rates.master.index', $module)->with('success', $definition['title'].' record created.');
     }
@@ -194,7 +195,8 @@ class CircleRateMasterController extends Controller
     public function update(Request $request, string $module, int $id)
     {
         $definition = $this->definition($module);
-        $record = $definition['model']::query()->findOrFail($id);
+        $model = $definition['model'];
+        $record = $model::query()->findOrFail($id);
         $record->update($this->validated($request, $definition, $record));
 
         return redirect()->route('admin.circle-rates.master.index', $module)->with('success', $definition['title'].' record updated.');
@@ -203,7 +205,8 @@ class CircleRateMasterController extends Controller
     public function destroy(string $module, int $id)
     {
         $definition = $this->definition($module);
-        $record = $definition['model']::query()->findOrFail($id);
+        $model = $definition['model'];
+        $record = $model::query()->findOrFail($id);
 
         try {
             $record->delete();
