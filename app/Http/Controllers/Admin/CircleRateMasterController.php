@@ -442,6 +442,15 @@ class CircleRateMasterController extends Controller
         if ($record && isset($data['parent_id']) && (int) $data['parent_id'] === (int) $record->id) {
             throw ValidationException::withMessages(['parent_id' => 'A location cannot be its own parent.']);
         }
+        if ($record instanceof CircleRateLocation && ! empty($data['parent_id'])) {
+            $ancestor = CircleRateLocation::query()->find($data['parent_id']);
+            while ($ancestor) {
+                if ((int) $ancestor->id === (int) $record->id) {
+                    throw ValidationException::withMessages(['parent_id' => 'A location cannot be moved below one of its own descendants.']);
+                }
+                $ancestor = $ancestor->parent;
+            }
+        }
         if (isset($data['parent_id'], $data['district_id']) && ! CircleRateLocation::query()->whereKey($data['parent_id'])->where('district_id', $data['district_id'])->exists()) {
             throw ValidationException::withMessages(['parent_id' => 'The parent location must belong to the selected district.']);
         }
