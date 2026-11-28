@@ -34,7 +34,7 @@
             <div class="col-md-4"><label class="form-label">Effective until</label><input class="form-control" type="date" name="effective_until" value="{{ old('effective_until', $rate->effective_until?->format('Y-m-d')) }}"></div>
             <div class="col-12"><label class="form-label">Rate conditions (JSON array)</label><textarea class="form-control font-monospace" rows="5" name="conditions" placeholder='[{"field":"land_use","operator":"equals","value":"residential"}]'>{{ old('conditions', $rate->conditions ? json_encode($rate->conditions, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : '') }}</textarea><small class="text-muted">Supported operators: equals, not_equals, greater_than, less_than, greater_than_or_equal, less_than_or_equal, between, in.</small></div>
             <div class="col-12"><label class="form-label">Administrator notes</label><textarea class="form-control" rows="3" name="admin_notes">{{ old('admin_notes', $rate->admin_notes) }}</textarea></div>
-            <div class="col-12"><label class="form-label">Change reason (required for audit context)</label><input class="form-control" name="change_reason" value="{{ old('change_reason') }}" maxlength="2000"></div>
+            <div class="col-12"><label class="form-label">Change reason @if($rate->exists)<span class="text-danger">*</span>@else (optional)@endif</label><input class="form-control" name="change_reason" value="{{ old('change_reason') }}" maxlength="2000" @required($rate->exists)></div>
         </div>
         @if($rate->exists)
             <div class="alert alert-warning mt-3 mb-0">Saving changes to a verified or published rate will move it back to draft/pending verification. The previous version is retained.</div>
