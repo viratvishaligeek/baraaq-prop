@@ -228,8 +228,12 @@ class ValuationService
 
         $previousDate = min($previousYear->ends_on->toDateString(), $data['valuation_date']);
         $previousInput = array_merge($data, ['financial_year_id' => $previousYear->id]);
-        $previousRate = $this->resolveRate($previousInput, $previousDate);
-        $result = $this->applyStrategy($previousRate, $area, (int) $data['area_unit_id']);
+        try {
+            $previousRate = $this->resolveRate($previousInput, $previousDate);
+            $result = $this->applyStrategy($previousRate, $area, (int) $data['area_unit_id']);
+        } catch (ValidationException|RuntimeException) {
+            return null;
+        }
 
         return [
             'financial_year' => $previousYear->name,
