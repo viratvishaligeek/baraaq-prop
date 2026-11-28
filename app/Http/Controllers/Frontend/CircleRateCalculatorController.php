@@ -27,7 +27,7 @@ class CircleRateCalculatorController extends Controller
             'propertyTypes' => CircleRatePropertyType::query()->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(),
             'financialYears' => CircleRateFinancialYear::query()->where('is_active', true)->where('show_on_frontend', true)->orderByDesc('starts_on')->get(),
             'units' => CircleRateUnit::query()->where('is_active', true)->where('dimension', 'area')->orderBy('name')->get(),
-            'fields' => \App\Models\CircleRateCalculatorField::query()->where('is_active', true)->orderBy('sort_order')->get(),
+            'fields' => \App\Models\CircleRateCalculatorField::query()->where('is_active', true)->with('options')->orderBy('sort_order')->get(),
         ]);
     }
 
@@ -50,7 +50,7 @@ class CircleRateCalculatorController extends Controller
             ->where('district_id', $data['district_id'])
             ->when($data['tehsil_id'] ?? null, fn ($q, $id) => $q->where('tehsil_id', $id))
             ->when($data['area_type_id'] ?? null, fn ($q, $id) => $q->where('area_type_id', $id))
-            ->when(array_key_exists('parent_id', $data), fn ($q) => $q->where('parent_id', $data['parent_id']))
+            ->when($request->has('parent_id'), fn ($q) => $q->where('parent_id', $data['parent_id'] ?? null), fn ($q) => $q->whereNull('parent_id'))
             ->where('is_active', true)->orderBy('name')->get(['id', 'name', 'level_id', 'parent_id']));
     }
 
