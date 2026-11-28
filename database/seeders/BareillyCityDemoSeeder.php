@@ -60,6 +60,10 @@ class BareillyCityDemoSeeder extends Seeder
                     'is_active' => true,
                 ]
             );
+            $this->assertDemo(
+                $actor->name === 'DEMO Seeder Verification Actor (Synthetic)',
+                'synthetic verification actor'
+            );
 
             $district = CircleRateDistrict::query()->firstOrCreate(
                 ['slug' => 'bareilly'],
@@ -461,8 +465,11 @@ class BareillyCityDemoSeeder extends Seeder
             ->where('category_id', $category?->id)
             ->where('road_width_range_id', $road?->id)
             ->where('financial_year_id', $year->id)
-            ->where('unit_id', $unit->id)
-            ->whereDate('effective_from', $year->starts_on->toDateString())
+            ->whereDate('effective_from', '<=', $year->ends_on->toDateString())
+            ->where(function ($query) use ($year): void {
+                $query->whereNull('effective_until')
+                    ->orWhereDate('effective_until', '>=', $year->starts_on->toDateString());
+            })
             ->first();
 
         if ($manualMatch && (
