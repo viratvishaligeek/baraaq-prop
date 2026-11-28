@@ -130,6 +130,7 @@ class CircleRateCalculatorController extends Controller
                 $rules[] = 'boolean';
             } elseif ($field->input_type === 'multi-select') {
                 $rules[] = 'array';
+                $customRules[$key.'.*'] = [Rule::in($field->options->pluck('value')->all())];
             } else {
                 $rules[] = 'string';
                 $rules[] = 'max:1000';
