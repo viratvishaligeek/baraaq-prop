@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\CircleRateMasterController;
 use App\Http\Controllers\Admin\CircleRateSourceController;
 use App\Http\Controllers\Admin\CircleRateImportController;
 use App\Http\Controllers\Admin\CircleRateApiSettingsController;
+use App\Http\Controllers\Admin\CircleRateValuationReportController;
+use App\Http\Controllers\Admin\CircleRateAuditLogController;
 use App\Http\Controllers\Admin\ContentController;
 use App\Http\Controllers\Admin\ContentPreviewController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -39,6 +41,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
         Route::get('/circle-rates', CircleRateDashboardController::class)->middleware('permission:circle-rates.view')->name('circle-rates.dashboard');
+        Route::get('/circle-rates/reports', [CircleRateValuationReportController::class, 'index'])->middleware('permission:circle-rates.view')->name('circle-rates.reports.index');
+        Route::get('/circle-rates/reports/export', [CircleRateValuationReportController::class, 'export'])->middleware('permission:circle-rates.view')->name('circle-rates.reports.export');
+        Route::get('/circle-rates/audit-logs', [CircleRateAuditLogController::class, 'index'])->middleware('permission:circle-rates.view')->name('circle-rates.audit.index');
         Route::get('/circle-rates/api-settings', [CircleRateApiSettingsController::class, 'index'])->middleware('permission:circle-rates.view')->name('circle-rates.api.index');
         Route::post('/circle-rates/api-settings', [CircleRateApiSettingsController::class, 'store'])->middleware('permission:circle-rates.manage')->name('circle-rates.api.store');
         Route::put('/circle-rates/api-settings/{connection}', [CircleRateApiSettingsController::class, 'update'])->middleware('permission:circle-rates.manage')->name('circle-rates.api.update');
