@@ -168,6 +168,21 @@ class CircleRateLocationImportController extends Controller
                     }
                 }
 
+                $duplicate = CircleRateLocation::query()
+                    ->where('district_id', $data['district_id'])
+                    ->where(function ($query) use ($data, $parent): void {
+                        $query->where('slug', $data['slug'])
+                            ->orWhere(function ($nameQuery) use ($data, $parent): void {
+                                $nameQuery->where('tehsil_id', $data['tehsil_id'])
+                                    ->where('parent_id', $parent?->id)
+                                    ->whereRaw('LOWER(name) = ?', [mb_strtolower($data['name'])]);
+                            });
+                    })->exists();
+                if ($duplicate) {
+                    $row->update(['status' => 'duplicate', 'validation_errors' => ['A matching location was created after preview. It was not overwritten.']]);
+                    continue;
+                }
+
                 $location = CircleRateLocation::query()->create([
                     'district_id' => $data['district_id'],
                     'tehsil_id' => $data['tehsil_id'],
