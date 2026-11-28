@@ -278,6 +278,13 @@ class BareillyCityDemoSeeder extends Seeder
                         'show_on_frontend' => true,
                     ]
                 );
+                $this->assertDemoMarker(
+                    $years[$name]->starts_on->toDateString() === $startsOn
+                    && $years[$name]->ends_on->toDateString() === $endsOn
+                    && $years[$name]->is_active
+                    && $years[$name]->show_on_frontend,
+                    'financial year '.$name
+                );
             }
 
             $source = CircleRateSource::query()
@@ -352,6 +359,15 @@ class BareillyCityDemoSeeder extends Seeder
                         || ! str_contains((string) $existing->admin_notes, self::DEMO_NOTE)
                     )) {
                         continue;
+                    }
+                    if ($existing) {
+                        $this->assertDemoMarker(
+                            $existing->verification_status === 'pending'
+                            && $existing->status === 'draft'
+                            && $existing->verified_by === null
+                            && $existing->verified_at === null,
+                            'circle rate '.$existing->id.' must remain pending and draft'
+                        );
                     }
 
                     $rate = $existing ?: CircleRate::query()->create($identity + [
