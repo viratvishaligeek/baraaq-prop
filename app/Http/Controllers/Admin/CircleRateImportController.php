@@ -38,6 +38,7 @@ class CircleRateImportController extends Controller
         'road_width' => 'Road width',
         'rate' => 'Rate amount',
         'unit' => 'Rate unit',
+        'priority' => 'Rate priority',
         'effective_from' => 'Effective from',
         'effective_until' => 'Effective until',
         'conditions' => 'Conditions JSON',
