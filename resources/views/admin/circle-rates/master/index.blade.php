@@ -37,6 +37,13 @@
                                                     <option value="{{ $option->id }}" @selected((string) $value === (string) $option->id)>{{ $option->name }}</option>
                                                 @endforeach
                                             </select>
+                                        @elseif ($field['type'] === 'multi-select')
+                                            <select class="form-select" name="{{ $name }}[]" id="field-{{ $name }}" multiple size="5">
+                                                @foreach (($options[$name] ?? []) as $option)
+                                                    <option value="{{ $option->id }}" @selected(in_array((string) $option->id, array_map('strval', (array) $value), true))>{{ $option->name }}</option>
+                                                @endforeach
+                                            </select>
+                                            <small class="text-muted">Hold Ctrl (Windows/Linux) or Command (Mac) to select multiple entries.</small>
                                         @elseif ($field['type'] === 'textarea')
                                             <textarea class="form-control" name="{{ $name }}" id="field-{{ $name }}" rows="3">{{ $value }}</textarea>
                                         @elseif ($field['type'] === 'json')
