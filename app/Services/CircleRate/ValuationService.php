@@ -120,11 +120,19 @@ class ValuationService
                         $specificity++;
                     }
                 }
+                $rate->setAttribute('_is_demo_rate', str_contains(strtoupper((string) $rate->source?->title), 'DEMO TEST DATA'));
                 $rate->setAttribute('_match_specificity', $specificity);
                 $rate->setAttribute('_condition_specificity', count($rate->conditions ?? []));
                 return $rate;
             })
-            ->sortByDesc(fn (CircleRate $rate) => [(int) $rate->priority, (int) $rate->getAttribute('_match_specificity'), (int) $rate->getAttribute('_condition_specificity')])
+            // Real published source-backed rates always outrank synthetic demo
+            // fixtures. Within the same source class, use priority and specificity.
+            ->sortByDesc(fn (CircleRate $rate) => [
+                $rate->getAttribute('_is_demo_rate') ? 0 : 1,
+                (int) $rate->priority,
+                (int) $rate->getAttribute('_match_specificity'),
+                (int) $rate->getAttribute('_condition_specificity'),
+            ])
             ->values();
 
         if ($candidates->isEmpty()) {
@@ -135,7 +143,8 @@ class ValuationService
 
         $first = $candidates->first();
         $top = $candidates->filter(fn (CircleRate $rate) =>
-            (int) $rate->priority === (int) $first->priority
+            (bool) $rate->getAttribute('_is_demo_rate') === (bool) $first->getAttribute('_is_demo_rate')
+            && (int) $rate->priority === (int) $first->priority
             && (int) $rate->getAttribute('_match_specificity') === (int) $first->getAttribute('_match_specificity')
             && (int) $rate->getAttribute('_condition_specificity') === (int) $first->getAttribute('_condition_specificity')
         );
