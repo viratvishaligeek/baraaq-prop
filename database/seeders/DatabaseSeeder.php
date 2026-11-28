@@ -39,6 +39,8 @@ class DatabaseSeeder extends Seeder
             BuraaqhContentSeeder::class,
             BuraaqhDemoPropertySeeder::class,
             CircleRateReferenceSeeder::class,
+            BareillyCityDemoSeeder::class,
+
         ]);
     }
 }
