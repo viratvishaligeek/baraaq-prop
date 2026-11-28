@@ -213,6 +213,10 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->json('conditions');
             $table->json('actions');
+            $table->foreignId('source_id')->nullable()->constrained('circle_rate_sources')->nullOnDelete();
+            $table->boolean('is_verified')->default(false)->index();
+            $table->foreignId('verified_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->timestamp('verified_at')->nullable();
             $table->unsignedInteger('priority')->default(0);
             $table->boolean('stop_processing')->default(true);
             $table->boolean('is_active')->default(true)->index();
