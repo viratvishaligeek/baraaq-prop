@@ -234,7 +234,7 @@ class CircleRateMasterController extends Controller
         return $this->definitions()[$module];
     }
 
-    public function index(Request $request, string $module)
+    public function index(string $module)
     {
         $definition = $this->definition($module);
         $model = $definition['model'];
@@ -256,10 +256,7 @@ class CircleRateMasterController extends Controller
             }
         }
 
-        $records = $model::query()
-            ->when($request->input('demo_filter') === 'demo', fn ($query) => $query->where('is_demo', true))
-            ->when($request->input('demo_filter') === 'official', fn ($query) => $query->where('is_demo', false))
-            ->latest('id')->paginate(20)->withQueryString();
+        $records = $model::query()->latest('id')->paginate(20)->withQueryString();
 
         return view('admin.circle-rates.master.index', compact('module', 'definition', 'record', 'records', 'options'));
     }
