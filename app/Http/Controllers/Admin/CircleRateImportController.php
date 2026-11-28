@@ -173,6 +173,7 @@ class CircleRateImportController extends Controller
             if (! $effectiveFrom) $errors[] = 'Effective-from date is missing or invalid.';
             if ($effectiveFrom && ($effectiveFrom < $year->starts_on || $effectiveFrom > $year->ends_on)) $errors[] = 'Effective-from date is outside the selected financial year.';
             if ($effectiveUntil && $effectiveFrom && $effectiveUntil < $effectiveFrom) $errors[] = 'Effective-until date cannot precede effective-from date.';
+            if ($effectiveUntil && $effectiveUntil > $year->ends_on) $errors[] = 'Effective-until date is outside the selected financial year.';
 
             $conditions = [];
             if ($get('conditions') !== '') {
