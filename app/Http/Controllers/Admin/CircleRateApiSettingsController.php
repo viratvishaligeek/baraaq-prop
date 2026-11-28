@@ -61,6 +61,15 @@ class CircleRateApiSettingsController extends Controller
         return back()->with('warning', 'No API request was sent. Configure a documented official endpoint and authentication contract before enabling synchronization.');
     }
 
+    private function containsCredentialKeys(array $configuration): bool
+    {
+        foreach ($configuration as $key => $value) {
+            if (preg_match('/secret|token|password|credential|api[_-]?key/i', (string) $key)) return true;
+            if (is_array($value) && $this->containsCredentialKeys($value)) return true;
+        }
+        return false;
+    }
+
     private function validated(Request $request): array
     {
         $data = $request->validate([
@@ -72,12 +81,19 @@ class CircleRateApiSettingsController extends Controller
             'is_enabled' => ['nullable', 'boolean'],
         ]);
 
+        if (! empty($data['base_url']) && parse_url($data['base_url'], PHP_URL_SCHEME) !== 'https') {
+            throw ValidationException::withMessages(['base_url' => 'Government API base URLs must use HTTPS.']);
+        }
+
         if (! empty($data['is_enabled']) && empty($data['base_url'])) {
             throw ValidationException::withMessages(['base_url' => 'A documented base URL is required before enabling a connection.']);
         }
 
         if (isset($data['configuration'])) {
             $data['configuration'] = json_decode($data['configuration'], true, 512, JSON_THROW_ON_ERROR);
+            if (! is_array($data['configuration']) || $this->containsCredentialKeys($data['configuration'])) {
+                throw ValidationException::withMessages(['configuration' => 'Store credentials only in the encrypted credentials field, not in general configuration JSON.']);
+            }
         }
         $data['is_enabled'] = $request->boolean('is_enabled');
 
