@@ -265,6 +265,7 @@ return new class extends Migration
             $table->foreignId('unit_id')->constrained('circle_rate_units')->restrictOnDelete();
             $table->foreignId('source_id')->nullable()->constrained('circle_rate_sources')->nullOnDelete();
             $table->decimal('rate', 20, 4);
+            $table->unsignedInteger('priority')->default(0);
             $table->date('effective_from');
             $table->date('effective_until')->nullable();
             $table->string('verification_status', 24)->default('pending')->index();
