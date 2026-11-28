@@ -362,6 +362,7 @@ class ValuationService
     {
         $previousYear = CircleRateFinancialYear::query()
             ->where('is_active', true)
+            ->where('is_demo', (bool) $year->is_demo)
             ->whereDate('ends_on', '<', $year->starts_on->toDateString())
             ->orderByDesc('ends_on')
             ->first();
