@@ -19,7 +19,6 @@
             <div class="col-md-2"><label class="form-label">Area type</label><select class="form-select" name="area_type_id"><option value="">All areas</option>@foreach($areaTypes as $item)<option value="{{ $item->id }}" @selected(($filters['area_type_id'] ?? '') == $item->id)>{{ $item->name }}</option>@endforeach</select></div>
             <div class="col-md-2"><label class="form-label">Property type</label><select class="form-select" name="property_type_id"><option value="">All types</option>@foreach($propertyTypes as $item)<option value="{{ $item->id }}" @selected(($filters['property_type_id'] ?? '') == $item->id)>{{ $item->name }}</option>@endforeach</select></div>
             <div class="col-md-2"><label class="form-label">Verification</label><select class="form-select" name="verification_status"><option value="">All statuses</option>@foreach(['pending','verified','rejected'] as $status)<option value="{{ $status }}" @selected(($filters['verification_status'] ?? '') === $status)>{{ ucfirst($status) }}</option>@endforeach</select></div>
-            <div class="col-md-2"><label class="form-label">Data type</label><select class="form-select" name="demo_filter"><option value="">All records</option><option value="demo" @selected(($filters['demo_filter'] ?? '') === 'demo')>DEMO only</option><option value="official" @selected(($filters['demo_filter'] ?? '') === 'official')>Official / managed</option></select></div>
             <div class="col-md-1"><button class="btn btn-outline-primary w-100">Go</button></div>
         </div>
     </form>
@@ -63,10 +62,10 @@
                     @forelse ($latestRates as $rate)
                         <tr>
                             <td>{{ $rate->location?->name ?? $rate->district?->name ?? 'District level' }}</td>
-                            <td>{{ $rate->propertyType?->name ?? '—' }} @if($rate->is_demo)<span class="badge text-bg-warning">DEMO</span>@endif</td>
+                            <td>{{ $rate->propertyType?->name ?? '—' }}</td>
                             <td>{{ $rate->financialYear?->name ?? '—' }}</td>
                             <td>{{ number_format((float) $rate->rate, 2) }} / {{ $rate->unit?->name ?? 'unit' }}</td>
-                            <td><span class="badge {{ $rate->is_demo ? 'text-bg-warning' : ($rate->verification_status === 'verified' ? 'text-bg-success' : 'text-bg-warning') }}">{{ $rate->is_demo ? 'DEMO – pending' : ucfirst($rate->verification_status) }}</span></td>
+                            <td><span class="badge {{ $rate->verification_status === 'verified' ? 'text-bg-success' : 'text-bg-warning' }}">{{ ucfirst($rate->verification_status) }}</span></td>
                         </tr>
                     @empty
                         <tr><td colspan="5" class="text-center text-muted py-4">No circle rate records yet. Add an official source and configure rates before enabling public valuation.</td></tr>
@@ -89,7 +88,7 @@
                 <tbody>
                     @forelse ($recentImports as $batch)
                         <tr>
-                            <td>{{ $batch->original_filename }} @if($batch->is_demo)<span class="badge text-bg-warning">DEMO</span>@endif</td>
+                            <td>{{ $batch->original_filename }}</td>
                             <td>{{ number_format($batch->total_rows) }}</td>
                             <td>{{ number_format($batch->valid_rows) }}</td>
                             <td>{{ number_format($batch->invalid_rows) }}</td>
