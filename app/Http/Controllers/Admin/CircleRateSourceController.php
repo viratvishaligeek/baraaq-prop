@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CircleRateSource;
+use App\Models\CircleRateAuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -37,7 +38,17 @@ class CircleRateSourceController extends Controller
 
         unset($data['document']);
         $data['uploaded_by'] = $request->user()->id;
-        CircleRateSource::query()->create($data);
+        $source = CircleRateSource::query()->create($data);
+        CircleRateAuditLog::query()->create([
+            'user_id' => $request->user()->id,
+            'subject_type' => CircleRateSource::class,
+            'subject_id' => $source->id,
+            'event' => 'source_created',
+            'new_values' => $source->getAttributes(),
+            'reason' => 'Source document uploaded or registered',
+            'source_id' => $source->id,
+            'ip_address' => $request->ip(),
+        ]);
 
         return back()->with('success', 'Source document saved.');
     }
@@ -48,10 +59,20 @@ class CircleRateSourceController extends Controller
             return back()->withErrors(['source' => 'This source is linked to circle rates. Replace the source reference before deleting it.']);
         }
 
+        $oldValues = $source->getAttributes();
         if ($source->document_path) {
             Storage::disk($source->document_disk)->delete($source->document_path);
         }
         $source->delete();
+        CircleRateAuditLog::query()->create([
+            'user_id' => request()->user()->id,
+            'subject_type' => CircleRateSource::class,
+            'subject_id' => $source->id,
+            'event' => 'source_deleted',
+            'old_values' => $oldValues,
+            'reason' => 'Unlinked source document deleted',
+            'ip_address' => request()->ip(),
+        ]);
 
         return back()->with('success', 'Source document deleted.');
     }
