@@ -255,7 +255,7 @@ class CircleRateController extends Controller
         return back()->with('success', $count.' circle rate record(s) processed.');
     }
 
-    private function validated(Request $request): array
+    private function validated(Request $request, ?CircleRate $ignore = null): array
     {
         $data = Validator::make($request->all(), [
             'district_id' => ['required', 'integer', 'exists:circle_rate_districts,id'],
@@ -297,7 +297,7 @@ class CircleRateController extends Controller
 
         unset($data['change_reason']);
         $data['priority'] = $data['priority'] ?? 0;
-        $this->validateRelationships($data);
+        $this->validateRelationships($data, $ignore);
         return $data;
     }
 
@@ -312,7 +312,7 @@ class CircleRateController extends Controller
         return false;
     }
 
-    private function validateRelationships(array $data): void
+    private function validateRelationships(array $data, ?CircleRate $ignore = null): void
     {
         $district = CircleRateDistrict::query()->findOrFail($data['district_id']);
         $tehsil = ! empty($data['tehsil_id']) ? CircleRateTehsil::query()->findOrFail($data['tehsil_id']) : null;
@@ -352,6 +352,26 @@ class CircleRateController extends Controller
             if ($category->locations()->exists() && (! $location || ! $this->locationMatchesIds($location, $category->locations()->pluck('circle_rate_locations.id')->all()))) {
                 throw ValidationException::withMessages(['category_id' => 'The selected category is not assigned to this location.']);
             }
+        }
+
+        $overlapEnd = $data['effective_until'] ?? $financialYear->ends_on->toDateString();
+        $duplicateQuery = CircleRate::query()
+            ->when($ignore, fn ($query) => $query->whereKeyNot($ignore->id))
+            ->where('district_id', $data['district_id'])
+            ->where('tehsil_id', $data['tehsil_id'] ?? null)
+            ->where('area_type_id', $data['area_type_id'] ?? null)
+            ->where('location_id', $data['location_id'] ?? null)
+            ->where('property_type_id', $data['property_type_id'])
+            ->where('category_id', $data['category_id'] ?? null)
+            ->where('road_width_range_id', $data['road_width_range_id'] ?? null)
+            ->where('financial_year_id', $data['financial_year_id'])
+            ->where('unit_id', $data['unit_id'])
+            ->where('priority', $data['priority'] ?? 0)
+            ->whereDate('effective_from', '<=', $overlapEnd)
+            ->where(fn ($query) => $query->whereNull('effective_until')->orWhereDate('effective_until', '>=', $data['effective_from']))
+            ->get();
+        if ($duplicateQuery->contains(fn (CircleRate $existing) => ($existing->conditions ?? []) == ($data['conditions'] ?? []))) {
+            throw ValidationException::withMessages(['effective_from' => 'A rate with the same location, category, conditions, priority and overlapping effective dates already exists. Update that record or define a genuinely different condition/priority.']);
         }
 
         if (! empty($data['road_width_range_id'])) {
